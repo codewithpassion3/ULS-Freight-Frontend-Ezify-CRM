@@ -29,7 +29,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      
+
       {/* Row 1 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
@@ -45,7 +45,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
       {/* Row 2 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-           <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1">
             <Label htmlFor="businessName">Business or Corporation Name*</Label>
             <Info className="h-4 w-4 text-muted-foreground" />
           </div>
@@ -100,68 +100,68 @@ export function Step1Form({ onNext }: Step1FormProps) {
       {/* Shipping Types Custom Cards */}
       <div className="space-y-3 pt-4">
         <Label>Select all the <span className="text-primary underline cursor-pointer">shipping types</span> that apply*</Label>
-        
+
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-           {/* Custom Type Card 1 */}
-           <div 
-             className={`flex items-center justify-center gap-2 p-3 border rounded-md cursor-pointer transition-all ${selectedTypes.includes('Pallet') ? 'border-green-500 bg-green-50/50 dark:bg-green-950/20' : 'border-border'}`}
-             onClick={() => toggleType('Pallet')}
-           >
-              {selectedTypes.includes('Pallet') && <div className="w-4 h-4 rounded-sm bg-green-500 text-white flex items-center justify-center text-[10px]">✓</div>}
-              {!selectedTypes.includes('Pallet') && <div className="w-4 h-4 rounded-sm border border-muted-foreground"></div>}
-              <span className="text-sm font-medium">Pallet</span>
-              <Truck className="h-4 w-4 ml-auto text-[#103b5f]" />
-           </div>
+          {/* Custom Type Card 1 */}
+          <div
+            className={`flex items-center justify-center gap-2 p-3 border rounded-md cursor-pointer transition-all ${selectedTypes.includes('Pallet') ? 'border-green-500 bg-green-50/50 dark:bg-green-950/20' : 'border-border'}`}
+            onClick={() => toggleType('Pallet')}
+          >
+            {selectedTypes.includes('Pallet') && <div className="w-4 h-4 rounded-sm bg-green-500 text-white flex items-center justify-center text-[10px]">✓</div>}
+            {!selectedTypes.includes('Pallet') && <div className="w-4 h-4 rounded-sm border border-muted-foreground"></div>}
+            <span className="text-sm font-medium">Pallet</span>
+            <Truck className="h-4 w-4 ml-auto text-[#103b5f]" />
+          </div>
 
-           {/* Custom Type Card 2 */}
-           <div 
-             className={`flex items-center justify-center gap-2 p-3 border rounded-md cursor-pointer transition-all ${selectedTypes.includes('Package') ? 'border-primary shadow-sm bg-primary/5' : 'border-border'}`}
-             onClick={() => toggleType('Package')}
-           >
-              {selectedTypes.includes('Package') && <div className="w-4 h-4 rounded-sm bg-green-500 text-white flex items-center justify-center text-[10px]">✓</div>}
-              {!selectedTypes.includes('Package') && <div className="w-4 h-4 rounded-sm border border-muted-foreground"></div>}
-              <span className="text-sm font-medium">Package</span>
-              <Package className="h-4 w-4 ml-auto text-[#103b5f]" />
-           </div>
+          {/* Custom Type Card 2 */}
+          <div
+            className={`flex items-center justify-center gap-2 p-3 border rounded-md cursor-pointer transition-all ${selectedTypes.includes('Package') ? 'border-primary shadow-sm bg-primary/5' : 'border-border'}`}
+            onClick={() => toggleType('Package')}
+          >
+            {selectedTypes.includes('Package') && <div className="w-4 h-4 rounded-sm bg-green-500 text-white flex items-center justify-center text-[10px]">✓</div>}
+            {!selectedTypes.includes('Package') && <div className="w-4 h-4 rounded-sm border border-muted-foreground"></div>}
+            <span className="text-sm font-medium">Package</span>
+            <Package className="h-4 w-4 ml-auto text-[#103b5f]" />
+          </div>
 
-           {/* Custom Type Card 3 */}
-           <div 
-             className={`flex items-center justify-center gap-2 p-3 border rounded-md cursor-pointer transition-all ${selectedTypes.includes('eCommerce') ? 'border-primary shadow-sm bg-primary/5' : 'border-border'}`}
-             onClick={() => toggleType('eCommerce')}
-           >
-              {selectedTypes.includes('eCommerce') && <div className="w-4 h-4 rounded-sm bg-green-500 text-white flex items-center justify-center text-[10px]">✓</div>}
-              {!selectedTypes.includes('eCommerce') && <div className="w-4 h-4 rounded-sm border border-muted-foreground"></div>}
-              <span className="text-sm font-medium text-muted-foreground">eCommerce</span>
-              <ShoppingCart className="h-4 w-4 ml-auto text-[#103b5f]" />
-           </div>
+          {/* Custom Type Card 3 */}
+          <div
+            className={`flex items-center justify-center gap-2 p-3 border rounded-md cursor-pointer transition-all ${selectedTypes.includes('eCommerce') ? 'border-primary shadow-sm bg-primary/5' : 'border-border'}`}
+            onClick={() => toggleType('eCommerce')}
+          >
+            {selectedTypes.includes('eCommerce') && <div className="w-4 h-4 rounded-sm bg-green-500 text-white flex items-center justify-center text-[10px]">✓</div>}
+            {!selectedTypes.includes('eCommerce') && <div className="w-4 h-4 rounded-sm border border-muted-foreground"></div>}
+            <span className="text-sm font-medium text-muted-foreground">eCommerce</span>
+            <ShoppingCart className="h-4 w-4 ml-auto text-[#103b5f]" />
+          </div>
 
-           {/* Custom Type Card 4 */}
-           <div 
-             className={`flex items-center justify-center gap-2 p-3 border rounded-md cursor-pointer transition-all ${selectedTypes.includes('PTL/FTL') ? 'border-primary shadow-sm bg-primary/5' : 'border-border'}`}
-             onClick={() => toggleType('PTL/FTL')}
-           >
-              {selectedTypes.includes('PTL/FTL') && <div className="w-4 h-4 rounded-sm bg-green-500 text-white flex items-center justify-center text-[10px]">✓</div>}
-              {!selectedTypes.includes('PTL/FTL') && <div className="w-4 h-4 rounded-sm border border-muted-foreground"></div>}
-              <span className="text-sm font-medium text-muted-foreground">PTL/FTL</span>
-              <Truck className="h-4 w-4 ml-auto text-[#103b5f]" />
-           </div>
+          {/* Custom Type Card 4 */}
+          <div
+            className={`flex items-center justify-center gap-2 p-3 border rounded-md cursor-pointer transition-all ${selectedTypes.includes('PTL/FTL') ? 'border-primary shadow-sm bg-primary/5' : 'border-border'}`}
+            onClick={() => toggleType('PTL/FTL')}
+          >
+            {selectedTypes.includes('PTL/FTL') && <div className="w-4 h-4 rounded-sm bg-green-500 text-white flex items-center justify-center text-[10px]">✓</div>}
+            {!selectedTypes.includes('PTL/FTL') && <div className="w-4 h-4 rounded-sm border border-muted-foreground"></div>}
+            <span className="text-sm font-medium text-muted-foreground">PTL/FTL</span>
+            <Truck className="h-4 w-4 ml-auto text-[#103b5f]" />
+          </div>
         </div>
 
         {/* Conditional sub-question for Package */}
         {selectedTypes.includes('Package') && (
           <div className="mt-3 p-4 border border-primary rounded-md bg-transparent relative">
-             <Button variant="ghost" size="icon" className="absolute top-1 right-1 h-6 w-6" type="button" onClick={() => toggleType('Package')}>
-               <span className="text-xs">✕</span>
-             </Button>
-             <Label className="block mb-3 font-medium text-sm">How many <span className="font-bold">package shipments</span> do you do monthly?</Label>
-             <RadioGroup defaultValue="none" className="flex flex-wrap gap-4 mt-2">
-                {['< 25', '26-50', '50-100', '101-300', '> 300'].map(val => (
-                  <div key={val} className="flex items-center space-x-2">
-                    <RadioGroupItem value={val} id={`ship-${val.replace(/\s+/g, '')}`} />
-                    <Label htmlFor={`ship-${val.replace(/\s+/g, '')}`} className="font-normal cursor-pointer text-sm text-muted-foreground">{val}</Label>
-                  </div>
-                ))}
-             </RadioGroup>
+            <Button variant="ghost" size="icon" className="absolute top-1 right-1 h-6 w-6" type="button" onClick={() => toggleType('Package')}>
+              <span className="text-xs">✕</span>
+            </Button>
+            <Label className="block mb-3 font-medium text-sm">How many <span className="font-bold">package shipments</span> do you do monthly?</Label>
+            <RadioGroup defaultValue="none" className="flex flex-wrap gap-4 mt-2">
+              {['< 25', '26-50', '50-100', '101-300', '> 300'].map(val => (
+                <div key={val} className="flex items-center space-x-2">
+                  <RadioGroupItem value={val} id={`ship-${val.replace(/\s+/g, '')}`} />
+                  <Label htmlFor={`ship-${val.replace(/\s+/g, '')}`} className="font-normal cursor-pointer text-sm text-muted-foreground">{val}</Label>
+                </div>
+              ))}
+            </RadioGroup>
           </div>
         )}
       </div>
