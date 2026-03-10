@@ -13,6 +13,7 @@ import { Progress } from "@/components/ui/progress"
 import { Step1Form } from "./step-1-form"
 import { Step2Form } from "./step-2-form"
 import { Step3Form } from "./step-3-form"
+import Image from "next/image"
 
 export default function RegisterPage() {
   const [step, setStep] = React.useState(1)
@@ -92,8 +93,7 @@ export default function RegisterPage() {
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
               <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-                <Package2 className="h-6 w-6" />
-                <span>ULS FREIGHT</span>
+                <Image src="/logo-light.jpeg" alt="ULS Freight" width={200} height={200} />
               </Link>
               <div className="flex items-center gap-2">
                 <LanguageToggle />
