@@ -85,7 +85,7 @@ export default function LoginPage() {
               </div>
 
               {/* reCAPTCHA Mockup */}
-              <div className="border border-border rounded bg-card p-3 flex grow items-center justify-between w-[300px] mt-4 shadow-sm">
+              <div className="opacity-50 border border-border rounded bg-card p-3 flex grow items-center justify-between w-[300px] mt-4 shadow-sm">
                 <div className="flex items-center gap-3">
                   <div className="h-7 w-7 border-2 border-muted-foreground rounded bg-background"></div>
                   <span className="text-sm font-medium text-foreground">I'm not a robot</span>
