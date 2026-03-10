@@ -10,6 +10,7 @@ import { Package, Truck, ShoppingCart, Info, Check } from "lucide-react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { registerStep1Schema, type RegisterStep1Values } from "@/lib/validations/register-schema"
+import FormField from "@/components/common/FormField"
 
 interface Step1FormProps {
   onNext: () => void
@@ -43,7 +44,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
       : [...current, type]
 
     form.setValue("shippingTypes", updated, { shouldValidate: true })
-  }, [form])
+  }, [form, shippingTypes])
 
   const {
     register,
@@ -64,24 +65,25 @@ export function Step1Form({ onNext }: Step1FormProps) {
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-
       {/* Row 1 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="firstName" className={errors.firstName ? "text-red-500" : ""}>First Name*</Label>
-          <Input
-            {...form.register("firstName")}
-            className={errors.firstName ? "border-red-500" : ""}
+          <FormField
+            name="firstName"
+            label="First Name*"
+            placeholder="Enter your first name"
+            register={form.register}
+            error={errors.firstName}
           />
-          {errors.firstName && <p className="text-xs text-red-500">{errors.firstName.message}</p>}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="lastName" className={errors.lastName ? "text-red-500" : ""}>Last Name*</Label>
-          <Input
-            {...form.register("lastName")}
-            className={errors.lastName ? "border-red-500" : ""}
+          <FormField
+            name="lastName"
+            label="Last Name*"
+            placeholder="Enter your last name"
+            register={form.register}
+            error={errors.lastName}
           />
-          {errors.lastName && <p className="text-xs text-red-500">{errors.lastName.message}</p>}
         </div>
       </div>
 
@@ -99,44 +101,47 @@ export function Step1Form({ onNext }: Step1FormProps) {
           {errors.businessName && <p className="text-xs text-red-500">{errors.businessName.message}</p>}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="industry" className={errors.industry ? "text-red-500" : ""}>Industry Type</Label>
-          <Input
-            {...form.register("industry")}
+          <FormField
+            name="industry"
+            label="Industry Type"
             placeholder="ex: Furniture"
-            className={errors.industry ? "border-red-500" : ""}
+            register={form.register}
+            error={errors.industry}
           />
-          {errors.industry && <p className="text-xs text-red-500">{errors.industry.message}</p>}
         </div>
       </div>
 
       {/* Row 3 */}
       <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
         <div className="space-y-2 sm:col-span-5">
-          <Label htmlFor="email" className={errors.email ? "text-red-500" : ""}>Email*</Label>
-          <Input
-            {...form.register("email")}
+          <FormField
+            name="email"
+            label="Email*"
             type="email"
             placeholder="example@email.com"
-            className={errors.email ? "border-red-500" : ""}
+            register={form.register}
+            error={errors.email}
           />
           {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
         </div>
         <div className="space-y-2 sm:col-span-4">
-          <Label htmlFor="phone" className={errors.phone ? "text-red-500" : ""}>Phone Number*</Label>
-          <Input
-            {...form.register("phone")}
+          <FormField
+            name="phone"
+            label="Phone Number*"
             type="tel"
-            className={errors.phone ? "border-red-500" : ""}
+            placeholder="Enter your phone number"
+            register={form.register}
+            error={errors.phone}
           />
-          {errors.phone && <p className="text-xs text-red-500">{errors.phone.message}</p>}
         </div>
         <div className="space-y-2 sm:col-span-3">
-          <Label htmlFor="ext" className={errors.ext ? "text-red-500" : ""}>Ext.</Label>
-          <Input
-            {...form.register("ext")}
-            className={errors.ext ? "border-red-500" : ""}
+          <FormField
+            name="ext"
+            label="Ext."
+            placeholder="Enter your extension"
+            register={form.register}
+            error={errors.ext}
           />
-          {errors.ext && <p className="text-xs text-red-500">{errors.ext.message}</p>}
         </div>
       </div>
 
@@ -192,6 +197,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
             { label: "PTL/FTL", icon: <Truck size={16} /> },
           ].map((type: any) => (
             <div
+              key={type.label}
               className={`flex items-center justify-center gap-2 p-3 border rounded-md cursor-pointer transition-all ${shippingTypes.includes(type.label) ? 'border-green-500 bg-green-50/50 dark:bg-green-950/20' : 'border-border'} ${errors.shippingTypes && !shippingTypes.includes(type.label) ? 'border-red-500/50' : ''}`}
               onClick={() => toggleType(type.label)}
             >
@@ -206,7 +212,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
         {errors.shippingTypes && <p className="text-xs text-red-500">{errors.shippingTypes.message}</p>}
 
         {/* Conditional sub-question for Package */}
-        {shippingTypes.includes("Package") && (
+        {shippingTypes.includes("Package") && shippingTypes[shippingTypes.length - 1] === "Package" && (
           <div className="mt-3 p-4 border border-primary rounded-md relative">
             <Button
               variant="ghost"
@@ -247,7 +253,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
           </div>
         )}
 
-        {shippingTypes.includes("Pallet") && (
+        {shippingTypes.includes("Pallet") && shippingTypes[shippingTypes.length - 1] === "Pallet" && (
           <div className="mt-3 p-4 border border-primary rounded-md relative">
             <Button
               variant="ghost"
@@ -343,7 +349,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
           </div>
         )} */}
 
-        {shippingTypes.includes("PTL/FTL") && (
+        {shippingTypes.includes("PTL/FTL") && shippingTypes[shippingTypes.length - 1] === "PTL/FTL" && (
           <div className="mt-3 p-4 border border-primary rounded-md relative">
             <Button
               variant="ghost"
