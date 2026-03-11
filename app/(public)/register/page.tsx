@@ -14,12 +14,39 @@ import { Step1Form } from "./step-1-form"
 import { Step2Form } from "./step-2-form"
 import { Step3Form } from "./step-3-form"
 import Image from "next/image"
-
+import { FormProvider, useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { registerSchema, RegisterSchemaTypes } from "@/lib/validations/register-schema"
+import { useMutation } from "@tanstack/react-query"
+import { registerUser } from "@/api/services/auth.api"
 export default function RegisterPage() {
   const [step, setStep] = React.useState(1)
 
+  const form = useForm<RegisterSchemaTypes>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      shippingPreference: [],
+      user: {
+        freightBroker: false
+      }
+    }
+  })
   const handleNext = () => setStep((s) => Math.min(s + 1, 3))
   const handleBack = () => setStep((s) => Math.max(s - 1, 1))
+  const registerMutation = useMutation({
+    mutationFn: registerUser,
+    onSuccess: (data) => {
+      console.log("User registered:", data)
+    },
+    onError: (error: any) => {
+      console.error("Registration failed:", error?.response?.data || error.message)
+    },
+  })
+  const onSubmit = (data: RegisterSchemaTypes) => {
+    console.log("FINAL DATA:", data)
+    registerMutation.mutate(data)
+  }
+
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -93,7 +120,7 @@ export default function RegisterPage() {
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
               <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-                <Image src="/logo-light.jpeg" alt="ULS Freight" width={200} height={200} />
+                <Image loading="eager" src="/logo-light.jpeg" alt="ULS Freight" width={200} height={200} />
               </Link>
               <div className="flex items-center gap-2">
                 <LanguageToggle />
@@ -117,11 +144,15 @@ export default function RegisterPage() {
             </div>
 
             {/* Form Container */}
-            <div className="flex-1">
-              {step === 1 && <Step1Form onNext={handleNext} />}
-              {step === 2 && <Step2Form onNext={handleNext} onBack={handleBack} />}
-              {step === 3 && <Step3Form onBack={handleBack} />}
-            </div>
+            <FormProvider {...form}>
+              <form onSubmit={form.handleSubmit(
+                onSubmit
+              )} className="flex-1">
+                {step === 1 && <Step1Form onNext={handleNext} />}
+                {step === 2 && <Step2Form onNext={handleNext} onBack={handleBack} />}
+                {step === 3 && <Step3Form onBack={handleBack} />}
+              </form>
+            </FormProvider>
 
           </div>
         </div>

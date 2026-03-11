@@ -1,16 +1,15 @@
 "use client"
-
-import * as React from "react"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Package, Truck, ShoppingCart, Info, Check } from "lucide-react"
-import { useForm, Controller } from "react-hook-form"
+import { Package, Truck, ShoppingCart, Info, Check, CloudCog } from "lucide-react"
+import { useForm, Controller, useFormContext } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { registerStep1Schema, type RegisterStep1Values } from "@/lib/validations/register-schema"
+import { registerSchema, type RegisterSchemaTypes } from "@/lib/validations/register-schema"
 import FormField from "@/components/common/FormField"
+import { PhoneInput } from "@/components/common/PhoneInput"
 
 interface Step1FormProps {
   onNext: () => void
@@ -18,44 +17,93 @@ interface Step1FormProps {
 
 
 export function Step1Form({ onNext }: Step1FormProps) {
-  const form = useForm<RegisterStep1Values>({
-    resolver: zodResolver(registerStep1Schema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      businessName: "",
-      email: "",
-      phone: "",
-      ext: "",
-      industry: "",
-      broker: "no",
-    }
-  })
-
-  const shippingTypes = form.watch("shippingTypes") || []
-  const packageShipments = form.watch("packageShipments")
-  const palletShipments = form.watch("palletShipments")
-  // const ecommercePlatforms = form.watch("ecommercePlatforms")
-
-  const toggleType = React.useCallback((type: RegisterStep1Values["shippingTypes"][number]) => {
-    const current = shippingTypes
-    const updated = current.includes(type)
-      ? current.filter(t => t !== type)
-      : [...current, type]
-
-    form.setValue("shippingTypes", updated, { shouldValidate: true })
-  }, [form, shippingTypes])
-
+  const form = useFormContext<RegisterSchemaTypes>()
   const {
     register,
     control,
+    formState: { errors },
+    trigger,
     watch,
-    setValue,
     getValues,
-    handleSubmit,
-    formState: { errors }
+    setValue,
+    handleSubmit
   } = form
-  const onSubmit = (data: RegisterStep1Values) => {
+
+  const handleNext = async () => {
+    const valid = await trigger([
+      "user.firstName",
+      "user.lastName",
+      "user.email",
+      "user.phoneNumber",
+      "shippingPreference",
+    ])
+
+    if (valid) onNext()
+    console.log(form.getValues())
+  }
+  const shippingPreference = watch("shippingPreference") || []
+  const hasType = (type: string) => shippingPreference.some(p => p.shippingType === type);
+  // const isShippingTypeLast = (type: string) => shippingPreference[shippingPreference.length - 1].shippingType === type
+  const isShippingTypeLast = (type: string) =>
+    shippingPreference?.[shippingPreference.length - 1]?.shippingType === type
+  // const shippingTypes = form.watch("shippingTypes") || []
+  // const packageShipments = form.watch("packageShipments")
+  // const palletShipments = form.watch("palletShipments")
+  // const ecommercePlatforms = form.watch("ecommercePlatforms")
+
+  const toggleType = (type: "pallet" | "package" | "PTL/FTL") => {
+    const current = shippingPreference || []
+    const exists = current.find(p => p.shippingType === type)
+
+    if (exists) {
+      form.setValue(
+        "shippingPreference",
+        current.filter(p => p.shippingType !== type),
+        { shouldValidate: true }
+      )
+    } else {
+      form.setValue(
+        "shippingPreference",
+        [...current, { shippingType: type }],
+        { shouldValidate: true }
+      )
+    }
+  }
+  type PackageVolumeType =
+    | "< 25"
+    | "26-50"
+    | "50-100"
+    | "101-300"
+    | "> 300"
+
+  const setPackageVolume = (value: PackageVolumeType) => {
+    const current = shippingPreference
+
+    const updated = current.map(p =>
+      p.shippingType === "package"
+        ? { ...p, shippingVolume: value }
+        : p
+    )
+
+    form.setValue("shippingPreference", updated, { shouldValidate: true })
+  }
+
+
+  type PalletVolumeType =
+    "1-5" | "6-10" | "11-20" | "21-50" | "> 50"
+  const setPalletVolume = (value: PalletVolumeType) => {
+    const current = shippingPreference
+
+    const updated = current.map(p =>
+      p.shippingType === "pallet"
+        ? { ...p, shippingVolume: value }
+        : p
+    )
+
+    form.setValue("shippingPreference", updated, { shouldValidate: true })
+  }
+
+  const onSubmit = (data: RegisterSchemaTypes) => {
     console.log("Step 1 Form submitted:", data)
     onNext()
   }
@@ -64,25 +112,25 @@ export function Step1Form({ onNext }: Step1FormProps) {
 
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <div className="space-y-6">
       {/* Row 1 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <FormField
-            name="firstName"
+            name="user.firstName"
             label="First Name*"
             placeholder="Enter your first name"
-            register={form.register}
-            error={errors.firstName}
+            register={register}
+            error={errors.user?.firstName}
           />
         </div>
         <div className="space-y-2">
           <FormField
-            name="lastName"
+            name="user.lastName"
             label="Last Name*"
             placeholder="Enter your last name"
             register={form.register}
-            error={errors.lastName}
+            error={errors.user?.lastName}
           />
         </div>
       </div>
@@ -91,82 +139,80 @@ export function Step1Form({ onNext }: Step1FormProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <div className="flex items-center gap-1">
-            <Label htmlFor="businessName" className={errors.businessName ? "text-red-500" : ""}>Business or Corporation Name*</Label>
+            <Label htmlFor="businessName" className={errors.company?.name ? "text-red-500" : ""}>Business or Corporation Name*</Label>
             <Info className="h-4 w-4 text-muted-foreground" />
           </div>
           <Input
-            {...form.register("businessName")}
-            className={errors.businessName ? "border-red-500" : ""}
+            {...form.register("company.name")}
+            className={errors.company?.name ? "border-red-500" : ""}
           />
-          {errors.businessName && <p className="text-xs text-red-500">{errors.businessName.message}</p>}
+          {errors.company?.name && <p className="text-xs text-red-500">{errors.company?.name.message}</p>}
         </div>
         <div className="space-y-2">
           <FormField
-            name="industry"
+            name="company.industryType"
             label="Industry Type"
             placeholder="ex: Furniture"
             register={form.register}
-            error={errors.industry}
+            error={errors.company?.industryType}
           />
         </div>
       </div>
 
       {/* Row 3 */}
-      <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
-        <div className="space-y-2 sm:col-span-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-2">
           <FormField
-            name="email"
+            name="user.email"
             label="Email*"
             type="email"
             placeholder="example@email.com"
             register={form.register}
-            error={errors.email}
+            error={errors.user?.email}
           />
-          {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
+          {errors.user?.email && <p className="text-xs text-red-500">{errors.user?.email.message}</p>}
         </div>
-        <div className="space-y-2 sm:col-span-4">
-          <FormField
-            name="phone"
-            label="Phone Number*"
-            type="tel"
-            placeholder="Enter your phone number"
-            register={form.register}
-            error={errors.phone}
-          />
-        </div>
-        <div className="space-y-2 sm:col-span-3">
-          <FormField
-            name="ext"
-            label="Ext."
-            placeholder="Enter your extension"
-            register={form.register}
-            error={errors.ext}
+        <div className="space-y-2">
+          <Label htmlFor="user.phoneNumber" className={errors.user?.phoneNumber ? "text-red-500" : ""}>Phone Number*</Label>
+          <Controller
+            name="user.phoneNumber"
+
+            control={control}
+            render={({ field }) => (
+              <PhoneInput
+                {...field}
+                placeholder="Phone number"
+                defaultCountry="CA"
+              // className="w-full"
+              />
+            )}
           />
         </div>
+
       </div>
 
       {/* Row 4 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
         <div className="space-y-2">
           <div className="flex items-center gap-1">
-            <Label htmlFor="signupCode" className={errors.signUpCode ? "text-red-500" : ""}>Sign up Code</Label>
+            <Label htmlFor="signupCode" className={errors.user?.signUpCode ? "text-red-500" : ""}>Sign up Code</Label>
             <Info className="h-4 w-4 text-muted-foreground" />
           </div>
           <Input
-            {...form.register("signUpCode")}
-            className={errors.signUpCode ? "border-red-500" : ""}
+            {...form.register("user.signUpCode")}
+            className={errors.user?.signUpCode ? "border-red-500" : ""}
           />
-          {errors.signUpCode && <p className="text-xs text-red-500">{errors.signUpCode.message}</p>}
+          {errors.user?.signUpCode && <p className="text-xs text-red-500">{errors.user?.signUpCode.message}</p>}
         </div>
         <div className="space-y-2">
-          <Label className={errors.broker ? "text-red-500" : ""}>Are you a Freight Broker?</Label>
+          <Label className={errors.user?.freightBroker ? "text-red-500" : ""}>Are you a Freight Broker?</Label>
           <Controller
             control={form.control}
-            name="broker"
+            name="user.freightBroker"
             render={({ field }) => (
               <RadioGroup
-                value={field.value}
-                onValueChange={field.onChange}
+                value={field.value === true ? "yes" : "no"}
+                onValueChange={(value) => field.onChange(value === "yes")}
                 className="flex space-x-4 mt-2"
               >
                 <div className="flex items-center space-x-2">
@@ -180,46 +226,46 @@ export function Step1Form({ onNext }: Step1FormProps) {
               </RadioGroup>
             )}
           />
-          {errors.broker && <p className="text-xs text-red-500">{errors.broker.message}</p>}
+          {errors.user?.freightBroker && <p className="text-xs text-red-500">{errors.user?.freightBroker.message}</p>}
         </div>
       </div>
 
       {/* Shipping Types Custom Cards */}
       <div className="space-y-3 pt-4">
-        <Label className={errors.shippingTypes ? "text-red-500" : ""}>Select all the <span className="text-primary underline cursor-pointer">shipping types</span> that apply*</Label>
+        <Label>Select all the <span className="text-primary underline cursor-pointer">shipping types</span> that apply*</Label>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-max">
           {/* Custom Type Card 1 */}
           {[
-            { label: "Pallet", icon: <Truck size={16} /> },
-            { label: "Package", icon: <Package size={16} /> },
+            { label: "pallet", icon: <Truck size={16} /> },
+            { label: "package", icon: <Package size={16} /> },
             // { label: "eCommerce", icon: <ShoppingCart size={16} /> },
             { label: "PTL/FTL", icon: <Truck size={16} /> },
           ].map((type: any) => (
             <div
               key={type.label}
-              className={`flex items-center justify-center gap-2 p-3 border rounded-md cursor-pointer transition-all ${shippingTypes.includes(type.label) ? 'border-green-500 bg-green-50/50 dark:bg-green-950/20' : 'border-border'} ${errors.shippingTypes && !shippingTypes.includes(type.label) ? 'border-red-500/50' : ''}`}
+              className={`flex items-center justify-center gap-2 p-3 border rounded-md cursor-pointer transition-all ${hasType(type.label) ? 'border-green-500 bg-green-50/50 dark:bg-green-950/20' : 'border-border'} ${errors.shippingPreference && hasType(type.label) ? 'border-green-500/50' : ''}`}
               onClick={() => toggleType(type.label)}
             >
-              {shippingTypes.includes(type.label) && <div className="w-4 h-4 rounded-sm bg-green-500 text-white flex items-center justify-center p-0.5"><Check /></div>}
-              {!shippingTypes.includes(type.label) && <div className="w-4 h-4 rounded-sm border border-muted-foreground"></div>}
-              <span className="text-sm font-medium">{type.label}</span>
-              {type.i}
+              {hasType(type.label) && <div className="w-4 h-4 rounded-sm bg-green-500 text-white flex items-center justify-center p-0.5"><Check /></div>}
+              {!hasType(type.label) && <div className="w-4 h-4 rounded-sm border border-muted-foreground"></div>}
+              <span className="text-sm font-medium capitalize">{type.label}</span>
+              {type.icon}
             </div>))}
 
 
         </div>
-        {errors.shippingTypes && <p className="text-xs text-red-500">{errors.shippingTypes.message}</p>}
+        {errors.shippingPreference && <p className="text-xs text-red-500">{errors.shippingPreference.message}</p>}
 
         {/* Conditional sub-question for Package */}
-        {shippingTypes.includes("Package") && shippingTypes[shippingTypes.length - 1] === "Package" && (
+        {hasType("package") && isShippingTypeLast("package") && (
           <div className="mt-3 p-4 border border-primary rounded-md relative">
             <Button
               variant="ghost"
               size="icon"
               className="absolute top-1 right-1 h-6 w-6"
               type="button"
-              onClick={() => toggleType("Package")}
+              onClick={() => toggleType("package")}
             >
               <span className="text-xs">✕</span>
             </Button>
@@ -229,10 +275,8 @@ export function Step1Form({ onNext }: Step1FormProps) {
             </Label>
 
             <RadioGroup
-              value={packageShipments}
-              onValueChange={(value) =>
-                form.setValue("packageShipments", value as RegisterStep1Values["packageShipments"])
-              }
+              value={shippingPreference.find((sp) => sp.shippingType === "package")?.shippingVolume || ""}
+              onValueChange={(value: PackageVolumeType) => setPackageVolume(value)}
               className="flex flex-wrap gap-4 mt-2"
             >
               {["< 25", "26-50", "50-100", "101-300", "> 300"].map((val) => (
@@ -253,14 +297,14 @@ export function Step1Form({ onNext }: Step1FormProps) {
           </div>
         )}
 
-        {shippingTypes.includes("Pallet") && shippingTypes[shippingTypes.length - 1] === "Pallet" && (
+        {hasType("pallet") && isShippingTypeLast("pallet") && (
           <div className="mt-3 p-4 border border-primary rounded-md relative">
             <Button
               variant="ghost"
               size="icon"
               className="absolute top-1 right-1 h-6 w-6"
               type="button"
-              onClick={() => toggleType("Pallet")}
+              onClick={() => toggleType("pallet")}
             >
               <span className="text-xs">✕</span>
             </Button>
@@ -270,10 +314,8 @@ export function Step1Form({ onNext }: Step1FormProps) {
             </Label>
 
             <RadioGroup
-              value={palletShipments}
-              onValueChange={(value) =>
-                form.setValue("palletShipments", value as any)
-              }
+              value={shippingPreference.find((sp) => sp.shippingType === "pallet")?.shippingVolume || ""}
+              onValueChange={(value: PalletVolumeType) => setPalletVolume(value)}
               className="flex flex-wrap gap-4 mt-2"
             >
               {["1-5", "6-10", "11-20", "21-50", "> 50"].map((val) => (
@@ -349,7 +391,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
           </div>
         )} */}
 
-        {shippingTypes.includes("PTL/FTL") && shippingTypes[shippingTypes.length - 1] === "PTL/FTL" && (
+        {hasType("PTL/FTL") && isShippingTypeLast("PTL/FTL") && (
           <div className="mt-3 p-4 border border-primary rounded-md relative">
             <Button
               variant="ghost"
@@ -375,10 +417,12 @@ export function Step1Form({ onNext }: Step1FormProps) {
       <div className="flex justify-end pt-6">
         <Button
           disabled={form.formState.isSubmitting}
-          type="submit" className="bg-[#0070c0] hover:bg-[#005999] text-white px-8 py-2">
+          // type="submit"
+          onClick={handleNext}
+          className="bg-[#0070c0] hover:bg-[#005999] text-white px-8 py-2">
           Next Step
         </Button>
       </div>
-    </form >
+    </div >
   )
 }
