@@ -2,6 +2,7 @@ import { z } from "zod"
 
 const palletVolumeEnum = z.enum(["1-5", "6-10", "11-20", "21-50", "> 50"])
 const packageVolumeEnum = z.enum(["< 25", "26-50", "50-100", "101-300", "> 300"])
+
 export const registerSchema = z.object({
   user: z.object({
     email: z.email("Invalid email address"),
@@ -13,11 +14,8 @@ export const registerSchema = z.object({
     signUpCode: z.string().min(1).optional(),
     termsAndConditionAccepted: z
       .boolean("You must accept the Terms and Conditions"),
-    // .refine((val) => val, "You must accept the Terms and Conditions"),
-
     companyPolicyAccepted: z
       .boolean("You must accept the Company Policy"),
-    // .refine((val) => val, "You must accept the Company Policy"),
     freightBroker: z.boolean(),
     phoneNumber: z.string().min(1, "Phone number required")
   }).refine((user) => user.password === user.confirmPassword, {

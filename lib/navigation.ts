@@ -1,0 +1,43 @@
+export const navItems = [
+    { title: "Home", href: "/" },
+
+    {
+        title: "Quote",
+        items: [
+            { title: "Create Quote", href: "/quote/create" },
+            { title: "Saved Quotes", href: "/quote/saved" },
+        ],
+    },
+
+    {
+        title: "Ship",
+        items: [
+            { title: "Create Shipment", href: "/ship/create" },
+            { title: "Bulk Shipping", href: "/ship/bulk" },
+        ],
+    },
+
+    {
+        title: "Track",
+        items: [
+            { title: "Track Shipment", href: "/track" },
+            { title: "Tracking History", href: "/track/history" },
+        ],
+    },
+
+    {
+        title: "Invoices",
+        items: [
+            { title: "All Invoices", href: "/invoices" },
+            { title: "Payment History", href: "/payments" },
+        ],
+    },
+
+    {
+        title: "Claims",
+        items: [
+            { title: "File Claim", href: "/claims/new" },
+            { title: "Claim History", href: "/claims/history" },
+        ],
+    },
+]

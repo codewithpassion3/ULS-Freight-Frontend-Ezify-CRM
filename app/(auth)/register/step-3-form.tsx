@@ -124,19 +124,19 @@ export function Step3Form({ onBack }: Step3FormProps) {
         </div>
       </div>
 
-      <div className="flex justify-between items-center pt-6">
+      <div className="flex flex-col-reverse gap-2 sm:flex-row justify-between items-center pt-6">
         <Button
           type="button"
           variant="outline"
           onClick={onBack}
-          className="text-[#0070c0] border border-[#0070c0] hover:bg-[#0070c0]/10 bg-transparent px-8"
+          className="w-full sm:w-max text-[#0070c0] border border-[#0070c0] hover:bg-[#0070c0]/10 bg-transparent px-8"
         >
           Previous Step
         </Button>
         <Button
           type="submit"
           disabled={!isValid}
-          className="bg-[#0070c0] hover:bg-[#005999] text-white px-8"
+          className="w-full sm:w-max bg-[#0070c0] hover:bg-[#005999] text-white px-8"
         >
           Finish Registration
         </Button>
