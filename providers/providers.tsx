@@ -3,6 +3,7 @@
 import { ThemeProvider } from "@/components/theme-provider"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { useState } from "react"
+import { Toaster } from "@/components/ui/sonner"
 
 export default function Providers({
   children,
@@ -20,6 +21,7 @@ export default function Providers({
 
       >
         {children}
+        <Toaster position="top-right" />
       </ThemeProvider>
     </QueryClientProvider>
   )

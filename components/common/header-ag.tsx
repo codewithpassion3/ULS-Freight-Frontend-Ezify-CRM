@@ -63,7 +63,7 @@ export default function Header() {
                 <SheetTitle className="sr-only">Navigation</SheetTitle>
               </SheetHeader>
               <MobileLink href="/" className="flex items-center" onOpenChange={setIsOpen}>
-                <Image src="/logo-light.jpeg" alt="Logo" width={100} height={32} className="h-8 w-auto mix-blend-multiply dark:mix-blend-normal object-contain" />
+                <Image src="/logo.png" alt="Logo" width={100} height={32} className="h-8 w-auto mix-blend-multiply dark:mix-blend-normal object-contain" />
               </MobileLink>
               <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6 pr-6 overflow-y-auto">
                 <div className="flex flex-col space-y-3">
@@ -91,7 +91,7 @@ export default function Header() {
             </SheetContent>
           </Sheet>
           <Link href="/" className="flex items-center space-x-2">
-            <Image src="/logo-light.jpeg" alt="Logo" width={120} height={40} className="h-10 w-auto mix-blend-multiply dark:mix-blend-normal object-contain" />
+            <Image src="/logo.png" alt="Logo" width={120} height={40} className="h-10 w-auto mix-blend-multiply dark:mix-blend-normal object-contain" />
           </Link>
         </div>
 

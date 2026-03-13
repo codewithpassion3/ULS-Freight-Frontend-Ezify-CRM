@@ -23,15 +23,23 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import FormField from "@/components/common/FormField"
+import { toast } from "sonner"
+
 export default function LoginPage() {
 
   const loginMutation = useMutation({
     mutationFn: (data: LoginFormValues) => loginUser(data),
     onSuccess: (data) => {
       console.log("Login successful:", data)
+      toast("Login Successful", {
+        description: "Welcome back! You are now logged in.",
+      })
     },
     onError: (error: any) => {
       console.log("Login failed:", error)
+      toast("Login Failed", {
+        description: "Please try again.",
+      })
     }
   });
 
@@ -60,9 +68,9 @@ export default function LoginPage() {
         />
         {/* Dark overlay for better text readability */}
         <div className="absolute inset-0 bg-black/40" />
-        <h1 className="relative z-10 text-4xl font-bold text-white tracking-tight">
+        {/* <h1 className="relative z-10 text-4xl font-bold text-white tracking-tight">
           Shipping Simplified
-        </h1>
+        </h1> */}
       </div>
 
       {/* Right Column - Login Form */}
@@ -72,8 +80,7 @@ export default function LoginPage() {
           {/* Header Area */}
           <div className="flex items-center justify-between mb-16">
             <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-              <Package2 className="h-6 w-6" />
-              <span>ULS FREIGHT</span>
+              <Image loading="eager" src="/logo.png" alt="ULS Freight" width={200} height={200} />
             </Link>
             <div className="flex items-center gap-2">
               <LanguageToggle />
@@ -104,21 +111,20 @@ export default function LoginPage() {
                 register={register}
                 error={errors.password}
               />
-            </form>
-            <div className="my-6 flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="remember" />
-                <Label htmlFor="remember" className="text-sm font-medium leading-none cursor-pointer">
-                  Remember me
-                </Label>
+              <div className="my-6 flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="remember" />
+                  <Label htmlFor="remember" className="text-sm font-medium leading-none cursor-pointer">
+                    Remember me
+                  </Label>
+                </div>
+                <Link href="#" className="text-sm text-primary hover:underline">
+                  Forgot Password?
+                </Link>
               </div>
-              <Link href="#" className="text-sm text-primary hover:underline">
-                Forgot Password?
-              </Link>
-            </div>
 
-            {/* reCAPTCHA Mockup */}
-            {/* <div className="opacity-50 border border-border rounded bg-card p-3 flex grow items-center justify-between w-[300px] mt-4 shadow-sm">
+              {/* reCAPTCHA Mockup */}
+              {/* <div className="opacity-50 border border-border rounded bg-card p-3 flex grow items-center justify-between w-[300px] mt-4 shadow-sm">
               <div className="flex items-center gap-3">
                 <div className="h-7 w-7 border-2 border-muted-foreground rounded bg-background"></div>
                 <span className="text-sm font-medium text-foreground">I'm not a robot</span>
@@ -129,16 +135,18 @@ export default function LoginPage() {
               </div>
             </div> */}
 
-            <Button type="submit" variant="default" className="w-full">
-              Start Shipping!
-            </Button>
+              <Button type="submit" variant="default" className="w-full">
+                Start Shipping!
+              </Button>
+            </form>
+
           </div>
 
           {/* Footer Area */}
           <div className="mt-16 text-sm text-muted-foreground">
             Don't have an account?{" "}
-            <Link href="#" className="text-primary hover:underline font-medium">
-              Sign up here
+            <Link href="/register" className="text-primary hover:underline font-medium">
+              Create an account
             </Link>
           </div>
         </div>

@@ -9,6 +9,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 // import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useUser } from "@/hooks/useUser";
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getUser } from "@/api/services/auth.api";
 
 const schema = z.object({
     companyName: z.string().min(1),
@@ -58,7 +61,14 @@ export default function Settings() {
         console.log(data);
     }
     const { data: user, isLoading, error } = useUser()
-
+    const getUserQuery = useQuery({
+        queryKey: ["user"],
+        queryFn: getUser,
+    })
+    useEffect(() => {
+        if (user) console.log("user updated", user)
+        getUserQuery.refetch()
+    }, [user])
     console.log("user", user)
 
     return (

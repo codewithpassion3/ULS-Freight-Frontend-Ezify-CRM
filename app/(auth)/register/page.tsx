@@ -19,6 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { registerSchema, RegisterSchemaTypes } from "@/lib/validations/register-schema"
 import { useMutation } from "@tanstack/react-query"
 import { registerUser } from "@/api/services/auth.api"
+import { toast } from "sonner"
 export default function RegisterPage() {
   const [step, setStep] = React.useState(1)
 
@@ -37,9 +38,15 @@ export default function RegisterPage() {
     mutationFn: registerUser,
     onSuccess: (data) => {
       console.log("User registered:", data)
+      toast("User registered successfully", {
+        description: "Welcome back! You are now logged in.",
+      })
     },
     onError: (error: any) => {
       console.error("Registration failed:", error?.response?.data || error.message)
+      toast("Registration Failed", {
+        description: "Please try again.",
+      })
     },
   })
   const onSubmit = (data: RegisterSchemaTypes) => {
@@ -120,7 +127,7 @@ export default function RegisterPage() {
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
               <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-                <Image loading="eager" src="/logo-light.jpeg" alt="ULS Freight" width={200} height={200} />
+                <Image loading="eager" src="/logo.png" alt="ULS Freight" width={200} height={200} />
               </Link>
               <div className="flex items-center gap-2">
                 <LanguageToggle />

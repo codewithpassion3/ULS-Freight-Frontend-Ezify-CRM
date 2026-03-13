@@ -26,7 +26,7 @@ export default function Header() {
     const pathname = usePathname()
 
     return (
-        <header className="border-b w-full fixed bg-white/10 backdrop-blur-md border border-white/20 rounded-xl z-10">
+        <header className="border-b w-full fixed bg-white/10 backdrop-blur-md border border-white/20 z-10">
             <div className="flex h-20 items-center justify-between px-4 lg:px-6">
 
                 {/* LEFT */}
@@ -52,7 +52,7 @@ export default function Header() {
                                             href={item.href!}
                                             className={`px-3 py-2 text-sm rounded-md ${pathname === item.href
                                                 ? "bg-gray-100 font-medium"
-                                                : "hover:bg-gray-50"
+                                                : "hover:bg-gray-50 dark:hover:text-black"
                                                 }`}
                                         >
                                             {item.title}
@@ -61,7 +61,7 @@ export default function Header() {
                                         <DropdownMenu>
 
                                             <DropdownMenuTrigger asChild>
-                                                <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50">
+                                                <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
                                                     {item.title}
                                                     <ChevronDown className="size-4" />
                                                 </button>
