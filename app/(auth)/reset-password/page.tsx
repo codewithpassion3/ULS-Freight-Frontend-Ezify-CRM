@@ -25,7 +25,7 @@ import { resetPassword } from "@/api/services/auth.api";
 
 export default function ResetPasswordPage() {
 
-    const searchParams = useSearchParams();
+    // const searchParams = useSearchParams();
     // const token = searchParams.get("token");
 
     const resetMutation = useMutation({
