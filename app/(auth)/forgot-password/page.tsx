@@ -14,21 +14,32 @@ import { toast } from "sonner";
 
 import FormField from "@/components/common/FormField";
 
-import { forgotPasswordSchema, ForgotPasswordValues } from "@/lib/validations/forgot-password-schema";
+import { forgotPasswordSchema, ForgotPasswordValues } from "@/lib/validations/auth/forgot-password-schema";
 import { forgotPassword } from "@/api/services/auth.api";
-
+import { useRouter } from "next/navigation";
+import { useUser } from "@/hooks/useUser";
+import { useOTPFlow } from "@/context/otp.context";
+import { AxiosError } from "axios";
+import { ApiError } from "next/dist/server/api-utils";
 export default function ForgotPasswordPage() {
+    type ApiError = {
+        message: string
+    };
+    const { setFlow } = useOTPFlow()
 
+    const router = useRouter()
+    // const { data: user } = useUser()
     const forgotMutation = useMutation({
         mutationFn: (data: ForgotPasswordValues) => forgotPassword(data),
         onSuccess: () => {
             toast("Email Sent", {
-                description: "Password reset link has been sent to your email.",
+                description: "An OTP has been sent to your email.",
             });
+            router.push(`/otp-verification`)
         },
-        onError: () => {
+        onError: (error: AxiosError<ApiError>) => {
             toast("Request Failed", {
-                description: "Please try again.",
+                description: error?.response?.data?.message,
             });
         }
     });
@@ -45,6 +56,8 @@ export default function ForgotPasswordPage() {
     });
 
     const onSubmit = (data: ForgotPasswordValues) => {
+        console.log(data.email, "password_reset")
+        setFlow(data.email, "password_reset")
         forgotMutation.mutate(data);
     };
 

@@ -26,14 +26,14 @@ export default function Header() {
     const pathname = usePathname()
 
     return (
-        <header className="border-b w-full fixed bg-white/10 backdrop-blur-md border border-white/20 z-10">
+        <header className="w-full fixed bg-white/10 backdrop-blur-md border-b border-b-white/20 z-10">
             <div className="flex h-20 items-center justify-between px-4 lg:px-6">
 
                 {/* LEFT */}
                 <div className="flex items-center gap-6">
 
                     <Image
-                        src="/logo-light.jpeg"
+                        src="/logo.png"
                         alt="logo"
                         width={64}
                         height={64}

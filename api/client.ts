@@ -3,7 +3,10 @@ import { interceptors } from "./interceptors";
 
 const apiClient = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-    withCredentials: true
+    withCredentials: true,
+    headers: {
+        "ngrok-skip-browser-warning": "true"
+    }
 })
 
 interceptors(apiClient)

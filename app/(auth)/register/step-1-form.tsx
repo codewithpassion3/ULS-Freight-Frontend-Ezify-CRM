@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Package, Truck, ShoppingCart, Info, Check, CloudCog } from "lucide-react"
 import { useForm, Controller, useFormContext } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { registerSchema, type RegisterSchemaTypes } from "@/lib/validations/register-schema"
+import { registerSchema, type RegisterSchemaTypes } from "@/lib/validations/auth/register-schema"
 import FormField from "@/components/common/FormField"
 import { PhoneInput } from "@/components/common/PhoneInput"
 

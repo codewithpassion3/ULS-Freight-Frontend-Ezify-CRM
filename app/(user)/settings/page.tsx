@@ -12,6 +12,8 @@ import { useUser } from "@/hooks/useUser";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/api/services/auth.api";
+import GeneralSettings from "./GeneralSettings";
+import UserPreferences from "./(user-preference)/UserPreferences";
 
 const schema = z.object({
     companyName: z.string().min(1),
@@ -72,7 +74,7 @@ export default function Settings() {
     console.log("user", user)
 
     return (
-        <div className="p-4 md:p-8 max-w-7xl mx-auto">
+        <div className="p-4 md:p-8 xl:min-w-7xl mx-auto">
             <Tabs defaultValue="account" className="space-y-6">
                 <TabsList className="flex flex-wrap gap-2">
                     <TabsTrigger value="account">Account Settings</TabsTrigger>
@@ -88,23 +90,21 @@ export default function Settings() {
                                 <CardTitle>Account Settings</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-2">
-                                <TabsList className="h-max w-full gap-4">
+                                <TabsList className="h-max w-full gap-4 bg-transparent">
                                     <TabsTrigger value="general-settings" className="w-max">General Settings</TabsTrigger>
                                     <TabsTrigger value="user-preference" className="w-max">User Preferences</TabsTrigger>
                                     <TabsTrigger value="email-notification" className="w-max">Email Notifications</TabsTrigger>
                                 </TabsList>
                             </CardContent>
                         </Card>
-                        <TabsContent className="lg:col-span-3" value="general-settings">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>General Settings</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    General Settings Content
-                                </CardContent>
-                            </Card>
-                        </TabsContent>
+                        <Card className="px-6 lg:col-span-3">
+                            <TabsContent value="general-settings">
+                                <GeneralSettings />
+                            </TabsContent>
+                            <TabsContent value="user-preference">
+                                <UserPreferences />
+                            </TabsContent>
+                        </Card>
                     </Tabs>
                 </TabsContent>
             </Tabs>

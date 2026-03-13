@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const resetPasswordSchema = z
     .object({
+        email: z.email("Invalid email"),
         password: z
             .string()
             .min(8, "Password must be at least 8 characters"),
@@ -9,6 +10,7 @@ export const resetPasswordSchema = z
         confirmPassword: z
             .string()
             .min(8, "Confirm password is required"),
+        resetToken: z.string(),
     })
     .refine((data) => data.password === data.confirmPassword, {
         message: "Passwords do not match",

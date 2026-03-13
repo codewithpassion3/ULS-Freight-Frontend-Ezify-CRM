@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import Providers from "@/providers/providers";
 import Header from "@/components/common/Header";
+import { OTPFlowProvider } from "@/context/otp.context";
 // import ThemeLayout from "./(user)/ThemeLayout";
 // import Header from "@/components/common/header-ag";
 
@@ -36,7 +37,9 @@ export default function RootLayout({
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
                 <Providers>
-                    {children}
+                    <OTPFlowProvider>
+                        {children}
+                    </OTPFlowProvider>
                 </Providers>
             </body>
         </html>

@@ -12,7 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { loginSchema, LoginFormValues } from "@/lib/validations/login-schema"
+import { loginSchema, LoginFormValues } from "@/lib/validations/auth/login-schema"
 import { useMutation } from "@tanstack/react-query"
 import { loginUser } from "@/api/services/auth.api"
 import {
@@ -24,9 +24,11 @@ import {
 } from "@/components/ui/field"
 import FormField from "@/components/common/FormField"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
 
+  const router = useRouter()
   const loginMutation = useMutation({
     mutationFn: (data: LoginFormValues) => loginUser(data),
     onSuccess: (data) => {
@@ -34,6 +36,7 @@ export default function LoginPage() {
       toast("Login Successful", {
         description: "Welcome back! You are now logged in.",
       })
+      router.push("/settings")
     },
     onError: (error: any) => {
       console.log("Login failed:", error)
@@ -118,7 +121,7 @@ export default function LoginPage() {
                     Remember me
                   </Label>
                 </div>
-                <Link href="#" className="text-sm text-primary hover:underline">
+                <Link href="/forgot-password" className="text-sm text-primary hover:underline">
                   Forgot Password?
                 </Link>
               </div>

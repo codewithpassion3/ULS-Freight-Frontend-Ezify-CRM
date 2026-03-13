@@ -16,13 +16,18 @@ import { Step3Form } from "./step-3-form"
 import Image from "next/image"
 import { FormProvider, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { registerSchema, RegisterSchemaTypes } from "@/lib/validations/register-schema"
+import { registerSchema, RegisterSchemaTypes } from "@/lib/validations/auth/register-schema"
 import { useMutation } from "@tanstack/react-query"
 import { registerUser } from "@/api/services/auth.api"
 import { toast } from "sonner"
+import { sendEmailVerificationOTP } from "@/api/services/otp.api"
+import { OtpFormValues } from "@/lib/validations/auth/otp-verification-schema"
+import { useRouter } from "next/navigation"
+import { useOTPFlow } from "@/context/otp.context"
 export default function RegisterPage() {
+  const router = useRouter()
   const [step, setStep] = React.useState(1)
-
+  const { setFlow } = useOTPFlow()
   const form = useForm<RegisterSchemaTypes>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -36,11 +41,11 @@ export default function RegisterPage() {
   const handleBack = () => setStep((s) => Math.max(s - 1, 1))
   const registerMutation = useMutation({
     mutationFn: registerUser,
-    onSuccess: (data) => {
-      console.log("User registered:", data)
+    onSuccess: () => {
       toast("User registered successfully", {
-        description: "Welcome back! You are now logged in.",
+        description: "User registered. Please verify your email",
       })
+      router.push(`/otp-verification`)
     },
     onError: (error: any) => {
       console.error("Registration failed:", error?.response?.data || error.message)
@@ -50,7 +55,7 @@ export default function RegisterPage() {
     },
   })
   const onSubmit = (data: RegisterSchemaTypes) => {
-    console.log("FINAL DATA:", data)
+    setFlow(data.user.email, "email_verification")
     registerMutation.mutate(data)
   }
 

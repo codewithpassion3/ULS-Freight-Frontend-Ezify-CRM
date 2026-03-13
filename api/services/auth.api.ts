@@ -1,7 +1,9 @@
 import { LoginPayload } from "@/types/auth/login.types";
 import apiClient from "../client";
-import { ForgotPasswordValues } from "@/lib/validations/forgot-password-schema";
-import { ResetPasswordValues } from "@/lib/validations/reset-password-schema";
+import { ForgotPasswordValues } from "@/lib/validations/auth/forgot-password-schema";
+import { ResetPasswordValues } from "@/lib/validations/auth/reset-password-schema";
+import { AddUserFormValues } from "@/app/(user)/settings/(user-preference)/(add-user)/AddUser";
+import { ChangePasswordFormValues } from "@/lib/validations/user/change-password.schema";
 
 export const registerUser = async (payload: any) => {
     const response = await apiClient.post("/auth/signup", payload);
@@ -20,6 +22,25 @@ export const forgotPassword = async (data: ForgotPasswordValues) => {
     return response.data
 }
 export const resetPassword = async (data: ResetPasswordValues) => {
-    const response = await apiClient.post("/auth/reset-password", data)
+    const response = await apiClient.patch("/auth/reset-password", data)
     return response.data
 }
+// Create users from admin dashboard
+export const createUser = async (data: AddUserFormValues) => {
+    const response = await apiClient.post("/users", data)
+    return response.data
+}
+export const logoutUser = async () => {
+    const response = await apiClient.post("/auth/logout")
+    return response.data
+}
+
+export const changePassword = async (data: ChangePasswordFormValues) => {
+    const response = await apiClient.patch("/users/password", data)
+    return response.data
+}
+// Get all users admin dashboard
+// export const getUsers = async () => {
+//     const response = await apiClient.get("/users")
+//     return response.data
+// }

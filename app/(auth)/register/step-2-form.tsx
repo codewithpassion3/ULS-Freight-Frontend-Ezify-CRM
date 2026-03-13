@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select"
 import FormField from "@/components/common/FormField"
 import { Controller, useForm, useFormContext } from "react-hook-form"
-import { registerSchema, RegisterSchemaTypes } from "@/lib/validations/register-schema"
+import { registerSchema, RegisterSchemaTypes } from "@/lib/validations/auth/register-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 interface Step2FormProps {
@@ -68,7 +68,7 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
           <FormField
             register={form.register}
             name="address.unit"
-            label="Unit/Floor #"
+            label="Unit/Floor # *"
             placeholder="Enter your unit/floor #"
             error={errors.address?.unit}
           />
