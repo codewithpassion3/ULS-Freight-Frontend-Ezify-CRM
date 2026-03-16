@@ -24,7 +24,13 @@ import { sendEmailVerificationOTP } from "@/api/services/otp.api"
 import { OtpFormValues } from "@/lib/validations/auth/otp-verification-schema"
 import { useRouter } from "next/navigation"
 import { useOTPFlow } from "@/context/otp.context"
+// import { useUser } from "@/hooks/useUser";
+import { useEffect } from "react";
+import { useUser } from "@/hooks/useUser"
 export default function RegisterPage() {
+
+  const { data, isLoading } = useUser();
+
   const router = useRouter()
   const [step, setStep] = React.useState(1)
   const { setFlow } = useOTPFlow()
@@ -37,6 +43,11 @@ export default function RegisterPage() {
       }
     }
   })
+  useEffect(() => {
+    if (!isLoading && data) {
+      router.push("/");
+    }
+  }, [data, isLoading, router]);
   const handleNext = () => setStep((s) => Math.min(s + 1, 3))
   const handleBack = () => setStep((s) => Math.max(s - 1, 1))
   const registerMutation = useMutation({

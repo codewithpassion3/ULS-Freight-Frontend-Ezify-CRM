@@ -25,10 +25,15 @@ import {
 import FormField from "@/components/common/FormField"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { useUser } from "@/hooks/useUser";
+import { useEffect } from "react";
+import { AxiosError } from "axios";
+import { ApiError } from "next/dist/server/api-utils";
 
 export default function LoginPage() {
 
   const router = useRouter()
+  const { data: user } = useUser();
   const loginMutation = useMutation({
     mutationFn: (data: LoginFormValues) => loginUser(data),
     onSuccess: (data) => {
@@ -36,15 +41,19 @@ export default function LoginPage() {
       toast("Login Successful", {
         description: "Welcome back! You are now logged in.",
       })
-      router.push("/settings")
+      router.push("/")
     },
-    onError: (error: any) => {
-      console.log("Login failed:", error)
-      toast("Login Failed", {
-        description: "Please try again.",
-      })
+    onError: (error: AxiosError<ApiError>) => {
+      toast.error(error?.response?.data?.message)
     }
   });
+
+  useEffect(() => {
+    console.log(user)
+    if (user) {
+      router.push("/")
+    }
+  }, [user])
 
   const { register, handleSubmit, control, formState: { errors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -85,10 +94,10 @@ export default function LoginPage() {
             <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
               <Image loading="eager" src="/logo.png" alt="ULS Freight" width={200} height={200} />
             </Link>
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <LanguageToggle />
               <ModeToggle />
-            </div>
+            </div> */}
           </div>
 
           {/* Form Area */}

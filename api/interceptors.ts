@@ -1,4 +1,15 @@
+import { useQueryClient } from "@tanstack/react-query"
 import { AxiosInstance } from "axios"
+
+function logoutUser() {
+    // remove cookies / tokens
+    document.cookie = "id=; Max-Age=0; path=/"
+
+    useQueryClient().clear()
+    // redirect to login
+    window.location.href = "/login"
+}
+
 export function interceptors(api: AxiosInstance) {
     api.interceptors.request.use((config) => {
         console.log(config.url)
@@ -9,8 +20,11 @@ export function interceptors(api: AxiosInstance) {
     api.interceptors.response.use(
         (response) => response,
         (error) => {
-            if (error.response?.status === 401) {
-                console.log("Unauthorized");
+            console.log(error?.response)
+            const message = error?.response?.data?.errorCode
+            if (message === "INVALID_SESSION") {
+                console.log("User session invalid")
+                logoutUser()
             }
             return Promise.reject(error)
         }

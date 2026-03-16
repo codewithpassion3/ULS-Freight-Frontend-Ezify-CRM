@@ -30,6 +30,10 @@ export const createUser = async (data: AddUserFormValues) => {
     const response = await apiClient.post("/users", data)
     return response.data
 }
+export const getAllUsers = async () => {
+    const response = await apiClient.get("/users")
+    return response.data
+}
 export const logoutUser = async () => {
     const response = await apiClient.post("/auth/logout")
     return response.data
@@ -39,6 +43,30 @@ export const changePassword = async (data: ChangePasswordFormValues) => {
     const response = await apiClient.patch("/users/password", data)
     return response.data
 }
+
+export const updateUserProfile = async (data: FormData) => {
+    const response = await apiClient.patch("/users/me", data)
+    return response.data
+}
+
+export const deleteUser = async (id: number) => {
+    const response = await apiClient.delete(`/users/${id}`)
+    return response.data
+}
+
+export const deleteUserProfilePhoto = async () => {
+    const response = await apiClient.delete("/users/me/profile-pic")
+    return response.data
+}
+
+export const updateUserSettings = async (data: any) => {
+    const response = await apiClient.post("/users/me/settings", data)
+    return response.data
+}
+
+
+
+
 // Get all users admin dashboard
 // export const getUsers = async () => {
 //     const response = await apiClient.get("/users")

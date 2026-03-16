@@ -148,20 +148,35 @@ export default function OTPVerificationPage() {
                                         maxLength={6}
                                         value={field.value || ""}
                                         onChange={field.onChange}
+                                        containerClassName="w-full"
+                                        size={20}
                                     >
                                         <InputOTPGroup>
                                             <InputOTPSlot index={0} />
+                                        </InputOTPGroup>
+                                        <InputOTPSeparator />
+                                        <InputOTPGroup>
                                             <InputOTPSlot index={1} />
+                                        </InputOTPGroup>
+                                        <InputOTPSeparator />
+                                        <InputOTPGroup>
                                             <InputOTPSlot index={2} />
                                         </InputOTPGroup>
-
                                         <InputOTPSeparator />
-
                                         <InputOTPGroup>
                                             <InputOTPSlot index={3} />
+                                        </InputOTPGroup>
+                                        <InputOTPSeparator />
+                                        <InputOTPGroup>
                                             <InputOTPSlot index={4} />
+                                        </InputOTPGroup>
+                                        <InputOTPSeparator />
+                                        <InputOTPGroup>
                                             <InputOTPSlot index={5} />
                                         </InputOTPGroup>
+
+
+
                                     </InputOTP>
                                 )}
                             />

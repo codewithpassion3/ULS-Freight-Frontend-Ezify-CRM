@@ -120,7 +120,7 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -150,10 +150,10 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent position="popper">
                     <SelectItem value="canada">Canada</SelectItem>
                     <SelectItem value="united-states">United States</SelectItem>
                   </SelectContent>

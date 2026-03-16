@@ -61,7 +61,7 @@ export default function UserProfile() {
                         <p className="text-sm font-medium">
                             Welcome, {user?.user?.firstName} {user?.user?.lastName}
                         </p>
-                        <p className="text-xs text-blue-600">
+                        <p className="text-xs dark:text-white text-blue-600">
                             Available Credit: $136.37
                         </p>
                     </div>
@@ -75,7 +75,7 @@ export default function UserProfile() {
                             </Avatar>
                         </DropdownMenuTrigger>
 
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent className="w-full" align="end">
                             <DropdownMenuItem>
                                 <User />
                                 <Link href="/profile">
@@ -98,7 +98,7 @@ export default function UserProfile() {
                             </DropdownMenuItem>
 
                             <DropdownMenuItem>
-                                <Button onClick={handleLogout}>
+                                <Button size="lg" onClick={handleLogout}>
                                     Logout
                                 </Button>
                             </DropdownMenuItem>

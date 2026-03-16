@@ -14,6 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/api/services/auth.api";
 import GeneralSettings from "./GeneralSettings";
 import UserPreferences from "./(user-preference)/UserPreferences";
+import EmailNotification from "./(email-notifications)/EmailNotification";
 
 const schema = z.object({
     companyName: z.string().min(1),
@@ -103,6 +104,9 @@ export default function Settings() {
                             </TabsContent>
                             <TabsContent value="user-preference">
                                 <UserPreferences />
+                            </TabsContent>
+                            <TabsContent value="email-notification">
+                                <EmailNotification />
                             </TabsContent>
                         </Card>
                     </Tabs>

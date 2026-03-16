@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-
 import {
     changePasswordSchema,
     ChangePasswordFormValues
@@ -10,14 +9,16 @@ import { Button } from "@/components/ui/button"
 import { useMutation } from "@tanstack/react-query"
 import { changePassword } from "@/api/services/auth.api"
 import { toast } from "sonner"
-import { isValid } from "zod/v3"
+import { Loader } from "lucide-react"
+import { ApiError } from "next/dist/server/api-utils"
+import { AxiosError } from "axios"
 
 export default function ChangePassword() {
     const {
         register,
         handleSubmit,
         reset,
-        formState: { errors }
+        formState: { errors, isValid }
     } = useForm<ChangePasswordFormValues>({
         resolver: zodResolver(changePasswordSchema),
         defaultValues: {
@@ -27,17 +28,18 @@ export default function ChangePassword() {
         }
     })
 
+    const { mutate, isPending } = useMutation({
+        mutationFn: changePassword,
+        onSuccess: () => {
+            toast.success("Password changed successfully")
+        },
+        onError: (error: AxiosError<ApiError>) => {
+            toast.error(error?.response?.data?.message)
+        }
+    })
+
     const onSubmit = (data: ChangePasswordFormValues) => {
-        console.log(data)
-        useMutation({
-            mutationFn: () => changePassword(data),
-            onSuccess: () => {
-                toast.success("Password changed successfully")
-            },
-            onError: (error) => {
-                toast.error(error.message)
-            }
-        })
+        mutate(data)
     }
 
     return (
@@ -61,7 +63,7 @@ export default function ChangePassword() {
                     />
 
                     <FormField
-                        name="confirmPassword"
+                        name="newConfirmPassword"
                         label="Confirm New Password*"
                         type="password"
                         error={errors.newConfirmPassword}
@@ -69,7 +71,9 @@ export default function ChangePassword() {
                     />
                 </div>
                 <div className="flex gap-4 mt-6">
-                    <Button disabled={!isValid} type="submit">Update Password</Button>
+                    <Button className="w-full sm:w-40" disabled={isPending || !isValid} type="submit">
+                        {isPending ? <Loader className="animate-spin" /> : "Update Password"}
+                    </Button>
                 </div>
             </form>
         </div>

@@ -23,9 +23,10 @@ import {
 
 import { resetPassword } from "@/api/services/auth.api";
 import { useUser } from "@/hooks/useUser";
-import { Loader } from "lucide-react";
+// import { Loader } from "lucide-react";
 import { useOTPFlow } from "@/context/otp.context";
 import { useRouter } from "next/navigation";
+import { Loader } from "@/components/common/Loader";
 
 export default function ResetPasswordPage() {
     const router = useRouter()
@@ -87,7 +88,8 @@ export default function ResetPasswordPage() {
 
             {/* Right Form */}
             {isLoading ?
-                <Loader className="animate-spin" /> :
+                <Loader />
+                :
                 <div className="flex items-center justify-center p-6 sm:p-12 h-screen overflow-y-auto bg-background">
 
                     <div className="mx-auto w-full max-w-[400px] flex flex-col justify-between min-h-full py-8">

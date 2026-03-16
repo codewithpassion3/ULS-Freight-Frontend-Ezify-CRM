@@ -123,9 +123,13 @@
 
   body {
     @apply bg-background text-foreground;
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+    overflow-y: scroll;
   }
 
   html {
     @apply font-sans;
+    scrollbar-gutter: stable;
   }
 }

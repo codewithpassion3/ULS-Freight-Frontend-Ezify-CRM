@@ -1,6 +1,4 @@
 "use client"
-
-import * as React from "react"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 
@@ -11,10 +9,35 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useUser } from "@/hooks/useUser"
+import { useEffect } from "react"
+import { toast } from "sonner"
+import { updateUserSettings } from "@/api/services/auth.api"
+import { useMutation } from "@tanstack/react-query"
+import { AxiosError } from "axios"
+import { ApiError } from "next/dist/server/api-utils"
 
 export function ModeToggle() {
   const { setTheme } = useTheme()
-
+  const { data } = useUser()
+  useEffect(() => {
+    if (data) {
+      setTheme(data.user?.settings?.dark_mode || "light")
+    }
+  }, [data])
+  const updateUserSettingsMutation = useMutation({
+    mutationFn: updateUserSettings,
+    onSuccess: () => {
+      toast.success("Settings updated successfully")
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toast.error(error?.response?.data?.message)
+    }
+  })
+  const handleThemeChange = (theme: string) => {
+    setTheme(theme)
+    updateUserSettingsMutation.mutate({ dark_mode: theme })
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -25,13 +48,13 @@ export function ModeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
+        <DropdownMenuItem onClick={() => handleThemeChange("light")}>
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
+        <DropdownMenuItem onClick={() => handleThemeChange("dark")}>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
+        <DropdownMenuItem onClick={() => handleThemeChange("system")}>
           System
         </DropdownMenuItem>
       </DropdownMenuContent>
