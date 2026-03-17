@@ -25,15 +25,11 @@ import {
 import FormField from "@/components/common/FormField"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { useUser } from "@/hooks/useUser";
-import { useEffect } from "react";
 import { AxiosError } from "axios";
 import { ApiError } from "next/dist/server/api-utils";
 
 export default function LoginPage() {
-
   const router = useRouter()
-  const { data: user } = useUser();
   const loginMutation = useMutation({
     mutationFn: (data: LoginFormValues) => loginUser(data),
     onSuccess: (data) => {
@@ -47,13 +43,6 @@ export default function LoginPage() {
       toast.error(error?.response?.data?.message)
     }
   });
-
-  useEffect(() => {
-    console.log(user)
-    if (user) {
-      router.push("/")
-    }
-  }, [user])
 
   const { register, handleSubmit, control, formState: { errors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),

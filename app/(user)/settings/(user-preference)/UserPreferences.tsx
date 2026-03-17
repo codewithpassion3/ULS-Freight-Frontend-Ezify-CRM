@@ -18,7 +18,7 @@ import UploadPhotoModal from "./(change-photo)/UploadPhotoModal"
 import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Loader } from "lucide-react"
+import { Loader, LoaderCircle } from "lucide-react"
 
 type UserSettingsFormValues = {
     landingPage: string
@@ -26,7 +26,7 @@ type UserSettingsFormValues = {
 }
 
 export default function UserPreferences() {
-    const { data: user, isLoading, isPending, refetch } = useUser()
+    const { data: user, isLoading, isPending, refetch, isFetching } = useUser()
     const { register, handleSubmit } = useForm<UserSettingsFormValues>({
         defaultValues: {
             landingPage: "Create New Quote",
@@ -38,6 +38,7 @@ export default function UserPreferences() {
     const [open, setOpen] = useState(false)
     const [mode, setMode] = useState<"create" | "edit">("create")
     const [selectedUser, setSelectedUser] = useState<User | null>(null)
+    const [imageKey, setImageKey] = useState(Date.now())
     const [userSettingsFormValues, setUserSettingsFormValues] = useState({
         default_landing_page: landingPage,
         home_quick_button: quickButton
@@ -188,8 +189,8 @@ export default function UserPreferences() {
                             />
                         } */}
                         <Avatar className="h-16 w-16 cursor-pointer object-cover">
-                            <AvatarImage className="object-cover" src={`${BASE_URL}${user?.user?.profilePic}`} />
-                            <AvatarFallback className="text-2xl">{user?.user?.firstName?.charAt(0)}{user?.user?.lastName?.charAt(0)}</AvatarFallback>
+                            <AvatarImage className="object-cover" src={`${BASE_URL}${user?.user?.profilePic}?t=${imageKey}`} />
+                            <AvatarFallback className="text-2xl">{isFetching || isPending || isLoading ? <LoaderCircle className="animate-spin" /> : `${user?.user?.firstName?.charAt(0)}${user?.user?.lastName?.charAt(0)}`}</AvatarFallback>
                         </Avatar>
 
                         <div className="flex flex-col sm:flex-row gap-2 text-sm">
@@ -209,6 +210,7 @@ export default function UserPreferences() {
                             <UploadPhotoModal
                                 open={isUploadPhotoModalOpen}
                                 setOpen={setIsUploadPhotoModalOpen}
+                                setImageKey={setImageKey}
                             />
                         </div>
 

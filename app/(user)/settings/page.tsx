@@ -70,7 +70,6 @@ export default function Settings() {
     })
     useEffect(() => {
         if (user) console.log("user updated", user)
-        getUserQuery.refetch()
     }, [user])
     console.log("user", user)
 

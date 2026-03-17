@@ -35,24 +35,33 @@ import { useMutation } from "@tanstack/react-query"
 import { logoutUser } from "@/api/services/auth.api"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { useQueryClient } from "@tanstack/react-query"
 
 export default function UserProfile() {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
+    const queryClient = useQueryClient()
     const router = useRouter()
+    const [open, setOpen] = useState(false)
     const { data: user, isLoading, error } = useUser()
-    const handleLogout = () => {
-        useLogoutMutation.mutate()
-    }
     const useLogoutMutation = useMutation({
         mutationFn: logoutUser,
         onSuccess: () => {
             toast.success("User logged out successfully")
+            queryClient.clear()
             router.push("/login")
         },
         onError: (error) => {
             toast.error(error.message)
         }
     })
+    const handleLogout = () => {
+        useLogoutMutation.mutate()
+    }
+    const handleNavigate = (path: string) => {
+        router.push(path)
+        setOpen(false)
+    }
     return (
         <>
             {isLoading ?
@@ -68,7 +77,7 @@ export default function UserProfile() {
                     </div>
 
                     {/* USER MENU */}
-                    <DropdownMenu>
+                    <DropdownMenu open={open} onOpenChange={setOpen}>
                         <DropdownMenuTrigger>
                             <Avatar className="cursor-pointer">
                                 <AvatarImage src={`${BASE_URL}${user?.user?.profilePic}`} />
@@ -77,11 +86,9 @@ export default function UserProfile() {
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent className="w-full" align="end">
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleNavigate("/settings")}>
                                 <UserRound />
-                                <Link href="/settings">
-                                    Profile
-                                </Link>
+                                Profile
                             </DropdownMenuItem>
 
                             <DropdownMenuItem>

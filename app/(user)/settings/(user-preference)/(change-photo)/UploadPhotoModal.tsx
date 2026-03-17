@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog"
 
 import { Button } from "@/components/ui/button"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { updateUserProfile } from "@/api/services/auth.api"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
@@ -21,9 +21,11 @@ import { useUser } from "@/hooks/useUser"
 type Props = {
     open: boolean
     setOpen: (open: boolean) => void
+    setImageKey: (imageKey: number) => void
 }
 
-export default function UploadPhotoModal({ open, setOpen }: Props) {
+export default function UploadPhotoModal({ open, setOpen, setImageKey }: Props) {
+    const queryClient = useQueryClient()
     const [file, setFile] = useState<File | null>(null)
     const [preview, setPreview] = useState<string | null>(null)
 
@@ -34,13 +36,16 @@ export default function UploadPhotoModal({ open, setOpen }: Props) {
         setFile(selected)
         setPreview(URL.createObjectURL(selected))
     }, [])
-    const { refetch } = useUser()
     const { mutate, isPending } = useMutation({
         mutationFn: updateUserProfile,
         onSuccess: () => {
             toast.success("Photo uploaded successfully")
             setPreview(null)
-            refetch()
+            setFile(null)
+            setImageKey(Date.now())
+            queryClient.invalidateQueries({
+                queryKey: ["user"]
+            })
         },
         onError: (error: AxiosError<ApiError>) => {
             toast.error(error?.response?.data?.message)

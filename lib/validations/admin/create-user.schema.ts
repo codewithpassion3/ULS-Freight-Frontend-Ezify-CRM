@@ -15,5 +15,18 @@ export const addUserSchema = z.object({
         .min(1, "Role is required"),
     permissionIds: z.array(z.number()).optional()
 })
+    .superRefine((data, ctx) => {
+        const USER_ROLE_ID = 2 // example: roleId for "user"
+
+        if (data.roleId === USER_ROLE_ID) {
+            if (!data.permissionIds || data.permissionIds.length === 0) {
+                ctx.addIssue({
+                    path: ["permissionIds"],
+                    code: z.ZodIssueCode.custom,
+                    message: "At least one permission must be selected for user role"
+                })
+            }
+        }
+    })
 
 export type AddUserFormValues = z.infer<typeof addUserSchema>
