@@ -26,7 +26,7 @@ import {
     AvatarImage,
 } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { CreditCard, FileQuestionMark, Menu, User } from "lucide-react"
+import { CreditCard, FileQuestionMark, LogOut, Menu, User, UserRound } from "lucide-react"
 import { navItems } from "@/lib/navigation"
 import Link from "next/link"
 import { useUser } from "@/hooks/useUser"
@@ -78,7 +78,7 @@ export default function UserProfile() {
 
                         <DropdownMenuContent className="w-full" align="end">
                             <DropdownMenuItem>
-                                <User />
+                                <UserRound />
                                 <Link href="/settings">
                                     Profile
                                 </Link>
@@ -98,8 +98,9 @@ export default function UserProfile() {
                                 </Link>
                             </DropdownMenuItem>
 
-                            <DropdownMenuItem>
-                                <Button size="lg" onClick={handleLogout}>
+                            <DropdownMenuItem className="hover:bg-transparent!">
+                                <Button variant="outline" className="w-full flex gap-2" size="lg" onClick={handleLogout}>
+                                    <LogOut />
                                     Logout
                                 </Button>
                             </DropdownMenuItem>

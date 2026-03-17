@@ -63,6 +63,13 @@ export const updateUserSettings = async (data: any) => {
     const response = await apiClient.post("/users/me/settings", data)
     return response.data
 }
+// edit user from admin dashboard
+
+export const editUserAdmin = async (data: AddUserFormValues) => {
+    console.log("data", data)
+    const response = await apiClient.patch(`/users/${data.id}`, data)
+    return response.data
+}
 
 
 

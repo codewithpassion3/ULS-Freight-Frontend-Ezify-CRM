@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Switch } from "@/components/ui/switch"
 import FormField from "@/components/common/FormField"
-import UserTable from "./UserTable"
+import UserTable, { User } from "./UserTable"
 import AddUser from "./(add-user)/AddUser"
 import { useUser } from "@/hooks/useUser"
 import { useMutation } from "@tanstack/react-query"
@@ -36,6 +36,8 @@ export default function UserPreferences() {
     const [landingPage, setLandingPage] = useState("Create New Quote")
     const [quickButton, setQuickButton] = useState("Create New Quote")
     const [open, setOpen] = useState(false)
+    const [mode, setMode] = useState<"create" | "edit">("create")
+    const [selectedUser, setSelectedUser] = useState<User | null>(null)
     const [userSettingsFormValues, setUserSettingsFormValues] = useState({
         default_landing_page: landingPage,
         home_quick_button: quickButton
@@ -219,10 +221,10 @@ export default function UserPreferences() {
                 {user?.user?.role.name.includes("admin") &&
                     <div className="border-t pt-6">
                         <div className="flex justify-between items-center mb-4">
-                            <AddUser open={open} setOpen={setOpen} />
+                            <AddUser open={open} selectedUser={selectedUser} setOpen={setOpen} mode={mode} setMode={setMode} setSelectedUser={setSelectedUser} />
                         </div>
                         <div className="border rounded-md overflow-hidden">
-                            <UserTable open={open} setOpen={setOpen} />
+                            <UserTable open={open} selectedUser={selectedUser} setOpen={setOpen} mode={mode} setMode={setMode} setSelectedUser={setSelectedUser} />
                         </div>
                     </div>}
 

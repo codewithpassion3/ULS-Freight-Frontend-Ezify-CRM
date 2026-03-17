@@ -28,7 +28,7 @@ export default function Header() {
     const pathname = usePathname()
 
     return (
-        <header className="w-full fixed bg-white/10 backdrop-blur-md border-b border-b-white/20 z-10">
+        <header className="w-full fixed bg-white/10 backdrop-blur-md border-b border-b-black/20 dark:border-b-white/20 z-10">
             <div className="flex h-20 items-center justify-between px-4 lg:px-6">
 
                 {/* LEFT */}

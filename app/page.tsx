@@ -17,7 +17,7 @@ export default function Home() {
     if (!isLoading && !data) {
       router.push("/login");
     }
-  }, [data, isLoading, router]);
+  }, [data, isLoading]);
 
 
   return (

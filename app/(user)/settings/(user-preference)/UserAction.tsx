@@ -15,7 +15,7 @@ import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
 import { User } from "./UserTable"
 
-export function UserActions({ id, user, open, setOpen }: { id: number, user: User, open: boolean, setOpen: (open: boolean) => void }) {
+export function UserActions({ id, selectedUser, open, setOpen, setMode, setSelectedUser }: { id: number, selectedUser: User | null, open: boolean, setOpen: (open: boolean) => void, setMode: (mode: "create" | "edit") => void, setSelectedUser: (user: User | null) => void }) {
     const queryClient = useQueryClient()
     const deleteUserMutation = useMutation({
         mutationFn: () => deleteUser(id),
@@ -29,7 +29,8 @@ export function UserActions({ id, user, open, setOpen }: { id: number, user: Use
         }
     })
     const handleEditUser = () => {
-
+        setMode("edit")
+        setSelectedUser(selectedUser)
         setOpen(!open)
     }
     return (

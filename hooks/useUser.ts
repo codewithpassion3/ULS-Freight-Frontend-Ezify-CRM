@@ -5,6 +5,9 @@ export function useUser(enabled = true) {
     return useQuery({
         queryKey: ["user"],
         queryFn: getUser,
+        // staleTime: 1000 * 60 * 5,
+        // refetchOnWindowFocus: false,
+        // retry: false,
         enabled
     })
 }

@@ -24,7 +24,7 @@ export interface User {
     updatedAt: string;
     lastLogin: string | null;
 }
-export default function UserTable({ open, setOpen }: { open: boolean, setOpen: (open: boolean) => void }) {
+export default function UserTable({ open, setOpen, mode, setMode, selectedUser, setSelectedUser }: { open: boolean, setOpen: (open: boolean) => void, mode: "create" | "edit", setMode: (mode: "create" | "edit") => void, selectedUser: User | null, setSelectedUser: (user: User | null) => void }) {
     const { data: res = [], isLoading } = useQuery({
         queryKey: ["users"],
         queryFn: getAllUsers,
@@ -92,7 +92,7 @@ export default function UserTable({ open, setOpen }: { open: boolean, setOpen: (
                             {user.lastLogin ? <span className="text-sm"> {new Date(user.lastLogin).toLocaleTimeString()}</span> : ""}
                         </TableCell>
                         <TableCell className="p-3">
-                            <UserActions id={user.id} user={user} open={open} setOpen={setOpen} />
+                            <UserActions id={user.id} selectedUser={user} open={open} setOpen={setOpen} setMode={setMode} setSelectedUser={setSelectedUser} />
                         </TableCell>
                     </TableRow>
                 ))}

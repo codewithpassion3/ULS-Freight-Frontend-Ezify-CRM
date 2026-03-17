@@ -20,7 +20,7 @@ export default function FormField({
     type,
     placeholder,
     register,
-    error
+    error,
 }: FormFieldProps) {
     const [showPassword, setShowPassword] = useState(false)
 
