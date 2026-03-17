@@ -21,7 +21,7 @@ export default function EmailNotification() {
                 <div className="flex items-center gap-3">
                     <Switch id="freight-email" defaultChecked />
                     <Label htmlFor="freight-email" className="text-sm">
-                        Enable optional Freightcom email notifications
+                        Enable optional ULS Freight email notifications
                     </Label>
                 </div>
             </CardContent>

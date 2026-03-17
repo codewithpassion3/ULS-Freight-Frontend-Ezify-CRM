@@ -35,7 +35,7 @@ export type AddUserFormValues = {
     permissionIds?: number[]
 }
 
-export default function AddUser() {
+export default function AddUser({ open, setOpen }: { open: boolean, setOpen: (open: boolean) => void }) {
 
     const { register, handleSubmit, reset, control, watch, formState: { isValid, errors } } = useForm<AddUserFormValues>({
         resolver: zodResolver(addUserSchema),
@@ -54,7 +54,7 @@ export default function AddUser() {
     })
     console.log(res.users)
     // const [roleId, setRoleId] = useState(1)
-    const [open, setOpen] = useState(false)
+
     // useEffect(() => {
     //     setRoleId(Number(watch("roleId")))
     // }, [watch("roleId")])
@@ -103,13 +103,11 @@ export default function AddUser() {
                 </p>
             </div>}
             <Dialog open={open} onOpenChange={setOpen}>
-
                 <DialogTrigger asChild>
                     <Button variant="outline">
                         + Add New User
                     </Button>
                 </DialogTrigger>
-
                 <DialogContent className="sm:max-w-[450px]">
 
                     <DialogHeader>

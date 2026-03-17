@@ -1,6 +1,6 @@
 "use client"
 
-import { MoreHorizontal, MoreVertical } from "lucide-react"
+import { MoreHorizontal, MoreVertical, Trash2, UserRoundPen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -13,8 +13,9 @@ import { deleteUser } from "@/api/services/auth.api"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
+import { User } from "./UserTable"
 
-export function UserActions({ id }: { id: number }) {
+export function UserActions({ id, user, open, setOpen }: { id: number, user: User, open: boolean, setOpen: (open: boolean) => void }) {
     const queryClient = useQueryClient()
     const deleteUserMutation = useMutation({
         mutationFn: () => deleteUser(id),
@@ -27,6 +28,10 @@ export function UserActions({ id }: { id: number }) {
 
         }
     })
+    const handleEditUser = () => {
+
+        setOpen(!open)
+    }
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -37,9 +42,17 @@ export function UserActions({ id }: { id: number }) {
 
             <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                    className="text-red-600 cursor-pointer"
+                    className="flex items-center gap-2 cursor-pointer"
+                    onClick={handleEditUser}
+                >
+                    <UserRoundPen />
+                    Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                    className="bg-red-100 text-red-600 flex items-center gap-2 cursor-pointer"
                     onClick={() => deleteUserMutation.mutate()}
                 >
+                    <Trash2 />
                     Delete
                 </DropdownMenuItem>
             </DropdownMenuContent>

@@ -186,9 +186,9 @@ export default function GeneralSettings() {
                     {/* Account Overview */}
                     <div>
                         <h2 className="font-semibold text-base mb-4">Account Overview</h2>
-                        <div className="grid grid-cols-3 gap-y-2 text-sm text-muted-foreground">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-2 text-sm text-muted-foreground">
                             <p><span className="font-medium text-foreground">Account Status:</span> Active</p>
-                            <p><span className="font-medium text-foreground">Freightcom Member Since:</span> Sep 20, 2022</p>
+                            <p><span className="font-medium text-foreground">ULS Freight Member Since:</span> Sep 20, 2022</p>
                             <p><span className="font-medium text-foreground">Payment Type:</span> Account Balance</p>
                             <p><span className="font-medium text-foreground">Last Ship Date:</span> Mar 4, 2026</p>
                             <p><span className="font-medium text-foreground">Last Payment Received:</span> Feb 25, 2026</p>
@@ -204,17 +204,17 @@ export default function GeneralSettings() {
 
                             <div className="flex items-center gap-2">
                                 <Checkbox {...register("promotions")} />
-                                <span className="text-sm">Freightcom Promotions</span>
+                                <span className="text-sm">ULS Freight Promotions</span>
                             </div>
 
                             <div className="flex items-center gap-2">
                                 <Checkbox {...register("systemUpdates")} />
-                                <span className="text-sm">Freightcom System Updates</span>
+                                <span className="text-sm">ULS Freight System Updates</span>
                             </div>
 
                             <div className="flex items-center gap-2">
                                 <Checkbox {...register("newsletters")} />
-                                <span className="text-sm">Freightcom Newsletters</span>
+                                <span className="text-sm">ULS Freight Newsletters</span>
                             </div>
 
                         </div>

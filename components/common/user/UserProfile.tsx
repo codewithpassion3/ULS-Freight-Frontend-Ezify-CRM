@@ -37,6 +37,7 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
 export default function UserProfile() {
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
     const router = useRouter()
     const { data: user, isLoading, error } = useUser()
     const handleLogout = () => {
@@ -70,7 +71,7 @@ export default function UserProfile() {
                     <DropdownMenu>
                         <DropdownMenuTrigger>
                             <Avatar className="cursor-pointer">
-                                <AvatarImage src="/avatar.png" />
+                                <AvatarImage src={`${BASE_URL}${user?.user?.profilePic}`} />
                                 <AvatarFallback>{user?.user?.firstName?.charAt(0)}{user?.user?.lastName?.charAt(0)}</AvatarFallback>
                             </Avatar>
                         </DropdownMenuTrigger>
@@ -78,7 +79,7 @@ export default function UserProfile() {
                         <DropdownMenuContent className="w-full" align="end">
                             <DropdownMenuItem>
                                 <User />
-                                <Link href="/profile">
+                                <Link href="/settings">
                                     Profile
                                 </Link>
                             </DropdownMenuItem>

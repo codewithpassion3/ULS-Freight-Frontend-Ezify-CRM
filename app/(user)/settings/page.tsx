@@ -78,10 +78,10 @@ export default function Settings() {
         <div className="p-4 md:p-8 xl:min-w-7xl mx-auto">
             <Tabs defaultValue="account" className="space-y-6">
                 <TabsList className="flex flex-wrap gap-2">
-                    <TabsTrigger value="account">Account Settings</TabsTrigger>
-                    <TabsTrigger value="shipment">Shipment Settings</TabsTrigger>
-                    <TabsTrigger value="payment">Payment Settings</TabsTrigger>
-                    <TabsTrigger value="api">API Settings</TabsTrigger>
+                    <TabsTrigger className="cursor-pointer" value="account">Account Settings</TabsTrigger>
+                    <TabsTrigger className="cursor-pointer" value="shipment">Shipment Settings</TabsTrigger>
+                    <TabsTrigger className="cursor-pointer" value="payment">Payment Settings</TabsTrigger>
+                    <TabsTrigger className="cursor-pointer" value="api">API Settings</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="account">
@@ -92,9 +92,9 @@ export default function Settings() {
                             </CardHeader>
                             <CardContent className="space-y-2">
                                 <TabsList className="h-max w-full gap-4 bg-transparent">
-                                    <TabsTrigger value="general-settings" className="w-max">General Settings</TabsTrigger>
-                                    <TabsTrigger value="user-preference" className="w-max">User Preferences</TabsTrigger>
-                                    <TabsTrigger value="email-notification" className="w-max">Email Notifications</TabsTrigger>
+                                    <TabsTrigger value="general-settings" className="w-max cursor-pointer">General Settings</TabsTrigger>
+                                    <TabsTrigger value="user-preference" className="w-max cursor-pointer">User Preferences</TabsTrigger>
+                                    <TabsTrigger value="email-notification" className="w-max cursor-pointer">Email Notifications</TabsTrigger>
                                 </TabsList>
                             </CardContent>
                         </Card>

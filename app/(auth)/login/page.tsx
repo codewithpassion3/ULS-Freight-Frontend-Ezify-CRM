@@ -123,13 +123,13 @@ export default function LoginPage() {
                 register={register}
                 error={errors.password}
               />
-              <div className="my-6 flex items-center justify-between">
-                <div className="flex items-center space-x-2">
+              <div className="my-6 flex items-center justify-end">
+                {/* <div className="flex items-center space-x-2">
                   <Checkbox id="remember" />
                   <Label htmlFor="remember" className="text-sm font-medium leading-none cursor-pointer">
                     Remember me
                   </Label>
-                </div>
+                </div> */}
                 <Link href="/forgot-password" className="text-sm text-primary hover:underline">
                   Forgot Password?
                 </Link>

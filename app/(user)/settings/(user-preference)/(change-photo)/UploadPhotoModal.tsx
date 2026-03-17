@@ -39,6 +39,7 @@ export default function UploadPhotoModal({ open, setOpen }: Props) {
         mutationFn: updateUserProfile,
         onSuccess: () => {
             toast.success("Photo uploaded successfully")
+            setPreview(null)
             refetch()
         },
         onError: (error: AxiosError<ApiError>) => {
@@ -95,6 +96,8 @@ export default function UploadPhotoModal({ open, setOpen }: Props) {
                         </p>
                     </div>
                 )}
+
+
 
                 <DialogFooter>
                     <Button

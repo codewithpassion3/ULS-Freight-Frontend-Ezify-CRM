@@ -35,6 +35,7 @@ export default function UserPreferences() {
     })
     const [landingPage, setLandingPage] = useState("Create New Quote")
     const [quickButton, setQuickButton] = useState("Create New Quote")
+    const [open, setOpen] = useState(false)
     const [userSettingsFormValues, setUserSettingsFormValues] = useState({
         default_landing_page: landingPage,
         home_quick_button: quickButton
@@ -150,12 +151,15 @@ export default function UserPreferences() {
                                 <SelectValue placeholder="Select Landing Page" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="create-quote">Create New Quote</SelectItem>
+                                {[{ text: "Create New Quote", value: "create-quote" }, { text: "Create New Shipments", value: "create-shipments" }, { text: "Quotes Dashboard", value: "quotes-dashboard" }, { text: "Pickups Dashboard", value: "pickups-dashboard" }, { text: "Tracking Dashboard", value: "tracking-dashboard" }, { text: "Invoices Dashboard", value: "invoices-dashboard" }]?.map((item) => (
+                                    <SelectItem key={item.value} value={item.value}>{item.text}</SelectItem>
+                                ))}
+                                {/* <SelectItem value="create-quote">Create New Quote</SelectItem>
                                 <SelectItem value="create-shipments">Create New Shipments</SelectItem>
                                 <SelectItem value="quotes-dashboard">Quotes Dashboard</SelectItem>
                                 <SelectItem value="pickups-dashboard">Pickups Dashboard</SelectItem>
                                 <SelectItem value="tracking-dashboard">Tracking Dashboard</SelectItem>
-                                <SelectItem value="invoices-dashboard">Invoices Dashboard</SelectItem>
+                                <SelectItem value="invoices-dashboard">Invoices Dashboard</SelectItem> */}
                             </SelectContent>
                         </Select>
                         <p className="text-sm text-muted-foreground mt-1">
@@ -171,12 +175,20 @@ export default function UserPreferences() {
                     <h3 className="font-medium mb-4">Profile Image</h3>
 
                     <div className="flex items-center gap-4">
-                        {isLoading || isPending ? <Loader className="animate-spin" /> :
-                            <Avatar size="lg" className="cursor-pointer object-cover">
-                                <AvatarImage className="object-cover" src={`${BASE_URL}${user?.user?.profilePic}`} />
-                                <AvatarFallback>{user?.user?.firstName?.charAt(0)}{user?.user?.lastName?.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                        }
+                        {/* {isLoading || isPending ?
+                            <Loader className="animate-spin" /> :
+                            <Image
+                                src={`${BASE_URL}${user?.user?.profilePic}`}
+                                alt="Profile"
+                                width={100}
+                                height={100}
+                                className="rounded-full object-cover"
+                            />
+                        } */}
+                        <Avatar className="h-16 w-16 cursor-pointer object-cover">
+                            <AvatarImage className="object-cover" src={`${BASE_URL}${user?.user?.profilePic}`} />
+                            <AvatarFallback className="text-2xl">{user?.user?.firstName?.charAt(0)}{user?.user?.lastName?.charAt(0)}</AvatarFallback>
+                        </Avatar>
 
                         <div className="flex flex-col sm:flex-row gap-2 text-sm">
                             <Button
@@ -207,13 +219,10 @@ export default function UserPreferences() {
                 {user?.user?.role.name.includes("admin") &&
                     <div className="border-t pt-6">
                         <div className="flex justify-between items-center mb-4">
-
-                            <AddUser />
+                            <AddUser open={open} setOpen={setOpen} />
                         </div>
-
-                        {/* Users Table */}
                         <div className="border rounded-md overflow-hidden">
-                            <UserTable />
+                            <UserTable open={open} setOpen={setOpen} />
                         </div>
                     </div>}
 

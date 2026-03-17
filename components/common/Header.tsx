@@ -20,9 +20,11 @@ import UserProfile from "./user/UserProfile"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { LanguageToggle } from "../language-toggle"
 import { ModeToggle } from "../mode-toggle"
+import { useUser } from "@/hooks/useUser"
 
 
 export default function Header() {
+    const { data: user } = useUser()
     const pathname = usePathname()
 
     return (
@@ -61,10 +63,25 @@ export default function Header() {
                                         <DropdownMenu>
 
                                             <DropdownMenuTrigger asChild>
-                                                <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
+                                                {item.title === "Ship" ? user?.user?.permissions.includes("shipping") ? <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
                                                     {item.title}
                                                     <ChevronDown className="size-4" />
-                                                </button>
+                                                </button> : "" :
+                                                    item.title === "Invoices" ? user?.user?.permissions.includes("billing") ? <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
+                                                        {item.title}
+                                                        <ChevronDown className="size-4" />
+                                                    </button> : "" :
+                                                        item.title === "Claims" ? user?.user?.permissions.includes("claims") ? <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
+                                                            {item.title}
+                                                            <ChevronDown className="size-4" />
+                                                        </button> : "" :
+
+                                                            <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
+                                                                {item.title}
+                                                                <ChevronDown className="size-4" />
+                                                            </button>
+                                                }
+
                                             </DropdownMenuTrigger>
 
                                             <DropdownMenuContent align="start" className="w-48">

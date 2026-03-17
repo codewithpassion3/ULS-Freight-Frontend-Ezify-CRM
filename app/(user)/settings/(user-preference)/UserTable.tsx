@@ -13,7 +13,7 @@ import { useQuery } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import { UserActions } from "./UserAction";
 import { CircleCheck } from "lucide-react";
-interface User {
+export interface User {
     id: number;
     firstName: string;
     lastName: string;
@@ -24,7 +24,7 @@ interface User {
     updatedAt: string;
     lastLogin: string | null;
 }
-export default function UserTable() {
+export default function UserTable({ open, setOpen }: { open: boolean, setOpen: (open: boolean) => void }) {
     const { data: res = [], isLoading } = useQuery({
         queryKey: ["users"],
         queryFn: getAllUsers,
@@ -92,7 +92,7 @@ export default function UserTable() {
                             {user.lastLogin ? <span className="text-sm"> {new Date(user.lastLogin).toLocaleTimeString()}</span> : ""}
                         </TableCell>
                         <TableCell className="p-3">
-                            <UserActions id={user.id} />
+                            <UserActions id={user.id} user={user} open={open} setOpen={setOpen} />
                         </TableCell>
                     </TableRow>
                 ))}
