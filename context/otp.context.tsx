@@ -1,6 +1,6 @@
 // otp-flow-context.tsx
 "use client";
-import { createContext, useContext, useState } from "react"
+import React, { createContext, useContext, useState } from "react"
 
 type Purpose = "email_verification" | "password_reset"
 
@@ -19,14 +19,15 @@ export function OTPFlowProvider({ children }: { children: React.ReactNode }) {
     const [purpose, setPurpose] = useState<Purpose>()
     const [token, setToken] = useState<string>()
 
-    const setFlow = (email: string, purpose: Purpose) => {
+    const setFlow = React.useCallback((email: string, purpose: Purpose) => {
         setEmail(email)
         setPurpose(purpose)
-    }
+    }, [])
 
+    const value = React.useMemo(() => ({ email, purpose, setFlow, token, setToken }), [email, purpose, setFlow, token, setToken])
 
     return (
-        <OTPFlowContext.Provider value={{ email, purpose, setFlow, token, setToken }}>
+        <OTPFlowContext.Provider value={value}>
             {children}
         </OTPFlowContext.Provider>
     )

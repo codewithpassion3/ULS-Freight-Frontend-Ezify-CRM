@@ -21,11 +21,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { LanguageToggle } from "../language-toggle"
 import { ModeToggle } from "../mode-toggle"
 import { useUser } from "@/hooks/useUser"
+import { useAuth } from "@/context/auth.context"
 import { useEffect } from "react"
 import { User } from "@/app/(user)/settings/(user-preference)/UserTable"
 
 
-export default function Header({ user }: { user: User }) {
+export default function Header() {
+    const { user } = useAuth();
     const pathname = usePathname()
     useEffect(() => {
         console.log("header mount", user);

@@ -15,6 +15,7 @@ import { getUser } from "@/api/services/auth.api";
 import GeneralSettings from "./GeneralSettings";
 import UserPreferences from "./(user-preference)/UserPreferences";
 import EmailNotification from "./(email-notifications)/EmailNotification";
+import { AddressBookTab } from "./(address-book)/AddressBookTab";
 
 const schema = z.object({
     companyName: z.string().min(1),
@@ -74,7 +75,7 @@ export default function Settings() {
     console.log("user", user)
 
     return (
-        <div className="p-4 md:p-8 xl:min-w-7xl mx-auto">
+        <div className="p-4 md:p-8 w-full mx-auto">
             <Tabs defaultValue="account" className="space-y-6">
                 <TabsList className="flex flex-wrap gap-2">
                     <TabsTrigger className="cursor-pointer" value="account">Account Settings</TabsTrigger>
@@ -108,6 +109,45 @@ export default function Settings() {
                                 <EmailNotification />
                             </TabsContent>
                         </Card>
+
+                    </Tabs>
+                </TabsContent>
+
+                <TabsContent value="shipment">
+                    <Tabs defaultValue="general-settings" orientation="vertical" className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                        <Card className="lg:col-span-1">
+                            <CardHeader>
+                                <CardTitle>Shipment Settings</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-2">
+                                <TabsList className="h-max w-full gap-4 bg-transparent">
+                                    {[
+                                        { title: "Shipping Preferences", value: "shipping-preferences" },
+                                        { title: "Carrier Preferences", value: "carrier-preferences" },
+                                        { title: "Address Book", value: "address-book" },
+                                        { title: "My Package & Pallets", value: "my-packages" },
+                                        { title: "My Products", value: "my-products" },
+                                        { title: "Request Shipping Supplies", value: "request-shipping-supplies" },
+
+                                    ].map((subTab) => (
+                                        <TabsTrigger key={subTab.value} value={subTab.value} className="w-max cursor-pointer">{subTab.title}</TabsTrigger>
+                                    ))}
+
+                                </TabsList>
+                            </CardContent>
+                        </Card>
+                        <Card className="px-6 lg:col-span-3">
+                            <TabsContent value="shipping-preferences">
+
+                            </TabsContent>
+                            <TabsContent value="carrier-preferences">
+
+                            </TabsContent>
+                            <TabsContent value="address-book" className="mt-0 pt-0">
+                                <AddressBookTab />
+                            </TabsContent>
+                        </Card>
+
                     </Tabs>
                 </TabsContent>
             </Tabs>

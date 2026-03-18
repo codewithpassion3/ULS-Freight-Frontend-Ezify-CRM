@@ -29,7 +29,7 @@ import { useEffect } from "react";
 import { useUser } from "@/hooks/useUser"
 export default function RegisterPage() {
 
-  const { data, isLoading } = useUser();
+  // const { data, isLoading } = useUser();
 
   const router = useRouter()
   const [step, setStep] = React.useState(1)
@@ -43,11 +43,6 @@ export default function RegisterPage() {
       }
     }
   })
-  useEffect(() => {
-    if (!isLoading && data) {
-      router.push("/");
-    }
-  }, [data, isLoading, router]);
   const handleNext = () => setStep((s) => Math.min(s + 1, 3))
   const handleBack = () => setStep((s) => Math.max(s - 1, 1))
   const registerMutation = useMutation({
@@ -145,10 +140,10 @@ export default function RegisterPage() {
               <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
                 <Image loading="eager" src="/logo.png" alt="ULS Freight" width={200} height={200} />
               </Link>
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <LanguageToggle />
                 <ModeToggle />
-              </div>
+              </div> */}
             </div>
 
             {/* Intro Text & Progress */}

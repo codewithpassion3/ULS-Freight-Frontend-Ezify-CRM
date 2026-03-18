@@ -6,7 +6,7 @@ const packageVolumeEnum = z.enum(["< 25", "26-50", "50-100", "101-300", "> 300"]
 export const registerSchema = z.object({
   user: z.object({
     email: z.email("Invalid email address"),
-    password: z.string().min(8, "Password must be atleast 8 characters"),
+    password: z.string().min(8, "Password must be atleast 8 characters"),  // password should have 
     confirmPassword: z.string().min(8, "Confirm password must match password"),
     firstName: z.string().min(1, "First name required"),
     lastName: z.string().min(1, "Last name required"),

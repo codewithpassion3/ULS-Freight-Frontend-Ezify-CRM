@@ -21,6 +21,7 @@ import { Loader } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useOTPFlow } from "@/context/otp.context";
+import { useAuth } from "@/context/auth.context";
 
 export default function OTPVerificationPage() {
     const { email, purpose, setToken } = useOTPFlow()
@@ -119,10 +120,10 @@ export default function OTPVerificationPage() {
                             />
                         </Link>
 
-                        <div className="flex items-center gap-2">
+                        {/* <div className="flex items-center gap-2">
                             <LanguageToggle />
                             <ModeToggle />
-                        </div>
+                        </div> */}
 
                     </div>
 
