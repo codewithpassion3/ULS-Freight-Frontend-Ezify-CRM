@@ -28,7 +28,7 @@ export function Step2Form({ onPrev, onSubmit }: { onPrev: () => void, onSubmit: 
 
   // Ensure there's at least one item on mount if empty
   if (fields.length === 0) {
-    append({ length: 0, width: 0, height: 0, weight: 0, freightClass: "", nmfc: "", type: "Pallet", unitsOnPallet: "" })
+    append({ length: "0", width: "0", height: "0", weight: "0", freightClass: "", nmfc: "", type: "Pallet", unitsOnPallet: "" })
   }
 
   const handleNext = async () => {
@@ -258,7 +258,7 @@ export function Step2Form({ onPrev, onSubmit }: { onPrev: () => void, onSubmit: 
             type="button" 
             variant="outline" 
             className="border-primary text-primary"
-            onClick={() => append({ length: 0, width: 0, height: 0, weight: 0, freightClass: "", nmfc: "", type: "Pallet", unitsOnPallet: "" })}
+            onClick={() => append({ length:" 0", width:" 0", height:" 0", weight:" 0", freightClass: "", nmfc: "", type: "Pallet", unitsOnPallet: "" })}
           >
             <Plus size={16} className="mr-2" /> Add Pallet
           </Button>
@@ -293,7 +293,7 @@ export function Step2Form({ onPrev, onSubmit }: { onPrev: () => void, onSubmit: 
 
         <div className="pt-6 border-t mt-4">
           <h4 className="font-semibold mb-4 text-base">Additional Services for Pallets</h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { id: "limitedAccess", label: "Limited Access" },
               { id: "appointmentDelivery", label: "Appointment Delivery" },
@@ -308,7 +308,7 @@ export function Step2Form({ onPrev, onSubmit }: { onPrev: () => void, onSubmit: 
               <div className="flex items-center space-x-2" key={service.id}>
                 <Controller
                   control={control}
-                  name={`additionalServicesForPallets.${service.id as any}`}
+                  name={`additionalServicesForPallets.${service.id}` ? "additionalInsurance.currency" : ""}
                   render={({ field }) => (
                     <Checkbox checked={!!field.value} onCheckedChange={field.onChange} id={service.id} />
                   )}
@@ -318,7 +318,7 @@ export function Step2Form({ onPrev, onSubmit }: { onPrev: () => void, onSubmit: 
                 </Label>
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
       </div>
 

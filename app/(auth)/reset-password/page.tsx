@@ -27,12 +27,18 @@ import { useUser } from "@/hooks/useUser";
 import { useOTPFlow } from "@/context/otp.context";
 import { useRouter } from "next/navigation";
 import { Loader } from "@/components/common/Loader";
+import { useEffect, useState } from "react";
 
 export default function ResetPasswordPage() {
     const router = useRouter()
     const { token, email } = useOTPFlow()
     console.log(email)
-    const { data: user, isLoading } = useUser()
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        const t = setTimeout(() => setIsLoading(false), 300)
+        return () => clearTimeout(t)
+    }, [])
 
     const resetMutation = useMutation({
         mutationFn: (data: ResetPasswordValues) =>
@@ -60,7 +66,7 @@ export default function ResetPasswordPage() {
     } = useForm<ResetPasswordValues>({
         resolver: zodResolver(resetPasswordSchema),
         defaultValues: {
-            email: user?.user?.email,
+            email:"",
             password: "",
             confirmPassword: "",
             resetToken: token || ""
@@ -70,6 +76,8 @@ export default function ResetPasswordPage() {
     const onSubmit = (data: ResetPasswordValues) => {
         resetMutation.mutate(data);
     };
+
+    if (isLoading) return <Loader />
 
     return (
         <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
@@ -87,10 +95,8 @@ export default function ResetPasswordPage() {
             </div>
 
             {/* Right Form */}
-            {isLoading ?
-                <Loader />
-                :
-                <div className="flex items-center justify-center p-6 sm:p-12 h-screen overflow-y-auto bg-background">
+            
+                <div className="flex items-center justify-center p-6 sm:p-12 h-screen overflow-y-auto bg-black/20">
 
                     <div className="mx-auto w-full max-w-[400px] flex flex-col justify-between min-h-full py-8">
 
@@ -165,7 +171,7 @@ export default function ResetPasswordPage() {
 
                     </div>
 
-                </div>}
+                </div>
         </div>
     );
 }

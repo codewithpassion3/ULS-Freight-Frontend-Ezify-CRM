@@ -31,32 +31,24 @@ import { navItems } from "@/lib/navigation"
 import Link from "next/link"
 import { useUser } from "@/hooks/useUser"
 import { UserProfileSkeleton } from "./UserProfileSkeleton"
-import { useMutation } from "@tanstack/react-query"
-import { logoutUser } from "@/api/services/auth.api"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { useQueryClient } from "@tanstack/react-query"
+import { useLogoutMutation } from "@/hooks/useLogout"
+import { AxiosError } from "axios"
+import { ApiError } from "next/dist/server/api-utils"
 
 export default function UserProfile() {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
-    const queryClient = useQueryClient()
     const router = useRouter()
     const [open, setOpen] = useState(false)
     const { data: user, isLoading, error } = useUser()
-    const useLogoutMutation = useMutation({
-        mutationFn: logoutUser,
-        onSuccess: () => {
-            toast.success("User logged out successfully")
-            queryClient.clear()
-            router.push("/login")
-        },
-        onError: (error) => {
-            toast.error(error.message)
-        }
+    const logoutMutation = useLogoutMutation({
+        onSuccess: () => toast.success("User logged out successfully"),
+        onError: (error: AxiosError<ApiError>) => toast.error(error?.response?.data?.message),
     })
     const handleLogout = () => {
-        useLogoutMutation.mutate()
+        logoutMutation.mutate()
     }
     const handleNavigate = (path: string) => {
         router.push(path)
@@ -86,19 +78,19 @@ export default function UserProfile() {
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent className="w-full" align="end">
-                            <DropdownMenuItem onClick={() => handleNavigate("/settings")}>
+                            <DropdownMenuItem className="cursor-pointer" onClick={() => handleNavigate("/settings")}>
                                 <UserRound />
                                 Profile
                             </DropdownMenuItem>
 
-                            <DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer">
                                 <CreditCard />
                                 <Link href="/billing">
                                     Billing
                                 </Link>
                             </DropdownMenuItem>
 
-                            <DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer"    >
                                 <FileQuestionMark />
                                 <Link href="/faqs">
                                     FAQs and resources

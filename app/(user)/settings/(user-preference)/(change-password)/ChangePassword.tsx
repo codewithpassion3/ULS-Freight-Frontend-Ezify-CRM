@@ -12,6 +12,9 @@ import { toast } from "sonner"
 import { Loader } from "lucide-react"
 import { ApiError } from "next/dist/server/api-utils"
 import { AxiosError } from "axios"
+import { useLogoutMutation } from "@/hooks/useLogout"
+import { useEffect } from "react"
+// import { useLogoutMutation } from "@/components/common/user/UserProfile"
 
 export default function ChangePassword() {
     const {
@@ -21,17 +24,29 @@ export default function ChangePassword() {
         formState: { errors, isValid }
     } = useForm<ChangePasswordFormValues>({
         resolver: zodResolver(changePasswordSchema),
+        mode: "onChange",
         defaultValues: {
             currentPassword: "",
             newPassword: "",
             newConfirmPassword: ""
         }
     })
-
+    useEffect(() => {
+        console.log("errors", errors.newPassword)
+    }, [errors])
+    // console.log(errors)
+    const logoutMutation = useLogoutMutation({
+        onSuccess: () => toast.success("User logged out successfully"),
+        onError: (error: AxiosError<ApiError>) => toast.error(error?.response?.data?.message),
+    })
+    const handleLogout = () => {
+        logoutMutation.mutate()
+    }
     const { mutate, isPending } = useMutation({
         mutationFn: changePassword,
         onSuccess: () => {
             toast.success("Password changed successfully")
+            handleLogout()
         },
         onError: (error: AxiosError<ApiError>) => {
             toast.error(error?.response?.data?.message)
@@ -44,7 +59,7 @@ export default function ChangePassword() {
 
     return (
         <div>
-            <h3 className="font-medium mb-4">Change Password</h3>
+            <h3 className="font-medium mb-4 text-base">Change Password</h3>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
@@ -69,6 +84,7 @@ export default function ChangePassword() {
                         error={errors.newConfirmPassword}
                         register={register}
                     />
+
                 </div>
                 <div className="flex gap-4 mt-6">
                     <Button className="w-full sm:w-40" disabled={isPending || !isValid} type="submit">

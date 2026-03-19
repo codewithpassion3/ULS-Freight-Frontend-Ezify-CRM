@@ -40,7 +40,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const pathname = usePathname();
 
-    const authRoutes = ["/login", "/register", "/reset-password"];
+    const authRoutes = ["/login", "/register", "/reset-password", "/forgot-password"];
     const exceptionalRoutes = ["/otp-verification", "/reset-password"];
 
     const isAuthRoute = authRoutes.includes(pathname);

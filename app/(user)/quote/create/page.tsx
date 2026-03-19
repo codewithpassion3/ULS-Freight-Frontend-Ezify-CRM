@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useForm, FormProvider } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { quoteSchema, QuoteSchemaTypes } from "@/lib/validations/quote/quote-schema"
+import { quoteSchema } from "@/lib/validations/quote/quote-schema"
 import { Step1Form } from "./step-1-form"
 import { Step2Form } from "./step-2-form"
 import { Eye, Bell, Truck } from "lucide-react"
@@ -11,10 +11,30 @@ import { Eye, Bell, Truck } from "lucide-react"
 export default function CreateSpotQuotePage() {
   const [currentStep, setCurrentStep] = useState(1)
 
-  const methods = useForm<QuoteSchemaTypes>({
+  const methods = useForm({
     resolver: zodResolver(quoteSchema),
     defaultValues: {
+      shipmentType: "LTL-Partial Truckload",
+      shippingFrom: {
+        address1: "",
+        postalCode: "",
+        city: "",
+        province: "",
+        country: "Canada",
+        locationType: "",
+        additionalNotes: "",
+      },
+      shippingTo: {
+        address1: "",
+        postalCode: "",
+        city: "",
+        province: "",
+        country: "Canada",
+        locationType: "",
+        additionalNotes: "",
+      },
       equipment: {
+        type: "Dry Van",
         inBond: false,
         protectFromFreeze: false,
         limitedAccess: false,
@@ -22,7 +42,19 @@ export default function CreateSpotQuotePage() {
       dimensionsAndWeight: {
         quantity: "1",
         unitSystem: "Imperial",
-        pallets: [{ length: "", width: "", height: "", weight: "", freightClass: "", nmfc: "", type: "Pallet", unitsOnPallet: "" }],
+        pallets: [
+          {
+            length: "",
+            width: "",
+            height: "",
+            weight: "",
+            freightClass: "",
+            nmfc: "",
+            type: "Pallet",
+            unitsOnPallet: "",
+          },
+        ],
+        description: "",
         dangerousGoods: false,
         stackable: false,
       },
@@ -45,10 +77,12 @@ export default function CreateSpotQuotePage() {
     mode: "onTouched",
   })
 
-  const onSubmit = (data: QuoteSchemaTypes) => {
+  const onSubmit = (data: unknown) => {
     console.log("Form Submitted:", data)
     alert("Quote submitted successfully! Check console for details.")
   }
+
+  const handleFullSubmit = () => methods.handleSubmit(onSubmit)()
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-7xl">
@@ -66,7 +100,7 @@ export default function CreateSpotQuotePage() {
               {currentStep === 2 && (
                 <Step2Form 
                   onPrev={() => setCurrentStep(1)} 
-                  onSubmit={methods.handleSubmit(onSubmit)} 
+                  onSubmit={handleFullSubmit}
                 />
               )}
             </form>

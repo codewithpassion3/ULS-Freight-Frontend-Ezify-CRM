@@ -1,0 +1,33 @@
+import { z } from "zod"
+
+export const contactSchema = z.object({
+    companyName: z.string().min(1, "Company/Name is required"),
+    contactId: z.string().optional(),
+    phone: z.string().min(1, "Phone Number is required"),
+    email: z.email("Invalid email").optional(),
+    defaultInstructions: z.string().optional(),
+    address: z.object({
+        address1: z.string().min(1, "Address 1 is required"),
+        address2: z.string().optional(),
+        unit: z.string().optional(),
+        postalCode: z.string().min(1, "Postal/ZIP Code is required"),
+        city: z.string().min(1, "City is required"),
+        state: z.string().min(1, "Province/State is required"),
+        country: z.string().min(1, "Country is required"),
+    }),
+    contactName: z.string().min(1, "Contact Name is required"),
+
+    // Pallet Shipping preferences
+    readyTimeHour: z.string().min(1),
+    readyTimeMinute: z.string().min(1),
+    readyTimeAmPm: z.enum(["AM", "PM"]),
+    closeTimeHour: z.string().min(1),
+    closeTimeMinute: z.string().min(1),
+    closeTimeAmPm: z.enum(["AM", "PM"]),
+
+    // Courier Shipping preferences
+    locationTypeId: z.number(),
+    signatureId: z.number(),
+    isResidential: z.boolean().optional(),
+})
+export type ContactFormValues = z.infer<typeof contactSchema>

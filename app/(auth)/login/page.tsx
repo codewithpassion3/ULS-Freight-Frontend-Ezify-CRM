@@ -27,22 +27,42 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { AxiosError } from "axios";
 import { ApiError } from "next/dist/server/api-utils";
+import { useEffect, useState } from "react";
+import { Loader } from "@/components/common/Loader";
+import { useQueryClient } from "@tanstack/react-query"
+import { getUser } from "@/api/services/auth.api"
 
 export default function LoginPage() {
   const router = useRouter()
+  const queryClient = useQueryClient()
+  const [isLoading, setIsLoading] = useState(true)
   const loginMutation = useMutation({
     mutationFn: (data: LoginFormValues) => loginUser(data),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       console.log("Login successful:", data)
       toast("Login Successful", {
         description: "Welcome back! You are now logged in.",
       })
-      router.push("/")
+      try {
+        await queryClient.fetchQuery({
+          queryKey: ["user"],
+          queryFn: getUser,
+        })
+      } catch {
+        // If /users/me is temporarily unavailable, the auth guard may redirect;
+        // on refresh it will re-check. We still navigate to the app.
+      }
+      setTimeout(() => router.replace("/"), 300)
     },
     onError: (error: AxiosError<ApiError>) => {
       toast.error(error?.response?.data?.message)
     }
   });
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false)
+    }, 300)
+  }, [])
 
   const { register, handleSubmit, control, formState: { errors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -57,75 +77,83 @@ export default function LoginPage() {
     loginMutation.mutate(data)
   }
   return (
-    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
-      {/* Left Column - Image Background */}
-      <div className="hidden lg:relative lg:flex lg:flex-col justify-center items-center">
-        <Image
-          src="/login-bg.png"
-          alt="Shipping Simplfied"
-          fill
-          className="object-cover"
-          priority
-        />
-        {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/40" />
-        {/* <h1 className="relative z-10 text-4xl font-bold text-white tracking-tight">
+    isLoading ? <Loader /> :
+      <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
+        {/* Left Column - Image Background */}
+        <div className="hidden lg:relative lg:flex lg:flex-col justify-center items-center">
+          <Image
+            src="/login-bg.png"
+            alt="Shipping Simplfied"
+            fill
+            sizes="auto"
+            className="h-auto w-auto object-cover"
+            priority
+          />
+          {/* Dark overlay for better text readability */}
+          <div className="absolute inset-0 bg-black/40" />
+          {/* <h1 className="relative z-10 text-4xl font-bold text-white tracking-tight">
           Shipping Simplified
         </h1> */}
-      </div>
+        </div>
 
-      {/* Right Column - Login Form */}
-      <div className="flex items-center justify-center p-6 sm:p-12 h-screen overflow-y-auto bg-background">
-        <div className="mx-auto w-full max-w-[400px] flex flex-col justify-between min-h-full py-8">
+        {/* Right Column - Login Form */}
+        <div className="flex items-center justify-center p-6 sm:p-12 h-screen overflow-y-auto bg-background">
+          <div className="mx-auto w-full max-w-[400px] flex flex-col justify-between min-h-full py-8">
 
-          {/* Header Area */}
-          <div className="flex items-center justify-between mb-16">
-            <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-              <Image loading="eager" src="/logo.png" alt="ULS Freight" width={200} height={200} />
-            </Link>
-            {/* <div className="flex items-center gap-2">
+            {/* Header Area */}
+            <div className="flex items-center justify-between mb-16">
+              <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
+                <Image loading="eager" src="/logo.png" alt="ULS Freight Logo"
+                  
+                  height={200}
+                  width={200}
+                  className="w-auto h-auto"
+                  // sizes="auto"
+                />
+              </Link>
+              {/* <div className="flex items-center gap-2">
               <LanguageToggle />
               <ModeToggle />
             </div> */}
-          </div>
-
-          {/* Form Area */}
-          <div className="flex-1">
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold text-foreground">
-                To access your ULS FREIGHT account, sign in below.
-              </h2>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              <FormField
-                name="email"
-                label="Email*"
-                placeholder="Enter your email"
-                register={register}
-                error={errors.email}
-              />
-              <FormField
-                name="password"
-                label="Password*"
-                placeholder="Enter your password"
-                register={register}
-                error={errors.password}
-              />
-              <div className="my-6 flex items-center justify-end">
-                {/* <div className="flex items-center space-x-2">
+            {/* Form Area */}
+            <div className="flex-1">
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-foreground">
+                  To access your ULS FREIGHT account, sign in below.
+                </h2>
+              </div>
+
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                <FormField
+                  name="email"
+                  label="Email*"
+                  placeholder="Enter your email"
+                  register={register}
+                  error={errors.email}
+                />
+                <FormField
+                  name="password"
+                  label="Password*"
+                  placeholder="Enter your password"
+                  register={register}
+                  error={errors.password}
+                />
+                <div className="my-6 flex items-center justify-end">
+                  {/* <div className="flex items-center space-x-2">
                   <Checkbox id="remember" />
                   <Label htmlFor="remember" className="text-sm font-medium leading-none cursor-pointer">
                     Remember me
                   </Label>
                 </div> */}
-                <Link href="/forgot-password" className="text-sm text-primary hover:underline">
-                  Forgot Password?
-                </Link>
-              </div>
+                  <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+                    Forgot Password?
+                  </Link>
+                </div>
 
-              {/* reCAPTCHA Mockup */}
-              {/* <div className="opacity-50 border border-border rounded bg-card p-3 flex grow items-center justify-between w-[300px] mt-4 shadow-sm">
+                {/* reCAPTCHA Mockup */}
+                {/* <div className="opacity-50 border border-border rounded bg-card p-3 flex grow items-center justify-between w-[300px] mt-4 shadow-sm">
               <div className="flex items-center gap-3">
                 <div className="h-7 w-7 border-2 border-muted-foreground rounded bg-background"></div>
                 <span className="text-sm font-medium text-foreground">I'm not a robot</span>
@@ -136,22 +164,22 @@ export default function LoginPage() {
               </div>
             </div> */}
 
-              <Button type="submit" variant="default" className="w-full">
-                Start Shipping!
-              </Button>
-            </form>
+                <Button type="submit" variant="default" className="w-full">
+                  Start Shipping!
+                </Button>
+              </form>
 
-          </div>
+            </div>
 
-          {/* Footer Area */}
-          <div className="mt-16 text-sm text-muted-foreground">
-            Don't have an account?{" "}
-            <Link href="/register" className="text-primary hover:underline font-medium">
-              Create an account
-            </Link>
+            {/* Footer Area */}
+            <div className="mt-16 text-sm text-muted-foreground text-center">
+              Don't have an account?{" "}
+              <Link href="/register" className="text-primary hover:underline font-medium">
+                Create an account
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
-    </div >
+      </div >
   )
 }
