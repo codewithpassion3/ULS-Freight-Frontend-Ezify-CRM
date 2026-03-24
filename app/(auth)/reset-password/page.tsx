@@ -34,15 +34,37 @@ export default function ResetPasswordPage() {
     const { token, email } = useOTPFlow()
     console.log(email)
     const [isLoading, setIsLoading] = useState(true)
-
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = useForm<ResetPasswordValues>({
+        resolver: zodResolver(resetPasswordSchema),
+        mode: "onChange",
+        defaultValues: {
+            email: "",
+            password: "",
+            confirmPassword: "",
+            resetToken: token || ""
+        },
+    });
     useEffect(() => {
+        if (token && email) {
+            reset({
+                email,
+                password: "",
+                confirmPassword: "",
+                resetToken: token,
+            });
+        }
         const t = setTimeout(() => setIsLoading(false), 300)
         return () => clearTimeout(t)
-    }, [])
+    }, [token, email, reset])
 
     const resetMutation = useMutation({
-        mutationFn: (data: ResetPasswordValues) =>
-            resetPassword({ ...data }),
+        mutationFn: (data: any) =>
+            resetPassword(data),
 
         onSuccess: () => {
 
@@ -59,22 +81,15 @@ export default function ResetPasswordPage() {
         },
     });
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<ResetPasswordValues>({
-        resolver: zodResolver(resetPasswordSchema),
-        defaultValues: {
-            email:"",
-            password: "",
-            confirmPassword: "",
-            resetToken: token || ""
-        },
-    });
+
 
     const onSubmit = (data: ResetPasswordValues) => {
-        resetMutation.mutate(data);
+        const payload = {
+            email: email,
+            password: data.password,
+            resetToken: token
+        }
+        resetMutation.mutate(payload);
     };
 
     if (isLoading) return <Loader />
@@ -95,83 +110,83 @@ export default function ResetPasswordPage() {
             </div>
 
             {/* Right Form */}
-            
-                <div className="flex items-center justify-center p-6 sm:p-12 h-screen overflow-y-auto bg-black/20">
 
-                    <div className="mx-auto w-full max-w-[400px] flex flex-col justify-between min-h-full py-8">
+            <div className="flex items-center justify-center p-6 sm:p-12 h-screen overflow-y-auto">
 
-                        {/* Header */}
-                        <div className="flex items-center justify-between mb-16">
+                <div className="mx-auto w-full max-w-[400px] flex flex-col justify-between min-h-full py-8">
 
-                            <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-                                <Image src="/logo.png" alt="ULS Freight" width={200} height={200} />
-                            </Link>
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-16">
 
-                            {/* <div className="flex items-center gap-2">
+                        <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
+                            <Image src="/logo.png" alt="ULS Freight" width={200} height={200} />
+                        </Link>
+
+                        {/* <div className="flex items-center gap-2">
                                 <LanguageToggle />
                                 <ModeToggle />
                             </div> */}
 
+                    </div>
+
+                    {/* Form Area */}
+                    <div className="flex-1">
+
+                        <div className="mb-6">
+                            <h2 className="text-lg font-semibold text-foreground">
+                                Reset your password
+                            </h2>
+                            <p className="text-sm text-muted-foreground mt-1">
+                                Enter a new password for your account.
+                            </p>
                         </div>
 
-                        {/* Form Area */}
-                        <div className="flex-1">
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
 
-                            <div className="mb-6">
-                                <h2 className="text-lg font-semibold text-foreground">
-                                    Reset your password
-                                </h2>
-                                <p className="text-sm text-muted-foreground mt-1">
-                                    Enter a new password for your account.
-                                </p>
-                            </div>
+                            <FormField
+                                name="password"
+                                label="New Password*"
+                                placeholder="Enter new password"
+                                register={register}
+                                error={errors.password}
+                            />
 
-                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                            <FormField
+                                name="confirmPassword"
+                                label="Confirm Password*"
+                                placeholder="Confirm your password"
+                                register={register}
+                                error={errors.confirmPassword}
+                            />
 
-                                <FormField
-                                    name="password"
-                                    label="New Password*"
-                                    placeholder="Enter new password"
-                                    register={register}
-                                    error={errors.password}
-                                />
+                            <Button type="submit" className="w-full">
+                                Reset Password
+                            </Button>
 
-                                <FormField
-                                    name="confirmPassword"
-                                    label="Confirm Password*"
-                                    placeholder="Confirm your password"
-                                    register={register}
-                                    error={errors.confirmPassword}
-                                />
+                        </form>
 
-                                <Button type="submit" className="w-full">
-                                    Reset Password
-                                </Button>
-
-                            </form>
-
-                            <div className="mt-6 text-sm text-center">
-                                <Link
-                                    href="/login"
-                                    className="text-primary hover:underline font-medium"
-                                >
-                                    Back to Login
-                                </Link>
-                            </div>
-
-                        </div>
-
-                        {/* Footer */}
-                        <div className="mt-16 text-sm text-muted-foreground">
-                            Don't have an account?{" "}
-                            <Link href="/register" className="text-primary hover:underline font-medium">
-                                Create an account
+                        <div className="mt-6 text-sm text-center">
+                            <Link
+                                href="/login"
+                                className="text-primary hover:underline font-medium"
+                            >
+                                Back to Login
                             </Link>
                         </div>
 
                     </div>
 
+                    {/* Footer */}
+                    <div className="mt-16 text-sm text-muted-foreground">
+                        Don't have an account?{" "}
+                        <Link href="/register" className="text-primary hover:underline font-medium">
+                            Create an account
+                        </Link>
+                    </div>
+
                 </div>
+
+            </div>
         </div>
     );
 }

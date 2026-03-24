@@ -18,11 +18,11 @@ export const contactSchema = z.object({
     contactName: z.string().min(1, "Contact Name is required"),
 
     // Pallet Shipping preferences
-    readyTimeHour: z.string().min(1),
-    readyTimeMinute: z.string().min(1),
+    readyTimeHour: z.string().min(0).max(12),
+    readyTimeMinute: z.string().min(0).max(59),
     readyTimeAmPm: z.enum(["AM", "PM"]),
-    closeTimeHour: z.string().min(1),
-    closeTimeMinute: z.string().min(1),
+    closeTimeHour: z.string().min(0).max(12),
+    closeTimeMinute: z.string().min(0).max(59),
     closeTimeAmPm: z.enum(["AM", "PM"]),
 
     // Courier Shipping preferences
@@ -30,4 +30,12 @@ export const contactSchema = z.object({
     signatureId: z.number(),
     isResidential: z.boolean().optional(),
 })
+export type ContactFormProps = {
+    defaultValues?: ContactFormValues
+    onSubmit: (data: ContactFormValues) => void
+    isLoading?: boolean
+    open: boolean
+    setOpen: (open: boolean) => void
+    setIsValid: (isValid: boolean) => void
+}
 export type ContactFormValues = z.infer<typeof contactSchema>

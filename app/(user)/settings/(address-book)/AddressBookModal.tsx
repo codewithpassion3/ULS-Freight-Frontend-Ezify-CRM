@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { AddContactModal } from "./AddContactModal"
+import { AddContactModal } from "./AddContactModalOld"
 
 export type AddressBookContact = {
   id: string
@@ -161,9 +161,8 @@ export function AddressBookModal({
                     key={ch}
                     type="button"
                     onClick={() => setLetter(ch)}
-                    className={`font-semibold ${
-                      letter === ch ? "text-primary" : "text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`font-semibold ${letter === ch ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                      }`}
                   >
                     {ch}
                   </button>

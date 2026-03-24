@@ -6,6 +6,8 @@ import { Search, Trash2, Edit, Copy, UserSquare2, Info, CheckCircle2 } from "luc
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
+// import { AddContactModal } from "./AddContactModalOld"
+import { AddressBookTable } from "./AddressBookTable"
 import { AddContactModal } from "./AddContactModal"
 
 const mockContacts = [
@@ -97,39 +99,15 @@ export function AddressBookTab() {
 
   return (
     <div className="w-full space-y-4">
-      <div className="flex items-center gap-2 mb-6">
-        <UserSquare2 className="h-6 w-6 text-primary" />
-        <h2 className="text-xl font-bold text-foreground">Address Book</h2>
-      </div>
-
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
-        <div className="flex items-center gap-4 w-full sm:w-auto">
-          <Button
-            variant="outline"
-            disabled={selectedIds.length === 0}
-            className="flex items-center gap-2 bg-muted/50 w-full sm:w-auto"
-          >
-            <Trash2 className="h-4 w-4" />
-            Delete
-          </Button>
-
-          <AddContactModal />
+      <div className="flex items-center justify-between gap-2 mb-6">
+        <div className="flex items-center gap-2">
+          <UserSquare2 className="h-6 w-6 text-primary" />
+          <h2 className="text-xl font-semiBold text-foreground">Address Book</h2>
         </div>
-
-        <div className="flex w-full sm:w-auto items-center">
-          <Input
-            placeholder="Search Contacts"
-            className="rounded-r-none w-full sm:w-[300px]"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <Button className="rounded-l-none bg-[#0070c0] hover:bg-[#005999] px-3">
-            <Search className="h-4 w-4" />
-          </Button>
-        </div>
+        <AddContactModal />
       </div>
-
-      <div className="rounded-md border border-border w-full overflow-x-auto">
+      <AddressBookTable />
+      {/* <div className="rounded-md border border-border w-full overflow-x-auto">
         <table className="w-full text-sm text-left">
           <thead className="bg-transparent border-b border-border text-muted-foreground font-medium text-xs">
             <tr>
@@ -191,7 +169,7 @@ export function AddressBookTab() {
             )}
           </tbody>
         </table>
-      </div>
+      </div> */}
     </div>
   )
 }

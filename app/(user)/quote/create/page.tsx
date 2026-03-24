@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { quoteSchema } from "@/lib/validations/quote/quote-schema"
 import { Step1Form } from "./step-1-form"
 import { Step2Form } from "./step-2-form"
-import { Eye, Bell, Truck } from "lucide-react"
+import { Eye, Truck } from "lucide-react"
 
 export default function CreateSpotQuotePage() {
   const [currentStep, setCurrentStep] = useState(1)
@@ -16,6 +16,7 @@ export default function CreateSpotQuotePage() {
     defaultValues: {
       shipmentType: "LTL-Partial Truckload",
       shippingFrom: {
+        multiplePickupLocations: false,
         address1: "",
         postalCode: "",
         city: "",
@@ -25,6 +26,7 @@ export default function CreateSpotQuotePage() {
         additionalNotes: "",
       },
       shippingTo: {
+        multipleDeliveryLocations: false,
         address1: "",
         postalCode: "",
         city: "",
@@ -35,9 +37,13 @@ export default function CreateSpotQuotePage() {
       },
       equipment: {
         type: "Dry Van",
+        refrigeratedType: undefined,
         inBond: false,
         protectFromFreeze: false,
         limitedAccess: false,
+        dangerousGoods: false,
+        allPalletsStackable: false,
+        somePalletsStackable: false,
       },
       dimensionsAndWeight: {
         quantity: "1",
@@ -72,6 +78,14 @@ export default function CreateSpotQuotePage() {
       additionalInsurance: {
         totalCostValue: 0,
         currency: "CAD",
+      },
+      contactInformation: {
+        contactName: "",
+        phoneNumber: "",
+        ext: "",
+        shipDate: "",
+        emailAddress: "",
+        spotQuoteName: "",
       }
     },
     mode: "onTouched",
@@ -112,16 +126,16 @@ export default function CreateSpotQuotePage() {
           <div className="border border-border p-5 rounded-md sticky top-6 bg-white dark:bg-card space-y-4">
             <div className="flex justify-between items-center border-b pb-2">
               <h2 className="font-semibold text-lg">{currentStep === 1 ? 'Shipment Overview' : 'Quote Overview'}</h2>
-              {currentStep === 1 && <span className="text-primary text-sm flex items-center gap-1 cursor-pointer hover:underline"><Eye size={14}/> Hide</span>}
+              {currentStep === 1 && <span className="text-[#0070c0] text-sm flex items-center gap-1 cursor-pointer hover:underline"><Eye size={14}/> Hide</span>}
             </div>
             
             <div className="relative pt-2 pl-2">
               {/* Stepper Lines connecting steps */}
-              <div className="absolute left-4 top-5 bottom-8 w-px bg-gray-200 dark:bg-gray-800 z-0 hidden lg:block"></div>
+              <div className="absolute left-4 top-5 bottom-8 w-px bg-slate-200 dark:bg-slate-800 z-0 hidden lg:block"></div>
               
               <div className="space-y-6 relative z-10">
-                <div className={`flex items-center gap-3 ${currentStep >= 1 ? "text-primary font-medium" : "text-muted-foreground"}`}>
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${currentStep === 1 ? 'bg-primary text-white' : 'border-2 border-primary text-primary bg-white'}`}>
+                <div className={`flex items-center gap-3 ${currentStep >= 1 ? "text-[#0070c0] font-medium" : "text-muted-foreground"}`}>
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${currentStep === 1 ? 'bg-[#0070c0] text-white' : 'border-2 border-[#0070c0] text-[#0070c0] bg-white'}`}>
                     {currentStep > 1 ? '✓' : '➔'}
                   </div>
                   <div className="flex justify-between w-full items-center">
@@ -130,34 +144,33 @@ export default function CreateSpotQuotePage() {
                   </div>
                 </div>
 
-                <div className={`flex items-center gap-3 ${currentStep >= 2 ? "text-primary font-medium" : "text-muted-foreground"}`}>
-                  <div className={`w-5 h-5 flex shrink-0 items-center justify-center ${currentStep === 2 ? 'text-primary' : 'text-muted-foreground'}`}>
+                <div className={`flex items-center gap-3 ${currentStep >= 2 ? "text-[#0070c0] font-medium" : "text-muted-foreground"}`}>
+                  <div className={`w-5 h-5 flex shrink-0 items-center justify-center ${currentStep === 2 ? 'text-[#0070c0]' : 'text-muted-foreground'}`}>
                     {currentStep === 2 ? 
-                      <div className="bg-primary text-white rounded-md p-1"><span className="text-xs">➔</span></div> : 
+                      <div className="bg-[#0070c0] text-white rounded-md p-1"><span className="text-xs">➔</span></div> : 
                       <div className="border border-muted-foreground/30 text-muted-foreground/30 rounded-md p-1 bg-white dark:bg-transparent"><span className="text-xs">Step 2</span></div>
                     }
                   </div>
                   <div className="flex justify-between w-full items-center">
-                    <span>{currentStep === 1 ? 'Step 2: Dimensions & Weight' : 'Packaging Details'}</span>
+                    <span>{currentStep === 1 ? 'Step 2: Dimensions & Weight' : 'Dimensions & Weight'}</span>
                     {currentStep > 2 && <span className="text-xs text-muted-foreground cursor-pointer hover:underline">View</span>}
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 text-muted-foreground/50">
                   <div className="w-5 h-5 border border-muted-foreground/30 text-muted-foreground/30 rounded-md p-1 bg-white dark:bg-transparent flex items-center justify-center">
-                    <span className="text-xs">💰</span>
+                    <span className="text-xs">📠</span>
                   </div>
-                  <span>{currentStep === 1 ? 'Step 3: Send Request' : 'Shipping Rates'}</span>
+                  <span>{currentStep === 1 ? 'Step 3: Send Request' : 'Send Request'}</span>
                 </div>
 
-                <div className="flex items-center gap-3 text-primary pt-4 cursor-pointer hover:underline">
+                <div className="flex items-center gap-3 text-[#0070c0] pt-4 cursor-pointer hover:underline text-sm font-medium">
                   <Save size={16} />
                   <span>Save For Later</span>
                 </div>
               </div>
             </div>
             
-            {/* Banner present in Image 1 */}
              {currentStep === 2 && (
               <div className="mt-8 bg-amber-100 p-4 rounded-md">
                 <div className="bg-white rounded max-w-min whitespace-nowrap px-2 py-0.5 text-xs font-bold border border-amber-300 mb-2">DDP Available</div>

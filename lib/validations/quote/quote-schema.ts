@@ -5,6 +5,7 @@ export const quoteSchema = z.object({
     message: "Please select a shipment type",
   }),
   shippingFrom: z.object({
+    multiplePickupLocations: z.boolean().default(false),
     address1: z.string().optional(),
     postalCode: z.string().min(1, "Postal/ZIP Code is required"),
     city: z.string().min(1, "City is required"),
@@ -14,6 +15,7 @@ export const quoteSchema = z.object({
     additionalNotes: z.string().optional(),
   }),
   shippingTo: z.object({
+    multipleDeliveryLocations: z.boolean().default(false),
     address1: z.string().optional(),
     postalCode: z.string().min(1, "Postal/ZIP Code is required"),
     city: z.string().min(1, "City is required"),
@@ -23,12 +25,16 @@ export const quoteSchema = z.object({
     additionalNotes: z.string().optional(),
   }),
   equipment: z.object({
-    type: z.enum(["Dry Van", "Refrigerated Services"], {
+    type: z.enum(["Dry Van", "Refrigerated Services", "Flatbed", "Ventilated Trailer"], {
       message: "Please select an equipment type",
     }),
+    refrigeratedType: z.enum(["Fresh", "Frozen"]).optional(),
     inBond: z.boolean().default(false),
     protectFromFreeze: z.boolean().default(false),
     limitedAccess: z.boolean().default(false),
+    dangerousGoods: z.boolean().default(false),
+    allPalletsStackable: z.boolean().default(false),
+    somePalletsStackable: z.boolean().default(false),
   }),
   dimensionsAndWeight: z.object({
     quantity: z.string().default("1"),
@@ -64,6 +70,14 @@ export const quoteSchema = z.object({
     totalCostValue: z.coerce.number().min(0).default(0),
     currency: z.enum(["CAD", "USD"]).default("CAD"),
   }).optional(),
+  contactInformation: z.object({
+    contactName: z.string().min(1, "Contact Name is required"),
+    phoneNumber: z.string().min(1, "Phone Number is required"),
+    ext: z.string().optional(),
+    shipDate: z.union([z.date(), z.string().min(1, "Ship Date is required")]),
+    emailAddress: z.string().email("Invalid email").min(1, "Email is required"),
+    spotQuoteName: z.string().optional(),
+  }),
 })
 
 export type QuoteSchemaTypes = z.infer<typeof quoteSchema>

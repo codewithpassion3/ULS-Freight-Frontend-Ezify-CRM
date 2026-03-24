@@ -67,7 +67,7 @@ export default function ForgotPasswordPage() {
         setFlow(data.email, "password_reset")
         forgotMutation.mutate(data);
     };
-    if(isLoading) return <Loader />
+    if (isLoading) return <Loader />
 
     return (
         <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
@@ -122,7 +122,7 @@ export default function ForgotPasswordPage() {
                             />
 
                             <Button type="submit" className="w-full">
-                                Send Reset Link
+                                Send Reset OTP
                             </Button>
 
                         </form>
