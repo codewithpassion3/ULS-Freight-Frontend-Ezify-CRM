@@ -14,11 +14,12 @@ interface Props {
     name: string
     label?: string
     options: Option[]
+    selectedClassName?: string
 }
 
-export function FormRadio({ name, label, options }: Props) {
+export function FormRadio({ name, label, options, selectedClassName }: Props) {
     const { control } = useFormContext()
-
+    console.log(selectedClassName, "selectedClassName")
     return (
         <FormFieldWrapper name={name} label={label}>
             <Controller
@@ -30,17 +31,21 @@ export function FormRadio({ name, label, options }: Props) {
                         onValueChange={(value) => field.onChange(value)}
                         className="flex gap-6"
                     >
-                        {options.map((opt) => (
-                            <div key={opt.value} className="flex items-center gap-2">
-                                <RadioGroupItem
-                                    value={opt.value.toString()}
-                                    id={`${name}-${opt.value}`}
-                                />
-                                <Label htmlFor={`${name}-${opt.value}`} className="cursor-pointer">
-                                    {opt.label}
-                                </Label>
-                            </div>
-                        ))}
+                        {options.map((opt) => {
+                            const isSelected = field.value?.toString() === opt.value.toString()
+                            return (
+                                <div key={opt.value} className="flex items-center gap-2">
+                                    <RadioGroupItem
+                                        value={opt.value.toString()}
+                                        id={`${name}-${opt.value}`}
+                                        className={isSelected ? selectedClassName : ""}
+                                    />
+                                    <Label htmlFor={`${name}-${opt.value}`} className="cursor-pointer">
+                                        {opt.label}
+                                    </Label>
+                                </div>
+                            )
+                        })}
                     </RadioGroup>
                 )}
             />

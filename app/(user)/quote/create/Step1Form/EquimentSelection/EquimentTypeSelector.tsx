@@ -58,7 +58,6 @@ export const EquimentTypeSelector = ({ control, errors, watch, shipmentType }: E
                         )}
                     />
                     {errors.equipment?.type && <p className="text-sm text-red-500">{errors.equipment.type.message}</p>} */}
-
                     <FormRadio
                         name="equipment.type"
                         label="Please describe the equipment required for this shipment"
@@ -69,15 +68,11 @@ export const EquimentTypeSelector = ({ control, errors, watch, shipmentType }: E
                             { label: "Ventilated Trailer", value: "Ventilated Trailer" },
                         ]}
                     />
-
-
-
-
                 </div>
 
                 {watch("equipment.type") === "Refrigerated Services" && (
                     <div className="bg-blue-50/20 p-4 border border-blue-50 rounded-md space-y-3 shadow-sm">
-                        <Label className="block text-sm text-slate-700 font-normal">Please specify what kind of Refrigerated Service is required:</Label>
+                        {/* <Label className="block text-sm text-slate-700 font-normal">Please specify what kind of Refrigerated Service is required:</Label>
                         <Controller
                             control={control}
                             name="equipment.refrigeratedType"
@@ -97,6 +92,16 @@ export const EquimentTypeSelector = ({ control, errors, watch, shipmentType }: E
                                     </div>
                                 </RadioGroup>
                             )}
+                        /> */}
+
+                        <FormRadio
+                            name="equipment.refrigeratedType"
+                            label="Please specify what kind of Refrigerated Service is required:"
+                            options={[
+                                { label: "Fresh (32°F / 0°C)", value: "Fresh" },
+                                { label: "Frozen (0°F / -17°C)", value: "Frozen" },
+                            ]}
+                            selectedClassName="text-amber-500 border-amber-500"
                         />
                     </div>
                 )}
