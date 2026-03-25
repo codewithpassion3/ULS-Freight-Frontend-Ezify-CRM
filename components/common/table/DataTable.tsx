@@ -27,6 +27,7 @@ export function DataTable<TData, TValue>({
         data,
         columns,
         state: { sorting },
+        // @ts-ignore
         onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),

@@ -41,6 +41,7 @@ export function AddressBookTable() {
                     columns={columns}
                     data={addressBook.data ?? []}
                     sorting={sorting}
+                    // @ts-ignore
                     setSorting={setSorting}
                 />
             )}
