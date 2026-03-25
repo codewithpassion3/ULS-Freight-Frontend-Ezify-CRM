@@ -120,14 +120,14 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full cursor-pointer">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ontario">Ontario</SelectItem>
-                    <SelectItem value="british-columbia">British Columbia</SelectItem>
-                    <SelectItem value="new-york">New York</SelectItem>
-                    <SelectItem value="california">California</SelectItem>
+                    <SelectItem value="ontario" className="cursor-pointer">Ontario</SelectItem>
+                    <SelectItem value="british-columbia" className="cursor-pointer">British Columbia</SelectItem>
+                    <SelectItem value="new-york" className="cursor-pointer">New York</SelectItem>
+                    <SelectItem value="california" className="cursor-pointer">California</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.address?.state && (
@@ -150,12 +150,12 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full cursor-pointer">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent position="popper">
-                    <SelectItem value="canada">Canada</SelectItem>
-                    <SelectItem value="united-states">United States</SelectItem>
+                    <SelectItem value="canada" className="cursor-pointer">Canada</SelectItem>
+                    <SelectItem value="united-states" className="cursor-pointer">United States</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.address?.country && (

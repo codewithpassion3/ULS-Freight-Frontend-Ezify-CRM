@@ -74,6 +74,7 @@ export function Step3Form({ onBack }: Step3FormProps) {
                     value={field.value ? "checked" : "unchecked"}
                     checked={field.value}
                     onCheckedChange={field.onChange}
+                    className="cursor-pointer"
                   />
 
                   <FieldContent>
@@ -102,6 +103,7 @@ export function Step3Form({ onBack }: Step3FormProps) {
                     value={field.value ? "checked" : "unchecked"}
                     checked={field.value}
                     onCheckedChange={field.onChange}
+                    className="cursor-pointer"
                   />
 
                   <FieldContent>

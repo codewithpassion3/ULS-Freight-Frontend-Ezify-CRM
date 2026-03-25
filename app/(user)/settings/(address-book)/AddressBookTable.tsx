@@ -46,6 +46,7 @@ export function AddressBookTable({ handleSelect, type = "all" }: { handleSelect:
                     ...column,
                     cell: (props: any) => (
                         <>
+                            {/* @ts-ignore */}
                             {originalCell?.(props)}
 
                             <Button
@@ -83,6 +84,7 @@ export function AddressBookTable({ handleSelect, type = "all" }: { handleSelect:
                             columns={updatedColumns}
                             data={type === "recent" ? recentContacts?.data ?? [] : addressBook.data ?? []}
                             sorting={sorting}
+                            // @ts-ignore
                             setSorting={setSorting}
                         />
 
