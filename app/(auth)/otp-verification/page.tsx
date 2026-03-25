@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label";
 import { sendEmailVerificationOTP, verifyEmailOTP } from "@/api/services/otp.api";
 import { useUser } from "@/hooks/useUser";
 import { Loader } from "@/components/common/Loader";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useOTPFlow } from "@/context/otp.context";
 import { useAuth } from "@/context/auth.context";
