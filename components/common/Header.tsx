@@ -21,25 +21,28 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { LanguageToggle } from "../language-toggle"
 import { ModeToggle } from "../mode-toggle"
 import { useUser } from "@/hooks/useUser"
+import { useAuth } from "@/context/auth.context"
+import { useEffect, useState } from "react"
+import { User } from "@/app/(user)/settings/(user-preference)/UserTable"
+import { Loader } from "./Loader"
 
 
 export default function Header() {
-    const { data: user } = useUser()
+    const { user } = useAuth();
     const pathname = usePathname()
-
     return (
-        <header className="w-full fixed bg-white/10 backdrop-blur-md border-b border-b-white/20 z-10">
+        <header className="w-full fixed bg-white/10 backdrop-blur-md border-b border-b-black/20 dark:border-b-white/20 z-10">
             <div className="flex h-20 items-center justify-between px-4 lg:px-6">
-
                 {/* LEFT */}
                 <div className="flex items-center gap-6">
-
-                    <Image
-                        src="/logo.png"
-                        alt="logo"
-                        width={64}
-                        height={64}
-                    />
+                    <Link href="/">
+                        <Image
+                            src="/logo.png"
+                            alt="logo"
+                            width={64}
+                            height={64}
+                        />
+                    </Link>
 
                     {/* DESKTOP NAV */}
                     {/*  */}
@@ -53,8 +56,8 @@ export default function Header() {
                                         <Link
                                             href={item.href!}
                                             className={`px-3 py-2 text-sm rounded-md ${pathname === item.href
-                                                ? "bg-gray-100 font-medium"
-                                                : "hover:bg-gray-50 dark:hover:text-black"
+                                                ? " font-medium dark:text-black"
+                                                : "hover:bg-gray-50 dark:hover:text-black!"
                                                 }`}
                                         >
                                             {item.title}
@@ -62,27 +65,37 @@ export default function Header() {
                                     ) : (
                                         <DropdownMenu>
 
-                                            <DropdownMenuTrigger asChild>
-                                                {item.title === "Ship" ? user?.user?.permissions.includes("shipping") ? <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
-                                                    {item.title}
-                                                    <ChevronDown className="size-4" />
-                                                </button> : "" :
-                                                    item.title === "Invoices" ? user?.user?.permissions.includes("billing") ? <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
+                                            {user.user.role.name.includes("admin") ?
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="link" className="hover:no-underline">
                                                         {item.title}
                                                         <ChevronDown className="size-4" />
-                                                    </button> : "" :
-                                                        item.title === "Claims" ? user?.user?.permissions.includes("claims") ? <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                :
+                                                <DropdownMenuTrigger asChild>
+                                                    {
+                                                        item.title === "Ship" ? user?.permissions?.includes("shipping") ? <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
                                                             {item.title}
                                                             <ChevronDown className="size-4" />
                                                         </button> : "" :
-
-                                                            <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
+                                                            item.title === "Invoices" ? user?.permissions?.includes("billing") ? <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
                                                                 {item.title}
                                                                 <ChevronDown className="size-4" />
-                                                            </button>
-                                                }
+                                                            </button> : "" :
+                                                                item.title === "Claims" ? user?.permissions?.includes("claims") ? <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
+                                                                    {item.title}
+                                                                    <ChevronDown className="size-4" />
+                                                                </button> : "" :
+                                                                    <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
+                                                                        {item.title}
+                                                                        <ChevronDown className="size-4" />
+                                                                    </button>
+                                                    }
 
-                                            </DropdownMenuTrigger>
+                                                </DropdownMenuTrigger>
+
+                                            }
 
                                             <DropdownMenuContent align="start" className="w-48">
                                                 {item.items.map((sub) => (
@@ -101,7 +114,7 @@ export default function Header() {
                         </NavigationMenuList>
                     </NavigationMenu>
                 </div>
-
+                {/* <p>User Role : {currentUser.role.id}</p> */}
                 {/* RIGHT SIDE */}
                 <div className="flex items-center gap-8">
                     <div className="flex gap-2">

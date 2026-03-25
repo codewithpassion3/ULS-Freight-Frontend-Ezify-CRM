@@ -21,11 +21,11 @@ export function LanguageToggle() {
   const { data } = useUser()
   const [language, setLanguage] = useState("en")
 
-  useEffect(() => {
-    if (data?.user?.settings?.language) {
-      setLanguage(data.user.settings.language)
-    }
-  }, [data])
+  // useEffect(() => {
+  //   if (data?.user?.settings?.language) {
+  //     setLanguage(data.user.settings.language)
+  //   }
+  // }, [data])
 
   const updateUserSettingsMutation = useMutation({
     mutationFn: updateUserSettings,

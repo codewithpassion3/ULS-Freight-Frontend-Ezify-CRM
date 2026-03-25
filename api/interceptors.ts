@@ -22,10 +22,13 @@ export function interceptors(api: AxiosInstance) {
         (error) => {
             console.log(error?.response)
             const message = error?.response?.data?.errorCode
-            if (message === "INVALID_SESSION") {
-                console.log("User session invalid")
-                logoutUser()
-            }
+            // if (message === "INVALID_SESSION") {
+            //     console.log("User session invalid")
+            //     // return message
+            //     // window.location.href = "/login"
+            //     logoutUser()
+            //     // return Promise.reject(error)
+            // }
             return Promise.reject(error)
         }
     )

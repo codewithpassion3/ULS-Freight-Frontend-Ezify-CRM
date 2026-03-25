@@ -26,33 +26,34 @@ import {
     AvatarImage,
 } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { CreditCard, FileQuestionMark, Menu, User } from "lucide-react"
+import { CreditCard, FileQuestionMark, LogOut, Menu, User, UserRound } from "lucide-react"
 import { navItems } from "@/lib/navigation"
 import Link from "next/link"
 import { useUser } from "@/hooks/useUser"
 import { UserProfileSkeleton } from "./UserProfileSkeleton"
-import { useMutation } from "@tanstack/react-query"
-import { logoutUser } from "@/api/services/auth.api"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { useLogoutMutation } from "@/hooks/useLogout"
+import { AxiosError } from "axios"
+import { ApiError } from "next/dist/server/api-utils"
 
 export default function UserProfile() {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
     const router = useRouter()
+    const [open, setOpen] = useState(false)
     const { data: user, isLoading, error } = useUser()
-    const handleLogout = () => {
-        useLogoutMutation.mutate()
-    }
-    const useLogoutMutation = useMutation({
-        mutationFn: logoutUser,
-        onSuccess: () => {
-            toast.success("User logged out successfully")
-            router.push("/login")
-        },
-        onError: (error) => {
-            toast.error(error.message)
-        }
+    const logoutMutation = useLogoutMutation({
+        onSuccess: () => toast.success("User logged out successfully"),
+        onError: (error: AxiosError<ApiError>) => toast.error(error?.response?.data?.message),
     })
+    const handleLogout = () => {
+        logoutMutation.mutate()
+    }
+    const handleNavigate = (path: string) => {
+        router.push(path)
+        setOpen(false)
+    }
     return (
         <>
             {isLoading ?
@@ -68,7 +69,7 @@ export default function UserProfile() {
                     </div>
 
                     {/* USER MENU */}
-                    <DropdownMenu>
+                    <DropdownMenu open={open} onOpenChange={setOpen}>
                         <DropdownMenuTrigger>
                             <Avatar className="cursor-pointer">
                                 <AvatarImage src={`${BASE_URL}${user?.user?.profilePic}`} />
@@ -77,29 +78,28 @@ export default function UserProfile() {
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent className="w-full" align="end">
-                            <DropdownMenuItem>
-                                <User />
-                                <Link href="/settings">
-                                    Profile
-                                </Link>
+                            <DropdownMenuItem className="cursor-pointer" onClick={() => handleNavigate("/settings")}>
+                                <UserRound />
+                                Profile
                             </DropdownMenuItem>
 
-                            <DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer">
                                 <CreditCard />
                                 <Link href="/billing">
                                     Billing
                                 </Link>
                             </DropdownMenuItem>
 
-                            <DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer"    >
                                 <FileQuestionMark />
                                 <Link href="/faqs">
                                     FAQs and resources
                                 </Link>
                             </DropdownMenuItem>
 
-                            <DropdownMenuItem>
-                                <Button size="lg" onClick={handleLogout}>
+                            <DropdownMenuItem className="hover:bg-transparent!">
+                                <Button variant="outline" className="w-full flex gap-2" size="lg" onClick={handleLogout}>
+                                    <LogOut />
                                     Logout
                                 </Button>
                             </DropdownMenuItem>

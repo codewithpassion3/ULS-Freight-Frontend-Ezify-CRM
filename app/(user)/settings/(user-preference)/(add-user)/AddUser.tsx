@@ -20,13 +20,15 @@ import { Checkbox } from "@/components/ui/checkbox"
 import FormField from "@/components/common/FormField"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useEffect, useState } from "react"
-import { createUser, getAllUsers } from "@/api/services/auth.api"
+import { createUser, editUserAdmin, getAllUsers } from "@/api/services/auth.api"
 import { addUserSchema } from "@/lib/validations/admin/create-user.schema"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
 import { Loader } from "@/components/common/Loader"
+import { User } from "../UserTable"
 
 export type AddUserFormValues = {
+    id?: number
     email: string
     firstName: string
     lastName: string
@@ -35,19 +37,21 @@ export type AddUserFormValues = {
     permissionIds?: number[]
 }
 
-export default function AddUser({ open, setOpen }: { open: boolean, setOpen: (open: boolean) => void }) {
+export default function AddUser({ open, setOpen, mode, setMode, selectedUser, setSelectedUser }: { open: boolean, setOpen: (open: boolean) => void, mode: "create" | "edit", setMode: (mode: "create" | "edit") => void, selectedUser: User | null, setSelectedUser: (user: User | null) => void }) {
 
     const { register, handleSubmit, reset, control, watch, formState: { isValid, errors } } = useForm<AddUserFormValues>({
         resolver: zodResolver(addUserSchema),
+        mode: mode === "edit" ? "onChange" : "onSubmit",
         defaultValues: {
-            email: "",
-            firstName: "",
-            lastName: "",
-            phoneNumber: "",
-            roleId: 1,
-            permissionIds: []
+            email: mode === "edit" ? selectedUser?.email : "",
+            firstName: mode === "edit" ? selectedUser?.firstName : "",
+            lastName: mode === "edit" ? selectedUser?.lastName : "",
+            phoneNumber: mode === "edit" ? selectedUser?.phoneNumber : "",
+            roleId: mode === "edit" ? selectedUser?.role : 1,
+            permissionIds: mode === "edit" ? selectedUser?.permissions?.map((p: any) => p.id) : []
         }
     })
+    console.log("selectedUser", selectedUser)
     const { data: res = [], isLoading } = useQuery({
         queryKey: ["users"],
         queryFn: getAllUsers,
@@ -61,6 +65,19 @@ export default function AddUser({ open, setOpen }: { open: boolean, setOpen: (op
     const roleId = watch("roleId")
     const queryClient = useQueryClient()
 
+    useEffect(() => {
+        if (mode === "edit" && selectedUser) {
+            reset({
+                email: selectedUser.email,
+                firstName: selectedUser.firstName,
+                lastName: selectedUser.lastName,
+                phoneNumber: selectedUser.phoneNumber,
+                roleId: selectedUser.role,
+                permissionIds: selectedUser?.permissions?.map((permission: any) => permission.id)
+            })
+        }
+
+    }, [selectedUser])
     const createUserMutation = useMutation({
         mutationFn: createUser,
         onSuccess: () => {
@@ -73,15 +90,21 @@ export default function AddUser({ open, setOpen }: { open: boolean, setOpen: (op
             toast.error(error?.response?.data?.message)
         }
     })
+    const updateUserMutation = useMutation({
+        mutationFn: editUserAdmin,
+        onSuccess: () => {
+            toast.success("User updated successfully")
+            reset()
+            queryClient.invalidateQueries({ queryKey: ["users"] })
+            setOpen(false)
+        },
+        onError: (error: AxiosError<ApiError>) => {
+            toast.error(error?.response?.data?.message)
+        }
+    })
+
 
     const onSubmit: SubmitHandler<AddUserFormValues> = (data) => {
-
-        // const permissionIds: number[] = []
-
-        // if (data.permissions[0]) permissionIds.push(1)
-        // if (data.permissions[1]) permissionIds.push(2)
-        // if (data.permissions[2]) permissionIds.push(3)
-
         const payload = {
             email: data.email,
             firstName: data.firstName,
@@ -90,10 +113,17 @@ export default function AddUser({ open, setOpen }: { open: boolean, setOpen: (op
             roleId: Number(data.roleId),
             permissionIds: data.permissionIds
         }
-        // console.log(payload)
-        createUserMutation.mutate(payload)
+        console.log("payload before", payload)
+        if (mode === "edit") {
+            console.log("payload after", { id: selectedUser?.id, ...payload })
+            // @ts-ignore
+            updateUserMutation.mutate({ id: selectedUser?.id, ...payload })
+
+        } else {
+            createUserMutation.mutate(payload)
+        }
     }
-    console.log(isValid)
+    // console.log(isValid)
     return (
         <>
             {isLoading ? <Loader /> : <div>
@@ -102,26 +132,32 @@ export default function AddUser({ open, setOpen }: { open: boolean, setOpen: (op
                     Total # of Users: {res.users.length}
                 </p>
             </div>}
+            <Button
+                onClick={() => {
+                    setMode("create")
+                    setSelectedUser(null)
+                    setOpen(true)
+                }}
+            >
+                + Add New User
+            </Button>
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                    <Button variant="outline">
-                        + Add New User
-                    </Button>
-                </DialogTrigger>
                 <DialogContent className="sm:max-w-[450px]">
 
                     <DialogHeader>
-                        <DialogTitle>Add New User</DialogTitle>
+                        <DialogTitle>{mode === "create" ? "Add New" : "Edit"} User</DialogTitle>
                     </DialogHeader>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 
-                        <FormField
+                        {mode === "create" ? <FormField
                             name="email"
                             label="Email"
                             placeholder="Enter email"
                             register={register}
-                        />
+
+
+                        /> : ""}
 
                         <FormField
                             name="firstName"
@@ -137,12 +173,12 @@ export default function AddUser({ open, setOpen }: { open: boolean, setOpen: (op
                             register={register}
                         />
 
-                        <FormField
+                        {mode === "create" ? <FormField
                             name="phoneNumber"
                             label="Phone Number"
                             placeholder="Enter phone number"
                             register={register}
-                        />
+                        /> : ""}
 
                         {/* Role */}
                         <div>
@@ -153,7 +189,7 @@ export default function AddUser({ open, setOpen }: { open: boolean, setOpen: (op
                             <Controller
                                 name="roleId"
                                 control={control}
-                                defaultValue={1}
+                                defaultValue={mode === "edit" ? selectedUser?.role : 1}
                                 render={({ field }) => (
                                     <Select
                                         value={field.value?.toString()}
@@ -244,7 +280,7 @@ export default function AddUser({ open, setOpen }: { open: boolean, setOpen: (op
                         </div> : ""}
                         <DialogFooter>
                             <Button disabled={!isValid} type="submit" className="w-full">
-                                Create User
+                                {mode === "create" ? "Create" : "Update"} User
                             </Button>
                         </DialogFooter>
 

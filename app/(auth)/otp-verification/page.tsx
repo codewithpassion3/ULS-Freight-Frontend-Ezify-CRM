@@ -17,15 +17,22 @@ import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/comp
 import { Label } from "@/components/ui/label";
 import { sendEmailVerificationOTP, verifyEmailOTP } from "@/api/services/otp.api";
 import { useUser } from "@/hooks/useUser";
-import { Loader } from "lucide-react";
+import { Loader } from "@/components/common/Loader";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useOTPFlow } from "@/context/otp.context";
+import { useAuth } from "@/context/auth.context";
 
 export default function OTPVerificationPage() {
     const { email, purpose, setToken } = useOTPFlow()
     const router = useRouter()
+    const [isLoading, setIsLoading] = useState(true)
     console.log(email, purpose)
+
+    useEffect(() => {
+        const t = setTimeout(() => setIsLoading(false), 300)
+        return () => clearTimeout(t)
+    }, [])
     // useEffect(() => {
     //     if (!email || !purpose) {
     //         router.push("/forgot-password")
@@ -87,6 +94,9 @@ export default function OTPVerificationPage() {
             description: "Please check your email for the verification code.",
         })
     }
+
+    if (isLoading) return <Loader />
+
     return (
         <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
 
@@ -119,10 +129,10 @@ export default function OTPVerificationPage() {
                             />
                         </Link>
 
-                        <div className="flex items-center gap-2">
+                        {/* <div className="flex items-center gap-2">
                             <LanguageToggle />
                             <ModeToggle />
-                        </div>
+                        </div> */}
 
                     </div>
 

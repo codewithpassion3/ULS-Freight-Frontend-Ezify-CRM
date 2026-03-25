@@ -21,14 +21,21 @@ import { useUser } from "@/hooks/useUser";
 import { useOTPFlow } from "@/context/otp.context";
 import { AxiosError } from "axios";
 import { ApiError } from "next/dist/server/api-utils";
+import { useState, useEffect } from "react";
+import { Loader } from "@/components/common/Loader";
 export default function ForgotPasswordPage() {
     type ApiError = {
         message: string
     };
     const { setFlow } = useOTPFlow()
-
+    const [isLoading, setIsLoading] = useState(true)
     const router = useRouter()
     // const { data: user } = useUser()
+    useEffect(() => {
+        setTimeout(() => {
+            setIsLoading(false)
+        }, 300)
+    }, [])
     const forgotMutation = useMutation({
         mutationFn: (data: ForgotPasswordValues) => forgotPassword(data),
         onSuccess: () => {
@@ -60,6 +67,7 @@ export default function ForgotPasswordPage() {
         setFlow(data.email, "password_reset")
         forgotMutation.mutate(data);
     };
+    if (isLoading) return <Loader />
 
     return (
         <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
@@ -86,10 +94,10 @@ export default function ForgotPasswordPage() {
                             <Image src="/logo.png" alt="ULS Freight" width={200} height={200} />
                         </Link>
 
-                        <div className="flex items-center gap-2">
+                        {/* <div className="flex items-center gap-2">
                             <LanguageToggle />
                             <ModeToggle />
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* Form */}
@@ -114,7 +122,7 @@ export default function ForgotPasswordPage() {
                             />
 
                             <Button type="submit" className="w-full">
-                                Send Reset Link
+                                Send Reset OTP
                             </Button>
 
                         </form>

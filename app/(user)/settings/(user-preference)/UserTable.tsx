@@ -24,7 +24,7 @@ export interface User {
     updatedAt: string;
     lastLogin: string | null;
 }
-export default function UserTable({ open, setOpen }: { open: boolean, setOpen: (open: boolean) => void }) {
+export default function UserTable({ open, setOpen, mode, setMode, selectedUser, setSelectedUser }: { open: boolean, setOpen: (open: boolean) => void, mode: "create" | "edit", setMode: (mode: "create" | "edit") => void, selectedUser: User | null, setSelectedUser: (user: User | null) => void }) {
     const { data: res = [], isLoading } = useQuery({
         queryKey: ["users"],
         queryFn: getAllUsers,
@@ -35,7 +35,7 @@ export default function UserTable({ open, setOpen }: { open: boolean, setOpen: (
     }
 
     if (res.users.length === 0) {
-        return <div className="text-center text-muted-foreground">No users found</div>
+        return <div className="text-center text-muted-foreground p-8">No users found</div>
     }
 
     return (
@@ -87,12 +87,17 @@ export default function UserTable({ open, setOpen }: { open: boolean, setOpen: (
                             }
                         </TableCell>
 
-                        <TableCell className="p-3 flex flex-col">
-                            {user.lastLogin ? <span className="text-sm"> {new Date(user.lastLogin).toLocaleDateString()}</span> : "Never"}
-                            {user.lastLogin ? <span className="text-sm"> {new Date(user.lastLogin).toLocaleTimeString()}</span> : ""}
-                        </TableCell>
+                        {user.lastLogin ?
+                            <TableCell className="p-3 flex flex-col">
+                                <span className="text-sm"> {new Date(user.lastLogin).toLocaleDateString()}</span>
+                                <span className="text-sm"> {new Date(user.lastLogin).toLocaleTimeString()}</span>
+                            </TableCell> :
+                            <TableCell className="p-3">
+                                Never
+                            </TableCell>
+                        }
                         <TableCell className="p-3">
-                            <UserActions id={user.id} user={user} open={open} setOpen={setOpen} />
+                            <UserActions id={user.id} selectedUser={user} open={open} setOpen={setOpen} setMode={setMode} setSelectedUser={setSelectedUser} />
                         </TableCell>
                     </TableRow>
                 ))}

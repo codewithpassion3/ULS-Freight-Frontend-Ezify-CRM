@@ -10,8 +10,7 @@ export default function Providers({
 }: {
   children: React.ReactNode
 }) {
-  const [queryClient] = useState(() => new QueryClient())
-
+  const [queryClient] = useState(() => new QueryClient());
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider
@@ -24,5 +23,6 @@ export default function Providers({
         <Toaster position="top-right" />
       </ThemeProvider>
     </QueryClientProvider>
+
   )
 }

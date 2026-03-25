@@ -25,17 +25,26 @@ import { OtpFormValues } from "@/lib/validations/auth/otp-verification-schema"
 import { useRouter } from "next/navigation"
 import { useOTPFlow } from "@/context/otp.context"
 // import { useUser } from "@/hooks/useUser";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "@/hooks/useUser"
+import { Loader } from "@/components/common/Loader"
 export default function RegisterPage() {
 
-  const { data, isLoading } = useUser();
+  // const { data, isLoading } = useUser();
 
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true)
   const [step, setStep] = React.useState(1)
   const { setFlow } = useOTPFlow()
+
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 300)
+    return () => clearTimeout(t)
+  }, [])
   const form = useForm<RegisterSchemaTypes>({
     resolver: zodResolver(registerSchema),
+    mode: "onChange",
+
     defaultValues: {
       shippingPreference: [],
       user: {
@@ -43,11 +52,6 @@ export default function RegisterPage() {
       }
     }
   })
-  useEffect(() => {
-    if (!isLoading && data) {
-      router.push("/");
-    }
-  }, [data, isLoading, router]);
   const handleNext = () => setStep((s) => Math.min(s + 1, 3))
   const handleBack = () => setStep((s) => Math.max(s - 1, 1))
   const registerMutation = useMutation({
@@ -70,6 +74,8 @@ export default function RegisterPage() {
     registerMutation.mutate(data)
   }
 
+
+  if (isLoading) return <Loader />
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -145,10 +151,10 @@ export default function RegisterPage() {
               <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
                 <Image loading="eager" src="/logo.png" alt="ULS Freight" width={200} height={200} />
               </Link>
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <LanguageToggle />
                 <ModeToggle />
-              </div>
+              </div> */}
             </div>
 
             {/* Intro Text & Progress */}

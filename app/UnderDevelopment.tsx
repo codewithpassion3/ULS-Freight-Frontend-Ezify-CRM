@@ -8,7 +8,7 @@ export default function UnderDevelopment() {
     const router = useRouter()
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
+        <div className="flex min-h-screen items-center justify-center px-4">
             <Card className="w-full max-w-md text-center shadow-xl">
                 <CardHeader>
                     <CardTitle className="text-4xl font-bold tracking-tight">
