@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import FormField from "@/components/common/FormField";
+import FormField from "@/components/common/forms/FormField";
 
 import {
     resetPasswordSchema,
@@ -92,7 +92,7 @@ export default function ResetPasswordPage() {
         resetMutation.mutate(payload);
     };
 
-    if (isLoading) return <Loader />
+    if (isLoading) return <Loader className="min-h-screen" />
 
     return (
         <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">

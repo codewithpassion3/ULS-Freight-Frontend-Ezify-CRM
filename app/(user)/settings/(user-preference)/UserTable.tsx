@@ -12,7 +12,8 @@ import {
 import { useQuery } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import { UserActions } from "./UserAction";
-import { CircleCheck } from "lucide-react";
+import { CircleCheck, User } from "lucide-react";
+import EmptyUI from "@/components/common/empty/Empty";
 export interface User {
     id: number;
     firstName: string;
@@ -23,6 +24,7 @@ export interface User {
     role: number;
     updatedAt: string;
     lastLogin: string | null;
+
 }
 export default function UserTable({ open, setOpen, mode, setMode, selectedUser, setSelectedUser }: { open: boolean, setOpen: (open: boolean) => void, mode: "create" | "edit", setMode: (mode: "create" | "edit") => void, selectedUser: User | null, setSelectedUser: (user: User | null) => void }) {
     const { data: res = [], isLoading } = useQuery({
@@ -35,7 +37,11 @@ export default function UserTable({ open, setOpen, mode, setMode, selectedUser, 
     }
 
     if (res.users.length === 0) {
-        return <div className="text-center text-muted-foreground p-8">No users found</div>
+        return <EmptyUI
+            title="No Users Found"
+            description="You haven't added any users yet."
+            icon={<User />}
+        />
     }
 
     return (
@@ -87,15 +93,10 @@ export default function UserTable({ open, setOpen, mode, setMode, selectedUser, 
                             }
                         </TableCell>
 
-                        {user.lastLogin ?
-                            <TableCell className="p-3 flex flex-col">
-                                <span className="text-sm"> {new Date(user.lastLogin).toLocaleDateString()}</span>
-                                <span className="text-sm"> {new Date(user.lastLogin).toLocaleTimeString()}</span>
-                            </TableCell> :
-                            <TableCell className="p-3">
-                                Never
-                            </TableCell>
-                        }
+                        <TableCell className="p-3 flex flex-col">
+                            {user.lastLogin ? <span className="text-sm"> {new Date(user.lastLogin).toLocaleDateString()}</span> : "Never"}
+                            {user.lastLogin ? <span className="text-sm"> {new Date(user.lastLogin).toLocaleTimeString()}</span> : ""}
+                        </TableCell>
                         <TableCell className="p-3">
                             <UserActions id={user.id} selectedUser={user} open={open} setOpen={setOpen} setMode={setMode} setSelectedUser={setSelectedUser} />
                         </TableCell>

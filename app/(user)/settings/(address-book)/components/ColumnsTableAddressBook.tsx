@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import { Button } from "@/components/ui/button"
-import { MoreVertical } from "lucide-react"
+import { MoreVertical, Trash2, UserRoundPen } from "lucide-react"
 import { EditContactModal } from "../EditContactModal"
 import { useState } from "react"
 import { useDeleteContact } from "../hooks/useDeleteContact"
@@ -130,14 +130,17 @@ export const columns: ColumnDef<any>[] = [
                 onClick={() => {
                   setOpen(true)
                 }}
+                className="cursor-pointer"
               >
+                <UserRoundPen />
                 Edit
               </DropdownMenuItem>
 
               <DropdownMenuItem
-                className="text-red-500"
+                className="text-red-500 cursor-pointer"
                 onClick={() => handleDeleteContact(contact.id)}
               >
+                <Trash2 />
                 Delete
               </DropdownMenuItem>
 

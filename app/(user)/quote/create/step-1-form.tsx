@@ -7,19 +7,30 @@ import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Info, Truck, Clock } from "lucide-react"
-import FormField from "@/components/common/FormField"
+import { Info, Truck, Clock, ArrowRight, ArrowLeftRight, X } from "lucide-react"
+import FormField from "@/components/common/forms/FormField"
 import { Input } from "@/components/ui/input"
 import { SelectAddressBookModal } from "./SelectAddressBookModal"
 import { ContactType } from "../../settings/(address-book)/types/addContact.types"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
+import { FormSelect } from "@/components/common/forms/FormSelect"
+import { getAllPalletShippingLocationTypes, markContactAsRecent } from "@/api/services/quotes.api"
+import { useQuery } from "@tanstack/react-query"
+import { Loader } from "@/components/common/Loader"
+import { FormFieldWrapper } from "@/components/common/forms/FormFieldWrapper"
+import { useMarkContactAsRecent } from "./hooks"
+import { ShippingTypeSelector } from "./Step1Form/ShippingTypeSelector"
+import { EquimentTypeSelector } from "./Step1Form/EquimentSelection/EquimentTypeSelector"
 
+
+export type ShipmentType = "LTL-Partial Truckload" | "Full Truck Load" | "Time Critical"
 export function Step1Form({ onNext }: { onNext: () => void }) {
   const form = useFormContext<QuoteSchemaTypes>()
+  const markContactAsRecent = useMarkContactAsRecent()
   const {
     register,
     control,
-    formState: { errors },
+    formState: { errors, defaultValues },
     trigger,
     watch,
     setValue,
@@ -32,8 +43,7 @@ export function Step1Form({ onNext }: { onNext: () => void }) {
   }
 
   const shipmentType = watch("shipmentType")
-
-  const setShipmentType = (type: "LTL-Partial Truckload" | "Full Truck Load" | "Time Critical") => {
+  const setShipmentType = (type: ShipmentType) => {
     setValue("shipmentType", type, { shouldValidate: true })
     // Re-trigger defaults if needed when switching tab
   }
@@ -44,11 +54,14 @@ export function Step1Form({ onNext }: { onNext: () => void }) {
     const typeErrors = errors[type] as any
 
     const handleAddressSelect = (contact: ContactType) => {
+      markContactAsRecent.mutate(contact.id || "")
+      console.log(contact)
       setValue(`${type}.address1`, contact.address?.address1 || "", { shouldValidate: true });
       setValue(`${type}.postalCode`, contact.address?.postalCode || "", { shouldValidate: true });
       setValue(`${type}.city`, contact.address?.city || "", { shouldValidate: true });
       setValue(`${type}.province`, contact.address?.state || "", { shouldValidate: true });
       setValue(`${type}.country`, contact.address?.country || "", { shouldValidate: true });
+      setValue(`${type}.locationType`, contact?.locationTypeId.toString() || "", { shouldValidate: true });
     }
 
     const clearAddress = () => {
@@ -61,19 +74,37 @@ export function Step1Form({ onNext }: { onNext: () => void }) {
       setValue(`${type}.additionalNotes`, "");
     }
 
+    const { data: palletShippingLocationTypesRes, isLoading: isLoadingPallet, isPending: isPendingPallet } = useQuery({
+      queryKey: ["palletShippingLocationTypes"],
+      queryFn: getAllPalletShippingLocationTypes
+    })
+
     return (
       <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white">
         <div className="flex items-center justify-between pb-2 border-b">
           <h3 className="font-semibold flex items-center gap-2">
-            <span className="text-xl">➔</span> {title}
+            <span className="text-xl">
+              <ArrowRight />
+            </span>
+            {title}
           </h3>
-          <div className="flex gap-4 text-sm text-primary">
-            <button type="button" onClick={clearAddress} className="flex items-center gap-1 hover:underline text-muted-foreground mr-2">
-              <span>✕</span> Clear
-            </button>
-            <button type="button" className="flex items-center gap-1 hover:underline">
-              <span>🔄</span> Swap
-            </button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={clearAddress}
+            >
+              <span>
+                <X />
+              </span> Clear
+            </Button>
+            <Button
+              variant="outline"
+              onClick={clearAddress}
+            >
+              <span>
+                <ArrowLeftRight />
+              </span> Swap
+            </Button>
           </div>
         </div>
 
@@ -136,6 +167,7 @@ export function Step1Form({ onNext }: { onNext: () => void }) {
               register={register}
               error={typeErrors?.province}
             />
+
             <FormField
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               name={`${type}.country` as any}
@@ -146,7 +178,7 @@ export function Step1Form({ onNext }: { onNext: () => void }) {
             />
           </div>
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label className={typeErrors?.locationType ? "text-red-500" : ""}>Location Type*</Label>
             <Controller
               control={control}
@@ -174,7 +206,26 @@ export function Step1Form({ onNext }: { onNext: () => void }) {
               )}
             />
             {typeErrors?.locationType && <p className="text-xs text-red-500">{typeErrors.locationType.message}</p>}
-          </div>
+          </div> */}
+
+          {!isLoadingPallet && !isPendingPallet ?
+            <>
+              <FormSelect
+                label="Location Type*"
+                name={`${type}.locationType` as "shippingFrom.locationType" | "shippingTo.locationType"}
+                control={control}
+                options={palletShippingLocationTypesRes.palletShippingLocationTypes}
+                optionKey="id"
+                optionValue="name"
+                placeholder="Select"
+                className={`${typeErrors?.locationType ? "border-red-500" : ""} w-full`}
+                hasError={!!typeErrors?.locationType}
+                defaultValue={defaultValues?.shippingFrom?.locationType}
+              />
+              <p>{defaultValues?.shippingFrom?.locationType}</p>
+            </>
+            : <Loader />
+          }
 
           <FormField
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -200,49 +251,14 @@ export function Step1Form({ onNext }: { onNext: () => void }) {
 
   return (
     <div className="space-y-6">
-      <div className="border border-border rounded-md p-4 bg-white">
-        <div className="flex items-center justify-between pb-4">
-          <h3 className="font-semibold flex items-center gap-2 text-lg">
-            <span className="bg-slate-800 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">➔</span> Select Shipment Type
-          </h3>
-          <button type="button" className="text-sm text-[#0070c0] flex items-center gap-1 hover:underline font-medium"><Info size={14} /> Shipment Types</button>
-        </div>
-
-        <div className="flex flex-wrap gap-4">
-          <Button
-            type="button"
-            variant={shipmentType === "LTL-Partial Truckload" ? "default" : "outline"}
-            className={`flex items-center gap-2 ${shipmentType === "LTL-Partial Truckload" ? "bg-blue-50 text-[#0070c0] border-[#0070c0] border-2 hover:bg-blue-100" : "border-slate-300"}`}
-            onClick={() => setShipmentType("LTL-Partial Truckload")}
-          >
-            <Truck size={16} /> LTL-Partial Truckload
-          </Button>
-          <Button
-            type="button"
-            variant={shipmentType === "Full Truck Load" ? "default" : "outline"}
-            className={`flex items-center gap-2 ${shipmentType === "Full Truck Load" ? "bg-blue-50 text-[#0070c0] border-[#0070c0] border-2 hover:bg-blue-100" : "border-slate-300"}`}
-            onClick={() => setShipmentType("Full Truck Load")}
-          >
-            <Truck size={16} /> Full Truck Load
-          </Button>
-          <Button
-            type="button"
-            variant={shipmentType === "Time Critical" ? "default" : "outline"}
-            className={`flex items-center gap-2 ${shipmentType === "Time Critical" ? "bg-blue-50 text-[#0070c0] border-[#0070c0] border-2 hover:bg-blue-100" : "border-slate-300"}`}
-            onClick={() => setShipmentType("Time Critical")}
-          >
-            <Clock size={16} /> Time Critical
-          </Button>
-        </div>
-        {errors.shipmentType && <p className="text-sm text-red-500 mt-2">{errors.shipmentType.message}</p>}
-      </div>
+      <ShippingTypeSelector shipmentType={shipmentType} setShipmentType={setShipmentType} errors={errors} />
 
       <div className="flex flex-col md:flex-row gap-6">
         <ShippingAddressSection type="shippingFrom" title="Shipping From" />
         <ShippingAddressSection type="shippingTo" title="Shipping To" />
       </div>
 
-      <div className="border border-border rounded-md p-4 bg-white">
+      {/* <div className="border border-border rounded-md p-4 bg-white">
         <h3 className="font-semibold flex items-center gap-2 pb-4 text-lg border-b mb-4">
           <Truck size={20} /> Equipment Type & Additional Services
         </h3>
@@ -372,7 +388,15 @@ export function Step1Form({ onNext }: { onNext: () => void }) {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
+
+      <EquimentTypeSelector
+        control={control}
+        errors={errors}
+        watch={watch}
+        shipmentType={shipmentType}
+      />
+
 
       <div className="border border-border rounded-md p-6 bg-white space-y-6">
         <div className="flex items-center justify-between pb-3 border-b">
@@ -408,7 +432,7 @@ export function Step1Form({ onNext }: { onNext: () => void }) {
             fields={[
               {
                 name: "contactInformation.contactName",
-                label: "Contact Name*",
+                label: "Contact Name 2*",
                 type: "text",
                 placeholder: "Contact Name",
                 wrapperClassName: "md:col-span-4",

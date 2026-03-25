@@ -22,7 +22,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
-import FormField from "@/components/common/FormField"
+import FormField from "@/components/common/forms/FormField"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { AxiosError } from "axios";
@@ -77,7 +77,7 @@ export default function LoginPage() {
     loginMutation.mutate(data)
   }
   return (
-    isLoading ? <Loader /> :
+    isLoading ? <Loader className="min-h-screen" /> :
       <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
         {/* Left Column - Image Background */}
         <div className="hidden lg:relative lg:flex lg:flex-col justify-center items-center">
@@ -104,11 +104,11 @@ export default function LoginPage() {
             <div className="flex items-center justify-between mb-16">
               <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
                 <Image loading="eager" src="/logo.png" alt="ULS Freight Logo"
-                  
+
                   height={200}
                   width={200}
                   className="w-auto h-auto"
-                  // sizes="auto"
+                // sizes="auto"
                 />
               </Link>
               {/* <div className="flex items-center gap-2">

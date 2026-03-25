@@ -4,7 +4,7 @@ import {
     changePasswordSchema,
     ChangePasswordFormValues
 } from "@/lib/validations/user/change-password.schema"
-import FormField from "@/components/common/FormField"
+import FormField from "@/components/common/forms/FormField"
 import { Button } from "@/components/ui/button"
 import { useMutation } from "@tanstack/react-query"
 import { changePassword } from "@/api/services/auth.api"

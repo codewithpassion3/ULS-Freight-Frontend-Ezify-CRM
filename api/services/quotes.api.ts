@@ -27,6 +27,16 @@ export const deleteContact = async (id: string) => {
     return response.data;
 };
 
+export const markContactAsRecent = async (id: string) => {
+    const response = await apiClient.post(`/address-book/${id}/recent`);
+    return response.data;
+};
+
+export const getRecentContacts = async ({ search }: { search: string }) => {
+    const response = await apiClient.get("/address-book/recent", { params: { search } });
+    return response.data;
+};
+
 export const getAllPalletShippingLocationTypes = async () => {
     const response = await apiClient.get("/pallet-shipping-location-types");
     return response.data;

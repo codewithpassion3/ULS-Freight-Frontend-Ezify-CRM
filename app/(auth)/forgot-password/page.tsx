@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import FormField from "@/components/common/FormField";
+import FormField from "@/components/common/forms/FormField";
 
 import { forgotPasswordSchema, ForgotPasswordValues } from "@/lib/validations/auth/forgot-password-schema";
 import { forgotPassword } from "@/api/services/auth.api";
@@ -67,7 +67,7 @@ export default function ForgotPasswordPage() {
         setFlow(data.email, "password_reset")
         forgotMutation.mutate(data);
     };
-    if (isLoading) return <Loader />
+    if (isLoading) return <Loader className="min-h-screen" />
 
     return (
         <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
@@ -139,7 +139,7 @@ export default function ForgotPasswordPage() {
                     </div>
 
                     {/* Footer */}
-                    <div className="mt-4 text-sm text-muted-foreground">
+                    <div className="mt-4 text-sm text-center text-muted-foreground">
                         Don't have an account?{" "}
                         <Link href="/register" className="text-primary hover:underline font-medium">
                             Create an account

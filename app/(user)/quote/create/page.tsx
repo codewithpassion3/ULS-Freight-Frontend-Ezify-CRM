@@ -21,7 +21,7 @@ export default function CreateSpotQuotePage() {
         postalCode: "",
         city: "",
         province: "",
-        country: "Canada",
+        country: "",
         locationType: "",
         additionalNotes: "",
       },
@@ -36,7 +36,7 @@ export default function CreateSpotQuotePage() {
         additionalNotes: "",
       },
       equipment: {
-        type: "Dry Van",
+
         refrigeratedType: undefined,
         inBond: false,
         protectFromFreeze: false,
@@ -112,8 +112,8 @@ export default function CreateSpotQuotePage() {
                 <Step1Form onNext={() => setCurrentStep(2)} />
               )}
               {currentStep === 2 && (
-                <Step2Form 
-                  onPrev={() => setCurrentStep(1)} 
+                <Step2Form
+                  onPrev={() => setCurrentStep(1)}
                   onSubmit={handleFullSubmit}
                 />
               )}
@@ -126,13 +126,13 @@ export default function CreateSpotQuotePage() {
           <div className="border border-border p-5 rounded-md sticky top-6 bg-white dark:bg-card space-y-4">
             <div className="flex justify-between items-center border-b pb-2">
               <h2 className="font-semibold text-lg">{currentStep === 1 ? 'Shipment Overview' : 'Quote Overview'}</h2>
-              {currentStep === 1 && <span className="text-[#0070c0] text-sm flex items-center gap-1 cursor-pointer hover:underline"><Eye size={14}/> Hide</span>}
+              {currentStep === 1 && <span className="text-[#0070c0] text-sm flex items-center gap-1 cursor-pointer hover:underline"><Eye size={14} /> Hide</span>}
             </div>
-            
+
             <div className="relative pt-2 pl-2">
               {/* Stepper Lines connecting steps */}
               <div className="absolute left-4 top-5 bottom-8 w-px bg-slate-200 dark:bg-slate-800 z-0 hidden lg:block"></div>
-              
+
               <div className="space-y-6 relative z-10">
                 <div className={`flex items-center gap-3 ${currentStep >= 1 ? "text-[#0070c0] font-medium" : "text-muted-foreground"}`}>
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${currentStep === 1 ? 'bg-[#0070c0] text-white' : 'border-2 border-[#0070c0] text-[#0070c0] bg-white'}`}>
@@ -146,8 +146,8 @@ export default function CreateSpotQuotePage() {
 
                 <div className={`flex items-center gap-3 ${currentStep >= 2 ? "text-[#0070c0] font-medium" : "text-muted-foreground"}`}>
                   <div className={`w-5 h-5 flex shrink-0 items-center justify-center ${currentStep === 2 ? 'text-[#0070c0]' : 'text-muted-foreground'}`}>
-                    {currentStep === 2 ? 
-                      <div className="bg-[#0070c0] text-white rounded-md p-1"><span className="text-xs">➔</span></div> : 
+                    {currentStep === 2 ?
+                      <div className="bg-[#0070c0] text-white rounded-md p-1"><span className="text-xs">➔</span></div> :
                       <div className="border border-muted-foreground/30 text-muted-foreground/30 rounded-md p-1 bg-white dark:bg-transparent"><span className="text-xs">Step 2</span></div>
                     }
                   </div>
@@ -170,20 +170,20 @@ export default function CreateSpotQuotePage() {
                 </div>
               </div>
             </div>
-            
-             {currentStep === 2 && (
+
+            {currentStep === 2 && (
               <div className="mt-8 bg-amber-100 p-4 rounded-md">
                 <div className="bg-white rounded max-w-min whitespace-nowrap px-2 py-0.5 text-xs font-bold border border-amber-300 mb-2">DDP Available</div>
                 <div className="flex items-center gap-2 justify-center py-4 px-2">
                   <span className="text-muted-foreground cursor-pointer">‹</span>
                   <div className="text-center text-sm font-medium">
-                     <div className="flex justify-center mb-2 items-center font-bold text-slate-800 gap-1"><span className="text-blue-600 bg-slate-800 rounded-sm p-0.5"><Truck size={12}/></span> FREIGHTCOM</div>
-                     Simplify cross-border shipping with all duties and taxes handled upfront. No surprises, no hidden costs.
+                    <div className="flex justify-center mb-2 items-center font-bold text-slate-800 gap-1"><span className="text-blue-600 bg-slate-800 rounded-sm p-0.5"><Truck size={12} /></span> FREIGHTCOM</div>
+                    Simplify cross-border shipping with all duties and taxes handled upfront. No surprises, no hidden costs.
                   </div>
                   <span className="text-muted-foreground cursor-pointer">›</span>
                 </div>
               </div>
-             )}
+            )}
           </div>
         </div>
       </div>
@@ -193,6 +193,6 @@ export default function CreateSpotQuotePage() {
 
 function Save({ size }: { size: number }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></svg>
   )
 }

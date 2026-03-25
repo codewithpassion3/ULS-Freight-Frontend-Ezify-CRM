@@ -17,7 +17,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 
-import FormField from "@/components/common/FormField"
+import FormField from "@/components/common/forms/FormField"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useEffect, useState } from "react"
 import { createUser, editUserAdmin, getAllUsers } from "@/api/services/auth.api"
@@ -26,6 +26,7 @@ import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
 import { Loader } from "@/components/common/Loader"
 import { User } from "../UserTable"
+import { FormFieldWrapper } from "@/components/common/forms/FormFieldWrapper"
 
 export type AddUserFormValues = {
     id?: number
@@ -159,7 +160,13 @@ export default function AddUser({ open, setOpen, mode, setMode, selectedUser, se
 
                         /> : ""}
 
-                        <FormField
+                        {/* <FormField
+                            name="firstName"
+                            label="First Name"
+                            placeholder="Enter first name"
+                            register={register}
+                        /> */}
+                        <FormFieldWrapper
                             name="firstName"
                             label="First Name"
                             placeholder="Enter first name"

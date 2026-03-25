@@ -95,7 +95,7 @@ export default function OTPVerificationPage() {
         })
     }
 
-    if (isLoading) return <Loader />
+    if (isLoading) return <Loader className="min-h-screen" />
 
     return (
         <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">

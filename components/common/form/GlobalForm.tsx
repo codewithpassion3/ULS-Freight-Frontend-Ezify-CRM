@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { PhoneInput } from "@/components/common/PhoneInput"
 import { useEffect } from "react"
 import { Loader } from "@/components/common/Loader"
+import { FormSelect } from "../forms/FormSelect"
 
 export type FieldType =
   | "text"
@@ -152,24 +153,14 @@ export function GlobalForm<T extends FieldValues>({
           return (
             <div key={field.name} className={`space-y-1 ${field.wrapperClassName || ""}`}>
               {renderLabel()}
-              <Controller
+              <FormSelect
                 name={field.name}
                 control={control}
                 defaultValue={field.defaultValue}
-                render={({ field: controllerField }) => (
-                  <Select value={controllerField.value?.toString() || ""} onValueChange={controllerField.onChange}>
-                    <SelectTrigger className={`${hasError ? "border-red-500 focus:ring-red-500" : ""} ${field.className || ""}`}>
-                      <SelectValue placeholder={field.placeholder || "Select"} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {field.options?.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value.toString()}>
-                          {opt.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                options={field.options}
+                placeholder={field.placeholder}
+                className={field.className}
+                hasError={hasError}
               />
               {hasError && <p className="text-xs text-red-500 font-medium">{errorMessage}</p>}
             </div>
@@ -203,7 +194,7 @@ export function GlobalForm<T extends FieldValues>({
         case "switch":
           return (
             <div key={field.name} className={`flex items-center gap-3 pt-2 ${field.wrapperClassName || ""}`}>
-               {field.labelAction && <div className="mr-2">{field.labelAction}</div>}
+              {field.labelAction && <div className="mr-2">{field.labelAction}</div>}
               <Controller
                 name={field.name}
                 control={control}
@@ -246,7 +237,7 @@ export function GlobalForm<T extends FieldValues>({
         case "phone":
           return (
             <div key={field.name} className={`space-y-1 ${field.wrapperClassName || ""}`}>
-               {renderLabel()}
+              {renderLabel()}
               <Controller
                 name={field.name}
                 control={control}

@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import FormField from "@/components/common/FormField"
+import FormField from "@/components/common/forms/FormField"
 import { Controller, useForm, useFormContext } from "react-hook-form"
 import { registerSchema, RegisterSchemaTypes } from "@/lib/validations/auth/register-schema"
 import { zodResolver } from "@hookform/resolvers/zod"

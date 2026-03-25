@@ -1,4 +1,5 @@
 export type ContactType = {
+    id?: string,
     companyName: string
     contactId?: string | null
     contactName: string

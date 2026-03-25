@@ -60,7 +60,7 @@ export function AddContactModal() {
                         setIsValid={setIsValid}
                     />
                 </ScrollArea>
-                <DialogFooter className="px-6 py-4 border-t border-border bg-muted/20 sm:justify-start gap-2">
+                {!mutation.isPending && <DialogFooter className="px-6 py-4 border-t border-border bg-muted/20 sm:justify-start gap-2">
                     <DialogClose asChild>
                         <Button type="button" variant="outline" className="w-[120px]">
                             Cancel
@@ -69,7 +69,7 @@ export function AddContactModal() {
                     <Button disabled={!isValid || mutation.isPending} type="submit" form="contact-form" className="bg-[#0070c0] hover:bg-[#005999] text-white w-[140px]">
                         Save Contact
                     </Button>
-                </DialogFooter>
+                </DialogFooter>}
             </DialogContent>
         </Dialog>
     )
