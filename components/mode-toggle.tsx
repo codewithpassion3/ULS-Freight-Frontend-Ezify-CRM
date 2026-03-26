@@ -16,15 +16,13 @@ import { updateUserSettings } from "@/api/services/auth.api"
 import { useMutation } from "@tanstack/react-query"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
+import { useAuth } from "@/context/auth.context"
 
 export function ModeToggle() {
   const { setTheme } = useTheme()
-  const { data } = useUser()
-  useEffect(() => {
-    if (data) {
-      setTheme(data.user?.settings?.dark_mode || "light")
-    }
-  }, [data])
+  // const { data } = useUser()
+  const { user } = useAuth();
+
   const updateUserSettingsMutation = useMutation({
     mutationFn: updateUserSettings,
     onSuccess: () => {
@@ -36,7 +34,9 @@ export function ModeToggle() {
   })
   const handleThemeChange = (theme: string) => {
     setTheme(theme)
-    updateUserSettingsMutation.mutate({ dark_mode: theme })
+    if (user) {
+      updateUserSettingsMutation.mutate({ dark_mode: theme })
+    }
   }
   return (
     <DropdownMenu>

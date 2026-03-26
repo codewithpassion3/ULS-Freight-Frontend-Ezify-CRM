@@ -124,7 +124,7 @@ export function Step3Form({ onBack }: Step3FormProps) {
         </div>
       </div>
 
-      <div className="flex flex-col-reverse gap-2 sm:flex-row justify-between items-center pt-6">
+      <div className="flex flex-col-reverse gap-2 sm:flex-row justify-between items-center pt-18">
         <Button
           type="button"
           variant="outline"

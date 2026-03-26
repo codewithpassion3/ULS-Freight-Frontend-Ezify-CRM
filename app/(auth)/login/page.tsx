@@ -104,17 +104,17 @@ export default function LoginPage() {
             <div className="flex items-center justify-between mb-16">
               <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
                 <Image loading="eager" src="/logo.png" alt="ULS Freight Logo"
-                  
+
                   height={200}
                   width={200}
                   className="w-auto h-auto"
-                  // sizes="auto"
+                // sizes="auto"
                 />
               </Link>
-              {/* <div className="flex items-center gap-2">
-              <LanguageToggle />
-              <ModeToggle />
-            </div> */}
+              <div className="flex items-center gap-2">
+                <LanguageToggle />
+                <ModeToggle />
+              </div>
             </div>
 
             {/* Form Area */}
@@ -141,12 +141,12 @@ export default function LoginPage() {
                   error={errors.password}
                 />
                 <div className="my-6 flex items-center justify-end">
-                  {/* <div className="flex items-center space-x-2">
-                  <Checkbox id="remember" />
-                  <Label htmlFor="remember" className="text-sm font-medium leading-none cursor-pointer">
-                    Remember me
-                  </Label>
-                </div> */}
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="remember" />
+                    <Label htmlFor="remember" className="text-sm font-medium leading-none cursor-pointer">
+                      Remember me
+                    </Label>
+                  </div>
                   <Link href="/forgot-password" className="text-sm text-primary hover:underline">
                     Forgot Password?
                   </Link>
