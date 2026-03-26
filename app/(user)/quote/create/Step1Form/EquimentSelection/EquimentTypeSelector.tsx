@@ -18,7 +18,7 @@ interface EquimentTypeSelectorProps {
 
 export const EquimentTypeSelector = ({ control, errors, watch, shipmentType }: EquimentTypeSelectorProps) => {
     return (
-        <div className="border border-border rounded-md p-4 bg-white">
+        <div className="border border-border rounded-md p-4 bg-white dark:bg-card">
             <h3 className="font-semibold flex items-center gap-2 pb-4 text-lg border-b mb-4">
                 <Truck size={20} /> Equipment Type & Additional Services
             </h3>

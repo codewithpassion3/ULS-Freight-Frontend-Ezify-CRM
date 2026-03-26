@@ -34,8 +34,7 @@ export function FormSelect({
                         value={field.value?.toString()}
                         onValueChange={(value) => field.onChange(value)}
                     >
-
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                             <SelectValue placeholder={placeholder} />
                         </SelectTrigger>
 

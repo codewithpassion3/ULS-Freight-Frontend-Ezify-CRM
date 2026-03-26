@@ -37,12 +37,9 @@ export function LanguageToggle() {
       updateUserSettingsMutation.mutate({ language: lang })
     }
     setLanguage(lang)
-<<<<<<< HEAD
     if (user) {
       updateUserSettingsMutation.mutate({ language: lang })
     }
-=======
->>>>>>> ui-improvement
   }
 
   return (

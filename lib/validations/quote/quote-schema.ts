@@ -5,7 +5,7 @@ export const quoteSchema = z.object({
     message: "Please select a shipment type",
   }),
   shippingFrom: z.object({
-    multiplePickupLocations: z.boolean().default(false),
+    multipleLocations: z.boolean().default(false).optional(),
     address1: z.string().optional(),
     postalCode: z.string().min(1, "Postal/ZIP Code is required"),
     city: z.string().min(1, "City is required"),
@@ -15,7 +15,7 @@ export const quoteSchema = z.object({
     additionalNotes: z.string().optional(),
   }),
   shippingTo: z.object({
-    multipleDeliveryLocations: z.boolean().default(false),
+    multipleLocations: z.boolean().default(false).optional(),
     address1: z.string().optional(),
     postalCode: z.string().min(1, "Postal/ZIP Code is required"),
     city: z.string().min(1, "City is required"),

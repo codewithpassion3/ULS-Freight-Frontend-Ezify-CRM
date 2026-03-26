@@ -1,5 +1,5 @@
 "use client"
-import { useForm, Controller, FieldValues, Path, DefaultValues, UseFormReturn } from "react-hook-form"
+import { useForm, Controller, FieldValues, Path, DefaultValues, UseFormReturn, useFormContext, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ZodType } from "zod"
 import { Input } from "@/components/ui/input"
@@ -13,6 +13,7 @@ import { PhoneInput } from "@/components/common/PhoneInput"
 import { useEffect } from "react"
 import { Loader } from "@/components/common/Loader"
 import { FormSelect } from "../forms/FormSelect"
+import { DatePicker } from "../date-picker/DatePicker"
 
 export type FieldType =
   | "text"
@@ -27,6 +28,10 @@ export type FieldType =
   | "switch"
   | "phone"
 
+export interface SelectOptions {
+  optionKey: string
+  optionValue: string
+}
 export interface FormField<T extends FieldValues> {
   name: Path<T>
   label?: string
@@ -42,8 +47,7 @@ export interface FormField<T extends FieldValues> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra?: any // extra props like min/max for numbers
   show?: boolean // Condition to show/hide the field
-  optionKey?: string
-  optionValue?: string
+  selectOptions?: SelectOptions
 }
 
 export interface GlobalFormProps<T extends FieldValues> {
@@ -51,12 +55,13 @@ export interface GlobalFormProps<T extends FieldValues> {
   defaultValues?: DefaultValues<T>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   schema?: ZodType<any, any, any>
-  onSubmit?: (data: T) => void
+  // onSubmit?: (data: T) => void
+  onSubmit?: SubmitHandler<FieldValues>;
   isLoading?: boolean
   setIsValid?: (valid: boolean) => void
   className?: string
-  wrapperClassName?: string
-  form?: UseFormReturn<T>
+  formWrapperClassName?: string
+  // form?: UseFormReturn<T>
 }
 
 export function GlobalForm<T extends FieldValues>({
@@ -67,8 +72,8 @@ export function GlobalForm<T extends FieldValues>({
   isLoading,
   setIsValid,
   className = "space-y-4",
-  wrapperClassName,
-  form,
+  formWrapperClassName,
+  // form,
 }: GlobalFormProps<T>) {
 
   const internalForm = useForm<T>({
@@ -78,8 +83,9 @@ export function GlobalForm<T extends FieldValues>({
   })
 
   // Use the provided form if available, otherwise use internal
-  const methods = form || internalForm
-  const { register, handleSubmit, control, reset, formState: { errors, isValid } } = methods
+  // const methods = form || internalForm
+  const form = useFormContext()
+  const { register, handleSubmit, control, reset, formState: { errors, isValid } } = form
 
   useEffect(() => {
     if (defaultValues && !form) {
@@ -112,7 +118,7 @@ export function GlobalForm<T extends FieldValues>({
       const renderLabel = () => {
         if (!field.label && !field.labelAction) return null
         return (
-          <div className="flex justify-between items-center mb-1">
+          <div className="flex justify-between items-center mb-2">
             {field.label && <Label className={hasError ? "text-red-500" : ""}>{field.label}</Label>}
             {field.labelAction && <div>{field.labelAction}</div>}
           </div>
@@ -124,7 +130,6 @@ export function GlobalForm<T extends FieldValues>({
         case "number":
         case "email":
         case "password":
-        case "date":
           return (
             <div key={field.name} className={`space-y-1 ${field.wrapperClassName || ""}`}>
               {renderLabel()}
@@ -138,6 +143,22 @@ export function GlobalForm<T extends FieldValues>({
               {hasError && <p className="text-xs text-red-500 font-medium">{errorMessage}</p>}
             </div>
           )
+        case "date":
+          <div key={field.name} className={`space-y-1 ${field.wrapperClassName || ""}`}>
+            {renderLabel()}
+            <Input
+              type={field.type}
+              placeholder={field.placeholder}
+              className={`${hasError ? "border-red-500 focus-visible:ring-red-500" : ""} ${field.className || ""}`}
+              {...register(field.name)}
+              {...field.extra}
+            />
+            {/* <DatePicker
+              name={field.name}
+            /> */}
+
+            {hasError && <p className="text-xs text-red-500 font-medium">{errorMessage}</p>}
+          </div>
 
         case "textarea":
           return (
@@ -165,8 +186,8 @@ export function GlobalForm<T extends FieldValues>({
                 placeholder={field.placeholder}
                 className={field.className}
                 hasError={hasError}
-                optionKey={field.optionKey}
-                optionValue={field.optionValue}
+                optionKey={field.selectOptions?.optionKey}
+                optionValue={field.selectOptions?.optionValue}
               />
               {hasError && <p className="text-xs text-red-500 font-medium">{errorMessage}</p>}
             </div>
@@ -265,19 +286,19 @@ export function GlobalForm<T extends FieldValues>({
   }
 
   // Render without wrapping in <form> if no onSubmit handler provided, allowing integration into larger forms
-  const FieldWrapper = ({ children, wrapperClassName }: { children: React.ReactNode, wrapperClassName?: string }) => {
-    return <div className={wrapperClassName}>{children}</div>
+  const FieldWrapper = ({ children, formWrapperClassName }: { children: React.ReactNode, formWrapperClassName?: string }) => {
+    return <div className={formWrapperClassName}>{children}</div>
   }
   if (!onSubmit) {
     return (
-      <FieldWrapper wrapperClassName={wrapperClassName}>
+      <FieldWrapper formWrapperClassName={formWrapperClassName}>
         {renderFields()}
       </FieldWrapper>
     )
   }
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={className}>
-      <FieldWrapper wrapperClassName={wrapperClassName}>
+      <FieldWrapper formWrapperClassName={formWrapperClassName}>
         {renderFields()}
       </FieldWrapper>
       <button id="global-form-submit" type="submit" className="hidden" />

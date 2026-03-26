@@ -13,32 +13,32 @@ interface Option {
 interface Props {
     name: string
     label?: string
-    options: Option[]
+    options: Option[],
+    className?: string
     selectedClassName?: string
 }
 
-export function FormRadio({ name, label, options, selectedClassName }: Props) {
-    const { control } = useFormContext()
-    console.log(selectedClassName, "selectedClassName")
+export function FormRadio({ name, label, options, selectedClassName, className }: Props) {
+    const { control, formState: { defaultValues } } = useFormContext()
     return (
         <FormFieldWrapper name={name} label={label}>
             <Controller
                 name={name}
                 control={control}
+                defaultValue={defaultValues?.[name]}
                 render={({ field }) => (
                     <RadioGroup
-                        value={field.value?.toString()}
                         onValueChange={(value) => field.onChange(value)}
                         className="flex gap-6"
                     >
                         {options.map((opt) => {
                             const isSelected = field.value?.toString() === opt.value.toString()
                             return (
-                                <div key={opt.value} className="flex items-center gap-2">
+                                <div key={opt.value} className="flex items-center gap-2 ">
                                     <RadioGroupItem
                                         value={opt.value.toString()}
                                         id={`${name}-${opt.value}`}
-                                        className={isSelected ? selectedClassName : ""}
+                                        className={`${isSelected ? selectedClassName : ""} cursor-pointer`}
                                     />
                                     <Label htmlFor={`${name}-${opt.value}`} className="cursor-pointer">
                                         {opt.label}
