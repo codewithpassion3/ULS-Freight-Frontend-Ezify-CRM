@@ -22,6 +22,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useOTPFlow } from "@/context/otp.context";
 import { useAuth } from "@/context/auth.context";
+import { AuthLayout } from "../AuthLayout";
 
 export default function OTPVerificationPage() {
     const { email, purpose, setToken } = useOTPFlow()
@@ -33,16 +34,10 @@ export default function OTPVerificationPage() {
         const t = setTimeout(() => setIsLoading(false), 300)
         return () => clearTimeout(t)
     }, [])
-    // useEffect(() => {
-    //     if (!email || !purpose) {
-    //         router.push("/forgot-password")
-    //     }
-    // }, [email, purpose])
     const verifyMutation = useMutation({
         mutationFn: (data: VerifyOtpFormValues) => verifyEmailOTP(data),
         onSuccess: (data) => {
             if (purpose === "password_reset") {
-                console.log(data)
                 toast("OTP Verified", {
                     description: "You're redirecting to reset password.",
                 })
@@ -98,139 +93,72 @@ export default function OTPVerificationPage() {
     if (isLoading) return <Loader className="min-h-screen" />
 
     return (
-        <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
-
-            {/* Left Column - Image */}
-            <div className="hidden lg:relative lg:flex lg:flex-col justify-center items-center">
-                <Image
-                    src="/login-bg.png"
-                    alt="Shipping Simplified"
-                    fill
-                    className="object-cover"
-                    priority
-                />
-                <div className="absolute inset-0 bg-black/40" />
-            </div>
-
-            {/* Right Column */}
-            <div className="flex items-center justify-center p-6 sm:p-12 h-screen overflow-y-auto bg-background">
-
-                <div className="mx-auto w-full max-w-[400px] flex flex-col justify-between min-h-full py-8">
-
-                    {/* Header */}
-                    <div className="flex items-center justify-between mb-16">
-
-                        <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-                            <Image
-                                src="/logo.png"
-                                alt="ULS Freight"
-                                width={200}
-                                height={200}
-                            />
-                        </Link>
-
-                        {/* <div className="flex items-center gap-2">
-                            <LanguageToggle />
-                            <ModeToggle />
-                        </div> */}
-
-                    </div>
-
-                    {/* Form */}
-                    <div className="flex-1">
-
-                        <div className="mb-6">
-                            <h2 className="text-lg font-semibold">
-                                OTP Verification
-                            </h2>
-
-                            <p className="text-sm text-muted-foreground mt-2">
-                                Enter the 6-digit code sent to your email to verify your account.
-                            </p>
-                        </div>
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                            <Label htmlFor="code">Verification Code*</Label>
-                            <Controller
-                                name="code"
-                                control={control}
-                                render={({ field }) => (
-                                    <InputOTP
-                                        maxLength={6}
-                                        value={field.value || ""}
-                                        onChange={field.onChange}
-                                        containerClassName="w-full"
-                                        size={20}
-                                    >
-                                        <InputOTPGroup>
-                                            <InputOTPSlot index={0} />
-                                        </InputOTPGroup>
-                                        <InputOTPSeparator />
-                                        <InputOTPGroup>
-                                            <InputOTPSlot index={1} />
-                                        </InputOTPGroup>
-                                        <InputOTPSeparator />
-                                        <InputOTPGroup>
-                                            <InputOTPSlot index={2} />
-                                        </InputOTPGroup>
-                                        <InputOTPSeparator />
-                                        <InputOTPGroup>
-                                            <InputOTPSlot index={3} />
-                                        </InputOTPGroup>
-                                        <InputOTPSeparator />
-                                        <InputOTPGroup>
-                                            <InputOTPSlot index={4} />
-                                        </InputOTPGroup>
-                                        <InputOTPSeparator />
-                                        <InputOTPGroup>
-                                            <InputOTPSlot index={5} />
-                                        </InputOTPGroup>
-
-
-
-                                    </InputOTP>
-                                )}
-                            />
-
-                            <Button type="submit" className="w-full">
-                                Verify Code
-                            </Button>
-
-                        </form>
-
-                        <div className="mt-4 text-center text-sm">
-
-                            <span className="text-muted-foreground">
-                                Didn't receive the code?
-                            </span>
-
-                            <Button
-                                disabled={!email}
-                                onClick={handleResendOtp}
-                                type="button"
-                                className="ml-2"
-                            >
-                                Resend OTP
-                            </Button>
-
-                        </div>
-
-                    </div>
-
-                    {/* Footer */}
-                    <div className="mt-16 text-sm text-muted-foreground text-center">
-                        Back to{" "}
-                        <Link
-                            href="/login"
-                            className="text-primary hover:underline font-medium"
-                        >
-                            Sign In
-                        </Link>
-                    </div>
-
+        <AuthLayout
+            title="OTP Verification"
+            subtitle="Enter the OTP sent to your email to continue."
+            leftImage="/login-bg.png"
+            footerText={
+                <div className="text-sm text-center">
+                    Didn't receive the OTP?{" "}
+                    <Button
+                        disabled={!email}
+                        onClick={handleResendOtp}
+                        type="button"
+                        className="ml-2"
+                    >
+                        Resend OTP
+                    </Button>
                 </div>
-
+            }
+        >
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                <Label htmlFor="code">Verification Code*</Label>
+                <Controller
+                    name="code"
+                    control={control}
+                    render={({ field }) => (
+                        <InputOTP
+                            maxLength={6}
+                            value={field.value || ""}
+                            onChange={field.onChange}
+                            containerClassName="w-full"
+                            size={20}
+                        >
+                            <InputOTPGroup>
+                                <InputOTPSlot index={0} />
+                            </InputOTPGroup>
+                            <InputOTPSeparator />
+                            <InputOTPGroup>
+                                <InputOTPSlot index={1} />
+                            </InputOTPGroup>
+                            <InputOTPSeparator />
+                            <InputOTPGroup>
+                                <InputOTPSlot index={2} />
+                            </InputOTPGroup>
+                            <InputOTPSeparator />
+                            <InputOTPGroup>
+                                <InputOTPSlot index={3} />
+                            </InputOTPGroup>
+                            <InputOTPSeparator />
+                            <InputOTPGroup>
+                                <InputOTPSlot index={4} />
+                            </InputOTPGroup>
+                            <InputOTPSeparator />
+                            <InputOTPGroup>
+                                <InputOTPSlot index={5} />
+                            </InputOTPGroup>
+                        </InputOTP>
+                    )}
+                />
+                <Button type="submit" className="w-full">
+                    Verify Code
+                </Button>
+            </form>
+            <div className="mt-6 text-sm text-center">
+                <Link href="/login" className="text-primary hover:underline font-medium">
+                    Back to Login
+                </Link>
             </div>
-
-        </div>
+        </AuthLayout>
     )
 }

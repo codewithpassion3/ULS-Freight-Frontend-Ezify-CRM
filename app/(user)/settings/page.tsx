@@ -92,7 +92,7 @@ export default function Settings() {
                             </CardHeader>
                             <CardContent className="space-y-2">
                                 <TabsList className="h-max w-full gap-4 bg-transparent">
-                                    <TabsTrigger value="general-settings" className="w-max cursor-pointer p-3">General Settings</TabsTrigger>
+                                    <TabsTrigger value="general-settings" className="w-max cursor-pointer p-3 ">General Settings</TabsTrigger>
                                     <TabsTrigger value="user-preference" className="w-max cursor-pointer p-3">User Preferences</TabsTrigger>
                                     <TabsTrigger value="email-notification" className="w-max cursor-pointer p-3">Email Notifications</TabsTrigger>
                                 </TabsList>

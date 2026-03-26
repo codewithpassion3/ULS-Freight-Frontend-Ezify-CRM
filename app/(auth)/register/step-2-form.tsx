@@ -169,7 +169,7 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
         </div>
       </div>
 
-      <div className="flex justify-between items-center pt-6">
+      <div className="flex justify-between items-center pt-18">
         <Button
           type="button"
           variant="outline"

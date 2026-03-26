@@ -53,7 +53,7 @@ export default function UserSettings() {
                             /> */}
                 </div>
 
-                <Button className="mt-4">
+                <Button variant="default" className="mt-4">
                     Save Details
                 </Button>
             </div>
