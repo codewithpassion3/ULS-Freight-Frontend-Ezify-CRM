@@ -129,10 +129,10 @@ export default function OTPVerificationPage() {
                             />
                         </Link>
 
-                        {/* <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2">
                             <LanguageToggle />
                             <ModeToggle />
-                        </div> */}
+                        </div>
 
                     </div>
 

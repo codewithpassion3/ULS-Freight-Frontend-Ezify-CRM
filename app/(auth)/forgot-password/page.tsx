@@ -94,10 +94,10 @@ export default function ForgotPasswordPage() {
                             <Image src="/logo.png" alt="ULS Freight" width={200} height={200} />
                         </Link>
 
-                        {/* <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2">
                             <LanguageToggle />
                             <ModeToggle />
-                        </div> */}
+                        </div>
                     </div>
 
                     {/* Form */}

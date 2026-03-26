@@ -24,6 +24,8 @@ import { useOTPFlow } from "@/context/otp.context";
 import { useRouter } from "next/navigation";
 import { Loader } from "@/components/common/Loader";
 import { useEffect, useState } from "react";
+import { LanguageToggle } from "@/components/language-toggle";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default function ResetPasswordPage() {
     const router = useRouter()
@@ -118,10 +120,10 @@ export default function ResetPasswordPage() {
                             <Image src="/logo.png" alt="ULS Freight" width={200} height={200} />
                         </Link>
 
-                        {/* <div className="flex items-center gap-2">
-                                <LanguageToggle />
-                                <ModeToggle />
-                            </div> */}
+                        <div className="flex items-center gap-2">
+                            <LanguageToggle />
+                            <ModeToggle />
+                        </div>
 
                     </div>
 

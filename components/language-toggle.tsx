@@ -16,16 +16,12 @@ import { useMutation } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
+import { useAuth } from "@/context/auth.context"
 
 export function LanguageToggle() {
-  const { data } = useUser()
+  const { user } = useAuth()
   const [language, setLanguage] = useState("en")
 
-  // useEffect(() => {
-  //   if (data?.user?.settings?.language) {
-  //     setLanguage(data.user.settings.language)
-  //   }
-  // }, [data])
 
   const updateUserSettingsMutation = useMutation({
     mutationFn: updateUserSettings,
@@ -39,7 +35,9 @@ export function LanguageToggle() {
 
   const handleLanguageChange = (lang: "en" | "fr") => {
     setLanguage(lang)
-    updateUserSettingsMutation.mutate({ language: lang })
+    if (user) {
+      updateUserSettingsMutation.mutate({ language: lang })
+    }
   }
 
   return (
