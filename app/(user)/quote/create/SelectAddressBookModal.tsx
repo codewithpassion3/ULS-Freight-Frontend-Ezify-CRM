@@ -4,12 +4,10 @@ import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Search, Loader2, NotebookText, BookUser, RotateCw } from "lucide-react"
+import { NotebookText, BookUser, RotateCw } from "lucide-react"
 import { getAllAddressBookContacts } from "@/api/services/quotes.api"
 import { useDebounce } from "../../settings/(address-book)/hooks/debounce.hook"
 import { AddressBookTable } from "../../settings/(address-book)/AddressBookTable"
-import { AddContactModal } from "../../settings/(address-book)/AddContactModal"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 type SelectAddressBookModalProps = {
@@ -53,7 +51,7 @@ export function SelectAddressBookModal({ onSelect, triggerButton }: SelectAddres
         <DialogHeader>
           <DialogTitle>Select Address from Address Book</DialogTitle>
         </DialogHeader>
-        <Tabs className="overflow-x-scroll" >
+        <Tabs>
           <TabsList>
             <TabsTrigger className="cursor-pointer" value="address-book">
               <BookUser />
@@ -64,114 +62,13 @@ export function SelectAddressBookModal({ onSelect, triggerButton }: SelectAddres
               Recent
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="address-book" className="overflow-x-scroll">
+          <TabsContent value="address-book">
             <AddressBookTable handleSelect={handleSelect} />
-            {/* <table className="w-full text-sm text-left">
-              <thead className="bg-muted sticky top-0">
-                <tr>
-                  <th className="p-3 font-semibold">Company/Name</th>
-                  <th className="p-3 font-semibold">Contact</th>
-                  <th className="p-3 font-semibold">Location</th>
-                  <th className="p-3 font-semibold text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {contacts.length > 0 ? (
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  contacts.map((contact: any) => (
-                    <tr key={contact.id} className="border-t hover:bg-muted/50">
-                      <td className="p-3">
-                        <div className="font-medium">{contact.companyName}</div>
-                        <div className="text-xs text-muted-foreground">{contact.email}</div>
-                      </td>
-                      <td className="p-3">
-                        <div>{contact.contactName}</div>
-                        <div className="text-xs text-muted-foreground">{contact.phoneNumber}</div>
-                      </td>
-                      <td className="p-3">
-                        {contact.address?.address1}, {contact.address?.city}, {contact.address?.state} {contact.address?.postalCode}
-                      </td>
-                      <td className="p-3 text-right">
-                        <Button size="sm" onClick={() => handleSelect(contact)} className="bg-[#0070c0] hover:bg-[#005999]">Select</Button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={4} className="p-4 text-center text-muted-foreground">
-                      No contacts found.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table> */}
           </TabsContent>
           <TabsContent value="recent">
             <AddressBookTable type="recent" handleSelect={handleSelect} />
           </TabsContent>
         </Tabs>
-        {/* <AddContactModal /> */}
-        {/* <div className="space-y-4">
-          <div className="flex items-center">
-            <Input
-              placeholder="Search Contacts"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="rounded-r-none"
-            />
-            <Button className="rounded-l-none bg-[#0070c0] hover:bg-[#005999] px-3">
-              <Search className="h-4 w-4" />
-            </Button>
-          </div>
-
-          {loading ? (
-            <div className="flex justify-center p-8">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : (
-            <div className="border rounded-md max-h-[400px] overflow-y-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="bg-muted sticky top-0">
-                  <tr>
-                    <th className="p-3 font-semibold">Company/Name</th>
-                    <th className="p-3 font-semibold">Contact</th>
-                    <th className="p-3 font-semibold">Location</th>
-                    <th className="p-3 font-semibold text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {contacts.length > 0 ? (
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    contacts.map((contact: any) => (
-                      <tr key={contact.id} className="border-t hover:bg-muted/50">
-                        <td className="p-3">
-                          <div className="font-medium">{contact.companyName}</div>
-                          <div className="text-xs text-muted-foreground">{contact.email}</div>
-                        </td>
-                        <td className="p-3">
-                          <div>{contact.contactName}</div>
-                          <div className="text-xs text-muted-foreground">{contact.phoneNumber}</div>
-                        </td>
-                        <td className="p-3">
-                          {contact.address?.address1}, {contact.address?.city}, {contact.address?.state} {contact.address?.postalCode}
-                        </td>
-                        <td className="p-3 text-right">
-                          <Button size="sm" onClick={() => handleSelect(contact)} className="bg-[#0070c0] hover:bg-[#005999]">Select</Button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={4} className="p-4 text-center text-muted-foreground">
-                        No contacts found.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div> */}
       </DialogContent>
     </Dialog>
   )

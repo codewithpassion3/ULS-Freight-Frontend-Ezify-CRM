@@ -160,13 +160,7 @@ export default function AddUser({ open, setOpen, mode, setMode, selectedUser, se
 
                         /> : ""}
 
-                        {/* <FormField
-                            name="firstName"
-                            label="First Name"
-                            placeholder="Enter first name"
-                            register={register}
-                        /> */}
-                        <FormFieldWrapper
+                        <FormField
                             name="firstName"
                             label="First Name"
                             placeholder="Enter first name"

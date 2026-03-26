@@ -42,6 +42,8 @@ export interface FormField<T extends FieldValues> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra?: any // extra props like min/max for numbers
   show?: boolean // Condition to show/hide the field
+  optionKey?: string
+  optionValue?: string
 }
 
 export interface GlobalFormProps<T extends FieldValues> {
@@ -53,6 +55,7 @@ export interface GlobalFormProps<T extends FieldValues> {
   isLoading?: boolean
   setIsValid?: (valid: boolean) => void
   className?: string
+  wrapperClassName?: string
   form?: UseFormReturn<T>
 }
 
@@ -64,6 +67,7 @@ export function GlobalForm<T extends FieldValues>({
   isLoading,
   setIsValid,
   className = "space-y-4",
+  wrapperClassName,
   form,
 }: GlobalFormProps<T>) {
 
@@ -161,6 +165,8 @@ export function GlobalForm<T extends FieldValues>({
                 placeholder={field.placeholder}
                 className={field.className}
                 hasError={hasError}
+                optionKey={field.optionKey}
+                optionValue={field.optionValue}
               />
               {hasError && <p className="text-xs text-red-500 font-medium">{errorMessage}</p>}
             </div>
@@ -259,13 +265,21 @@ export function GlobalForm<T extends FieldValues>({
   }
 
   // Render without wrapping in <form> if no onSubmit handler provided, allowing integration into larger forms
-  if (!onSubmit) {
-    return <div className={className}>{renderFields()}</div>
+  const FieldWrapper = ({ children, wrapperClassName }: { children: React.ReactNode, wrapperClassName?: string }) => {
+    return <div className={wrapperClassName}>{children}</div>
   }
-
+  if (!onSubmit) {
+    return (
+      <FieldWrapper wrapperClassName={wrapperClassName}>
+        {renderFields()}
+      </FieldWrapper>
+    )
+  }
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={className}>
-      {renderFields()}
+      <FieldWrapper wrapperClassName={wrapperClassName}>
+        {renderFields()}
+      </FieldWrapper>
       <button id="global-form-submit" type="submit" className="hidden" />
     </form>
   )
