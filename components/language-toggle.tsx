@@ -22,12 +22,6 @@ export function LanguageToggle() {
   const { user } = useAuth()
   const [language, setLanguage] = useState("en")
 
-  // useEffect(() => {
-  //   if (data?.user?.settings?.language) {
-  //     setLanguage(data.user.settings.language)
-  //   }
-  // }, [data])
-
   const updateUserSettingsMutation = useMutation({
     mutationFn: updateUserSettings,
     onSuccess: () => {
@@ -39,10 +33,16 @@ export function LanguageToggle() {
   })
 
   const handleLanguageChange = (lang: "en" | "fr") => {
-    setLanguage(lang)
     if (user) {
       updateUserSettingsMutation.mutate({ language: lang })
     }
+    setLanguage(lang)
+<<<<<<< HEAD
+    if (user) {
+      updateUserSettingsMutation.mutate({ language: lang })
+    }
+=======
+>>>>>>> ui-improvement
   }
 
   return (
