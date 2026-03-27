@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Clock, Info, Truck } from "lucide-react"
-import { QuoteSchemaTypes } from "@/lib/validations/quote/quote-schema"
+import { QuoteSchemaTypes } from "@/lib/validations/quote/spot-quote-schema"
 import { FieldErrors } from "react-hook-form"
-import { ShipmentType } from "../step-1-form"
+import { ShipmentType } from "../../step-1-form"
 
 
 interface ShippingTypeSelectorProps {

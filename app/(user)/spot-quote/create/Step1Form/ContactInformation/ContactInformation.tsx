@@ -74,7 +74,9 @@ export default function ContactInformation({ onNext }: { onNext: () => void }) {
                     },
                 ]}
             />
-
+            <div className="flex justify-end pt-4">
+                <Button onClick={onNext} type="button" className="bg-[#0070c0] hover:bg-[#005999] px-8 text-base font-semibold">Next Step</Button>
+            </div>
         </div>
     )
 }

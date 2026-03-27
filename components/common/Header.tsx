@@ -100,7 +100,7 @@ export default function Header() {
                                             <DropdownMenuContent align="start" className="w-48">
                                                 {item.items.map((sub) => (
                                                     <DropdownMenuItem key={sub.title} asChild>
-                                                        <Link href={sub.href}>{sub.title}</Link>
+                                                        <Link href={sub.href} className="cursor-pointer">{sub.title}</Link>
                                                     </DropdownMenuItem>
                                                 ))}
                                             </DropdownMenuContent>

@@ -5,9 +5,9 @@ import { useQuery } from "@tanstack/react-query"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { NotebookText, BookUser, RotateCw } from "lucide-react"
-import { getAllAddressBookContacts } from "@/api/services/quotes.api"
-import { useDebounce } from "../../settings/(address-book)/hooks/debounce.hook"
-import { AddressBookTable } from "../../settings/(address-book)/AddressBookTable"
+import { getAllAddressBookContacts } from "@/api/services/address-book.api"
+import { useDebounce } from "../../../../settings/(address-book)/hooks/debounce.hook"
+import { AddressBookTable } from "../../../../settings/(address-book)/AddressBookTable"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 type SelectAddressBookModalProps = {

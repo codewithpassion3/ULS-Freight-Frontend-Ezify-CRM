@@ -3,7 +3,7 @@ import { ArrowRight, Check, Eye, FileUser, Package, Save, Truck } from "lucide-r
 export function SideBar({ currentStep, setCurrentStep }: { currentStep: number, setCurrentStep: (step: number) => void }) {
     return (
         <div className="lg:col-span-1">
-            <div className="border border-border p-5 rounded-md sticky top-24 bg-white dark:bg-card space-y-4 shadow-lg">
+            <div className="border border-border p-5 rounded-md sticky top-20 bg-white dark:bg-card space-y-4 shadow-lg">
                 <div className="flex justify-between items-center border-b pb-2">
                     <h2 className="font-semibold text-lg">{currentStep === 1 ? 'Shipment Overview' : 'Quote Overview'}</h2>
                     {currentStep === 1 && <span className="text-[#0070c0] text-sm flex items-center gap-1 cursor-pointer hover:underline"><Eye size={14} /> Hide</span>}

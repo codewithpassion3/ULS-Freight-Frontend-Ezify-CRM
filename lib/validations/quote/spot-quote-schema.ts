@@ -1,29 +1,30 @@
 import { z } from "zod"
 
 export const quoteSchema = z.object({
+
   shipmentType: z.enum(["LTL-Partial Truckload", "Full Truck Load", "Time Critical"], {
     message: "Please select a shipment type",
   }),
-  shippingFrom: z.object({
-    multipleLocations: z.boolean().default(false).optional(),
-    address1: z.string().optional(),
-    postalCode: z.string().min(1, "Postal/ZIP Code is required"),
-    city: z.string().min(1, "City is required"),
-    province: z.string().min(1, "Province/State is required"),
-    country: z.string().min(1, "Country is required"),
-    locationType: z.string().min(1, "Location Type is required"),
-    additionalNotes: z.string().optional(),
-  }),
-  shippingTo: z.object({
-    multipleLocations: z.boolean().default(false).optional(),
-    address1: z.string().optional(),
-    postalCode: z.string().min(1, "Postal/ZIP Code is required"),
-    city: z.string().min(1, "City is required"),
-    province: z.string().min(1, "Province/State is required"),
-    country: z.string().min(1, "Country is required"),
-    locationType: z.string().min(1, "Location Type is required"),
-    additionalNotes: z.string().optional(),
-  }),
+  // shippingFrom: z.object({
+  //   multipleLocations: z.boolean().default(false).optional(),
+  //   address1: z.string().optional(),
+  //   postalCode: z.string().min(1, "Postal/ZIP Code is required"),
+  //   city: z.string().min(1, "City is required"),
+  //   province: z.string().min(1, "Province/State is required"),
+  //   country: z.string().min(1, "Country is required"),
+  //   locationType: z.string().min(1, "Location Type is required"),
+  //   additionalNotes: z.string().optional(),
+  // }),
+  // shippingTo: z.object({
+  //   multipleLocations: z.boolean().default(false).optional(),
+  //   address1: z.string().optional(),
+  //   postalCode: z.string().min(1, "Postal/ZIP Code is required"),
+  //   city: z.string().min(1, "City is required"),
+  //   province: z.string().min(1, "Province/State is required"),
+  //   country: z.string().min(1, "Country is required"),
+  //   locationType: z.string().min(1, "Location Type is required"),
+  //   additionalNotes: z.string().optional(),
+  // }),
   equipment: z.object({
     type: z.enum(["Dry Van", "Refrigerated Services", "Flatbed", "Ventilated Trailer"], {
       message: "Please select an equipment type",

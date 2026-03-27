@@ -30,7 +30,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { PhoneInput } from "@/components/common/PhoneInput"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { createContact, getAllPalletShippingLocationTypes, getAllSignatures } from "@/api/services/quotes.api"
+import { createContact, getAllPalletShippingLocationTypes, getAllSignatures } from "@/api/services/address-book.api"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"

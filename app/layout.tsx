@@ -87,7 +87,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" className={cn("font-sans", inter.variable)} suppressHydrationWarning>
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}>
+            <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`} suppressHydrationWarning>
                 <Providers>
                     <AuthProvider>
                         <AuthWrapper>

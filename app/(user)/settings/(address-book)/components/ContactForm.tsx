@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select"
 import { PhoneInput } from "@/components/common/PhoneInput"
 import { useQuery } from "@tanstack/react-query"
-import { getAllPalletShippingLocationTypes, getAllSignatures } from "@/api/services/quotes.api"
+import { getAllPalletShippingLocationTypes, getAllSignatures } from "@/api/services/address-book.api"
 import { ContactFormProps, ContactFormValues } from "../schemas/addContact.schema"
 import { LocationType, Signature } from "../types/addContact.types"
 import { Loader } from "@/components/common/Loader"

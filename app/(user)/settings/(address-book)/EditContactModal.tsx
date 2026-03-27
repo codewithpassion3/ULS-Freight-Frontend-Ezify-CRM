@@ -1,5 +1,5 @@
 "use client";
-import { createContact, getSingleContact, updateContact } from "@/api/services/quotes.api"
+import { createContact, getSingleContact, updateContact } from "@/api/services/address-book.api"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"

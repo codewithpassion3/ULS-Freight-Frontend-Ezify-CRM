@@ -37,6 +37,7 @@ export interface FormField<T extends FieldValues> {
   label?: string
   type: FieldType
   placeholder?: string
+  disabled?: boolean
   options?: { label: string; value: string | number }[] // for select/radio
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   defaultValue?: any
@@ -134,6 +135,7 @@ export function GlobalForm<T extends FieldValues>({
             <div key={field.name} className={`space-y-1 ${field.wrapperClassName || ""}`}>
               {renderLabel()}
               <Input
+                disabled={field.disabled}
                 type={field.type}
                 placeholder={field.placeholder}
                 className={`${hasError ? "border-red-500 focus-visible:ring-red-500" : ""} ${field.className || ""}`}
