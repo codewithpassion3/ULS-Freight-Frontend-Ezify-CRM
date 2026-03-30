@@ -38,7 +38,7 @@ export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, t
       city: contact.address?.city || "",
       province: contact.address?.state || "",
       country: contact.address?.country || "",
-      locationType: contact?.locationTypeId?.toString() || "",
+      ...(shipmentType === "FTL" && { locationType: contact?.locationTypeId?.toString() || "" }),
     }, { shouldValidate: true });
   }
 

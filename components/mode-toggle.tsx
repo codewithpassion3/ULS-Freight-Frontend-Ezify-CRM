@@ -29,7 +29,9 @@ export function ModeToggle() {
   const updateUserSettingsMutation = useMutation({
     mutationFn: updateUserSettings,
     onSuccess: () => {
-      toast.success("Settings updated successfully")
+      toast.success("Settings updated successfully", {
+        duration: 700
+      })
     },
     onError: (error: AxiosError<ApiError>) => {
       toast.error(error?.response?.data?.message)
@@ -51,13 +53,13 @@ export function ModeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => handleThemeChange("light")}>
+        <DropdownMenuItem className="cursor-pointer" onClick={() => handleThemeChange("light")}>
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleThemeChange("dark")}>
+        <DropdownMenuItem className="cursor-pointer" onClick={() => handleThemeChange("dark")}>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleThemeChange("system")}>
+        <DropdownMenuItem className="cursor-pointer" onClick={() => handleThemeChange("system")}>
           System
         </DropdownMenuItem>
       </DropdownMenuContent>
