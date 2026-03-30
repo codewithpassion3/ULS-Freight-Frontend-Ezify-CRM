@@ -8,21 +8,29 @@ import {
 } from "@/components/ui/select"
 
 import { FormFieldWrapper } from "./FormFieldWrapper"
-
+type SelectOptions = {
+    name: string;
+    options: { label: string; value: string | number }[];
+    optionKey?: string;
+    optionValue?: string;
+    placeholder?: string;
+    defaultValue?: string;
+    className?: string;
+}
 export function FormSelect({
     name,
-    label,
     options,
     optionKey,
     optionValue,
     placeholder,
-    defaultValue
-}: any) {
+    defaultValue,
+    className
+}: SelectOptions) {
 
     const { control } = useFormContext()
 
     return (
-        <FormFieldWrapper name={name} label={label}>
+        <FormFieldWrapper name={name}>
 
             <Controller
                 name={name}
@@ -34,7 +42,7 @@ export function FormSelect({
                         value={field.value?.toString()}
                         onValueChange={(value) => field.onChange(value)}
                     >
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className={`w-full cursor-pointer ${className}`}>
                             <SelectValue placeholder={placeholder} />
                         </SelectTrigger>
 
@@ -42,10 +50,11 @@ export function FormSelect({
 
                             {options.map((opt: any) => (
                                 <SelectItem
-                                    key={opt[optionKey]}
-                                    value={opt[optionKey].toString()}
+                                    key={optionKey ? opt[optionKey] : opt.value}
+                                    value={optionKey ? opt[optionKey].toString() : opt.value.toString()}
+                                    className="cursor-pointer"
                                 >
-                                    {opt[optionValue]}
+                                    {optionValue ? opt[optionValue] : opt.label}
                                 </SelectItem>
                             ))}
 

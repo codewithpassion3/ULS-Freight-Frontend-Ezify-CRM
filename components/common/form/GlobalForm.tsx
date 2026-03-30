@@ -32,24 +32,39 @@ export interface SelectOptions {
   optionKey: string
   optionValue: string
 }
-export interface FormField<T extends FieldValues> {
-  name: Path<T>
-  label?: string
-  type: FieldType
-  placeholder?: string
-  disabled?: boolean
-  options?: { label: string; value: string | number }[] // for select/radio
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  defaultValue?: any
-  required?: boolean
-  className?: string
-  wrapperClassName?: string
-  labelAction?: React.ReactNode // Extra component to render next to the label (e.g. "Address book" button)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  extra?: any // extra props like min/max for numbers
-  show?: boolean // Condition to show/hide the field
-  selectOptions?: SelectOptions
+export interface BaseField<T extends FieldValues> {
+  name: Path<T>;
+  label?: string;
+  type: FieldType;
+  placeholder?: string;
+  disabled?: boolean;
+  defaultValue?: any;
+  required?: boolean;
+  className?: string;
+  wrapperClassName?: string;
+  labelAction?: React.ReactNode;
+  extra?: any;
+  show?: boolean;
+  selectOptions?: SelectOptions;
 }
+
+export interface SelectField<T extends FieldValues> extends BaseField<T> {
+  type: "select" | "radio";
+  options: { label: string; value: string | number; icon?: React.ReactNode }[];
+}
+
+export interface CheckboxField<T extends FieldValues> extends BaseField<T> {
+  type: "checkbox";
+  icon?: React.ReactNode;
+}
+
+// Fields for all other types — options forbidden
+export interface NonSelectField<T extends FieldValues> extends BaseField<T> {
+  type: Exclude<FieldType, "select" | "radio" | "checkbox">;
+  options?: never;
+}
+
+export type FormField<T extends FieldValues> = SelectField<T> | NonSelectField<T> | CheckboxField<T>;
 
 export interface GlobalFormProps<T extends FieldValues> {
   fields: FormField<T>[]
@@ -182,12 +197,10 @@ export function GlobalForm<T extends FieldValues>({
               {renderLabel()}
               <FormSelect
                 name={field.name}
-                control={control}
                 defaultValue={field.defaultValue}
                 options={field.options}
-                placeholder={field.placeholder}
                 className={field.className}
-                hasError={hasError}
+                placeholder={field.placeholder}
                 optionKey={field.selectOptions?.optionKey}
                 optionValue={field.selectOptions?.optionValue}
               />
@@ -209,7 +222,10 @@ export function GlobalForm<T extends FieldValues>({
                       {field.options?.map((opt) => (
                         <div key={opt.value} className="flex items-center gap-2">
                           <RadioGroupItem value={opt.value.toString()} id={`${field.name}-${opt.value}`} className={controllerField.value?.toString() === opt.value.toString() ? "border-amber-500 text-amber-500" : ""} />
-                          <Label htmlFor={`${field.name}-${opt.value}`} className="cursor-pointer font-normal text-sm">{opt.label}</Label>
+                          <div className="flex items-center gap-1">
+                            <Label htmlFor={`${field.name}-${opt.value}`} className="cursor-pointer font-normal text-sm">{opt.label}</Label>
+                            {opt?.icon}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -243,7 +259,7 @@ export function GlobalForm<T extends FieldValues>({
         case "checkbox":
           return (
             <div key={field.name} className={`flex flex-col gap-1 ${field.wrapperClassName || ""}`}>
-              <div className="flex items-center gap-2 pt-2">
+              <div className="flex items-center gap-2  pt-2">
                 <Controller
                   name={field.name}
                   control={control}
@@ -253,11 +269,13 @@ export function GlobalForm<T extends FieldValues>({
                       id={`${field.name}`}
                       checked={!!controllerField.value}
                       onCheckedChange={(checked) => controllerField.onChange(checked)}
+                      className="cursor-pointer"
                     />
                   )}
                 />
-                {field.label && <Label htmlFor={`${field.name}`} className={hasError ? "text-red-500 leading-none cursor-pointer font-normal text-sm" : "leading-none cursor-pointer font-normal text-sm"}>{field.label}</Label>}
+                {field.label && <Label htmlFor={`${field.name}`} className={hasError ? "text-red-500 leading-none  font-normal text-sm" : "leading-none cursor-pointer font-normal text-sm"}>{field.label}</Label>}
                 {field.labelAction && <div className="ml-1">{field.labelAction}</div>}
+                {field.icon && <div>{field.icon}</div>}
               </div>
               {hasError && <p className="text-xs text-red-500 font-medium pl-6">{errorMessage}</p>}
             </div>
@@ -273,7 +291,7 @@ export function GlobalForm<T extends FieldValues>({
                 defaultValue={field.defaultValue}
                 render={({ field: controllerField }) => (
                   <div className={hasError ? "text-red-500 [&_input]:border-red-500 [&_input]:focus-visible:ring-red-500" : ""}>
-                    <PhoneInput {...controllerField} placeholder={field.placeholder} {...field.extra} />
+                    <PhoneInput className={field.className} {...controllerField} placeholder={field.placeholder} {...field.extra} />
                   </div>
                 )}
               />
