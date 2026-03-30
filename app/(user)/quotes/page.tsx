@@ -6,7 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { CustomDateRangePicker } from "@/components/ui/custom-date-picker"
 import { MultiSelect } from "@/components/ui/multi-select"
-import { Search, CheckCircle, Edit, MoreVertical, Trash2 } from "lucide-react"
+import { Search, CheckCircle, Edit, MoreVertical, Trash2, Heart, SaveIcon, Truck } from "lucide-react"
+
+import { DataTable } from "@/components/common/table/DataTable"
+import { DataTablePagination } from "@/components/common/table/DataTablePagination"
+import { columns } from "./components/ColumnsTableQuotes"
+import { SortingState } from "@tanstack/react-table"
 
 const MOCK_QUOTES = [
   {
@@ -112,6 +117,8 @@ export default function QuotesDashboardPage() {
   const [dateRange, setDateRange] = useState<{ from?: string; to?: string }>({})
   const [selectedPackaging, setSelectedPackaging] = useState<string[]>([])
   const [showFilters, setShowFilters] = useState(true)
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [page, setPage] = useState(1)
 
   const favouritesCount = useMemo(() => MOCK_QUOTES.filter((q) => q.isFavourite).length, [])
   const savedCount = useMemo(() => MOCK_QUOTES.filter((q) => !q.isFavourite).length, [])
@@ -196,57 +203,57 @@ export default function QuotesDashboardPage() {
 
       {showFilters ? (
         <div className="bg-muted/30 border border-border p-4 rounded-md mb-6 relative">
-        <div className="flex justify-between items-start mb-2">
-          <h2 className="text-lg font-semibold text-[#004e8c]">Search Quotes</h2>
-          <div className="flex gap-4 text-sm text-[#0070c0]">
-            <button
-              type="button"
-              className="flex items-center gap-1 hover:underline"
-              onClick={() => {
-                setSearchText("")
-                setDateRange({})
-                setSelectedPackaging([])
-              }}
-            >
-              <span className="text-xl leading-none -mt-1">&times;</span> Clear Filters
-            </button>
-            <button type="button" className="hover:underline" onClick={() => setShowFilters(false)}>
-              Hide
-            </button>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-6 items-end mt-4">
-          <div className="space-y-1">
-            <label className="text-sm text-muted-foreground block">Search by Date Range:</label>
-            <CustomDateRangePicker value={dateRange} onChange={setDateRange} />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-sm text-muted-foreground block">Search:</label>
-            <div className="flex w-[240px]">
-              <Input
-                placeholder="Search"
-                className="rounded-r-none"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-              />
-              <Button
+          <div className="flex justify-between items-start mb-2">
+            <h2 className="text-lg font-semibold text-[#004e8c]">Search Quotes</h2>
+            <div className="flex gap-4 text-sm text-[#0070c0]">
+              <button
                 type="button"
-                className="rounded-l-none bg-[#0070c0] hover:bg-[#005999] px-3"
-                onClick={() => {}}
+                className="flex items-center gap-1 hover:underline"
+                onClick={() => {
+                  setSearchText("")
+                  setDateRange({})
+                  setSelectedPackaging([])
+                }}
               >
-                <Search size={16} />
-              </Button>
+                <span className="text-xl leading-none -mt-1">&times;</span> Clear Filters
+              </button>
+              <button type="button" className="hover:underline" onClick={() => setShowFilters(false)}>
+                Hide
+              </button>
             </div>
           </div>
 
-          <div className="space-y-1">
-            <label className="text-sm text-muted-foreground block">Packaging Type:</label>
-            <MultiSelect options={PACKAGING_TYPES} value={selectedPackaging} onChange={setSelectedPackaging} />
+          <div className="flex flex-wrap gap-6 items-end mt-4">
+            <div className="space-y-1">
+              <label className="text-sm text-muted-foreground block">Search by Date Range:</label>
+              <CustomDateRangePicker value={dateRange} onChange={setDateRange} />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-sm text-muted-foreground block">Search:</label>
+              <div className="flex w-[240px]">
+                <Input
+                  placeholder="Search"
+                  className="rounded-r-none"
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                />
+                <Button
+                  type="button"
+                  className="rounded-l-none bg-[#0070c0] hover:bg-[#005999] px-3"
+                  onClick={() => { }}
+                >
+                  <Search size={16} />
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-sm text-muted-foreground block">Packaging Type:</label>
+              <MultiSelect options={PACKAGING_TYPES} value={selectedPackaging} onChange={setSelectedPackaging} />
+            </div>
           </div>
         </div>
-      </div>
       ) : (
         <div className="mb-6 flex justify-end">
           <Button type="button" variant="outline" onClick={() => setShowFilters(true)}>
@@ -257,24 +264,19 @@ export default function QuotesDashboardPage() {
 
       {/* Tabs */}
       <div className="flex border-b border-border mb-4">
-        <button 
-          className={`flex items-center gap-1 px-6 py-3 text-sm font-medium transition-colors ${selectedTab === 'Favourites' ? 'border-b-2 border-orange-500 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-          onClick={() => setSelectedTab('Favourites')}
-        >
-          <span className="text-muted-foreground">♥</span> Favourites ({favouritesCount})
-        </button>
-        <button 
-          className={`flex items-center gap-1 px-6 py-3 text-sm font-medium transition-colors ${selectedTab === 'Saved' ? 'border-b-2 border-orange-500 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-          onClick={() => setSelectedTab('Saved')}
-        >
-          <Save size={14} /> Saved ({savedCount})
-        </button>
-        <button 
-          className={`flex items-center gap-1 px-6 py-3 text-sm font-medium transition-colors ${selectedTab === 'Spot Quotes' ? 'border-b-2 border-orange-500 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-          onClick={() => setSelectedTab('Spot Quotes')}
-        >
-          <span className="text-muted-foreground">🚚</span> Spot Quotes ({spotCount})
-        </button>
+        {[
+          { icon: Heart, label: "Favourites", count: favouritesCount },
+          { icon: SaveIcon, label: "Saved", count: savedCount },
+          { icon: Truck, label: "Spot Quotes", count: spotCount }
+        ].map((tab) => (
+          <button
+            key={tab.label}
+            className={`flex items-center gap-1 px-6 py-3 text-sm font-medium transition-colors ${selectedTab === tab.label ? 'border-b-2 border-orange-500 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+            onClick={() => setSelectedTab(tab.label as "Favourites" | "Saved" | "Spot Quotes")}
+          >
+            <tab.icon /> {tab.label} ({tab.count})
+          </button>
+        ))}
       </div>
 
       <div className="flex justify-between items-end mb-4">
@@ -284,92 +286,29 @@ export default function QuotesDashboardPage() {
       </div>
 
       <p className="text-xs text-muted-foreground mb-4">
-        These quotes are based on the information provided and are valid <span className="font-semibold">5 business days</span> from the issue date.<br/>
+        These quotes are based on the information provided and are valid <span className="font-semibold">5 business days</span> from the issue date.<br />
         Rates are subject to change without prior notice based on carrier availability, weekly fuel surcharges, and currency exchange where applicable.
       </p>
 
       {/* Table */}
-      <div className="border border-border rounded-md overflow-hidden bg-background mb-4">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-muted-foreground font-semibold border-b border-border">
-              <tr>
-                <th className="p-4 w-12"><Checkbox /></th>
-                <th className="py-4 px-2 whitespace-nowrap"><SortLabel>Name</SortLabel></th>
-                <th className="py-4 px-2 whitespace-nowrap"><SortLabel>Quote ID</SortLabel></th>
-                <th className="py-4 px-2 whitespace-nowrap"><SortLabel>Transaction #</SortLabel></th>
-                <th className="py-4 px-2 whitespace-nowrap"><SortLabel>Date Created</SortLabel></th>
-                <th className="py-4 px-2 whitespace-nowrap"><SortLabel>Ship From</SortLabel></th>
-                <th className="py-4 px-2 whitespace-nowrap"><SortLabel>Ship To</SortLabel></th>
-                <th className="py-4 px-2"><SortLabel>Packaging Details</SortLabel></th>
-                <th className="py-4 px-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {visibleQuotes.map((quote, index) => (
-                <tr
-                  key={quote.id}
-                  className={`border-b border-border/60 hover:bg-muted/30 ${index % 2 !== 0 ? "bg-muted/20" : ""}`}
-                >
-                  <td className="p-4"><Checkbox /></td>
-                  <td className="py-4 px-2 text-[#0070c0] font-medium whitespace-nowrap">{quote.name}</td>
-                  <td className="py-4 px-2 text-[#0070c0] font-medium whitespace-nowrap">{quote.quoteId}</td>
-                  <td className="py-4 px-2 text-foreground whitespace-nowrap">{quote.transactionId}</td>
-                  <td className="py-4 px-2 text-foreground whitespace-nowrap leading-tight">
-                    {quote.dateCreated.split('\n')[0]}<br/>
-                    <span className="text-muted-foreground">{quote.dateCreated.split('\n')[1]}</span>
-                  </td>
-                  <td className="py-4 px-2 text-foreground">{quote.shipFrom}</td>
-                  <td className="py-4 px-2 text-foreground">{quote.shipTo}</td>
-                  <td className="py-4 px-2 text-foreground leading-tight">
-                    {quote.packagingDetails.split('\n')[0]}<br/>
-                    {quote.packagingDetails.split('\n')[1]}
-                  </td>
-                  <td className="py-4 px-2">
-                    <div className="flex items-center gap-4">
-                      <button className="flex items-center gap-1 text-[#0070c0] font-medium hover:underline whitespace-nowrap">
-                        <Edit size={14} /> Edit
-                      </button>
-                      <button className="flex items-center gap-1 text-[#0070c0] font-medium hover:underline whitespace-nowrap">
-                        <CheckCircle size={14} /> Book Now
-                      </button>
-                      <button className="text-muted-foreground hover:text-foreground">
-                        <MoreVertical size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <div className="bg-background mb-4">
+        <DataTable
+          columns={columns}
+          data={visibleQuotes}
+          sorting={sorting}
+          setSorting={setSorting}
+        />
       </div>
 
       <div className="flex justify-between items-center mb-10">
         <Button variant="outline" className="text-muted-foreground border-border">
           <Trash2 size={16} className="mr-2" /> Delete
         </Button>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span>View</span>
-          <select className="border border-border rounded px-2 py-1 bg-background outline-none text-foreground">
-            <option>25</option>
-            <option>50</option>
-            <option>100</option>
-          </select>
-          <span>of 7 Quotes</span>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function SortLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex items-center cursor-pointer hover:text-foreground">
-      {children}
-      <div className="flex flex-col ml-1">
-        <span className="text-[8px] leading-[4px] text-muted-foreground">▲</span>
-        <span className="text-[8px] leading-[4px] text-muted-foreground">▼</span>
+        <DataTablePagination
+          page={page}
+          totalPages={1} // Static totalPages for now, based on mock data
+          setPage={setPage}
+        />
       </div>
     </div>
   )
@@ -377,6 +316,6 @@ function SortLabel({ children }: { children: React.ReactNode }) {
 
 function Save({ size }: { size: number }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></svg>
   )
 }

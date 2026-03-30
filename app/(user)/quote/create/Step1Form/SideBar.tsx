@@ -1,12 +1,20 @@
 import { ArrowRight, Check, Eye, FileUser, Package, Save, Truck } from "lucide-react"
-
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel"
+import { Button } from "@/components/ui/button"
+import Image from "next/image"
 export function SideBar({ currentStep, setCurrentStep }: { currentStep: number, setCurrentStep: (step: number) => void }) {
     return (
         <div className="lg:col-span-1">
             <div className="border border-border p-5 rounded-md sticky top-24 bg-white dark:bg-card space-y-4 shadow-lg">
                 <div className="flex justify-between items-center border-b pb-2">
                     <h2 className="font-semibold text-lg">{currentStep === 1 ? 'Shipment Overview' : 'Quote Overview'}</h2>
-                    {currentStep === 1 && <span className="text-[#0070c0] text-sm flex items-center gap-1 cursor-pointer hover:underline"><Eye size={14} /> Hide</span>}
+                    {/* {currentStep === 1 && <span className="text-[#0070c0] text-sm flex items-center gap-1 cursor-pointer hover:underline"><Eye size={14} /> Hide</span>} */}
                 </div>
 
                 <div className="relative pt-2 pl-2">
@@ -52,19 +60,58 @@ export function SideBar({ currentStep, setCurrentStep }: { currentStep: number, 
                     </div>
                 </div>
 
-                {currentStep === 2 && (
-                    <div className="mt-8 bg-amber-100 p-4 rounded-md">
-                        <div className="bg-white rounded max-w-min whitespace-nowrap px-2 py-0.5 text-xs font-bold border border-amber-300 mb-2">DDP Available</div>
-                        <div className="flex items-center gap-2 justify-center py-4 px-2">
-                            <span className="text-muted-foreground cursor-pointer">‹</span>
-                            <div className="text-center text-sm font-medium">
-                                <div className="flex justify-center mb-2 items-center font-bold text-slate-800 gap-1"><span className="text-blue-600 bg-slate-800 rounded-sm p-0.5"><Truck size={12} /></span> FREIGHTCOM</div>
-                                Simplify cross-border shipping with all duties and taxes handled upfront. No surprises, no hidden costs.
-                            </div>
-                            <span className="text-muted-foreground cursor-pointer">›</span>
-                        </div>
+                {/* Sidebar Carousel */}
+
+
+                <div className="w-full max-w-3xl border rounded-md overflow-hidden">
+
+                    {/* Top Label */}
+                    <div className="bg-[#0072BC] text-white p-2 text-sm w-full">
+                        <span className="rounded-2xl p-1 bg-white text-[#0072BC] text-xs">
+                            New White Glove Options
+                        </span>
                     </div>
-                )}
+
+                    <Carousel className="bg-[#CBDFEE] py-8">
+                        <CarouselContent>
+
+                            {/* Slide 1 */}
+                            <CarouselItem>
+                                <div className="flex flex-col items-center gap-4 text-center px-10">
+
+                                    <div className="flex items-center gap-4">
+                                        <Image
+                                            src="/logo.png"
+                                            alt="Logo"
+                                            width={60}
+                                            height={40}
+                                        />
+
+                                        <Button>Learn More</Button>
+                                    </div>
+
+                                    <p className="text-sm font-medium max-w-md">
+                                        Exciting New White Glove Delivery Options and Carriers NOW AVAILABLE.
+                                    </p>
+
+                                </div>
+                            </CarouselItem>
+
+                            {/* Slide 2 Example */}
+                            <CarouselItem>
+                                <div className="flex flex-col items-center gap-4 text-center px-10">
+                                    <p className="text-lg font-medium max-w-md">
+                                        Faster shipping options now available across Canada.
+                                    </p>
+                                </div>
+                            </CarouselItem>
+
+                        </CarouselContent>
+
+                        <CarouselPrevious />
+                        <CarouselNext />
+                    </Carousel>
+                </div>
             </div>
         </div>
     )

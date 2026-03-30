@@ -50,6 +50,7 @@ export const quoteSchema = z.object({
         nmfc: z.string().optional(),
         type: z.string().default("Pallet"),
         unitsOnPallet: z.string().optional(),
+        specialHandling: z.boolean().default(false).optional(),
       })
     ).min(1, "At least one pallet is required"),
     description: z.string().optional(),
@@ -70,7 +71,9 @@ export const quoteSchema = z.object({
   additionalInsurance: z.object({
     totalCostValue: z.coerce.number().min(0).default(0),
     currency: z.enum(["CAD", "USD"]).default("CAD"),
+    type: z.enum(["Freightcom", "ThirdParty"]).default("Freightcom").optional(),
   }).optional(),
+  signaturePreference: z.enum(["No Signature Required", "Signature Required", "Adult Signature Required"]).default("No Signature Required").optional(),
   contactInformation: z.object({
     contactName: z.string().min(1, "Contact Name is required"),
     phoneNumber: z.string().min(1, "Phone Number is required"),

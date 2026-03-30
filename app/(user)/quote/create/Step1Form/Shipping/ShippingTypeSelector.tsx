@@ -14,9 +14,9 @@ interface QuoteShippingTypeSelectorProps {
 }
 
 const shipmentTypes = [
-    { label: "Pallet", icon: <WalletCards /> },
-    { label: "Package", icon: <Package /> },
-    { label: "Courier Pack", icon: <Boxes /> },
+    { label: "PALLET", icon: <WalletCards /> },
+    { label: "PACKAGE", icon: <Package /> },
+    { label: "COURIER_PACK", icon: <Boxes /> },
     { label: "FTL", icon: <Truck /> },
 ]
 
@@ -40,10 +40,10 @@ export const ShippingTypeSelector = <T extends ZodType<any>>({ shipmentType, set
                         key={type.label}
                         type="button"
                         variant={shipmentType === type.label ? "default" : "outline"}
-                        className={`flex items-center gap-2 ${shipmentType === type.label ? "bg-blue-50 dark:bg-gray-900  text-[#0070c0] border-[#0070c0] hover:bg-blue-100" : "border-slate-300 dark:bg-transparent"}`}
+                        className={`flex items-center gap-2 capitalize ${shipmentType === type.label ? "bg-blue-50 dark:bg-gray-900  text-[#0070c0] border-[#0070c0] hover:bg-blue-100" : "border-slate-300 dark:bg-transparent"}`}
                         onClick={() => setShipmentType(type.label as ShipmentOptions[keyof ShipmentOptions])}
                     >
-                        {type.icon} {type.label}
+                        {type.icon} {type.label.toLowerCase().replace("_", " ")}
                     </Button>
                 ))}
 
