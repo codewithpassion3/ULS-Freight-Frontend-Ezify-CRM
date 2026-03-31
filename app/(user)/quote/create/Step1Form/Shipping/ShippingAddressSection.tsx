@@ -1,5 +1,5 @@
 import { getAllPalletShippingLocationTypes } from "@/api/services/address-book.api"
-import { useFormContext, UseFormReturn } from "react-hook-form"
+import { FieldValues, useFormContext, UseFormReturn } from "react-hook-form"
 import { QuoteSchemaTypes } from "@/lib/validations/quote/spot-quote-schema"
 import { ContactType } from "../../../../settings/(address-book)/types/addContact.types"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
@@ -14,8 +14,9 @@ import { ArrowLeftRight, X } from "lucide-react"
 import { FormCheckbox } from "@/components/common/forms/FormCheckbox"
 import { ShipmentOptions } from "../../CreateQuote"
 import z, { ZodType } from "zod"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { InferSchema } from "../../quote.types"
+import FormField from "@/components/common/forms/FormField"
 
 
 export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, type, title }: { shipmentType: ShipmentOptions[keyof ShipmentOptions], type: "TO" | "FROM", title: string }) => {
@@ -24,6 +25,7 @@ export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, t
   const markContactAsRecent = useMarkContactAsRecent()
   // const { setValue } = useFormContext()
   const [addressLocked, setAddressLocked] = useState(false)
+
   const index = type === "FROM" ? 0 : 1
   useEffect(() => {
     setValue(`addresses.${index}.type`, type)
@@ -33,12 +35,14 @@ export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, t
     setAddressLocked(true)
     setValue(`addresses.${index}`, {
       ...getValues(`addresses.${index}`),
+      type: type,
+      addressBookId: contact.id,
       address1: contact.address?.address1 || "",
       postalCode: contact.address?.postalCode || "",
       city: contact.address?.city || "",
-      province: contact.address?.state || "",
+      state: contact.address?.state || "",
       country: contact.address?.country || "",
-      ...(shipmentType === "FTL" && { locationType: contact?.locationTypeId?.toString() || "" }),
+      ...(shipmentType === "STANDARD_FTL" && { locationType: contact?.locationTypeId?.toString() || "" }),
     }, { shouldValidate: true });
   }
 
@@ -52,7 +56,7 @@ export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, t
     setAddressLocked(false)
     const addresses = getValues("addresses").map((item: any, i: number) =>
       i === index
-        ? { ...item, address1: "", postalCode: "", city: "", province: "", country: "", locationType: "", additionalNotes: "" }
+        ? { ...item, addressBookId: null, address1: "", postalCode: "", city: "", state: "", country: "", locationType: "", additionalNotes: "" }
         : item
     );
     setValue("addresses", addresses, { shouldValidate: true, shouldDirty: true });
@@ -66,13 +70,7 @@ export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, t
     setValue("addresses.1.type", "TO")
   }
 
-  const addressFields = [
-    { key: "address1", label: "Address*", placeholder: "Address" },
-    { key: "postalCode", label: "Postal/ZIP Code*", placeholder: "A1A 1A1" },
-    { key: "city", label: "City*", placeholder: "City Name" },
-    { key: "province", label: "Province/State*", placeholder: "State/Province" },
-    { key: "country", label: "Country*", placeholder: "Country" },
-  ];
+  console.log("errors", errors)
 
   return (
     <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
@@ -94,25 +92,42 @@ export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, t
           <p className="text-sm font-medium">Select Address</p>
           <SelectAddressBookModal onSelect={handleAddressSelect} />
         </div>
-
-        <GlobalForm
-          formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 gap-4"
-          fields={addressFields.map(field => ({
-            name: `addresses.${index}.${field.key}`,
-            label: field.label,
-            type: "text",
-            placeholder: field.placeholder,
-            disabled: addressLocked,
-          }))}
-        />
-        {shipmentType === "FTL" && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FormField
+            label="Address*"
+            name={`addresses.[${index}].address1`}
+            placeholder="Address"
+            disabled={addressLocked}
+          />
+          <FormField
+            label="Postal/ZIP Code*"
+            name={`addresses.[${index}].postalCode`}
+            placeholder="A1A 1A1"
+            disabled={addressLocked}
+          />
+          <FormField
+            label="City*"
+            name={`addresses.[${index}].city`}
+            placeholder="City Name"
+            disabled={addressLocked}
+          />
+          <FormField
+            label="Province/State*"
+            name={`addresses.[${index}].state`}
+            placeholder="State/Province"
+            disabled={addressLocked}
+          />
+          <FormField
+            label="Country*"
+            name={`addresses.[${index}].country`}
+            placeholder="Country"
+            disabled={addressLocked}
+          />
+        </div>
+        {shipmentType === "STANDARD_FTL" && (
           <p className="text-sm font-medium">FTL Location Type : {palletShippingLocationTypesRes?.palletShippingLocationTypes.find((item: any) => item.id === getValues(`${type}.locationType`))?.name}</p>
         )}
-        {/* <FormCheckbox
-          name={`${type} ${type}.includeStraps`}
-          label="Include Straps"
-        // control={control}
-        /> */}
+
       </div>
     </div>
   )

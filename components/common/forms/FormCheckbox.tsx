@@ -3,14 +3,14 @@
 import { Controller, useFormContext } from "react-hook-form"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
-import { FormFieldWrapper } from "./FormFieldWrapper"
 
 interface Props {
     name: string
     label?: string
     description?: string
     selectedClassName?: string
-    extra?: React.ReactNode
+    icon?: React.ReactNode
+    defaultValue?: boolean
 }
 
 export function FormCheckbox({
@@ -18,7 +18,8 @@ export function FormCheckbox({
     label,
     description,
     selectedClassName,
-    extra
+    icon,
+    defaultValue
 }: Props) {
     const { control } = useFormContext()
 
@@ -33,7 +34,7 @@ export function FormCheckbox({
                     <div className="flex items-center gap-2">
                         <Checkbox
                             id={name}
-                            checked={isChecked}
+                            checked={isChecked || defaultValue}
                             onCheckedChange={(checked) => field.onChange(checked)}
                             className={`${isChecked ? selectedClassName : ""} border-border cursor-pointer`}
                         />
@@ -42,7 +43,7 @@ export function FormCheckbox({
                                 {label}
                             </Label>
                         )}
-                        {extra}
+                        {icon}
                     </div>
                 )
             }}

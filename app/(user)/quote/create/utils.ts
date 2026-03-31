@@ -5,15 +5,31 @@ import z from "zod"
 export function determineSchema<Q extends keyof ShipmentOptions>(quoteType: Q, shipmentType?: ShipmentOptions[Q]) {
     if (quoteType === "STANDARD") {
         switch (shipmentType) {
-            case "Pallet":
+            case "PALLET":
                 return quoteStandardPalletSchema
-            case "Package":
+            case "PACKAGE":
                 return quoteStandardPackageSchema
-            case "Courier Pack":
+            case "COURIER_PACK":
                 return quoteStandardCourierPackSchema
             case "FTL":
                 return quoteStandardFTLSchema
         }
     }
     return z.any()
+}
+
+export function formatPayload(payload: any) {
+    const formattedAddresses = payload.addresses?.map((address: any) => {
+        if (address.addressBookId) {
+            return {
+                addressBookId: address.addressBookId,
+                type: address.type
+            }
+        }
+        return address
+    })
+    return {
+        ...payload,
+        "addresses": formattedAddresses,
+    }
 }

@@ -17,24 +17,26 @@ interface Props {
     className?: string
     selectedClassName?: string
     onChange?: (value: string) => void
+    valueType?: "string" | "number"
+    defaultValue?: string
 }
 
-export function FormRadio({ name, label, options, selectedClassName, className, onChange }: Props) {
+export function FormRadio({ name, label, options, selectedClassName, className, onChange, valueType = "string", defaultValue }: Props) {
     const { control, formState: { defaultValues } } = useFormContext()
     return (
         <FormFieldWrapper name={name} label={label}>
             <Controller
                 name={name}
                 control={control}
-                defaultValue={defaultValues?.[name]}
+                defaultValue={defaultValues?.[name] || defaultValue}
                 render={({ field }) => (
                     <RadioGroup
                         onValueChange={(value) => {
-                            field.onChange(value)
+                            field.onChange(valueType === "number" ? Number(value) : value)
 
                         }}
                         onChange={() => onChange}
-                        className="flex gap-6"
+                        className={`flex gap-6 ${className}`}
                     >
                         {options.map((opt) => {
                             const isSelected = field.value?.toString() === opt.value.toString()

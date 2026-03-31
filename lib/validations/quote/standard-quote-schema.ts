@@ -8,7 +8,7 @@ export const quoteSchema = z.object({
         "type": z.enum(["TO", "FROM"]),
         "address1": z.string().min(1, "Address is required"),
         "city": z.string().min(1, "City is required"),
-        "state": z.string().min(1, "Province is required"),
+        "state": z.string().min(1, "State is required"),
         "postalCode": z.string().min(1, "Postal Code is required"),
         "country": z.string().min(1, "Country is required"),
     }))

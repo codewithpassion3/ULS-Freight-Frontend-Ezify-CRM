@@ -79,7 +79,7 @@ export function SideBar({ currentStep, setCurrentStep }: { currentStep: number, 
                             <CarouselItem>
                                 <div className="flex flex-col items-center gap-4 text-center px-10">
 
-                                    <div className="flex items-center gap-4">
+                                    <div className="flex flex-col xl:flex-row items-center gap-4">
                                         <Image
                                             src="/logo.png"
                                             alt="Logo"

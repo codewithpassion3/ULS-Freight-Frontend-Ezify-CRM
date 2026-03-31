@@ -1,6 +1,6 @@
 "use client"
 
-import { useForm } from "react-hook-form"
+import { FormProvider, useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import FormField from "@/components/common/forms/FormField"
@@ -31,7 +31,7 @@ type SettingsFormValues = {
 
 export default function GeneralSettings() {
     const { data: user, isLoading } = useUser()
-    const { register, handleSubmit } = useForm<SettingsFormValues>({
+    const form = useForm<SettingsFormValues>({
         defaultValues: {
             companyName: user?.user?.company?.name ?? "",
             contactName: user?.user?.firstName ? user?.user?.firstName + " " + user?.user?.lastName : "",
@@ -62,66 +62,63 @@ export default function GeneralSettings() {
             {isLoading ?
                 <Loader /> :
                 <div className="flex flex-col gap-4">
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
-                        {/* Company Profile Settings */}
-                        <div>
-                            <div className="flex justify-between items-center mb-4">
-                                <h2 className="font-semibold text-base">Company Profile Settings</h2>
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    disabled
-                                // className="text-sm text-primary hover:underline"
-                                >
-                                    Request Company Name Change
-                                </Button>
-                            </div>
+                    <FormProvider {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
+                            {/* Company Profile Settings */}
+                            <div>
+                                <div className="flex justify-between items-center mb-4">
+                                    <h2 className="font-semibold text-base">Company Profile Settings</h2>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        disabled
+                                    // className="text-sm text-primary hover:underline"
+                                    >
+                                        Request Company Name Change
+                                    </Button>
+                                </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                                <FormField
-                                    name="companyName"
-                                    label="Company Name"
-                                    register={register}
-                                />
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                    <FormField
+                                        name="companyName"
+                                        label="Company Name"
+                                    />
 
-                                <FormField
-                                    name="contactName"
-                                    label="Contact Name*"
-                                    register={register}
-                                />
+                                    <FormField
+                                        name="contactName"
+                                        label="Contact Name*"
+                                    />
 
-                                <FormField
-                                    name="industryType"
-                                    label="Industry Type"
-                                    register={register}
-                                />
+                                    <FormField
+                                        name="industryType"
+                                        label="Industry Type"
+                                    />
 
-                                <FormField
-                                    name="email"
-                                    label="Email"
-                                    register={register}
-                                />
+                                    <FormField
+                                        name="email"
+                                        label="Email"
+                                    />
 
-                                <FormField
-                                    name="phone"
-                                    label="Phone Number"
-                                    register={register}
-                                />
+                                    <FormField
+                                        name="phone"
+                                        label="Phone Number"
+                                    />
 
-                                {/* <FormField
+                                    {/* <FormField
                                 name="ext"
                                 label="Ext."
                                 register={register}
                             /> */}
-                            </div>
+                                </div>
 
-                            <Button
-                                disabled
-                                className="mt-4">
-                                Save Details
-                            </Button>
-                        </div>
-                    </form>
+                                <Button
+                                    disabled
+                                    className="mt-4">
+                                    Save Details
+                                </Button>
+                            </div>
+                        </form>
+                    </FormProvider>
 
                     {/* Company Address */}
                     <div>
@@ -141,43 +138,36 @@ export default function GeneralSettings() {
                             <FormField
                                 name="address"
                                 label="Address*"
-                                register={register}
                             />
 
                             <FormField
                                 name="address2"
                                 label="Address 2 (optional)"
-                                register={register}
                             />
 
                             <FormField
                                 name="unit"
                                 label="Unit/Floor #"
-                                register={register}
                             />
 
                             <FormField
                                 name="postalCode"
                                 label="Postal Code"
-                                register={register}
                             />
 
                             <FormField
                                 name="city"
                                 label="City"
-                                register={register}
                             />
 
                             <FormField
                                 name="province"
                                 label="Province"
-                                register={register}
                             />
 
                             <FormField
                                 name="country"
                                 label="Country"
-                                register={register}
                             />
 
                         </div>
@@ -203,17 +193,17 @@ export default function GeneralSettings() {
                         <div className="space-y-3">
 
                             <div className="flex items-center gap-2">
-                                <Checkbox {...register("promotions")} />
+                                <Checkbox />
                                 <span className="text-sm">ULS Freight Promotions</span>
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <Checkbox {...register("systemUpdates")} />
+                                <Checkbox />
                                 <span className="text-sm">ULS Freight System Updates</span>
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <Checkbox {...register("newsletters")} />
+                                <Checkbox />
                                 <span className="text-sm">ULS Freight Newsletters</span>
                             </div>
 

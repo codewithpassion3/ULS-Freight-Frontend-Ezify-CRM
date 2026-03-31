@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { createContext, useMemo, useState } from "react"
 import { useForm, FormProvider, useFormContext } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 // import { quoteSchema } from "@/lib/validations/quote/spot-quote-schema"
@@ -19,9 +19,10 @@ import { Button } from "@/components/ui/button"
 
 export type QuoteTypes = "SPOT" | "STANDARD"
 export type ShipmentOptions = {
-    SPOT: "LTL" | "FTL" | "PACKAGE",       // example values for spot quote
-    STANDARD: "PALLET" | "PACKAGE" | "COURIER_PACK" | "FTL",
+    SPOT: "SPOT_LTL" | "SPOT_FTL" | "TIME_CRITICAL",
+    STANDARD: "PALLET" | "PACKAGE" | "COURIER_PAK" | "STANDARD_FTL",
 };
+export const SchemaContext = createContext<z.ZodType<any> | null>(null)
 export default function CreateQuote({ quoteType, initialShipmentType }: {
     quoteType: keyof ShipmentOptions,
     initialShipmentType: ShipmentOptions[keyof ShipmentOptions]
@@ -35,13 +36,14 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
         return determineSchema(quoteType, shipmentType)
     }, [quoteType, shipmentType])
 
+
     const methods = useForm({
         resolver: zodResolver(schema),
         mode: "onTouched",
     })
 
     const { watch } = methods;
-
+    // const methodsWithSchema = { ...methods, schema }
     const values = watch();
     console.log("values", values)
     console.log("quoteType", quoteType)
@@ -62,7 +64,7 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
     const onError = (errors: any) => {
         console.error("Form Validation Errors:", errors)
 
-        // // Find if error is in step 1 
+        // Find if error is in step 1 
         // const step1Keys = ["shippingFrom", "shippingTo", "shipmentDate", "equipmentType", "contactInfo", "lineItem"]
         // const hasStep1Error = Object.keys(errors).some(k => step1Keys.includes(k) && k !== "lineItem")
 
@@ -74,20 +76,49 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
     }
 
     const handleFullSubmit = () => {
-        methods.handleSubmit(onSubmit, onError)()
+        onSubmit(methods.getValues())
     }
 
     const confirmSubmit = (status: "DRAFT" | "SAVED") => {
         setQuoteStatus(status)
         setIsModalOpen(false)
+
+        const formattedAddresses = formDataToSubmit.addresses?.map((address: any) => {
+            if (address.addressBookId) {
+                return {
+                    addressBookId: address.addressBookId,
+                    type: address.type
+                }
+            }
+            return address
+        })
+
         const payload = {
+            ...formDataToSubmit,
+            "addresses": formattedAddresses,
             "quoteType": quoteType,
             "shipmentType": shipmentType,
             "status": status,
-            ...formDataToSubmit,
+            "lineItem": {
+                ...formDataToSubmit.lineItem,
+                "type": shipmentType,
+            },
         }
-        console.log("Submitting Payload:", payload)
-        createQuoteMutation.mutate(payload)
+        const transformedAddresses = payload.addresses.map((addr: any) => {
+            if (addr.addressBookId) {
+                // Only send addressBookId if selected from address book
+                return { type: addr.type, addressBookId: addr.addressBookId };
+            }
+            // Otherwise, send the manual address
+            return { ...addr };
+        });
+
+        const payloadTransformed = {
+            ...payload,
+            addresses: transformedAddresses,
+        };
+        console.log("Submitting Payload:", payloadTransformed)
+        createQuoteMutation.mutate(payloadTransformed)
         alert(`Quote submitted successfully as ${status}! Check console for details.`)
     }
 
@@ -100,31 +131,33 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 <div className="lg:col-span-3">
                     <FormProvider {...methods}>
-                        <form onSubmit={methods.handleSubmit(onSubmit, onError)} className="space-y-8">
-                            {currentStep === 1 && (
-                                <Step1Form
-                                    quoteType={quoteType}
-                                    shipmentType={shipmentType}
-                                    setShipmentType={setShipmentType}
-                                    onNext={() => setCurrentStep(2)}
+                        <SchemaContext.Provider value={schema}>
+                            <form onSubmit={methods.handleSubmit(onSubmit, onError)} className="space-y-8">
+                                {currentStep === 1 && (
+                                    <Step1Form
+                                        quoteType={quoteType}
+                                        shipmentType={shipmentType}
+                                        setShipmentType={setShipmentType}
+                                        onNext={() => setCurrentStep(2)}
+                                    />
+                                )}
+                                {currentStep === 2 && (
+                                    <Step2Form
+                                        shipmentType={shipmentType}
+                                        onPrev={() => setCurrentStep(1)}
+                                        onSubmit={handleFullSubmit}
+                                    />
+                                )}
+                                <StepperButtons
+                                    quoteStatus={quoteStatus}
+                                    setQuoteStatus={setQuoteStatus}
+                                    totalSteps={totalSteps}
+                                    currentStep={currentStep}
+                                    onNext={() => currentStep === totalSteps ? handleFullSubmit() : setCurrentStep(prev => prev + 1)}
+                                    onPrev={() => setCurrentStep(prev => prev - 1)}
                                 />
-                            )}
-                            {currentStep === 2 && (
-                                <Step2Form
-                                    shipmentType={shipmentType}
-                                    onPrev={() => setCurrentStep(1)}
-                                    onSubmit={handleFullSubmit}
-                                />
-                            )}
-                            <StepperButtons
-                                quoteStatus={quoteStatus}
-                                setQuoteStatus={setQuoteStatus}
-                                totalSteps={totalSteps}
-                                currentStep={currentStep}
-                                onNext={() => currentStep === totalSteps ? handleFullSubmit() : setCurrentStep(prev => prev + 1)}
-                                onPrev={() => setCurrentStep(prev => prev - 1)}
-                            />
-                        </form>
+                            </form>
+                        </SchemaContext.Provider>
                     </FormProvider>
                 </div>
 

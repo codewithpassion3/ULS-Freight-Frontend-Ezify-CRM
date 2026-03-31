@@ -143,9 +143,10 @@ export function GlobalForm<T extends FieldValues>({
 
       switch (field.type) {
         case "text":
-        case "number":
         case "email":
         case "password":
+        case "number":
+
           return (
             <div key={field.name} className={`space-y-1 ${field.wrapperClassName || ""}`}>
               {renderLabel()}
@@ -154,7 +155,7 @@ export function GlobalForm<T extends FieldValues>({
                 type={field.type}
                 placeholder={field.placeholder}
                 className={`${hasError ? "border-red-500 focus-visible:ring-red-500" : ""} ${field.className || ""}`}
-                {...register(field.name)}
+                {...register(field.name, { valueAsNumber: field.type === "number" })}
                 {...field.extra}
               />
               {hasError && <p className="text-xs text-red-500 font-medium">{errorMessage}</p>}
@@ -193,19 +194,17 @@ export function GlobalForm<T extends FieldValues>({
 
         case "select":
           return (
-            <div key={field.name} className={`space-y-1 ${field.wrapperClassName || ""}`}>
-              {renderLabel()}
-              <FormSelect
-                name={field.name}
-                defaultValue={field.defaultValue}
-                options={field.options}
-                className={field.className}
-                placeholder={field.placeholder}
-                optionKey={field.selectOptions?.optionKey}
-                optionValue={field.selectOptions?.optionValue}
-              />
-              {hasError && <p className="text-xs text-red-500 font-medium">{errorMessage}</p>}
-            </div>
+            <FormSelect
+              key={field.name}
+              label={field.label}
+              name={field.name}
+              defaultValue={field.defaultValue}
+              options={field.options}
+              className={field.className}
+              placeholder={field.placeholder}
+              optionKey={field.selectOptions?.optionKey}
+              optionValue={field.selectOptions?.optionValue}
+            />
           )
 
         case "radio":

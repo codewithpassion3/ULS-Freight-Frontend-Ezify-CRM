@@ -1,159 +1,134 @@
 import { GlobalForm } from "@/components/common/form/GlobalForm"
+import { FormCheckbox } from "@/components/common/forms/FormCheckbox"
+import { FormRadio } from "@/components/common/forms/FormRadio"
+import { Info } from "lucide-react"
+import { useFormContext } from "react-hook-form"
+import InBond from "./InBond"
 
 export default function AdditionalServices() {
-    const additionServicesCheckboxes = [
-        {
-            name: "limitedAccess",
-            label: "Limited Access",
-            type: "checkbox",
-        },
-        {
-            name: "appointmentDelivery",
-            label: "Appointment Delivery",
-            type: "checkbox",
-        },
-        {
-            name: "thresholdDelivery",
-            label: "Threshold Delivery",
-            type: "checkbox",
-        },
-        {
-            name: "thresholdPickup",
-            label: "Threshold Pickup",
-            type: "checkbox",
-        },
-        {
-            name: "inBond",
-            label: "In Bond",
-            type: "checkbox",
-        },
-        {
-            name: "protectFromFreeze",
-            label: "Protect from Freeze",
-            type: "checkbox",
-        },
-        {
-            name: "tradeShowDelivery",
-            label: "Trade Show Delivery",
-            type: "checkbox",
-        },
-        {
-            name: "amazonFbaDelivery",
-            label: "Amazon/FBA Delivery",
-            type: "checkbox",
-        },
-        {
-            name: "refrigeratedServices",
-            label: "Refrigerated Services",
-            type: "checkbox",
-        },
-    ]
+    const { watch } = useFormContext()
+
     return (
         <div className="border border-border rounded-md p-6 bg-white dark:bg-card space-y-4">
             <h2 className="text-base font-semibold text-slate-800">Additional Services</h2>
-            <GlobalForm
-                formWrapperClassName="flex flex-wrap gap-2"
-                fields={[
-                    {
-                        name: "limitedAccess",
-                        label: "Limited Access",
-                        type: "checkbox",
-                    },
-                    // if limited access options
-                    // {
-                    //     name: "limitedAccess.location.constructionSite",
-                    //     label: "Construction Site",
-                    //     type: "checkbox",
-                    // },
-                    // {
-                    //     name: "limitedAccess.location.individualStorageUnit",
-                    //     label: "Individual (Mini) Storage Unit",
-                    //     type: "checkbox",
-                    // },
-                    // {
-                    //     name: "limitedAccess.location.fairAmusementPark",
-                    //     label: "Fair/Amusement Park",
-                    //     type: "checkbox",
-                    // },
-                    // {
-                    //     name: "limitedAccess.location.placeOfWorship",
-                    //     label: "Place of Worship",
-                    //     type: "checkbox",
-                    // },
-                    // {
-                    //     name: "limitedAccess.location.farmCountryClubEstate",
-                    //     label: "Farm/Country Club/Estate",
-                    //     type: "checkbox",
-                    // },
-                    // {
-                    //     name: "limitedAccess.location.securedLocationsDelivery",
-                    //     label: "Secured Locations Delivery - prisons, military bases, airport",
-                    //     type: "checkbox",
-                    // },
-                    // {
-                    //     name: "limitedAccess.location.schoolUniversity",
-                    //     label: "School/University",
-                    //     type: "checkbox",
-                    // },
-                    // {
-                    //     name: "limitedAccess.location.plazaMallDeliveries",
-                    //     label: "Plaza/Mall deliveries or stores with only parking lot/Street access",
-                    //     type: "checkbox",
-                    // },
-                    // {
-                    //     name: "limitedAccess.location.groceryRetailLocations",
-                    //     label: "Grocery/Retail Locations (ex: Costco or Walmart)",
-                    //     type: "checkbox",
-                    // },
-                    // {
-                    //     name: "limitedAccess.location.other",
-                    //     label: "Other",
-                    //     type: "checkbox",
-                    // },
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="sm:col-span-3 ">
+                    <FormCheckbox
+                        name={"services.limitedAccess"}
+                        label="Limited Access"
+                        defaultValue={false}
+                        icon={<Info size={16} />}
+                    />
+                    {watch("services.limitedAccess") &&
+                        <div className="my-4">
+                            <FormRadio
 
-                    {
-                        name: "appointmentDelivery",
-                        label: "Appointment Delivery",
-                        type: "checkbox",
-                    },
-                    {
-                        name: "thresholdDelivery",
-                        label: "Threshold Delivery",
-                        type: "checkbox",
-                    },
-                    {
-                        name: "thresholdPickup",
-                        label: "Threshold Pickup",
-                        type: "checkbox",
-                    },
-                    {
-                        name: "inBond",
-                        label: "In Bond",
-                        type: "checkbox",
-                    },
-                    {
-                        name: "protectFromFreeze",
-                        label: "Protect from Freeze",
-                        type: "checkbox",
-                    },
-                    {
-                        name: "tradeShowDelivery",
-                        label: "Trade Show Delivery",
-                        type: "checkbox",
-                    },
-                    {
-                        name: "amazonFbaDelivery",
-                        label: "Amazon/FBA Delivery",
-                        type: "checkbox",
-                    },
-                    {
-                        name: "refrigeratedServices",
-                        label: "Refrigerated Services",
-                        type: "checkbox",
-                    },
+                                className="grid grid-cols-2 gap-4"
+                                name="limitedAccess.location"
+                                label="Location"
+                                options={[
+                                    {
+                                        value: "constructionSite",
+                                        label: "Construction Site",
+                                    },
+                                    {
+                                        value: "individualStorageUnit",
+                                        label: "Individual (Mini) Storage Unit",
+                                    },
+                                    {
+                                        value: "fairAmusementPark",
+                                        label: "Fair/Amusement Park",
+                                    },
+                                    {
+                                        value: "placeOfWorship",
+                                        label: "Place of Worship",
+                                    },
+                                    {
+                                        value: "farmCountryClubEstate",
+                                        label: "Farm/Country Club/Estate",
+                                    },
+                                    {
+                                        value: "securedLocationsDelivery",
+                                        label: "Secured Locations Delivery - prisons, military bases, airport",
+                                    },
+                                    {
+                                        value: "schoolUniversity",
+                                        label: "School/University",
+                                    },
+                                    {
+                                        value: "plazaMallDeliveries",
+                                        label: "Plaza/Mall deliveries or stores with only parking lot/Street access",
+                                    },
+                                    {
+                                        value: "groceryRetailLocations",
+                                        label: "Grocery/Retail Locations (ex: Costco or Walmart)",
+                                    },
+                                    {
+                                        value: "other",
+                                        label: "Other",
+                                    },
+                                ]}
+                            />
+                        </div>
+                    }
+                </div>
 
-                ]}
-            />
+                <FormCheckbox
+                    name="services.appointmentDelivery"
+                    label="Appointment Delivery"
+                    defaultValue={false}
+                    icon={<Info size={16} />}
+                />
+                <FormCheckbox
+                    name="services.thresholdDelivery"
+                    label="Threshold Delivery"
+                    defaultValue={false}
+                    icon={<Info size={16} />}
+                />
+                <FormCheckbox
+                    name="services.thresholdPickup"
+                    label="Threshold Pickup"
+                    defaultValue={false}
+                    icon={<Info size={16} />}
+                />
+                <div className="sm:col-span-3">
+                    <FormCheckbox
+                        name="services.inBond"
+                        label="In Bond"
+                        defaultValue={false}
+                        icon={<Info size={16} />}
+                    />
+                    {watch("services.inBond") &&
+                        <div className="my-4">
+                            <InBond />
+                        </div>
+                    }
+                </div>
+                <FormCheckbox
+                    name="services.protectFromFreeze"
+                    label="Protect from Freeze"
+                    defaultValue={false}
+                    icon={<Info size={16} />}
+                />
+                <FormCheckbox
+                    name="services.tradeShowDelivery"
+                    label="Trade Show Delivery"
+                    defaultValue={false}
+                    icon={<Info size={16} />}
+                />
+                <FormCheckbox
+                    name="services.amazonFbaDelivery"
+                    label="Amazon/FBA Delivery"
+                    defaultValue={false}
+                    icon={<Info size={16} />}
+                />
+                <FormCheckbox
+                    name="services.refrigeratedServices"
+                    label="Refrigerated Services"
+                    defaultValue={false}
+                    icon={<Info size={16} />}
+                />
+            </div>
         </div>
     )
 }

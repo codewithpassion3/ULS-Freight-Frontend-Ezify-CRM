@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -25,12 +25,7 @@ export default function ResetPasswordPage() {
     const { token, email } = useOTPFlow(); // use OTP context
     const [isLoading, setIsLoading] = useState(true);
 
-    const {
-        register,
-        handleSubmit,
-        reset,
-        formState: { errors },
-    } = useForm<ResetPasswordValues>({
+    const form = useForm<ResetPasswordValues>({
         resolver: zodResolver(resetPasswordSchema),
         mode: "onChange",
         defaultValues: {
@@ -40,11 +35,10 @@ export default function ResetPasswordPage() {
             resetToken: token || "",
         },
     });
-
     // Populate form with context values when available
     useEffect(() => {
         if (token && email) {
-            reset({
+            form.reset({
                 email,
                 password: "",
                 confirmPassword: "",
@@ -54,7 +48,7 @@ export default function ResetPasswordPage() {
 
         const t = setTimeout(() => setIsLoading(false), 300);
         return () => clearTimeout(t);
-    }, [token, email, reset]);
+    }, [token, email, form.reset]);
 
     const resetMutation = useMutation({
         mutationFn: (data: any) => resetPassword(data),
@@ -96,26 +90,23 @@ export default function ResetPasswordPage() {
                 </>
             }
         >
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                <FormField
-                    name="password"
-                    label="New Password*"
-                    placeholder="Enter new password"
-                    register={register}
-                    error={errors.password}
-                />
-                <FormField
-                    name="confirmPassword"
-                    label="Confirm Password*"
-                    placeholder="Confirm your password"
-                    register={register}
-                    error={errors.confirmPassword}
-                />
-                <Button type="submit" className="w-full">
-                    Reset Password
-                </Button>
-            </form>
-
+            <FormProvider {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                    <FormField
+                        name="password"
+                        label="New Password*"
+                        placeholder="Enter new password"
+                    />
+                    <FormField
+                        name="confirmPassword"
+                        label="Confirm Password*"
+                        placeholder="Confirm your password"
+                    />
+                    <Button disabled={resetMutation.isPending || !form.formState.isValid} type="submit" className="w-full">
+                        Reset Password
+                    </Button>
+                </form>
+            </FormProvider>
             <div className="mt-6 text-sm text-center">
                 <Link href="/login" className="text-primary hover:underline font-medium">
                     Back to Login

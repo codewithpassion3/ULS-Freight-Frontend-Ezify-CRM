@@ -120,8 +120,6 @@ export function Step1Form({ onNext }: Step1FormProps) {
             name="user.firstName"
             label="First Name*"
             placeholder="Enter your first name"
-            register={register}
-            error={errors.user?.firstName}
           />
         </div>
         <div className="space-y-2">
@@ -129,8 +127,6 @@ export function Step1Form({ onNext }: Step1FormProps) {
             name="user.lastName"
             label="Last Name*"
             placeholder="Enter your last name"
-            register={form.register}
-            error={errors.user?.lastName}
           />
         </div>
       </div>
@@ -153,8 +149,6 @@ export function Step1Form({ onNext }: Step1FormProps) {
             name="company.industryType"
             label="Industry Type"
             placeholder="ex: Furniture"
-            register={form.register}
-            error={errors.company?.industryType}
           />
         </div>
       </div>
@@ -167,8 +161,6 @@ export function Step1Form({ onNext }: Step1FormProps) {
             label="Email*"
             type="email"
             placeholder="example@email.com"
-            register={form.register}
-            error={errors.user?.email}
           />
           {errors.user?.email && <p className="text-xs text-red-500">{errors.user?.email.message}</p>}
         </div>

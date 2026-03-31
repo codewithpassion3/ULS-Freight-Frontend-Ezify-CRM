@@ -8,7 +8,7 @@ export function FormFieldWrapper({
 }: any) {
 
     return (
-        <div className="space-y-2">
+        <div className="space-y-4">
 
             {label && (
                 <Label className={`${error ? "text-red-500" : ""}`}>

@@ -12,6 +12,10 @@ import { ShipmentOptions } from "../CreateQuote"
 import DangerousGoodsForm from "./DangerousGoodDetails"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
 import AdditionalServices from "./AdditionalServices"
+import { Textarea } from "@/components/ui/textarea"
+import FormField from "@/components/common/forms/FormField"
+import { FormSelect } from "@/components/common/forms/FormSelect"
+import { FormCheckbox } from "@/components/common/forms/FormCheckbox"
 
 export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }) {
     const { register, control, watch, setValue, formState: { errors } } = useFormContext<any>()
@@ -43,7 +47,6 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                     <Cuboid className="w-5 h-5" />
                     Dimensions & Weight
                 </h2>
-
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50 dark:bg-card border p-4 rounded-md">
                     <div className="flex items-center gap-4">
                         <Label className="font-semibold text-slate-800 dark:text-slate-100 mb-0">Quantity</Label>
@@ -73,11 +76,10 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                             </SelectContent>
                         </Select>
                     </div>
-
                     <Controller
                         control={control}
                         name="lineItem.measurementUnit"
-                        defaultValue="Imperial"
+                        defaultValue="IMPERIAL"
                         render={({ field }) => (
                             <RadioGroup
                                 value={field.value}
@@ -142,50 +144,121 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 items-start">
-                                    <div className="space-y-1.5">
-                                        <Label className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Length ({lengthUnit})*</Label>
-                                        <Input
-                                            placeholder="L"
-                                            type="number"
-                                            {...register(`lineItem.units.${index}.length`, { valueAsNumber: true })}
-                                            className={rowErrors?.length ? "border-red-500" : ""}
-                                        />
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <Label className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Width ({lengthUnit})*</Label>
-                                        <Input
-                                            placeholder="W"
-                                            type="number"
-                                            {...register(`lineItem.units.${index}.width`, { valueAsNumber: true })}
-                                            className={rowErrors?.width ? "border-red-500" : ""}
-                                        />
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <Label className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Height ({lengthUnit})*</Label>
-                                        <Input
-                                            placeholder="H"
-                                            type="number"
-                                            {...register(`lineItem.units.${index}.height`, { valueAsNumber: true })}
-                                            className={rowErrors?.height ? "border-red-500" : ""}
-                                        />
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <Label className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Weight ({weightUnit})*</Label>
-                                        <Input
-                                            placeholder={isImperial ? "lbs" : "kg"}
-                                            type="number"
-                                            {...register(`lineItem.units.${index}.weight`, { valueAsNumber: true })}
-                                            className={rowErrors?.weight ? "border-red-500" : ""}
-                                        />
-                                    </div>
-                                    <div className="space-y-1.5 col-span-2 md:col-span-1">
-                                        <Label className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Description</Label>
-                                        <Input
-                                            placeholder="Describe the item"
-                                            {...register(`lineItem.units.${index}.description`)}
-                                        />
-                                    </div>
+                                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 xl:grid-cols-8 gap-4 items-start">
+                                    <FormField
+                                        name={`lineItem.units.${index}.length`}
+                                        label={`Length (${lengthUnit})*`}
+                                        type="number"
+                                        placeholder="L"
+                                        labelClassName="text-xs text-muted-foreground"
+                                    />
+                                    <FormField
+                                        name={`lineItem.units.${index}.width`}
+                                        label={`Width (${lengthUnit})*`}
+                                        type="number"
+                                        placeholder="W"
+                                        labelClassName="text-xs text-muted-foreground"
+                                        className={rowErrors?.width ? "border-red-500" : ""}
+                                    />
+                                    <FormField
+                                        name={`lineItem.units.${index}.height`}
+                                        label={`Height (${lengthUnit})*`}
+                                        type="number"
+                                        placeholder="H"
+                                        labelClassName="text-xs text-muted-foreground"
+                                    // className={rowErrors?.height ? "border-red-500" : ""}
+                                    />
+                                    <FormField
+                                        name={`lineItem.units.${index}.weight`}
+                                        label={`Weight (${weightUnit})*`}
+                                        type="number"
+                                        placeholder={isImperial ? "lbs" : "kg"}
+                                        labelClassName="text-xs text-muted-foreground"
+                                    // className={rowErrors?.weight ? "border-red-500" : ""}
+                                    />
+                                    <FormSelect
+                                        label="Freight Class*"
+                                        name={`lineItem.units.${index}.freightClass`}
+                                        options={[
+                                            { value: "25", label: "25" },
+                                            { value: "50", label: "50" },
+                                            { value: "75", label: "75" },
+                                            { value: "100", label: "100" },
+                                            { value: "125", label: "125" },
+                                            { value: "150", label: "150" },
+                                            { value: "175", label: "175" },
+                                            { value: "200", label: "200" },
+                                            { value: "250", label: "250" },
+                                            { value: "300", label: "300" },
+                                            { value: "350", label: "350" },
+                                            { value: "400", label: "400" },
+                                            { value: "450", label: "450" },
+                                            { value: "500", label: "500" },
+                                            { value: "550", label: "550" },
+                                            { value: "600", label: "600" },
+                                            { value: "650", label: "650" },
+                                            { value: "700", label: "700" },
+                                            { value: "750", label: "750" },
+                                            { value: "800", label: "800" },
+                                            { value: "850", label: "850" },
+                                            { value: "900", label: "900" },
+                                            { value: "950", label: "950" },
+                                            { value: "1000", label: "1000" },
+                                        ]}
+                                        labelClassName="text-xs text-muted-foreground"
+                                        placeholder="Select Frieght Class"
+                                    />
+                                    <FormField
+                                        name={`lineItem.units.${index}.nmfc`}
+                                        label={`NMFC Code`}
+                                        type="text"
+                                        placeholder="#0000"
+                                        labelClassName="text-xs text-muted-foreground"
+                                    />
+                                    <FormSelect
+                                        name={`lineItem.units.${index}.palletUnitType`}
+                                        label={`Type`}
+                                        placeholder="Select Type"
+                                        options={[
+                                            { value: "PALLET", label: "Pallet" },
+                                            { value: "DRUM", label: "Drum" },
+                                            { value: "BOXES", label: "Boxes" },
+                                            { value: "ROLLS", label: "Rolls" },
+                                            { value: "PIPES_OR_TUBES", label: "Pipes or Tubes" },
+                                            { value: "BALES", label: "Bales" },
+                                            { value: "BAGS", label: "Bags" },
+                                            { value: "CYLINDER", label: "Cylinder" },
+                                            { value: "PAILS", label: "Pails" },
+                                            { value: "REELS", label: "Reels" },
+                                            { value: "CRATE", label: "Crate" },
+                                            { value: "LOOSE", label: "Loose" },
+                                            { value: "PIECES", label: "Pieces" },
+                                        ]}
+
+                                        labelClassName="text-xs text-muted-foreground"
+                                    // className={rowErrors?.type ? "border-red-500" : ""}
+                                    />
+                                    <FormField
+                                        name={`lineItem.units.${index}.unitsOnPallet`}
+                                        label={`Units`}
+                                        type="number"
+                                        placeholder="#units"
+                                        labelClassName="text-xs text-muted-foreground"
+                                    // className={rowErrors?.unitsOnPallet ? "border-red-500" : ""}
+                                    />
+                                    <FormField
+                                        name={`lineItem.units.${index}.description`}
+                                        label={`Description`}
+                                        type="textarea"
+                                        placeholder="Describe the item"
+                                        labelClassName="text-xs text-muted-foreground"
+                                        className={`col-span-2 md:col-span-4`}
+
+                                    />
+                                    {/* <FormCheckbox
+                                        name={`lineItem.units.${index}.stackable`}
+                                        label="Stackable"
+                                    /> */}
                                 </div>
 
                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
@@ -236,15 +309,17 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                         formWrapperClassName="flex items-center gap-4"
                         fields={[
                             {
-                                name: "dangerousGoods",
+                                name: "lineItem.dangerousGoods",
                                 label: "Dangerous Goods",
                                 type: "checkbox",
+                                defaultValue: false,
                                 icon: <Info size={14} className="text-slate-800" />,
                             },
                             {
-                                name: "stackable",
+                                name: "lineItem.stackable",
                                 label: "Stackable",
                                 type: "checkbox",
+                                defaultValue: false,
                                 icon: <Info size={14} className="text-slate-800" />,
                             },
                         ]}

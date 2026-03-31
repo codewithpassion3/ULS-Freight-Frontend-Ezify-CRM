@@ -1,5 +1,5 @@
 "use client"
-import { useForm } from "react-hook-form"
+import { useForm, FormProvider } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { loginSchema, LoginFormValues } from "@/lib/validations/auth/login-schema"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -43,10 +43,11 @@ export default function LoginPage() {
   }
     , [])
 
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
+  const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "", remember: false }
   })
+  const { register, handleSubmit, formState: { errors } } = form
 
   const onSubmit = (data: LoginFormValues) => loginMutation.mutate(data)
 
@@ -65,39 +66,38 @@ export default function LoginPage() {
         </>
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        <FormField
-          name="email"
-          label="Email*"
-          placeholder="Enter your email"
-          register={register}
-          error={errors.email}
-        />
-        <FormField
-          name="password"
-          label="Password*"
-          placeholder="Enter your password"
-          register={register}
-          error={errors.password}
-        />
-        <div className="flex items-center gap-2">
-          <Checkbox
-            className="cursor-pointer"
-            {...register("remember")}
+      <FormProvider {...form}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <FormField
+            name="email"
+            label="Email*"
+            placeholder="Enter your email"
           />
-          <Label>
-            Remember me
-          </Label>
-        </div>
-        <div className="my-6 flex items-center justify-end">
-          <Link href="/forgot-password" className="text-sm text-primary hover:underline">
-            Forgot Password?
-          </Link>
-        </div>
-        <Button type="submit" variant="default" className="w-full">
-          Start Shipping!
-        </Button>
-      </form>
+          <FormField
+            name="password"
+            label="Password*"
+            placeholder="Enter your password"
+            type="password"
+          />
+          <div className="flex items-center gap-2">
+            <Checkbox
+              className="cursor-pointer"
+              {...register("remember")}
+            />
+            <Label>
+              Remember me
+            </Label>
+          </div>
+          <div className="my-6 flex items-center justify-end">
+            <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+              Forgot Password?
+            </Link>
+          </div>
+          <Button type="submit" variant="default" className="w-full">
+            Start Shipping!
+          </Button>
+        </form>
+      </FormProvider>
     </AuthLayout>
   )
 }

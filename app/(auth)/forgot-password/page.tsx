@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useForm } from "react-hook-form"
+import { FormProvider, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { toast } from "sonner"
@@ -35,10 +35,11 @@ export default function ForgotPasswordPage() {
         },
     })
 
-    const { register, handleSubmit, formState: { errors } } = useForm<ForgotPasswordValues>({
+    const form = useForm<ForgotPasswordValues>({
         resolver: zodResolver(forgotPasswordSchema),
         defaultValues: { email: "" }
     })
+    const { register, handleSubmit, formState: { errors } } = form
 
     const onSubmit = (data: ForgotPasswordValues) => {
         setFlow(data.email, "password_reset")
@@ -61,18 +62,18 @@ export default function ForgotPasswordPage() {
                 </>
             }
         >
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                <FormField
-                    name="email"
-                    label="Email*"
-                    placeholder="Enter your email"
-                    register={register}
-                    error={errors.email}
-                />
-                <Button type="submit" className="w-full">
-                    Send Reset OTP
-                </Button>
-            </form>
+            <FormProvider {...form}>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                    <FormField
+                        name="email"
+                        label="Email*"
+                        placeholder="Enter your email"
+                    />
+                    <Button disabled={forgotMutation.isPending || Object.keys(errors).length > 0} type="submit" className="w-full">
+                        Send Reset OTP
+                    </Button>
+                </form>
+            </FormProvider>
 
             <div className="mt-6 text-sm text-center">
                 <Link href="/login" className="text-primary hover:underline font-medium">

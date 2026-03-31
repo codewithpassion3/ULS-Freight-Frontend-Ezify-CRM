@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/select"
 
 import { FormFieldWrapper } from "./FormFieldWrapper"
+import { Label } from "@/components/ui/label";
 type SelectOptions = {
     name: string;
     options: { label: string; value: string | number }[];
@@ -16,6 +17,8 @@ type SelectOptions = {
     placeholder?: string;
     defaultValue?: string;
     className?: string;
+    label?: string;
+    labelClassName?: string;
 }
 export function FormSelect({
     name,
@@ -24,20 +27,21 @@ export function FormSelect({
     optionValue,
     placeholder,
     defaultValue,
-    className
+    className,
+    label,
+    labelClassName
 }: SelectOptions) {
 
     const { control } = useFormContext()
 
     return (
-        <FormFieldWrapper name={name}>
-
+        <div className="flex flex-col gap-2">
+            <Label className={labelClassName} htmlFor={name}>{label ? label : name}</Label>
             <Controller
                 name={name}
                 control={control}
                 defaultValue={defaultValue}
                 render={({ field }) => (
-
                     <Select
                         value={field.value?.toString()}
                         onValueChange={(value) => field.onChange(value)}
@@ -59,12 +63,11 @@ export function FormSelect({
                             ))}
 
                         </SelectContent>
-
                     </Select>
 
                 )}
             />
+        </div>
 
-        </FormFieldWrapper>
     )
 }
