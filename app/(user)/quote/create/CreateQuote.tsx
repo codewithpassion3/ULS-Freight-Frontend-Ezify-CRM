@@ -129,7 +129,7 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
         };
         console.log("Submitting Payload:", payloadTransformed)
 
-        updateQuoteMutation.mutate(payloadTransformed)
+        quoteId ? updateQuoteMutation.mutate(payloadTransformed) : createQuoteMutation.mutate(payloadTransformed)
         alert(`Quote submitted successfully as ${status}! Check console for details.`)
     }
 
