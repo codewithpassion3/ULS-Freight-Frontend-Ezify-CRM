@@ -13,7 +13,7 @@ import EmptyUI from "@/components/common/empty/Empty"
 import { BookUser } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-export function AddressBookTable({ handleSelect, type = "all" }: { handleSelect: (contact: any) => void, type?: "all" | "recent" }) {
+export function AddressBookTable({ handleSelect, type = "all" }: { handleSelect?: (contact: any) => void, type?: "all" | "recent" }) {
     const [search, setSearch] = useState("")
     const [page, setPage] = useState(1)
     const [sorting, setSorting] = useState([])
@@ -77,6 +77,7 @@ export function AddressBookTable({ handleSelect, type = "all" }: { handleSelect:
                             setSearch={setSearch}
                             selectedRows={[]}
                             onBulkDelete={(rows) => console.log(rows)}
+                            placeholder="Search Company Name"
                         />
 
 

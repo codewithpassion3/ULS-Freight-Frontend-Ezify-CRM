@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useMemo, useState } from "react"
+import { createContext, useEffect, useMemo, useState } from "react"
 import { useForm, FormProvider, useFormContext } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 // import { quoteSchema } from "@/lib/validations/quote/spot-quote-schema"
@@ -12,10 +12,11 @@ import { quoteStandardCourierPackSchema, quoteStandardFTLSchema, quoteStandardPa
 import z from "zod"
 import { determineSchema } from "./utils"
 import StepperButtons from "./StepperButtons"
-import { createQuote } from "@/api/services/quotes.api"
-import { useMutation } from "@tanstack/react-query"
+import { createQuote, getSingleQuote, updateQuote } from "@/api/services/quotes.api"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { useSearchParams } from "next/navigation"
 
 export type QuoteTypes = "SPOT" | "STANDARD"
 export type ShipmentOptions = {
@@ -30,13 +31,21 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
     const [shipmentType, setShipmentType] = useState<ShipmentOptions[keyof ShipmentOptions]>(initialShipmentType)
     const [currentStep, setCurrentStep] = useState(1)
     const [quoteStatus, setQuoteStatus] = useState<"DRAFT" | "SAVED">("DRAFT")
+    const quoteId = useSearchParams().get("id")
     const totalSteps = 2
+    const isEditing = !!quoteId
+
 
     const schema = useMemo(() => {
         return determineSchema(quoteType, shipmentType)
     }, [quoteType, shipmentType])
 
-
+    const { data: singleQuote, isLoading: isSingleQuoteLoading, isError: isSingleQuoteError, isSuccess: isSingleQuoteSuccess } = useQuery({
+        queryKey: ["singleQuote", quoteId],
+        queryFn: () => quoteId ? getSingleQuote(quoteId) : null,
+        enabled: !!quoteId,
+    })
+    console.log("singleQuote", singleQuote)
     const methods = useForm({
         resolver: zodResolver(schema),
         mode: "onTouched",
@@ -44,10 +53,7 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
 
     const { watch } = methods;
     // const methodsWithSchema = { ...methods, schema }
-    const values = watch();
-    console.log("values", values)
-    console.log("quoteType", quoteType)
-    console.log("shipmentType", shipmentType)
+
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [formDataToSubmit, setFormDataToSubmit] = useState<any>(null)
 
@@ -57,8 +63,12 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
         setIsModalOpen(true)
     }
 
+
     const createQuoteMutation = useMutation({
         mutationFn: (data: unknown) => createQuote(data),
+    })
+    const updateQuoteMutation = useMutation({
+        mutationFn: (data: unknown) => updateQuote(data),
     })
 
     const onError = (errors: any) => {
@@ -118,14 +128,16 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
             addresses: transformedAddresses,
         };
         console.log("Submitting Payload:", payloadTransformed)
-        createQuoteMutation.mutate(payloadTransformed)
+
+        updateQuoteMutation.mutate(payloadTransformed)
         alert(`Quote submitted successfully as ${status}! Check console for details.`)
     }
+
 
     return (
         <div className="container mx-auto py-8 px-4 max-w-7xl">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">Create New Quote</h1>
+                <h1 className="text-2xl font-bold">{isEditing ? "Edit Quote" : "Create New Quote"}</h1>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">

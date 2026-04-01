@@ -9,13 +9,11 @@ export function DataTableToolbar<TData, TValue>({
     setSearch,
     selectedRows,
     onBulkDelete,
+    placeholder = "Search"
 }: DataTableToolbarProps<TData, TValue>) {
     return (
         <div className="w-full flex items-center justify-between">
-
-            <SearchInput search={search} setSearch={setSearch} placeholder="Search" />
-
-
+            <SearchInput search={search} setSearch={setSearch} placeholder={placeholder} />
             {selectedRows.length > 0 && (
                 <Button
                     variant="destructive"

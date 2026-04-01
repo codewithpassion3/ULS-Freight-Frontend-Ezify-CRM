@@ -1,6 +1,11 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Bell, Boxes, Clock, Info, Mail, Package, Truck, WalletCards } from "lucide-react"
 import { ShipmentOptions } from "../../CreateQuote"
+import { useQuery } from "@tanstack/react-query"
+import { getSingleQuote } from "@/api/services/quotes.api"
+import { useEffect } from "react"
+import { useSearchParams } from "next/navigation"
+import { Loader } from "@/components/common/Loader"
 
 interface QuoteShippingTypeSelectorProps {
     shipmentType: ShipmentOptions[keyof ShipmentOptions]
@@ -15,6 +20,26 @@ const shipmentTypes = [
 ]
 
 export const ShippingTypeSelector = ({ shipmentType, setShipmentType }: QuoteShippingTypeSelectorProps) => {
+    const quoteId = useSearchParams().get("id")
+
+    const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
+        queryKey: ["singleQuote", quoteId],
+        queryFn: () => quoteId ? getSingleQuote(quoteId) : null,
+        enabled: !!quoteId,
+        // Optional: prevent automatic refetch
+        staleTime: 1000 * 60 * 5, // 5 minutes
+    })
+    useEffect(() => {
+        if (cachedSingleQuote) {
+            setShipmentType(cachedSingleQuote.quote.shipmentType)
+        }
+    }, [cachedSingleQuote])
+    console.log("cachedSingleQuote", cachedSingleQuote)
+    if (quoteId) {
+        if (isLoading || isPending) {
+            return <Loader />
+        }
+    }
     return (
         <div className="border border-border rounded-md p-4 bg-white dark:bg-card">
             <div className="flex items-center justify-between pb-4">

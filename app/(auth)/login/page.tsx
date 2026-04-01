@@ -45,7 +45,7 @@ export default function LoginPage() {
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "", remember: false }
+    defaultValues: { email: "", password: "", rememberMe: false }
   })
   const { register, handleSubmit, formState: { errors } } = form
 
@@ -82,7 +82,7 @@ export default function LoginPage() {
           <div className="flex items-center gap-2">
             <Checkbox
               className="cursor-pointer"
-              {...register("remember")}
+              {...register("rememberMe")}
             />
             <Label>
               Remember me

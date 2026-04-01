@@ -9,9 +9,64 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { CheckCircle, Edit, MoreVertical, Trash2 } from "lucide-react"
+import { CheckCircle, CircleCheck, Edit, MoreVertical, Trash2 } from "lucide-react"
+import Link from "next/link"
 
 export const columns: ColumnDef<any>[] = [
+  //   addresses
+  // : 
+  // (2) [{…}, {…}]
+  // createdAt
+  // : 
+  // "2026-03-31T20:58:21.969Z"
+  // createdBy
+  // : 
+  // 1
+  // description
+  // : 
+  // null
+  // id
+  // : 
+  // 3
+  // insurance
+  // : 
+  // 3
+  // lineItems
+  // : 
+  // {id: 3, type: 'PALLET', measurementUnit: 'IMPERIAL', dangerousGoods: false, stackable: true, …}
+  // palletServices
+  // : 
+  // {id: 2, dangerousGoods: false, stackable: false, limitedAccess: true, appointmentDelivery: true, …}
+  // quoteId
+  // : 
+  // "F778537D"
+  // quoteType
+  // : 
+  // "STANDARD"
+  // shipmentType
+  // : 
+  // "PALLET"
+  // signature
+  // : 
+  // null
+  // spotDetails
+  // : 
+  // null
+  // spotFtlServices
+  // : 
+  // null
+  // spotLtlServices
+  // : 
+  // null
+  // standardFTLService
+  // : 
+  // null
+  // status
+  // : 
+  // "DRAFT"
+  // updatedAt
+  // : 
+  // "2026-03-31T20:58:21.969Z"
   {
     id: "select",
     header: ({ table }) => (
@@ -37,7 +92,7 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => {
       return (
         <span className="text-[#0070c0] font-medium whitespace-nowrap">
-          {row.original.name}
+          {row.original.quoteId}
         </span>
       )
     },
@@ -64,11 +119,27 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "dateCreated",
     header: "Date Created",
     cell: ({ row }) => {
-      const parts = row.original.dateCreated.split('\n')
+      // show time first and date after and use 12 hour format
+      const createdAt = row.original.createdAt
+      const dateObj = new Date(createdAt);
+
+      // Format time in 12-hour format
+      const time = dateObj.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      });
+
+      // Format date
+      const formattedDate = dateObj.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
       return (
         <div className="leading-tight whitespace-nowrap">
-          {parts[0]}<br />
-          <span className="text-muted-foreground">{parts[1]}</span>
+          {time}<br />
+          <span className="text-muted-foreground">{formattedDate}</span>
         </div>
       )
     },
@@ -76,20 +147,36 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: "shipFrom",
     header: "Ship From",
+    cell: ({ row }) => {
+      return (
+        <span className="text-[#0070c0] font-medium whitespace-nowrap">
+          {/* {row.original.addresses[0].address.city} */}
+          Lahore
+        </span>
+      )
+    },
   },
   {
     accessorKey: "shipTo",
     header: "Ship To",
+    cell: ({ row }) => {
+      return (
+        <span className="text-[#0070c0] font-medium whitespace-nowrap">
+          {/* {row.original.addresses[1].address.city} */}
+          Karachi
+        </span>
+      )
+    },
   },
   {
     accessorKey: "packagingDetails",
     header: "Packaging Details",
     cell: ({ row }) => {
-      const parts = row.original.packagingDetails.split('\n')
+      const quoteType = row.original.quoteType.toLowerCase()
+      const shipmentType = row.original.shipmentType.toLowerCase()
       return (
-        <div className="leading-tight">
-          {parts[0]}<br />
-          {parts[1]}
+        <div className="leading-tight capitalize">
+          {quoteType} - {shipmentType}
         </div>
       )
     },
@@ -100,20 +187,19 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-4">
-          <button className="flex items-center gap-1 text-[#0070c0] font-medium hover:underline whitespace-nowrap">
-            <Edit size={14} /> Edit
-          </button>
-          <button className="flex items-center gap-1 text-[#0070c0] font-medium hover:underline whitespace-nowrap">
-            <CheckCircle size={14} /> Book Now
-          </button>
-          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="text-muted-foreground hover:text-foreground">
-                <MoreVertical size={16} />
-              </button>
+              <MoreVertical size={16} />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem className="cursor-pointer">
+                <CircleCheck size={14} /> Book Now
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <Link className="flex gap-2 items-center w-full" href={`/quote/create?id=${row.original.id}`}>
+                  <Edit size={14} /> Edit
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem className="text-red-500 cursor-pointer">
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete

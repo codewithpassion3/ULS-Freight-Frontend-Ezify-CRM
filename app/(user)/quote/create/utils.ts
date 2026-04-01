@@ -9,9 +9,9 @@ export function determineSchema<Q extends keyof ShipmentOptions>(quoteType: Q, s
                 return quoteStandardPalletSchema
             case "PACKAGE":
                 return quoteStandardPackageSchema
-            case "COURIER_PACK":
+            case "COURIER_PAK":
                 return quoteStandardCourierPackSchema
-            case "FTL":
+            case "STANDARD_FTL":
                 return quoteStandardFTLSchema
         }
     }

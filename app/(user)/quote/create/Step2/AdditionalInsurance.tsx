@@ -1,24 +1,53 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ChevronDown, ChevronUp, Info } from "lucide-react";
+import { ChevronDown, ChevronUp, Info, ShieldCheck } from "lucide-react";
 import { Controller } from "react-hook-form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useFormContext } from "react-hook-form";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useQuery } from "@tanstack/react-query";
+import { getSingleQuote } from "@/api/services/quotes.api";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { Loader } from "@/components/common/Loader";
 
 export default function AdditionalInsurance() {
 
-    const { register, control } = useFormContext<any>();
-
+    const { register, control, setValue } = useFormContext<any>();
+    const quoteId = useSearchParams().get("id");
+    const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
+        queryKey: ["singleQuote", quoteId],
+        queryFn: () => quoteId ? getSingleQuote(quoteId) : null,
+        enabled: !!quoteId,
+        staleTime: 1000 * 60 * 5, // 5 minutes
+    });
+    useEffect(() => {
+        if (cachedSingleQuote) {
+            const insurance = cachedSingleQuote.quote.insurance;
+            if (insurance) {
+                setValue("insurance", {
+                    amount: insurance.amount,
+                    currency: insurance.currency,
+                    type: insurance.type,
+                });
+            }
+        }
+    }, [cachedSingleQuote, setValue]);
+    if (quoteId) {
+        if (isLoading || isPending) {
+            return <Loader />
+        }
+    }
     return (
         <Accordion type="single" collapsible className="border border-border rounded-md bg-white dark:bg-card">
             <AccordionItem value="insurance" className="border-none">
                 <AccordionTrigger className="group px-6 py-4 hover:no-underline items-center cursor-pointer [&>svg]:hidden!" >
-                    <h3 className="font-semibold flex items-center gap-2 text-lg text-slate-800">
+                    <h2 className="font-semibold flex items-center gap-2 text-lg text-slate-800">
+                        <ShieldCheck />
                         Additional Insurance
                         <ChevronUp className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-                    </h3>
+                    </h2>
                 </AccordionTrigger>
 
                 <AccordionContent className="px-6 pb-6 space-y-6">

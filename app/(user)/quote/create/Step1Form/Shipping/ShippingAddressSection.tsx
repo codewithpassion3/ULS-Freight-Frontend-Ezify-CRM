@@ -17,19 +17,53 @@ import z, { ZodType } from "zod"
 import { useEffect, useMemo, useState } from "react"
 import { InferSchema } from "../../quote.types"
 import FormField from "@/components/common/forms/FormField"
+import { FormSelect } from "@/components/common/forms/FormSelect"
+import { useSearchParams } from "next/navigation"
+import { getSingleQuote } from "@/api/services/quotes.api"
+import { Loader } from "@/components/common/Loader"
 
 
 export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, type, title }: { shipmentType: ShipmentOptions[keyof ShipmentOptions], type: "TO" | "FROM", title: string }) => {
-  // console.log("shipmentType", shipmentType)
-  const { register, setValue, reset, getValues, watch, formState: { errors } } = useFormContext<any>()
+  const { register, setValue, resetField, getValues, watch, formState: { errors } } = useFormContext<any>()
+  const quoteId = useSearchParams().get("id")
   const markContactAsRecent = useMarkContactAsRecent()
-  // const { setValue } = useFormContext()
   const [addressLocked, setAddressLocked] = useState(false)
 
+  const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
+    queryKey: ["singleQuote", quoteId],
+    queryFn: () => quoteId ? getSingleQuote(quoteId) : null,
+    enabled: !!quoteId,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  })
   const index = type === "FROM" ? 0 : 1
   useEffect(() => {
-    setValue(`addresses.${index}.type`, type)
-  }, [])
+    if (!cachedSingleQuote) return;
+
+    const addresses = getValues("addresses") || [];
+    if (!addresses[index]) {
+      addresses[index] = {}; // initialize if missing
+      setValue("addresses", addresses);
+    }
+
+    const quoteAddress = cachedSingleQuote.quote.addresses[index]?.address
+      ?? cachedSingleQuote.quote.addresses[index]?.addressBookEntry?.address;
+
+    if (quoteAddress) {
+      setAddressLocked(true);
+      setValue(`addresses.${index}`, {
+        ...addresses[index],
+        type,
+        addressBookId: cachedSingleQuote.quote.addresses[index]?.addressBook?.id ?? null,
+        address1: quoteAddress.address1,
+        postalCode: quoteAddress.postalCode,
+        city: quoteAddress.city,
+        state: quoteAddress.state,
+        country: quoteAddress.country,
+        ...(shipmentType === "STANDARD_FTL" && { locationType: quoteAddress.locationType }),
+      }, { shouldValidate: true });
+    }
+
+  }, [cachedSingleQuote, index, type, shipmentType]);
   const handleAddressSelect = (contact: ContactType) => {
     markContactAsRecent.mutate(contact.id || "")
     setAddressLocked(true)
@@ -42,7 +76,8 @@ export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, t
       city: contact.address?.city || "",
       state: contact.address?.state || "",
       country: contact.address?.country || "",
-      ...(shipmentType === "STANDARD_FTL" && { locationType: contact?.locationTypeId?.toString() || "" }),
+      // locationType: contact?.locationTypeId || "",
+      ...(shipmentType === "STANDARD_FTL" && { locationType: contact?.locationTypeId || "" }),
     }, { shouldValidate: true });
   }
 
@@ -54,12 +89,18 @@ export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, t
 
   const handleClearAddress = () => {
     setAddressLocked(false)
-    const addresses = getValues("addresses").map((item: any, i: number) =>
-      i === index
-        ? { ...item, addressBookId: null, address1: "", postalCode: "", city: "", state: "", country: "", locationType: "", additionalNotes: "" }
-        : item
-    );
-    setValue("addresses", addresses, { shouldValidate: true, shouldDirty: true });
+    // const addresses = getValues("addresses").map((item: any, i: number) =>
+    //   i === index
+    //     ? { ...item, addressBookId: null, address1: "", postalCode: "", city: "", state: "", country: "", locationType: "", additionalNotes: "" }
+    //     : item
+    // );
+    // setValue("addresses", addresses, { shouldValidate: true, shouldDirty: true });
+    resetField(`addresses.${index}.address1`)
+    resetField(`addresses.${index}.postalCode`)
+    resetField(`addresses.${index}.city`)
+    resetField(`addresses.${index}.state`)
+    resetField(`addresses.${index}.country`)
+    resetField(`addresses.${index}.locationType`)
   };
   const handleSwap = () => {
     const from = getValues("addresses.0")
@@ -69,15 +110,17 @@ export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, t
     setValue("addresses.0.type", "FROM")
     setValue("addresses.1.type", "TO")
   }
-
-  console.log("errors", errors)
-
+  if (quoteId) {
+    if (isLoading || isPending) {
+      return <Loader />
+    }
+  }
   return (
     <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-semibold">{title}</h2>
         <div className="flex gap-2">
-          <Button variant="outline" type="button" onClick={handleClearAddress}>
+          <Button variant="destructive" type="button" onClick={handleClearAddress}>
             <X />
             Clear
           </Button>
@@ -95,38 +138,52 @@ export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, t
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             label="Address*"
-            name={`addresses.[${index}].address1`}
+            name={`addresses.${index}.address1`}
             placeholder="Address"
             disabled={addressLocked}
           />
           <FormField
             label="Postal/ZIP Code*"
-            name={`addresses.[${index}].postalCode`}
+            name={`addresses.${index}.postalCode`}
             placeholder="A1A 1A1"
             disabled={addressLocked}
           />
           <FormField
             label="City*"
-            name={`addresses.[${index}].city`}
+            name={`addresses.${index}.city`}
             placeholder="City Name"
             disabled={addressLocked}
           />
           <FormField
             label="Province/State*"
-            name={`addresses.[${index}].state`}
+            name={`addresses.${index}.state`}
             placeholder="State/Province"
             disabled={addressLocked}
           />
           <FormField
             label="Country*"
-            name={`addresses.[${index}].country`}
+            name={`addresses.${index}.country`}
             placeholder="Country"
             disabled={addressLocked}
           />
+          {shipmentType === "STANDARD_FTL" && (
+            <FormSelect
+              label="Location Type*"
+              name={`addresses.${index}.locationType`}
+              placeholder="Location Type"
+              options={palletShippingLocationTypesRes?.palletShippingLocationTypes.map((item: any) => ({
+                value: item.id,
+                label: item.name
+              }))}
+              valueType="number"
+              disabled={addressLocked}
+            />
+          )}
+
         </div>
-        {shipmentType === "STANDARD_FTL" && (
+        {/* {shipmentType === "STANDARD_FTL" && (
           <p className="text-sm font-medium">FTL Location Type : {palletShippingLocationTypesRes?.palletShippingLocationTypes.find((item: any) => item.id === getValues(`${type}.locationType`))?.name}</p>
-        )}
+        )} */}
 
       </div>
     </div>

@@ -16,14 +16,49 @@ import { Textarea } from "@/components/ui/textarea"
 import FormField from "@/components/common/forms/FormField"
 import { FormSelect } from "@/components/common/forms/FormSelect"
 import { FormCheckbox } from "@/components/common/forms/FormCheckbox"
+import { useSearchParams } from "next/navigation"
+import { useQuery } from "@tanstack/react-query"
+import { getSingleQuote } from "@/api/services/quotes.api"
+import { useEffect } from "react"
 
 export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }) {
     const { register, control, watch, setValue, formState: { errors } } = useFormContext<any>()
-
+    const quoteId = useSearchParams().get("id")
+    const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
+        queryKey: ["singleQuote", quoteId],
+        queryFn: () => quoteId ? getSingleQuote(quoteId) : null,
+        enabled: !!quoteId,
+        staleTime: 1000 * 60 * 5, // 5 minutes
+    })
     const { fields, append, remove } = useFieldArray({
         control,
         name: "lineItem.units",
     })
+
+    useEffect(() => {
+        if (cachedSingleQuote) {
+            const units = cachedSingleQuote.quote.lineItems?.units || [];
+            // If no units exist, initialize with 1 empty package
+            if (units.length === 0) {
+                setValue("lineItem.units", [{
+                    quantity: 1,
+                    length: "",
+                    width: "",
+                    height: "",
+                    weight: "",
+                    description: "",
+                    specialHandlingRequired: false
+                }]);
+            } else {
+                setValue("lineItem.units", units);
+            }
+
+            // Also set global lineItem fields if needed
+            setValue("lineItem.measurementUnit", cachedSingleQuote.lineItem?.measurementUnit || "IMPERIAL");
+            setValue("lineItem.dangerousGoods", cachedSingleQuote.lineItem?.dangerousGoods || false);
+            setValue("lineItem.stackable", cachedSingleQuote.lineItem?.stackable || false);
+        }
+    }, [cachedSingleQuote, setValue]);
 
     const handleAddPackage = () => {
         append({ quantity: 1, length: "", width: "", height: "", weight: "", description: "", specialHandlingRequired: false })
@@ -51,6 +86,7 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                     <div className="flex items-center gap-4">
                         <Label className="font-semibold text-slate-800 dark:text-slate-100 mb-0">Quantity</Label>
                         <Select
+                            defaultValue="1"
                             value={fields.length.toString()}
                             onValueChange={(val) => {
                                 const targetCount = parseInt(val, 10);
@@ -104,9 +140,9 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                 </div>
 
                 <div className="space-y-6 flex flex-col">
-                    {fields.length === 0 && (
+                    {/* {fields.length === 0 && (
                         <div className="text-slate-500 text-sm italic py-4">No packages added yet. Click &quot;Add Package&quot; below.</div>
-                    )}
+                    )} */}
                     {fields.map((field, index) => {
                         const rowErrors = (errors.lineItem as any)?.units?.[index]
                         const measurementUnit = watch(`lineItem.measurementUnit`) || "Imperial"

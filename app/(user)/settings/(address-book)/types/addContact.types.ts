@@ -16,6 +16,8 @@ export type ContactType = {
         country: string
         city: string
         state: string
+        locationType?: number,
+        additionalNotes?: string
     }
     locationTypeId: number
     signatureId: number

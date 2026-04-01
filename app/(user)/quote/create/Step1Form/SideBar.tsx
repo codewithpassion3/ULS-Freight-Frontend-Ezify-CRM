@@ -27,7 +27,7 @@ export function SideBar({ currentStep, setCurrentStep }: { currentStep: number, 
                             </div>
                             <div className="flex justify-between w-full items-center">
                                 <span>{currentStep === 1 ? 'Step 1: Shipping Details' : 'Shipping Details'}</span>
-                                {currentStep > 1 && <span className="text-xs text-muted-foreground cursor-pointer hover:underline" onClick={() => setCurrentStep(1)}>View</span>}
+                                {currentStep > 1 && <Button variant="outline" onClick={() => setCurrentStep(1)}>View</Button>}
                             </div>
                         </div>
 
@@ -42,7 +42,7 @@ export function SideBar({ currentStep, setCurrentStep }: { currentStep: number, 
                             </div>
                             <div className="flex justify-between w-full items-center">
                                 <span>{currentStep === 1 ? 'Step 2: Dimensions & Weight' : 'Dimensions & Weight'}</span>
-                                {currentStep > 2 && <span className="text-xs text-muted-foreground cursor-pointer hover:underline">View</span>}
+                                {currentStep > 2 && <Button variant="outline">View</Button>}
                             </div>
                         </div>
 

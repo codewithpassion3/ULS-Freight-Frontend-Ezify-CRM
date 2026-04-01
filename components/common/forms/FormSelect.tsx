@@ -19,6 +19,8 @@ type SelectOptions = {
     className?: string;
     label?: string;
     labelClassName?: string;
+    disabled?: boolean;
+    valueType?: "string" | "number";
 }
 export function FormSelect({
     name,
@@ -29,7 +31,9 @@ export function FormSelect({
     defaultValue,
     className,
     label,
-    labelClassName
+    labelClassName,
+    disabled,
+    valueType
 }: SelectOptions) {
 
     const { control } = useFormContext()
@@ -44,7 +48,8 @@ export function FormSelect({
                 render={({ field }) => (
                     <Select
                         value={field.value?.toString()}
-                        onValueChange={(value) => field.onChange(value)}
+                        onValueChange={(value) => valueType === "number" ? field.onChange(Number(value)) : field.onChange(value)}
+                        disabled={disabled}
                     >
                         <SelectTrigger className={`w-full cursor-pointer ${className}`}>
                             <SelectValue placeholder={placeholder} />

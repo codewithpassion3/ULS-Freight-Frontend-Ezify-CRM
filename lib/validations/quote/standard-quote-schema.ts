@@ -1,18 +1,17 @@
 import { z } from "zod"
 
-export const quoteSchema = z.object({
-    quoteType: z.enum(["Spot Quote", "Standard Quote"], {
-        message: "Please select a quote type",
-    }),
-    addresses: z.array(z.object({
-        "type": z.enum(["TO", "FROM"]),
-        "address1": z.string().min(1, "Address is required"),
-        "city": z.string().min(1, "City is required"),
-        "state": z.string().min(1, "State is required"),
-        "postalCode": z.string().min(1, "Postal Code is required"),
-        "country": z.string().min(1, "Country is required"),
-    }))
+export const addressSchema = z.object({
+    type: z.enum(["TO", "FROM"]),
+    address1: z.string().min(1, "Address is required"),
+    city: z.string().min(1, "City is required"),
+    state: z.string().min(1, "State is required"),
+    postalCode: z.string().min(1, "Postal Code is required"),
+    country: z.string().min(1, "Country is required"),
+})
 
+export const quoteSchema = z.object({
+    quoteType: z.enum(["Spot Quote", "Standard Quote"]),
+    addresses: z.array(addressSchema),
 })
 export const quoteStandardSchema = quoteSchema.extend({
     shipmentType: z.enum(["Pallet", "Package", "Courier Pack", "Envelope", "FTL", "White Glove"], {
@@ -88,7 +87,11 @@ export const quoteStandardCourierPackSchema = quoteStandardSchema.extend({
         currency: z.enum(["CAD", "USD"]).default("CAD"),
     }).optional(),
 })
+export const ftlAddressSchema = addressSchema.extend({
+    locationType: z.string().min(1, "Location type required"),
+})
 export const quoteStandardFTLSchema = quoteStandardSchema.extend({
+    addresses: z.array(ftlAddressSchema),
     knownShipper: z.boolean().default(false),
     includeStraps: z.boolean().default(false),
     appointmentDelivery: z.boolean().default(false),
