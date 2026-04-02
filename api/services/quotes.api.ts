@@ -7,11 +7,15 @@ export const createQuote = async (payload: any) => {
     return response.data;
 };
 
-export const updateQuote = async (payload: any) => {
-    const response = await apiClient.patch(`/quotes/${payload.quote.id}`, payload);
+export const updateQuote = async (id: string, payload: any) => {
+    const response = await apiClient.patch(`/quotes/${id}`, payload);
     return response.data;
 };
-
+// delete quote
+export const deleteQuote = async (id: string) => {
+    const response = await apiClient.delete(`/quotes/${id}`);
+    return response.data;
+};
 // get all quotes
 export const getAllQuotes = async ({ search }: { search: string }) => {
     const response = await apiClient.get(`/quotes?search=${search}`);
@@ -44,9 +48,3 @@ export const getSpotQuotes = async ({ search }: { search: string }) => {
 //     const response = await apiClient.patch(`/quotes/${id}`, data);
 //     return response.data;
 // };
-
-// delete quote
-export const deleteQuote = async (id: string) => {
-    const response = await apiClient.delete(`/quotes/${id}`);
-    return response.data;
-};

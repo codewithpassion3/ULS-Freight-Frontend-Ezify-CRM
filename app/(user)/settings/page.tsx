@@ -16,7 +16,16 @@ import GeneralSettings from "./GeneralSettings";
 import UserPreferences from "./(user-preference)/UserPreferences";
 import EmailNotification from "./(email-notifications)/EmailNotification";
 import { AddressBookTab } from "./(address-book)/AddressBookTab";
-import { BellDot, CircleUserRound, Code, CreditCard, User, UserCog, UserRoundCog } from "lucide-react";
+import {
+    BellDot, CircleUserRound, Code, CreditCard, Settings2, User, UserCog, UserRoundCog,
+    Truck,
+    BookUser,
+    PackageOpen,
+    ShoppingBasket,
+    FileStack,
+} from "lucide-react";
+import { PackagesTable } from "../packages/MyPackages";
+
 
 
 export default function Settings() {
@@ -74,7 +83,7 @@ export default function Settings() {
             <Tabs defaultValue="account" className="space-y-6">
                 <TabsList className="flex flex-wrap gap-2">
                     {settings.map((setting) => (
-                        <TabsTrigger key={setting.value} value={setting.value} className="cursor-pointer">{setting.icon} {setting.title}</TabsTrigger>
+                        <TabsTrigger key={setting.value} value={setting.value} className="cursor-pointer p-2 data-[state=active]:text-primary data-[state=active]:bg-primary/10  data-[state=active]:border-primary border">{setting.icon} {setting.title}</TabsTrigger>
                     ))}
                 </TabsList>
 
@@ -87,7 +96,7 @@ export default function Settings() {
                             <CardContent className="space-y-2">
                                 <TabsList className="h-max w-full gap-4 bg-transparent">
                                     {accountSettings.map((setting) => (
-                                        <TabsTrigger key={setting.value} value={setting.value} className="w-max cursor-pointer p-3 data-[state=active]:border data-[state=active]:border-gray-400 data-[state=active]:shadow-lg">
+                                        <TabsTrigger key={setting.value} value={setting.value} className="w-max cursor-pointer p-2 data-[state=active]:text-primary data-[state=active]:bg-primary/10  data-[state=active]:border-primary border">
                                             {setting.title}
                                         </TabsTrigger>
                                     ))}
@@ -118,15 +127,15 @@ export default function Settings() {
                             <CardContent className="space-y-2">
                                 <TabsList className="h-max w-full gap-4 bg-transparent">
                                     {[
-                                        { title: "Shipping Preferences", value: "shipping-preferences" },
-                                        { title: "Carrier Preferences", value: "carrier-preferences" },
-                                        { title: "Address Book", value: "address-book" },
-                                        { title: "My Package & Pallets", value: "my-packages" },
-                                        { title: "My Products", value: "my-products" },
-                                        { title: "Request Shipping Supplies", value: "request-shipping-supplies" },
+                                        { title: "Shipping Preferences", value: "shipping-preferences", icon: <Settings2 /> },
+                                        { title: "Carrier Preferences", value: "carrier-preferences", icon: <Truck /> },
+                                        { title: "Address Book", value: "address-book", icon: <BookUser /> },
+                                        { title: "My Package & Pallets", value: "my-packages", icon: <PackageOpen /> },
+                                        { title: "My Products", value: "my-products", icon: <ShoppingBasket /> },
+                                        { title: "Request Shipping Supplies", value: "request-shipping-supplies", icon: <FileStack /> },
 
                                     ].map((subTab) => (
-                                        <TabsTrigger key={subTab.value} value={subTab.value} className="w-max cursor-pointer"> {subTab.title}</TabsTrigger>
+                                        <TabsTrigger key={subTab.value} value={subTab.value} className="p-2 w-max cursor-pointer data-[state=active]:text-primary data-[state=active]:bg-primary/10  data-[state=active]:border-primary border data-[state=active]:shadow-lg"> {subTab.icon} {subTab.title} </TabsTrigger>
                                     ))}
 
                                 </TabsList>
@@ -141,6 +150,10 @@ export default function Settings() {
                             </TabsContent>
                             <TabsContent value="address-book" className="mt-0 pt-0">
                                 <AddressBookTab />
+                            </TabsContent>
+                            <TabsContent value="my-packages">
+                                {/* <MyPackages /> */}
+                                <PackagesTable />
                             </TabsContent>
                         </Card>
 

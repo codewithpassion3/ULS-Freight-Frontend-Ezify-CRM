@@ -43,7 +43,6 @@ export default function UserSettings() {
                     <FormField
                         name="phone"
                         label="Phone Number"
-                        register={register}
                     />
 
                     {/* <FormField

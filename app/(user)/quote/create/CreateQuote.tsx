@@ -3,20 +3,30 @@
 import { createContext, useEffect, useMemo, useState } from "react"
 import { useForm, FormProvider, useFormContext } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-// import { quoteSchema } from "@/lib/validations/quote/spot-quote-schema"
-import { Step1Form } from "./step-1-form"
-import { Step2Form } from "./step-2-form"
+// import Step1Form from "./step-1-form"
+// import { Step2Form } from "./step-2-form"
 import { Eye, Truck } from "lucide-react"
-import { SideBar } from "./Step1Form/SideBar"
-import { quoteStandardCourierPackSchema, quoteStandardFTLSchema, quoteStandardPackageSchema, quoteStandardPalletSchema } from "@/lib/validations/quote/standard-quote-schema"
+import { SideBar } from "../../../../components/shared/SideBar"
+// import { quoteStandardCourierPackSchema, quoteStandardFTLSchema, quoteStandardPackageSchema, quoteStandardPalletSchema } from "@/lib/validations/quote/standard-quote-schema"
 import z from "zod"
 import { determineSchema } from "./utils"
-import StepperButtons from "./StepperButtons"
+import StepperButtons from "../../../../components/shared/Buttons"
 import { createQuote, getSingleQuote, updateQuote } from "@/api/services/quotes.api"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+// import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+// import { Button } from "@/components/ui/button"
 import { useSearchParams } from "next/navigation"
+import { toast } from "sonner"
+import { AxiosError } from "axios"
+import { ApiError } from "next/dist/server/api-utils"
+import { ShippingTypeSelector } from "../../../../components/shared/Shipping/ShippingTypeSelector"
+import { ShippingAddressSection } from "../../../../components/shared/Shipping/ShippingAddressSection"
+import { EquimentTypeSelector } from "../../../../components/shared/EquimentSelection/EquimentTypeSelector"
+import ContactInformation from "../../../../components/shared/ContactInformation/ContactInformation"
+import Dimensions from "../../../../components/shared/Dimensions/Dimensions"
+import AdditionalServices from "../../../../components/shared/AdditionalService/AdditionalServices"
+import AdditionalInsurance from "../../../../components/shared/AdditionalInsurance/AdditionalInsurance"
+import SignaturePreference from "../../../../components/shared/SignaturePreference/SignaturePreference"
 
 export type QuoteTypes = "SPOT" | "STANDARD"
 export type ShipmentOptions = {
@@ -45,7 +55,6 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
         queryFn: () => quoteId ? getSingleQuote(quoteId) : null,
         enabled: !!quoteId,
     })
-    console.log("singleQuote", singleQuote)
     const methods = useForm({
         resolver: zodResolver(schema),
         mode: "onTouched",
@@ -53,22 +62,26 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
 
     const { watch } = methods;
     // const methodsWithSchema = { ...methods, schema }
-
-    const [isModalOpen, setIsModalOpen] = useState(false)
     const [formDataToSubmit, setFormDataToSubmit] = useState<any>(null)
-
-    const onSubmit = (data: unknown) => {
-        console.log("Form Validated:", data)
-        setFormDataToSubmit(data)
-        setIsModalOpen(true)
-    }
-
-
     const createQuoteMutation = useMutation({
         mutationFn: (data: unknown) => createQuote(data),
+        onSuccess: () => {
+            toast.success("Quote created successfully")
+            // router.push("/quotes")
+        },
+        onError: (error: AxiosError<ApiError>) => {
+            toast.error(error.response?.data.message)
+        }
     })
     const updateQuoteMutation = useMutation({
-        mutationFn: (data: unknown) => updateQuote(data),
+        mutationFn: (data: unknown) => updateQuote(quoteId!, data),
+        onSuccess: () => {
+            toast.success("Quote updated successfully")
+            // router.push("/quotes")
+        },
+        onError: (error: AxiosError<ApiError>) => {
+            toast.error(error.response?.data.message)
+        }
     })
 
     const onError = (errors: any) => {
@@ -85,15 +98,14 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
         // }
     }
 
-    const handleFullSubmit = () => {
-        onSubmit(methods.getValues())
+
+    const onSubmit = () => {
+        const data = methods.getValues()
+        payloadTransformer(data)
     }
 
-    const confirmSubmit = (status: "DRAFT" | "SAVED") => {
-        setQuoteStatus(status)
-        setIsModalOpen(false)
-
-        const formattedAddresses = formDataToSubmit.addresses?.map((address: any) => {
+    const payloadTransformer = (data: any) => {
+        const formattedAddresses = data.addresses?.map((address: any) => {
             if (address.addressBookId) {
                 return {
                     addressBookId: address.addressBookId,
@@ -104,13 +116,13 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
         })
 
         const payload = {
-            ...formDataToSubmit,
+            ...data,
             "addresses": formattedAddresses,
             "quoteType": quoteType,
             "shipmentType": shipmentType,
-            "status": status,
+            ...(!isEditing && quoteStatus !== singleQuote?.quote.status && { "status": quoteStatus }),
             "lineItem": {
-                ...formDataToSubmit.lineItem,
+                ...data.lineItem,
                 "type": shipmentType,
             },
         }
@@ -129,7 +141,11 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
         };
         console.log("Submitting Payload:", payloadTransformed)
 
-        quoteId ? updateQuoteMutation.mutate(payloadTransformed) : createQuoteMutation.mutate(payloadTransformed)
+        if (isEditing) {
+            updateQuoteMutation.mutate(payloadTransformed)
+        } else {
+            createQuoteMutation.mutate(payloadTransformed)
+        }
         alert(`Quote submitted successfully as ${status}! Check console for details.`)
     }
 
@@ -145,28 +161,30 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
                     <FormProvider {...methods}>
                         <SchemaContext.Provider value={schema}>
                             <form onSubmit={methods.handleSubmit(onSubmit, onError)} className="space-y-8">
-                                {currentStep === 1 && (
-                                    <Step1Form
-                                        quoteType={quoteType}
-                                        shipmentType={shipmentType}
-                                        setShipmentType={setShipmentType}
-                                        onNext={() => setCurrentStep(2)}
-                                    />
-                                )}
-                                {currentStep === 2 && (
-                                    <Step2Form
-                                        shipmentType={shipmentType}
-                                        onPrev={() => setCurrentStep(1)}
-                                        onSubmit={handleFullSubmit}
-                                    />
-                                )}
+                                <div className="space-y-6">
+                                    <ShippingTypeSelector shipmentType={shipmentType} setShipmentType={setShipmentType} />
+                                    <div className="flex flex-col md:flex-row gap-6">
+                                        <ShippingAddressSection shipmentType={shipmentType} type="FROM" title="Shipping From" />
+                                        <ShippingAddressSection shipmentType={shipmentType} type="TO" title="Shipping To" />
+                                    </div>
+                                    {quoteType === "SPOT" ?
+                                        <>
+                                            <EquimentTypeSelector
+                                                shipmentType={shipmentType}
+                                            />
+                                            <ContactInformation />
+                                        </>
+                                        : ""}
+
+                                </div>
+                                <Dimensions shipmentType={shipmentType} />
+                                <AdditionalServices />
+                                <AdditionalInsurance />
+                                <SignaturePreference />
                                 <StepperButtons
                                     quoteStatus={quoteStatus}
                                     setQuoteStatus={setQuoteStatus}
-                                    totalSteps={totalSteps}
-                                    currentStep={currentStep}
-                                    onNext={() => currentStep === totalSteps ? handleFullSubmit() : setCurrentStep(prev => prev + 1)}
-                                    onPrev={() => setCurrentStep(prev => prev - 1)}
+                                    onSubmit={onSubmit}
                                 />
                             </form>
                         </SchemaContext.Provider>
@@ -176,37 +194,6 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
                 {/* Sidebar */}
                 <SideBar currentStep={currentStep} setCurrentStep={setCurrentStep} />
             </div>
-
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                        <DialogTitle>Save Quote</DialogTitle>
-                        <DialogDescription>
-                            How would you like to save this quote?
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="flex flex-col gap-4 py-4">
-                        <button
-                            className="w-full border justify-start rounded-lg cursor-pointer text-left border-slate-200"
-                            onClick={() => confirmSubmit("DRAFT")}
-                        >
-                            <div className="flex flex-col px-4 py-2">
-                                <span className="font-semibold text-slate-900">Save as Draft</span>
-                                <span className="text-sm font-normal text-slate-500">Resume and review later, without finalizing the request.</span>
-                            </div>
-                        </button>
-                        <button
-                            className="w-full border justify-start rounded-lg cursor-pointer text-left border-primary bg-primary/5 hover:bg-primary/10"
-                            onClick={() => confirmSubmit("SAVED")}
-                        >
-                            <div className="flex flex-col items-start gap-1 px-4 py-2 ">
-                                <span className="font-semibold text-primary">Save and Get Rates</span>
-                                <span className="text-sm font-normal text-primary/80">Save context and fetch spot rates for this quote.</span>
-                            </div>
-                        </button>
-                    </div>
-                </DialogContent>
-            </Dialog>
         </div>
     )
 }

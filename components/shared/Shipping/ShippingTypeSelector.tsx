@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Bell, Boxes, Clock, Info, Mail, Package, Truck, WalletCards } from "lucide-react"
-import { ShipmentOptions } from "../../CreateQuote"
+import { ShipmentOptions } from "../../../app/(user)/quote/create/CreateQuote"
 import { useQuery } from "@tanstack/react-query"
 import { getSingleQuote } from "@/api/services/quotes.api"
 import { useEffect } from "react"
@@ -21,7 +21,7 @@ const shipmentTypes = [
 
 export const ShippingTypeSelector = ({ shipmentType, setShipmentType }: QuoteShippingTypeSelectorProps) => {
     const quoteId = useSearchParams().get("id")
-
+    const isEditing = !!quoteId
     const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
         queryKey: ["singleQuote", quoteId],
         queryFn: () => quoteId ? getSingleQuote(quoteId) : null,
@@ -57,6 +57,7 @@ export const ShippingTypeSelector = ({ shipmentType, setShipmentType }: QuoteShi
                     <Button
                         key={type.label}
                         type="button"
+                        disabled={isEditing}
                         variant={shipmentType === type.label ? "default" : "outline"}
                         className={`flex items-center gap-2 capitalize ${shipmentType === type.label ? "bg-blue-50 dark:bg-gray-900  text-[#0070c0] border-[#0070c0] hover:bg-blue-100" : "border-slate-300 dark:bg-transparent"}`}
                         onClick={() => setShipmentType(type.label as ShipmentOptions[keyof ShipmentOptions])}

@@ -62,7 +62,7 @@ export const EquimentTypeSelector = ({ shipmentType }: EquimentTypeSelectorProps
                                     key={item.name}
                                     name={item.name}
                                     label={item.label}
-                                    extra={<Info size={14} className="text-[#0070c0]" />}
+                                    icon={<Info size={14} className="text-[#0070c0]" />}
                                 />
                             ))
 
@@ -76,7 +76,7 @@ export const EquimentTypeSelector = ({ shipmentType }: EquimentTypeSelectorProps
                                     key={item.name}
                                     name={item.name}
                                     label={item.label}
-                                    extra={<Info size={14} className="text-[#0070c0]" />}
+                                    icon={<Info size={14} className="text-[#0070c0]" />}
                                 />
                             ))
                         )}

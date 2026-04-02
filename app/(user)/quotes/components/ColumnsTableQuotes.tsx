@@ -11,62 +11,13 @@ import {
 import { Button } from "@/components/ui/button"
 import { CheckCircle, CircleCheck, Edit, MoreVertical, Trash2 } from "lucide-react"
 import Link from "next/link"
+import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query"
+import { deleteQuote } from "@/api/services/quotes.api"
+import { toast } from "sonner"
+import { AxiosError } from "axios"
+import { ApiError } from "next/dist/server/api-utils"
 
 export const columns: ColumnDef<any>[] = [
-  //   addresses
-  // : 
-  // (2) [{…}, {…}]
-  // createdAt
-  // : 
-  // "2026-03-31T20:58:21.969Z"
-  // createdBy
-  // : 
-  // 1
-  // description
-  // : 
-  // null
-  // id
-  // : 
-  // 3
-  // insurance
-  // : 
-  // 3
-  // lineItems
-  // : 
-  // {id: 3, type: 'PALLET', measurementUnit: 'IMPERIAL', dangerousGoods: false, stackable: true, …}
-  // palletServices
-  // : 
-  // {id: 2, dangerousGoods: false, stackable: false, limitedAccess: true, appointmentDelivery: true, …}
-  // quoteId
-  // : 
-  // "F778537D"
-  // quoteType
-  // : 
-  // "STANDARD"
-  // shipmentType
-  // : 
-  // "PALLET"
-  // signature
-  // : 
-  // null
-  // spotDetails
-  // : 
-  // null
-  // spotFtlServices
-  // : 
-  // null
-  // spotLtlServices
-  // : 
-  // null
-  // standardFTLService
-  // : 
-  // null
-  // status
-  // : 
-  // "DRAFT"
-  // updatedAt
-  // : 
-  // "2026-03-31T20:58:21.969Z"
   {
     id: "select",
     header: ({ table }) => (
@@ -185,11 +136,26 @@ export const columns: ColumnDef<any>[] = [
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
+      const queryClient = useQueryClient()
+      const mutation = useMutation({
+        mutationFn: (id: string) => deleteQuote(id),
+        onSuccess: () => {
+          toast.success("Contact deleted successfully")
+          queryClient.invalidateQueries({ queryKey: ["quotes"] })
+        },
+        onError: (error: AxiosError<ApiError>) => {
+          toast.error(error.response?.data.message)
+        }
+      })
+
+      const handleDeleteQuote = (id: string) => {
+        mutation.mutate(id)
+      }
       return (
         <div className="flex items-center gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <MoreVertical size={16} />
+              <MoreVertical size={16} className="cursor-pointer" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem className="cursor-pointer">
@@ -200,7 +166,7 @@ export const columns: ColumnDef<any>[] = [
                   <Edit size={14} /> Edit
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-red-500 cursor-pointer">
+              <DropdownMenuItem className="text-red-500 cursor-pointer" onClick={() => handleDeleteQuote(row.original.id)}>
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>

@@ -8,10 +8,10 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Button } from "@/components/ui/button"
-import { ShipmentOptions } from "../CreateQuote"
+import { ShipmentOptions } from "../../../app/(user)/quote/create/CreateQuote"
 import DangerousGoodsForm from "./DangerousGoodDetails"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
-import AdditionalServices from "./AdditionalServices"
+import AdditionalServices from "../AdditionalService/AdditionalServices"
 import { Textarea } from "@/components/ui/textarea"
 import FormField from "@/components/common/forms/FormField"
 import { FormSelect } from "@/components/common/forms/FormSelect"
@@ -20,10 +20,13 @@ import { useSearchParams } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
 import { getSingleQuote } from "@/api/services/quotes.api"
 import { useEffect } from "react"
+import AddPackage from "@/app/(user)/packages/AddPackage"
+import { useState } from "react"
 
 export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }) {
     const { register, control, watch, setValue, formState: { errors } } = useFormContext<any>()
     const quoteId = useSearchParams().get("id")
+    const [open, setOpen] = useState(false);
     const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
         queryKey: ["singleQuote", quoteId],
         queryFn: () => quoteId ? getSingleQuote(quoteId) : null,
@@ -47,7 +50,6 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                     height: "",
                     weight: "",
                     description: "",
-                    specialHandlingRequired: false
                 }]);
             } else {
                 setValue("lineItem.units", units);
@@ -57,11 +59,15 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
             setValue("lineItem.measurementUnit", cachedSingleQuote.lineItem?.measurementUnit || "IMPERIAL");
             setValue("lineItem.dangerousGoods", cachedSingleQuote.lineItem?.dangerousGoods || false);
             setValue("lineItem.stackable", cachedSingleQuote.lineItem?.stackable || false);
+            setValue("lineItem.specialHandlingRequired", cachedSingleQuote.lineItem?.specialHandlingRequired || false);
+            setValue("lineItem.quantity", cachedSingleQuote.lineItem?.quantity || 1);
+
+
         }
     }, [cachedSingleQuote, setValue]);
 
     const handleAddPackage = () => {
-        append({ quantity: 1, length: "", width: "", height: "", weight: "", description: "", specialHandlingRequired: false })
+        append({ quantity: 1, length: "", width: "", height: "", weight: "", description: "" })
     }
 
     const isDangerousGood = watch("lineItem.dangerousGoods")
@@ -72,7 +78,6 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
         setValue(`lineItem.units.${index}.height`, null);
         setValue(`lineItem.units.${index}.weight`, null);
         setValue(`lineItem.units.${index}.description`, "");
-        setValue(`lineItem.units.${index}.specialHandlingRequired`, false);
     }
 
     return (
@@ -93,7 +98,7 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                                 const currentCount = fields.length;
                                 if (targetCount > currentCount) {
                                     const itemsToAdd = Array(targetCount - currentCount).fill({
-                                        quantity: 1, length: "", width: "", height: "", weight: "", description: "", specialHandlingRequired: false
+                                        quantity: 1, length: "", width: "", height: "", weight: "", description: "",
                                     });
                                     append(itemsToAdd);
                                 } else if (targetCount < currentCount) {
@@ -161,7 +166,7 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                                             <span className="font-semibold text-slate-800 dark:text-slate-100">Package {index + 1}</span>
 
                                             {/* Keep a hidden input for per-row quantity so schema validation passes if it expects it */}
-                                            <input type="hidden" {...register(`lineItem.units.${index}.quantity`, { valueAsNumber: true })} value={1} />
+                                            <input type="hidden" {...register(`lineItem.quantity`, { valueAsNumber: true })} value={fields.length} />
                                             <input value={shipmentType} type="text" {...register(`lineItem.type`)} className="hidden" />
                                         </div>
                                     </div>
@@ -296,48 +301,66 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                                         label="Stackable"
                                     /> */}
                                 </div>
-
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
-                                    <div className="flex items-center space-x-2">
-                                        <Controller
-                                            control={control}
-                                            name={`lineItem.units.${index}.specialHandlingRequired`}
-                                            render={({ field }) => (
-                                                <Checkbox checked={!!field.value} onCheckedChange={field.onChange} id={`special-handling-${index}`} />
-                                            )}
-                                        />
-                                        <Label htmlFor={`special-handling-${index}`} className="font-normal flex items-center gap-1 cursor-pointer text-slate-500">
-                                            Special Handling Required <Info size={14} className="text-slate-800" />
-                                        </Label>
-                                    </div>
-
-                                    <div className="flex items-center gap-4 text-sm mt-2 sm:mt-0">
-                                        <Button disabled variant="ghost" type="button">
-                                            <PackageOpen /> My Packages
-                                        </Button>
-                                        <Button disabled variant="ghost" type="button">
+                                <div className="flex items-center gap-4 text-sm mt-2 sm:mt-0">
+                                    <Button variant="link" type="button">
+                                        <PackageOpen /> My Packages
+                                    </Button>
+                                    <AddPackage
+                                        open={open}
+                                        setOpen={setOpen}
+                                        initialData={
+                                            {
+                                                measurementUnit: watch(`lineItem.measurementUnit`),
+                                                length: watch(`lineItem.units.${index}.length`),
+                                                width: watch(`lineItem.units.${index}.width`),
+                                                height: watch(`lineItem.units.${index}.height`),
+                                                weight: watch(`lineItem.units.${index}.weight`),
+                                                freightClass: watch(`lineItem.units.${index}.freightClass`),
+                                                nmfc: watch(`lineItem.units.${index}.nmfc`),
+                                                type: watch(`lineItem.units.${index}.type`),
+                                                unitsOnPallet: watch(`lineItem.units.${index}.unitsOnPallet`),
+                                                description: watch(`lineItem.units.${index}.description`),
+                                            }
+                                        }
+                                    >
+                                        <Button variant="link" type="button">
                                             <Save /> Save Package
                                         </Button>
-                                        <Button type="button" variant="destructive" onClick={() => handleClearDimensions(index)}>
-                                            <X /> Clear
-                                        </Button>
-                                    </div>
+                                    </AddPackage>
+                                    <Button type="button" variant="destructive" onClick={() => handleClearDimensions(index)}>
+                                        <X /> Clear
+                                    </Button>
                                 </div>
+
                                 {rowErrors && Object.keys(rowErrors).length > 0 && (
                                     <div className="text-xs text-red-500">Please fill required dimensions (number &gt; 0)</div>
                                 )}
                             </div>
                         )
                     })}
-                </div>
-                <div className="flex justify-end pt-2 border-b pb-6">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={handleAddPackage}
-                    >
-                        <Plus size={16} className="mr-1" /> Add Package
-                    </Button>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
+                        <div className="flex items-center space-x-2">
+                            <Controller
+                                control={control}
+                                name={`lineItem.specialHandlingRequired`}
+                                render={({ field }) => (
+                                    <Checkbox checked={!!field.value} onCheckedChange={field.onChange} id={`special-handling`} />
+                                )}
+                            />
+                            <Label htmlFor={`special-handling`} className="font-normal flex items-center gap-1 cursor-pointer">
+                                Special Handling Required <Info size={14} className="text-slate-800" />
+                            </Label>
+                        </div>
+
+
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleAddPackage}
+                        >
+                            <Plus size={16} className="mr-1" /> Add Package
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="pt-2 flex items-center space-x-2">

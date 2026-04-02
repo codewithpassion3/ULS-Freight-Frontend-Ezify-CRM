@@ -60,7 +60,7 @@ export function DataTable<TData, TValue>({
 
                     {table.getRowModel().rows.length ? (
                         table.getRowModel().rows.map((row) => (
-                            <TableRow key={row.id} className="hover:bg-blue-100">
+                            <TableRow key={row.id} className="hover:bg-primary/10">
 
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id}>

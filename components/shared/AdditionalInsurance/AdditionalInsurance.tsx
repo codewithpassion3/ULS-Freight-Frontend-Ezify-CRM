@@ -75,14 +75,14 @@ export default function AdditionalInsurance() {
                                         <RadioGroup
                                             value={field.value}
                                             onValueChange={field.onChange}
-                                            className="flex space-x-4"
+                                            className="flex space-x-4 cursor-pointer"
                                         >
                                             <div className="flex items-center space-x-2">
-                                                <RadioGroupItem value="CAD" id="currency-cad" className="text-amber-500 border-amber-500" />
+                                                <RadioGroupItem value="CAD" id="currency-cad" className="text-amber-500 border-amber-500 cursor-pointer" />
                                                 <Label htmlFor="currency-cad" className="font-semibold cursor-pointer text-slate-800">CAD</Label>
                                             </div>
                                             <div className="flex items-center space-x-2">
-                                                <RadioGroupItem value="USD" id="currency-usd" />
+                                                <RadioGroupItem value="USD" id="currency-usd" className="cursor-pointer" />
                                                 <Label htmlFor="currency-usd" className="font-normal cursor-pointer text-slate-500">USD</Label>
                                             </div>
                                         </RadioGroup>

@@ -1,21 +1,21 @@
 import { getAllPalletShippingLocationTypes } from "@/api/services/address-book.api"
 import { FieldValues, useFormContext, UseFormReturn } from "react-hook-form"
 import { QuoteSchemaTypes } from "@/lib/validations/quote/spot-quote-schema"
-import { ContactType } from "../../../../settings/(address-book)/types/addContact.types"
+import { ContactType } from "../../../app/(user)/settings/(address-book)/types/addContact.types"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
 import { FormFieldWrapper } from "@/components/common/forms/FormFieldWrapper"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { SelectAddressBookModal } from "./SelectAddressBookModal"
 import { useQuery } from "@tanstack/react-query"
-import { useMarkContactAsRecent } from "../../hooks"
+import { useMarkContactAsRecent } from "../../../app/(user)/quote/create/hooks"
 import { Button } from "@/components/ui/button"
 import { ArrowLeftRight, X } from "lucide-react"
 import { FormCheckbox } from "@/components/common/forms/FormCheckbox"
-import { ShipmentOptions } from "../../CreateQuote"
+import { ShipmentOptions } from "../../../app/(user)/quote/create/CreateQuote"
 import z, { ZodType } from "zod"
 import { useEffect, useMemo, useState } from "react"
-import { InferSchema } from "../../quote.types"
+import { InferSchema } from "../../../app/(user)/quote/create/quote.types"
 import FormField from "@/components/common/forms/FormField"
 import { FormSelect } from "@/components/common/forms/FormSelect"
 import { useSearchParams } from "next/navigation"
@@ -47,13 +47,14 @@ export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, t
 
     const quoteAddress = cachedSingleQuote.quote.addresses[index]?.address
       ?? cachedSingleQuote.quote.addresses[index]?.addressBookEntry?.address;
+    const isAddressBookEntry = cachedSingleQuote.quote.addresses[index]?.addressBookEntry?.address;
 
     if (quoteAddress) {
       setAddressLocked(true);
       setValue(`addresses.${index}`, {
         ...addresses[index],
         type,
-        addressBookId: cachedSingleQuote.quote.addresses[index]?.addressBook?.id ?? null,
+        ...(isAddressBookEntry && { addressBookId: quoteAddress.id ?? null }),
         address1: quoteAddress.address1,
         postalCode: quoteAddress.postalCode,
         city: quoteAddress.city,
@@ -112,7 +113,7 @@ export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, t
   }
   if (quoteId) {
     if (isLoading || isPending) {
-      return <Loader />
+      return <></>
     }
   }
   return (

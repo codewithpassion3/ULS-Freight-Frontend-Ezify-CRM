@@ -21,6 +21,7 @@ type SelectOptions = {
     labelClassName?: string;
     disabled?: boolean;
     valueType?: "string" | "number";
+    wrapperClassName?: string;
 }
 export function FormSelect({
     name,
@@ -33,13 +34,14 @@ export function FormSelect({
     label,
     labelClassName,
     disabled,
-    valueType
+    valueType,
+    wrapperClassName
 }: SelectOptions) {
 
     const { control } = useFormContext()
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className={`flex flex-col gap-2 ${wrapperClassName}`}>
             <Label className={labelClassName} htmlFor={name}>{label ? label : name}</Label>
             <Controller
                 name={name}

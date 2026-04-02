@@ -204,6 +204,7 @@ export function GlobalForm<T extends FieldValues>({
               placeholder={field.placeholder}
               optionKey={field.selectOptions?.optionKey}
               optionValue={field.selectOptions?.optionValue}
+              wrapperClassName={field.wrapperClassName}
             />
           )
 

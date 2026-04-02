@@ -5,7 +5,7 @@ import { quoteSchema } from "@/lib/validations/quote/spot-quote-schema";
 import { Phone, X } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { QuoteSchemaTypes } from "@/lib/validations/quote/spot-quote-schema";
-export default function ContactInformation({ onNext }: { onNext: () => void }) {
+export default function ContactInformation() {
     const form = useFormContext<QuoteSchemaTypes>();
     const { formState: { isValid }, reset, getValues } = form;
     const handleClearContactInformation = () => {
