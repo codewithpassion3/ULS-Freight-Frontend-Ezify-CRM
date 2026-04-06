@@ -1,5 +1,5 @@
 import { quoteStandardCourierPackSchema, quoteStandardFTLSchema, quoteStandardPackageSchema, quoteStandardPalletSchema } from "@/lib/validations/quote/standard-quote-schema"
-import { ShipmentOptions } from "./CreateQuote"
+import { ShipmentOptions } from "../../../../components/shared/DynamicQuote/DynamicQuote"
 import z from "zod"
 
 export function determineSchema<Q extends keyof ShipmentOptions>(quoteType: Q, shipmentType?: ShipmentOptions[Q]) {

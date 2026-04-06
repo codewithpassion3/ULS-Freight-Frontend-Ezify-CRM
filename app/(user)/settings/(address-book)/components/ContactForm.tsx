@@ -77,6 +77,7 @@ export function ContactForm({
     return (
         isLoading ?
             <Loader /> :
+            
             <form id="contact-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-1">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">

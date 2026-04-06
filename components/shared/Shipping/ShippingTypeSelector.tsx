@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Bell, Boxes, Clock, Info, Mail, Package, Truck, WalletCards } from "lucide-react"
-import { ShipmentOptions } from "../../../app/(user)/quote/create/CreateQuote"
+import { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import { useQuery } from "@tanstack/react-query"
 import { getSingleQuote } from "@/api/services/quotes.api"
 import { useEffect } from "react"
@@ -10,18 +10,30 @@ import { Loader } from "@/components/common/Loader"
 interface QuoteShippingTypeSelectorProps {
     shipmentType: ShipmentOptions[keyof ShipmentOptions]
     setShipmentType: (type: ShipmentOptions[keyof ShipmentOptions]) => void
+    quoteType: keyof ShipmentOptions
 }
 
-const shipmentTypes = [
-    { label: "PALLET", icon: <WalletCards /> },
-    { label: "PACKAGE", icon: <Package /> },
-    { label: "COURIER_PAK", icon: <Boxes /> },
-    { label: "STANDARD_FTL", icon: <Truck /> },
-]
 
-export const ShippingTypeSelector = ({ shipmentType, setShipmentType }: QuoteShippingTypeSelectorProps) => {
+
+export const ShippingTypeSelector = ({ shipmentType, setShipmentType, quoteType }: QuoteShippingTypeSelectorProps) => {
     const quoteId = useSearchParams().get("id")
     const isEditing = !!quoteId
+    const shipmentTypes = () => {
+        if (quoteType === "SPOT") {
+            return [
+                { name: "SPOT_LTL", label: "LTL-Partial Truckload", icon: <WalletCards /> },
+                { name: "SPOT_FTL", label: "Full Truck Load", icon: <Truck /> },
+                { name: "TIME_CRITICAL", label: "Time Critical", icon: <Clock /> },
+            ]
+        }
+        return [
+            { name: "PALLET", label: "Pallet", icon: <WalletCards /> },
+            { name: "PACKAGE", label: "Package", icon: <Package /> },
+            { name: "COURIER_PAK", label: "Courier Pak", icon: <Boxes /> },
+            { name: "STANDARD_FTL", label: "FTL", icon: <Truck /> },
+        ]
+    }
+    console.log("shipmentTypes", shipmentTypes())
     const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
         queryKey: ["singleQuote", quoteId],
         queryFn: () => quoteId ? getSingleQuote(quoteId) : null,
@@ -53,16 +65,16 @@ export const ShippingTypeSelector = ({ shipmentType, setShipmentType }: QuoteShi
             </div>
             {/* Use tab instead of buttons */}
             <div className="flex flex-wrap gap-4">
-                {shipmentTypes.map((type) => (
+                {shipmentTypes().map((type) => (
                     <Button
-                        key={type.label}
+                        key={type.name}
                         type="button"
                         disabled={isEditing}
-                        variant={shipmentType === type.label ? "default" : "outline"}
-                        className={`flex items-center gap-2 capitalize ${shipmentType === type.label ? "bg-blue-50 dark:bg-gray-900  text-[#0070c0] border-[#0070c0] hover:bg-blue-100" : "border-slate-300 dark:bg-transparent"}`}
-                        onClick={() => setShipmentType(type.label as ShipmentOptions[keyof ShipmentOptions])}
+                        variant={shipmentType === type.name ? "default" : "outline"}
+                        className={`flex items-center gap-2 capitalize ${shipmentType === type.name ? "bg-blue-50 dark:bg-gray-900  text-[#0070c0] border-[#0070c0] hover:bg-blue-100" : "border-slate-300 dark:bg-transparent"}`}
+                        onClick={() => setShipmentType(type.name as ShipmentOptions[keyof ShipmentOptions])}
                     >
-                        {type.icon} {type.label === "STANDARD_FTL" ? "FTL" : type.label.toLowerCase().replace("_", " ")}
+                        {type.icon} {type.label}
                     </Button>
                 ))}
 

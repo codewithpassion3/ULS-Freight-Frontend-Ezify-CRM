@@ -40,34 +40,7 @@ export function PackagesTable({ handleSelect, type = "all" }: { handleSelect?: (
         isPendingRecent = recentContacts.isPending
         console.log(recentContacts)
     }
-    let updatedColumns = columns
-    if (handleSelect) {
-        updatedColumns = columns.map((column) => {
-            if (column.id === "actions") {
-                const originalCell = column.cell
-
-                return {
-                    ...column,
-                    cell: (props: any) => (
-                        <>
-                            {/* @ts-ignore */}
-                            {originalCell?.(props)}
-
-                            <Button
-                                size="sm"
-                                onClick={() => handleSelect(props.row.original)}
-                                className="bg-[#0070c0] hover:bg-[#005999]"
-                            >
-                                Select
-                            </Button>
-                        </>
-                    ),
-                }
-            }
-
-            return column
-        })
-    }
+    
 
     return (
         <div className="flex justify-center items-center">
@@ -86,7 +59,7 @@ export function PackagesTable({ handleSelect, type = "all" }: { handleSelect?: (
 
 
                         <DataTable
-                            columns={updatedColumns}
+                            columns={columns}
                             data={type === "recent" ? recentContacts?.data ?? [] : packages.data ?? []}
                             sorting={sorting}
                             // @ts-ignore

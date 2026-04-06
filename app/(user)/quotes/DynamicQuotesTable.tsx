@@ -3,7 +3,7 @@ import { DataTable } from "@/components/common/table/DataTable"
 import { DataTablePagination } from "@/components/common/table/DataTablePagination"
 import { columns } from "./components/ColumnsTableQuotes"
 import { SortingState } from "@tanstack/react-table"
-import { Trash2 } from "lucide-react"
+import { CircleSlash, Plus, Trash2, Truck } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 import { MOCK_QUOTES, QuoteCategory } from "./page"
 import { useDebounce } from "../../../hooks/useDebounce.hook"
@@ -11,6 +11,8 @@ import { useQuery } from "@tanstack/react-query"
 import { getAllQuotes, getFavoriteQuotes, getSavedQuotes, getSpotQuotes } from "@/api/services/quotes.api"
 import { Loader } from "@/components/common/Loader"
 import { Empty } from "@/components/ui/empty"
+import EmptyUI from "@/components/common/empty/Empty"
+import Link from "next/link"
 interface Props {
     setCount: (count: { all: number; saved: number; spot: number }) => void
     quoteCategory: QuoteCategory
@@ -48,7 +50,16 @@ export default function DynamicQuotesTable({ setCount, quoteCategory }: Props) {
         }
     }, [quotes])
     if (isLoading || isPending) return <Loader className="py-20" />
-    if (isError) return <Empty title="Error" content="Failed to fetch quotes" />
+    if (isError) return <EmptyUI
+        icon={<CircleSlash size={80} />}
+        title="Error"
+        description="Failed to fetch quotes"
+        action={
+            <Button variant="outline" className="text-muted-foreground border-border">
+                <Plus size={16} /> Retry
+            </Button>
+        }
+    />
 
     return (
         quotes.data.length > 0 ?
@@ -76,9 +87,17 @@ export default function DynamicQuotesTable({ setCount, quoteCategory }: Props) {
                     />
                 </div>
             </> :
-            <Empty
-                title="No quotes found"
-                content="You have no quotes yet. Create one to get started."
+            <EmptyUI
+                icon={<Truck size={80} />}
+                title="No Quotes Found"
+                description="You have no quotes yet. Create one to get started."
+                action={
+                    <Link href="/quote/create">
+                        <Button variant="outline" className="text-muted-foreground border-border">
+                            <Plus size={16} /> Create Quote
+                        </Button>
+                    </Link>
+                }
             />
     )
 }

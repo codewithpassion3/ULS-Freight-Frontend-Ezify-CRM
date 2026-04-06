@@ -351,7 +351,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
         )}
       </div>
 
-      <div className="flex justify-end pt-18">
+      <div className="flex justify-end pt-18 mb-4">
         <Button
           disabled={form.formState.isSubmitting}
           // type="submit"

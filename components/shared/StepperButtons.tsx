@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useContext } from "react";
 import { useFormContext } from "react-hook-form";
-import { SchemaContext } from "../../app/(user)/quote/create/CreateQuote";
+import { SchemaContext } from "./DynamicQuote/DynamicQuote";
 import { ZodObject, ZodTypeAny } from "zod"
 import { useSearchParams } from "next/navigation";
 // stepper control buttons

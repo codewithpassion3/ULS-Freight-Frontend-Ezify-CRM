@@ -40,7 +40,7 @@ export default function AdditionalInsurance() {
         }
     }
     return (
-        <Accordion type="single" collapsible className="border border-border rounded-md bg-white dark:bg-card">
+        <Accordion type="single" collapsible className="shadow-lg border border-border rounded-md bg-white dark:bg-card">
             <AccordionItem value="insurance" className="border-none">
                 <AccordionTrigger className="group px-6 py-4 hover:no-underline items-center cursor-pointer [&>svg]:hidden!" >
                     <h2 className="font-semibold flex items-center gap-2 text-lg text-slate-800">
@@ -65,6 +65,7 @@ export default function AdditionalInsurance() {
                                         {...register("insurance.amount", { valueAsNumber: true })}
                                         className="pl-7"
                                         placeholder="0"
+                                        min={0}
                                     />
                                 </div>
 

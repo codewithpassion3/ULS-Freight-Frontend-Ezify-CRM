@@ -10,8 +10,9 @@ import { useQuery } from "@tanstack/react-query"
 import { getSingleQuote } from "@/api/services/quotes.api"
 import { useEffect } from "react"
 import { Loader } from "@/components/common/Loader"
+import { ShipmentOptions } from "@/components/shared/DynamicQuote/DynamicQuote"
 
-export default function AdditionalServices() {
+export default function AdditionalServices({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }) {
     const { watch, setValue } = useFormContext()
     const quoteId = useSearchParams().get("id")
     const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
@@ -48,7 +49,7 @@ export default function AdditionalServices() {
         }
     }
     return (
-        <Accordion type="single" collapsible className="border border-border rounded-md bg-white dark:bg-card">
+        <Accordion type="single" collapsible className="shadow-lg border border-border rounded-md bg-white dark:bg-card">
             <AccordionItem value="insurance" className="border-none">
                 <AccordionTrigger className="group px-6 py-4 hover:no-underline items-center cursor-pointer [&>svg]:hidden!" >
                     <h2 className="font-semibold flex items-center gap-2 text-lg text-slate-800">
@@ -58,7 +59,7 @@ export default function AdditionalServices() {
                     </h2>
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-6 space-y-6 h-full">
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {shipmentType !== "STANDARD_FTL" ? <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="sm:col-span-3 ">
                             <FormCheckbox
                                 name={"services.limitedAccess"}
@@ -175,7 +176,25 @@ export default function AdditionalServices() {
                             defaultValue={false}
                             icon={<Info size={16} />}
                         />
-                    </div>
+                    </div> : ""}
+                    {shipmentType === "STANDARD_FTL" ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <FormRadio
+                                name="services"
+                                options={[
+                                    {
+                                        value: "services.looseFreight",
+                                        label: "Loose Freight (Floor Loaded)",
+                                    },
+                                    {
+                                        value: "services.pallets",
+                                        label: "Pallets",
+                                    },
+                                ]}
+                            />
+
+                        </div>
+                    ) : ""}
                 </AccordionContent>
             </AccordionItem>
         </Accordion>

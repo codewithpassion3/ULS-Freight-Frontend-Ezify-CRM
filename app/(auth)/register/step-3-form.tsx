@@ -43,7 +43,6 @@ export function Step3Form({ onBack }: Step3FormProps) {
             type="password"
             placeholder="Enter your password"
           />
-          <p className="text-xs text-muted-foreground mt-1">Must be at least 8 characters</p>
         </div>
 
         <div className="space-y-2 relative">

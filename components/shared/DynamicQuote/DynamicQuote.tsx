@@ -6,11 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 // import Step1Form from "./step-1-form"
 // import { Step2Form } from "./step-2-form"
 import { Eye, Truck } from "lucide-react"
-import { SideBar } from "../../../../components/shared/SideBar"
+import { SideBar } from "../SideBar"
 // import { quoteStandardCourierPackSchema, quoteStandardFTLSchema, quoteStandardPackageSchema, quoteStandardPalletSchema } from "@/lib/validations/quote/standard-quote-schema"
 import z from "zod"
-import { determineSchema } from "./utils"
-import StepperButtons from "../../../../components/shared/StepperButtons"
+import { determineSchema } from "../../../app/(user)/quote/create/utils"
+import StepperButtons from "../StepperButtons"
 import { createQuote, getSingleQuote, updateQuote } from "@/api/services/quotes.api"
 import { useMutation, useQuery } from "@tanstack/react-query"
 // import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -19,14 +19,14 @@ import { useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
-import { ShippingTypeSelector } from "../../../../components/shared/Shipping/ShippingTypeSelector"
-import { ShippingAddressSection } from "../../../../components/shared/Shipping/ShippingAddressSection"
-import { EquimentTypeSelector } from "../../../../components/shared/EquimentSelection/EquimentTypeSelector"
-import ContactInformation from "../../../../components/shared/ContactInformation/ContactInformation"
-import Dimensions from "../../../../components/shared/Dimensions/Dimensions"
-import AdditionalServices from "../../../../components/shared/AdditionalService/AdditionalServices"
-import AdditionalInsurance from "../../../../components/shared/AdditionalInsurance/AdditionalInsurance"
-import SignaturePreference from "../../../../components/shared/SignaturePreference/SignaturePreference"
+import { ShippingTypeSelector } from "../Shipping/ShippingTypeSelector"
+import { ShippingAddressSection } from "../Shipping/ShippingAddressSection"
+import { EquimentTypeSelector } from "../EquimentSelection/EquimentTypeSelector"
+import ContactInformation from "../ContactInformation/ContactInformation"
+import Dimensions from "../Dimensions/Dimensions"
+import AdditionalServices from "../AdditionalService/AdditionalServices"
+import AdditionalInsurance from "../AdditionalInsurance/AdditionalInsurance"
+import SignaturePreference from "../SignaturePreference/SignaturePreference"
 
 export type QuoteTypes = "SPOT" | "STANDARD"
 export type ShipmentOptions = {
@@ -34,7 +34,7 @@ export type ShipmentOptions = {
     STANDARD: "PALLET" | "PACKAGE" | "COURIER_PAK" | "STANDARD_FTL",
 };
 export const SchemaContext = createContext<z.ZodType<any> | null>(null)
-export default function CreateQuote({ quoteType, initialShipmentType }: {
+export default function DynamicQuote({ quoteType, initialShipmentType }: {
     quoteType: keyof ShipmentOptions,
     initialShipmentType: ShipmentOptions[keyof ShipmentOptions]
 }) {
@@ -57,7 +57,7 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
     })
     const methods = useForm({
         resolver: zodResolver(schema),
-        mode: "onTouched",
+        mode: "onChange",
     })
 
     const { watch } = methods;
@@ -121,9 +121,11 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
             "quoteType": quoteType,
             "shipmentType": shipmentType,
             ...(!isEditing && quoteStatus !== singleQuote?.quote.status && { "status": quoteStatus }),
-            "lineItem": {
-                ...data.lineItem,
-                "type": shipmentType,
+            ...(shipmentType !== "STANDARD_FTL") && {
+                "lineItem": {
+                    ...data.lineItem,
+                    "type": shipmentType,
+                },
             },
         }
         const transformedAddresses = payload.addresses.map((addr: any) => {
@@ -146,14 +148,14 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
         } else {
             createQuoteMutation.mutate(payloadTransformed)
         }
-        alert(`Quote submitted successfully as ${status}! Check console for details.`)
+        // alert(`Quote submitted successfully as ${status}! Check console for details.`)
     }
 
 
     return (
         <div className="container mx-auto py-8 px-4 max-w-7xl">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">{isEditing ? "Edit Quote" : "Create New Quote"}</h1>
+                <h1 className="text-2xl font-bold capitalize">{isEditing ? `Edit ${quoteType.toLowerCase()} Quote` : `Create New ${quoteType.toLowerCase()} Quote`}</h1>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -162,10 +164,10 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
                         <SchemaContext.Provider value={schema}>
                             <form onSubmit={methods.handleSubmit(onSubmit, onError)} className="space-y-8">
                                 <div className="space-y-6">
-                                    <ShippingTypeSelector shipmentType={shipmentType} setShipmentType={setShipmentType} />
+                                    <ShippingTypeSelector quoteType={quoteType} shipmentType={shipmentType} setShipmentType={setShipmentType} />
                                     <div className="flex flex-col md:flex-row gap-6">
-                                        <ShippingAddressSection shipmentType={shipmentType} type="FROM" title="Shipping From" />
-                                        <ShippingAddressSection shipmentType={shipmentType} type="TO" title="Shipping To" />
+                                        <ShippingAddressSection quoteType={quoteType} shipmentType={shipmentType} type="FROM" title="Shipping From" />
+                                        <ShippingAddressSection quoteType={quoteType} shipmentType={shipmentType} type="TO" title="Shipping To" />
                                     </div>
                                     {quoteType === "SPOT" ?
                                         <>
@@ -177,10 +179,10 @@ export default function CreateQuote({ quoteType, initialShipmentType }: {
                                         : ""}
 
                                 </div>
-                                <Dimensions shipmentType={shipmentType} />
-                                <AdditionalServices />
-                                <AdditionalInsurance />
-                                <SignaturePreference />
+                                {shipmentType !== "STANDARD_FTL" && <Dimensions shipmentType={shipmentType} />}
+                                <AdditionalServices shipmentType={shipmentType} />
+                                {quoteType === "STANDARD" && <AdditionalInsurance />}
+                                {(shipmentType === "PALLET" || shipmentType === "COURIER_PAK") && <SignaturePreference />}
                                 <StepperButtons
                                     quoteStatus={quoteStatus}
                                     setQuoteStatus={setQuoteStatus}

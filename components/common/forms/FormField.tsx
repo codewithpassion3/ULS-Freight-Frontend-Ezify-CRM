@@ -16,7 +16,11 @@ type FormFieldProps = {
     labelClassName?: string
     disabled?: boolean
     inputClassName?: string
+    min?: number
+    max?: number
 }
+
+
 
 export default function FormField({
     name,
@@ -27,12 +31,23 @@ export default function FormField({
     labelClassName,
     disabled,
     inputClassName,
+    min,
+    max,
 }: FormFieldProps) {
     const [showPassword, setShowPassword] = useState(false)
     const formContext = useFormContext()
     const register = formContext?.register
     const error = get(formContext?.formState?.errors, name) as FieldError | undefined
     const isPassword = type === "password"
+    // const validationRules: any = {}
+    const validationRules = {
+        required: "This field is required",
+        min: {
+            value: 1,
+            message: "Value must be greater than 0",
+        },
+        valueAsNumber: true, // ensures the value is treated as number
+    };
     return (
         <div className={`flex flex-col gap-2 ${className}`}>
             <Label htmlFor={name} className={`${error ? "text-red-500" : ""} ${labelClassName}`}>
@@ -47,6 +62,8 @@ export default function FormField({
                     {...(register ? register(name, { valueAsNumber: type === "number" }) : {})}
                     className={`${inputClassName} ${error ? "border-red-500" : ""} ${isPassword ? "pr-10" : ""}`}
                     disabled={disabled}
+                    min={min}
+                    max={max}
                 />
 
                 {isPassword && (

@@ -30,7 +30,7 @@ export default function SignaturePreference() {
         }
     }
     return (
-        <Accordion type="single" collapsible className="px-6 border border-border rounded-md bg-white dark:bg-card">
+        <Accordion type="single" collapsible className="px-6 shadow-lg border border-border rounded-md bg-white dark:bg-card">
             <AccordionItem value="signaturePreference">
                 <AccordionTrigger className="group  hover:no-underline items-center cursor-pointer [&>svg]:hidden!">
                     <h2 className="font-semibold flex items-center gap-2 text-lg text-slate-800">

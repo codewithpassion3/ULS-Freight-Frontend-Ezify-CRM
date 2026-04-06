@@ -17,6 +17,7 @@ import { AxiosError } from "axios";
 import { ApiError } from "next/dist/server/api-utils";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
+import { ShipmentOptions } from "../../../components/shared/DynamicQuote/DynamicQuote";
 
 const packageSchema = z.object({
     measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
@@ -27,8 +28,9 @@ const packageSchema = z.object({
     weight: z.number().min(0).optional(),
     freightClass: z.string().optional(),
     nmfc: z.string().optional(),
-    type: z.string().optional(),
+    shipmentType: z.string().optional(),
     unitsOnPallet: z.number().optional(),
+    palletUnitType: z.string().optional(),
     description: z.string().optional(),
 });
 
@@ -39,17 +41,18 @@ type AddPackageProps = {
     initialData?: Partial<PackageFormValues>;
     onSave?: (data: PackageFormValues) => void;
     children?: React.ReactNode;
-    open: boolean;
-    setOpen: (open: boolean) => void;
+    shipmentType?: ShipmentOptions[keyof ShipmentOptions];
 };
 
-export default function AddPackage({ id, initialData, onSave, children, open, setOpen }: AddPackageProps) {
-
+export default function AddPackage({ id, shipmentType, initialData, onSave, children }: AddPackageProps) {
+    const [open, setOpen] = useState(false)
     // Determine Add or Edit mode
     const isEdit = false;
+    const isNew = !shipmentType;
 
     const methods = useForm<PackageFormValues>({
         resolver: zodResolver(packageSchema),
+        mode: "onChange",
         defaultValues: {
             measurementUnit: "IMPERIAL",
             name: "",
@@ -59,7 +62,7 @@ export default function AddPackage({ id, initialData, onSave, children, open, se
             weight: undefined,
             freightClass: "",
             nmfc: "",
-            type: "PALLET",
+            shipmentType: "",
             unitsOnPallet: undefined,
             description: "",
         },
@@ -72,7 +75,7 @@ export default function AddPackage({ id, initialData, onSave, children, open, se
             methods.reset({
                 measurementUnit: "IMPERIAL",
                 name: "",
-                type: "PALLET",
+                shipmentType: "PALLET",
             });
         }
     }, [open, initialData, methods]);
@@ -111,16 +114,22 @@ export default function AddPackage({ id, initialData, onSave, children, open, se
         }
     };
 
+    const normalText = (text: string) => text?.toLowerCase().replace("_", " ");
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                {children ? children : <Button variant="outline">{isEdit ? "Edit Profile" : "Add Package"}</Button>}
+                {children ? children : <Button variant="outline">{shipmentType ? "Edit Package" : "Add Package"}</Button>}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto w-full">
                 <DialogHeader className="border-b pb-4 mb-4">
                     <DialogTitle className="flex items-center gap-2 text-xl text-slate-800">
                         <PackageIcon className="w-5 h-5 text-slate-700" />
-                        {isEdit ? "Edit Pallet" : "Add Pallet"}
+                        {isEdit ? "Edit" : "Add"}{" "}
+
+                        {<span className="capitalize">
+                            {normalText(!isNew ? shipmentType : methods?.watch("shipmentType") || "")}
+                        </span>}
                     </DialogTitle>
                 </DialogHeader>
                 <FormProvider {...methods} >
@@ -138,7 +147,7 @@ export default function AddPackage({ id, initialData, onSave, children, open, se
                                     { value: "COURIER_PAK", label: "Courier Pak" },
                                 ],
                                 wrapperClassName: "col-span-2",
-                                show: !isEdit
+                                show: isNew
                             },
                             {
                                 name: "measurementUnit",
@@ -196,12 +205,30 @@ export default function AddPackage({ id, initialData, onSave, children, open, se
                                 label: "Freight Class",
                                 placeholder: "Select Class",
                                 options: [
+                                    { value: "25", label: "25" },
                                     { value: "50", label: "50" },
-                                    { value: "55", label: "55" },
-                                    { value: "60", label: "60" },
-                                    { value: "65", label: "65" },
-                                    { value: "70", label: "70" },
-                                    { value: "77.5", label: "77.5" },
+                                    { value: "75", label: "75" },
+                                    { value: "100", label: "100" },
+                                    { value: "125", label: "125" },
+                                    { value: "150", label: "150" },
+                                    { value: "175", label: "175" },
+                                    { value: "200", label: "200" },
+                                    { value: "250", label: "250" },
+                                    { value: "300", label: "300" },
+                                    { value: "350", label: "350" },
+                                    { value: "400", label: "400" },
+                                    { value: "450", label: "450" },
+                                    { value: "500", label: "500" },
+                                    { value: "550", label: "550" },
+                                    { value: "600", label: "600" },
+                                    { value: "650", label: "650" },
+                                    { value: "700", label: "700" },
+                                    { value: "750", label: "750" },
+                                    { value: "800", label: "800" },
+                                    { value: "850", label: "850" },
+                                    { value: "900", label: "900" },
+                                    { value: "950", label: "950" },
+                                    { value: "1000", label: "1000" },
                                 ],
                                 wrapperClassName: "col-span-2",
 
@@ -224,6 +251,15 @@ export default function AddPackage({ id, initialData, onSave, children, open, se
                                     { value: "DRUM", label: "Drum" },
                                     { value: "BOXES", label: "Boxes" },
                                     { value: "ROLLS", label: "Rolls" },
+                                    { value: "PIPES_OR_TUBES", label: "Pipes or Tubes" },
+                                    { value: "BALES", label: "Bales" },
+                                    { value: "BAGS", label: "Bags" },
+                                    { value: "CYLINDER", label: "Cylinder" },
+                                    { value: "PAILS", label: "Pails" },
+                                    { value: "REELS", label: "Reels" },
+                                    { value: "CRATE", label: "Crate" },
+                                    { value: "LOOSE", label: "Loose" },
+                                    { value: "PIECES", label: "Pieces" },
                                 ],
                                 wrapperClassName: "col-span-2"
 
@@ -250,8 +286,11 @@ export default function AddPackage({ id, initialData, onSave, children, open, se
                         <Button variant="outline" onClick={() => setOpen(false)}>
                             Cancel
                         </Button>
-                        <Button type="submit" onClick={onSubmit}>
-                            Save Package
+                        <Button disabled={!methods.formState.isValid} type="submit" onClick={onSubmit}>
+                            Save
+                            {<span className="capitalize">
+                                {normalText(!isNew ? shipmentType : methods?.watch("shipmentType") || "")}
+                            </span>}
                         </Button>
                     </div>
                 </FormProvider>

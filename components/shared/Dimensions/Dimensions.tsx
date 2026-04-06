@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Button } from "@/components/ui/button"
-import { ShipmentOptions } from "../../../app/(user)/quote/create/CreateQuote"
+import { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import DangerousGoodsForm from "./DangerousGoodDetails"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
 import AdditionalServices from "../AdditionalService/AdditionalServices"
@@ -22,7 +22,7 @@ import { getSingleQuote } from "@/api/services/quotes.api"
 import { useEffect } from "react"
 import AddPackage from "@/app/(user)/packages/AddPackage"
 import { useState } from "react"
-
+export type PackageType = "PACKAGE" | "PALLET" | "COURIER_PAK"
 export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }) {
     const { register, control, watch, setValue, formState: { errors } } = useFormContext<any>()
     const quoteId = useSearchParams().get("id")
@@ -81,9 +81,9 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
     }
 
     return (
-        <div className="space-y-6">
-            <div className="border border-border rounded-md p-6 bg-white dark:bg-card space-y-6">
-                <h2 className="flex gap-2 items-center border-b pb-4 text-lg font-semibold text-slate-800 dark:text-slate-100">
+        <div className="space-y-6 ">
+            <div className="shadow-lg border border-border rounded-md p-6 bg-white dark:bg-card space-y-6">
+                <h2 className="flex gap-2 items-center text-lg font-semibold text-slate-800 dark:text-slate-100">
                     <Cuboid className="w-5 h-5" />
                     Dimensions & Weight
                 </h2>
@@ -190,14 +190,17 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                                         name={`lineItem.units.${index}.length`}
                                         label={`Length (${lengthUnit})*`}
                                         type="number"
+                                        min={0}
                                         placeholder="L"
                                         labelClassName="text-xs text-muted-foreground"
+
                                     />
                                     <FormField
                                         name={`lineItem.units.${index}.width`}
                                         label={`Width (${lengthUnit})*`}
                                         type="number"
                                         placeholder="W"
+                                        min={0}
                                         labelClassName="text-xs text-muted-foreground"
                                         className={rowErrors?.width ? "border-red-500" : ""}
                                     />
@@ -206,6 +209,8 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                                         label={`Height (${lengthUnit})*`}
                                         type="number"
                                         placeholder="H"
+                                        min={0}
+
                                         labelClassName="text-xs text-muted-foreground"
                                     // className={rowErrors?.height ? "border-red-500" : ""}
                                     />
@@ -213,6 +218,8 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                                         name={`lineItem.units.${index}.weight`}
                                         label={`Weight (${weightUnit})*`}
                                         type="number"
+                                        min={0}
+
                                         placeholder={isImperial ? "lbs" : "kg"}
                                         labelClassName="text-xs text-muted-foreground"
                                     // className={rowErrors?.weight ? "border-red-500" : ""}
@@ -284,6 +291,8 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                                         label={`Units`}
                                         type="number"
                                         placeholder="#units"
+                                        min={0}
+
                                         labelClassName="text-xs text-muted-foreground"
                                     // className={rowErrors?.unitsOnPallet ? "border-red-500" : ""}
                                     />
@@ -306,6 +315,7 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                                         <PackageOpen /> My Packages
                                     </Button>
                                     <AddPackage
+                                        shipmentType={shipmentType}
                                         open={open}
                                         setOpen={setOpen}
                                         initialData={
@@ -317,8 +327,9 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                                                 weight: watch(`lineItem.units.${index}.weight`),
                                                 freightClass: watch(`lineItem.units.${index}.freightClass`),
                                                 nmfc: watch(`lineItem.units.${index}.nmfc`),
-                                                type: watch(`lineItem.units.${index}.type`),
+                                                shipmentType: watch(`lineItem.units.${index}.shipmentType`),
                                                 unitsOnPallet: watch(`lineItem.units.${index}.unitsOnPallet`),
+                                                palletUnitType: watch(`lineItem.units.${index}.palletUnitType`),
                                                 description: watch(`lineItem.units.${index}.description`),
                                             }
                                         }
@@ -339,7 +350,7 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                         )
                     })}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
-                        <div className="flex items-center space-x-2">
+                        {shipmentType === "PACKAGE" ? <div className="flex items-center space-x-2">
                             <Controller
                                 control={control}
                                 name={`lineItem.specialHandlingRequired`}
@@ -350,7 +361,7 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                             <Label htmlFor={`special-handling`} className="font-normal flex items-center gap-1 cursor-pointer">
                                 Special Handling Required <Info size={14} className="text-slate-800" />
                             </Label>
-                        </div>
+                        </div> : null}
 
 
                         <Button

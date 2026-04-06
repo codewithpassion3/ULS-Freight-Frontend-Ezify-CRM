@@ -107,69 +107,7 @@ export function AddressBookTab() {
         <AddContactModal />
       </div>
       <AddressBookTable />
-      {/* <div className="rounded-md border border-border w-full overflow-x-auto">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-transparent border-b border-border text-muted-foreground font-medium text-xs">
-            <tr>
-              <th className="p-4 w-[50px]">
-                <Checkbox
-                  checked={
-                    selectedIds.length === mockContacts.length && mockContacts.length > 0
-                  }
-                  onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
-                />
-              </th>
-              <th className="px-4 py-3 min-w-[200px]">Name ↕</th>
-              <th className="px-4 py-3">Contact ID ↕</th>
-              <th className="px-4 py-3 min-w-[250px]">Address ↕</th>
-              <th className="px-4 py-3 min-w-[200px]">Contact ↕</th>
-              <th className="px-4 py-3 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {mockContacts.map((contact) => (
-              <tr key={contact.id} className="hover:bg-muted/30 transition-colors bg-card">
-                <td className="p-4">
-                  <Checkbox
-                    checked={selectedIds.includes(contact.id)}
-                    onCheckedChange={(checked) => handleSelectOne(checked as boolean, contact.id)}
-                  />
-                </td>
-                <td className="px-4 py-3">
-                  <div className="font-semibold text-foreground">{contact.name}</div>
-                  <div className="text-muted-foreground">{contact.contactName}</div>
-                </td>
-                <td className="px-4 py-3">{contact.contactId}</td>
-                <td className="px-4 py-3 whitespace-pre-line text-muted-foreground">
-                  {contact.address}
-                </td>
-                <td className="px-4 py-3 whitespace-pre-line text-muted-foreground">
-                  {contact.contactInfo}
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <div className="flex items-center justify-end gap-4 text-[#0070c0] font-medium cursor-pointer">
-                    <span className="flex items-center gap-1 hover:underline">
-                      <Edit className="h-4 w-4" />
-                      Edit
-                    </span>
-                    <span className="flex items-center gap-1 hover:underline">
-                      <Copy className="h-4 w-4" />
-                      Duplicate
-                    </span>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {mockContacts.length === 0 && (
-              <tr>
-                <td colSpan={6} className="p-4 text-center text-muted-foreground">
-                  No contacts found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div> */}
+      
     </div>
   )
 }

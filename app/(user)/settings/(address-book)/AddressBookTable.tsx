@@ -10,8 +10,9 @@ import { useDebounce } from "@/hooks/useDebounce.hook"
 import { getAllAddressBookContacts, getRecentContacts } from "@/api/services/address-book.api"
 import { Loader } from "@/components/common/Loader"
 import EmptyUI from "@/components/common/empty/Empty"
-import { BookUser } from "lucide-react"
+import { BookUser, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { AddContactModal } from "./AddContactModal"
 
 export function AddressBookTable({ handleSelect, type = "all" }: { handleSelect?: (contact: any) => void, type?: "all" | "recent" }) {
     const [search, setSearch] = useState("")
@@ -72,13 +73,17 @@ export function AddressBookTable({ handleSelect, type = "all" }: { handleSelect?
             ) : (
                 addressBook?.data.length > 0 ?
                     <div className="space-y-4 w-full">
-                        < DataTableToolbar
-                            search={search}
-                            setSearch={setSearch}
-                            selectedRows={[]}
-                            onBulkDelete={(rows) => console.log(rows)}
-                            placeholder="Search Company Name"
-                        />
+                        <div className="flex justify-between gap-2">
+                            < DataTableToolbar
+                                search={search}
+                                setSearch={setSearch}
+                                selectedRows={[]}
+                                onBulkDelete={(rows) => console.log(rows)}
+                                placeholder="Search Company Name"
+                            />
+                            <AddContactModal />
+
+                        </div>
 
 
                         <DataTable
@@ -100,6 +105,9 @@ export function AddressBookTable({ handleSelect, type = "all" }: { handleSelect?
                         title="No Contacts Found"
                         description="You haven't added any contacts yet."
                         icon={<BookUser />}
+                        action={
+                            <AddContactModal />
+                        }
                     />
 
             )}

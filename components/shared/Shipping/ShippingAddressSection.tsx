@@ -12,7 +12,7 @@ import { useMarkContactAsRecent } from "../../../app/(user)/quote/create/hooks"
 import { Button } from "@/components/ui/button"
 import { ArrowLeftRight, X } from "lucide-react"
 import { FormCheckbox } from "@/components/common/forms/FormCheckbox"
-import { ShipmentOptions } from "../../../app/(user)/quote/create/CreateQuote"
+import { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import z, { ZodType } from "zod"
 import { useEffect, useMemo, useState } from "react"
 import { InferSchema } from "../../../app/(user)/quote/create/quote.types"
@@ -23,12 +23,13 @@ import { getSingleQuote } from "@/api/services/quotes.api"
 import { Loader } from "@/components/common/Loader"
 
 
-export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, type, title }: { shipmentType: ShipmentOptions[keyof ShipmentOptions], type: "TO" | "FROM", title: string }) => {
+export const ShippingAddressSection = <T extends ZodType<any>>({ quoteType, shipmentType, type, title }: { quoteType: keyof ShipmentOptions, shipmentType: ShipmentOptions[keyof ShipmentOptions], type: "TO" | "FROM", title: string }) => {
   const { register, setValue, resetField, getValues, watch, formState: { errors } } = useFormContext<any>()
   const quoteId = useSearchParams().get("id")
   const markContactAsRecent = useMarkContactAsRecent()
   const [addressLocked, setAddressLocked] = useState(false)
-
+  const showLocationType = quoteType === "SPOT" || shipmentType === "STANDARD_FTL";
+  const showAdditionalNotes = quoteType === "SPOT";
   const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
     queryKey: ["singleQuote", quoteId],
     queryFn: () => quoteId ? getSingleQuote(quoteId) : null,
@@ -87,6 +88,8 @@ export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, t
     queryKey: ["palletShippingLocationTypes"],
     queryFn: getAllPalletShippingLocationTypes
   })
+
+  console.log("palletShippingLocationTypesRes", palletShippingLocationTypesRes)
 
   const handleClearAddress = () => {
     setAddressLocked(false)
@@ -167,7 +170,7 @@ export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, t
             placeholder="Country"
             disabled={addressLocked}
           />
-          {shipmentType === "STANDARD_FTL" && (
+          {showLocationType && palletShippingLocationTypesRes?.palletShippingLocationTypes.length > 0 && (
             <FormSelect
               label="Location Type*"
               name={`addresses.${index}.locationType`}
@@ -180,6 +183,15 @@ export const ShippingAddressSection = <T extends ZodType<any>>({ shipmentType, t
               disabled={addressLocked}
             />
           )}
+          {showAdditionalNotes && (
+            <FormField
+              label="Additional Notes"
+              name={`addresses.${index}.additionalNotes`}
+              placeholder="Additional Notes"
+
+            />
+          )}
+
 
         </div>
         {/* {shipmentType === "STANDARD_FTL" && (
