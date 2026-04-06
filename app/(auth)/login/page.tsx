@@ -17,9 +17,6 @@ import { AuthLayout } from "../AuthLayout"
 import { FormCheckbox } from "@/components/common/forms/FormCheckbox"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
-import Image from "next/image"
-import { LanguageToggle } from "@/components/language-toggle"
-import { ModeToggle } from "@/components/mode-toggle"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -69,96 +66,38 @@ export default function LoginPage() {
         </>
       }
     >
-
-      {/* Right Column - Login Form */}
-      <div className="flex items-center justify-center p-6 sm:p-12 h-screen overflow-y-auto bg-background">
-        <div className="mx-auto w-full max-w-[400px] flex flex-col justify-between min-h-full py-8">
-
-          {/* Header Area */}
-          <div className="flex items-center justify-between mb-16">
-            <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-              <Image loading="eager" src="/logo.png" alt="ULS Freight Logo"
-
-                height={200}
-                width={200}
-                className="w-auto h-auto"
-              // sizes="auto"
-              />
-            </Link>
-            <div className="flex items-center gap-2">
-              <LanguageToggle />
-              <ModeToggle />
-            </div>
+      <FormProvider {...form}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <FormField
+            name="email"
+            label="Email*"
+            placeholder="Enter your email"
+          />
+          <FormField
+            name="password"
+            label="Password*"
+            placeholder="Enter your password"
+            type="password"
+          />
+          <div className="flex items-center gap-2">
+            <Checkbox
+              className="cursor-pointer"
+              {...register("rememberMe")}
+            />
+            <Label>
+              Remember me
+            </Label>
           </div>
-
-          {/* Form Area */}
-          <div className="flex-1">
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold text-foreground">
-                To access your ULS FREIGHT account, sign in below.
-              </h2>
-            </div>
-
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              <FormField
-                name="email"
-                label="Email*"
-                placeholder="Enter your email"
-              />
-              <FormField
-                name="password"
-                label="Password*"
-                placeholder="Enter your password"
-              />
-              <div className="my-6 flex items-center justify-end">
-                {/* <div className="flex items-center space-x-2">
-                  <Checkbox id="remember" />
-                  <Label htmlFor="remember" className="text-sm font-medium leading-none cursor-pointer">
-                    Remember me
-                  </Label>
-                </div> */}
-                <Link href="/forgot-password" className="text-sm text-primary hover:underline">
-                  Forgot Password?
-                </Link>
-              </div>
-
-              {/* reCAPTCHA Mockup */}
-              {/* <div className="opacity-50 border border-border rounded bg-card p-3 flex grow items-center justify-between w-[300px] mt-4 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="h-7 w-7 border-2 border-muted-foreground rounded bg-background"></div>
-                <span className="text-sm font-medium text-foreground">I'm not a robot</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <RefreshCcw className="h-6 w-6 text-primary mb-1" />
-                <span className="text-[10px] text-muted-foreground text-center">reCAPTCHA<br />Privacy - Terms</span>
-              </div>
-            </div> */}
-
-              <Button type="submit" variant="default" className="w-full">
-                Start Shipping!
-              </Button>
-            </form>
-
-          </div>
-
-          {/* Footer Area */}
-          <div className="mt-16 text-sm text-muted-foreground text-center">
-            Don't have an account?{" "}
-            <Link href="/register" className="text-primary hover:underline font-medium">
-              Create an account
+          <div className="my-6 flex items-center justify-end">
+            <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+              Forgot Password?
             </Link>
           </div>
-        </div>
-        <div className="my-6 flex items-center justify-end">
-          <Link href="/forgot-password" className="text-sm text-primary hover:underline">
-            Forgot Password?
-          </Link>
-        </div>
-        <Button type="submit" variant="default" className="w-full">
-          Start Shipping!
-        </Button>
-      </div>
-
-    </AuthLayout >
+          <Button type="submit" variant="default" className="w-full">
+            Start Shipping!
+          </Button>
+        </form>
+      </FormProvider>
+    </AuthLayout>
   )
 }

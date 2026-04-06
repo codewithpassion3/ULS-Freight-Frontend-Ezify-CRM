@@ -16,9 +16,6 @@ import { forgotPassword } from "@/api/services/auth.api"
 import { useOTPFlow } from "@/context/otp.context"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
-import Image from "next/image"
-import { LanguageToggle } from "@/components/language-toggle"
-import { ModeToggle } from "@/components/mode-toggle"
 
 export default function ForgotPasswordPage() {
     const { setFlow } = useOTPFlow()
@@ -83,66 +80,6 @@ export default function ForgotPasswordPage() {
                     Back to Login
                 </Link>
             </div>
-
-            {/* Right Form */}
-            <div className="flex items-center justify-center p-6 sm:p-12 h-screen overflow-y-auto bg-background">
-                <div className="mx-auto w-full max-w-[400px] flex flex-col justify-between min-h-full py-8">
-
-                    {/* Header */}
-                    <div className="flex items-center justify-between mb-16">
-                        <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-                            <Image src="/logo.png" alt="ULS Freight" width={200} height={200} />
-                        </Link>
-
-                        <div className="flex items-center gap-2">
-                            <LanguageToggle />
-                            <ModeToggle />
-                        </div>
-                    </div>
-
-                    {/* Form */}
-                    <div className="flex-1">
-                        <div className="mb-6">
-                            <h2 className="text-lg font-semibold text-foreground">
-                                Forgot your password?
-                            </h2>
-                            <p className="text-sm text-muted-foreground mt-1">
-                                Enter your email and we will send you a password reset link.
-                            </p>
-                        </div>
-
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-
-                            <FormField
-                                name="email"
-                                label="Email*"
-                                placeholder="Enter your email"
-                            />
-
-                            <Button type="submit" className="w-full">
-                                Send Reset OTP
-                            </Button>
-
-                        </form>
-
-                        <div className="mt-6 text-sm text-center">
-                            <Link href="/login" className="text-primary hover:underline font-medium">
-                                Back to Login
-                            </Link>
-                        </div>
-
-                    </div>
-
-                    {/* Footer */}
-                    <div className="mt-4 text-sm text-muted-foreground">
-                        Don't have an account?{" "}
-                        <Link href="/register" className="text-primary hover:underline font-medium">
-                            Create an account
-                        </Link>
-                    </div>
-
-                </div>
-            </div>
         </AuthLayout>
-    );
+    )
 }
