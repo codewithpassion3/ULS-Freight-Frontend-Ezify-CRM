@@ -56,32 +56,28 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
         <div className="space-y-2">
 
           <FormField
-            register={form.register}
             name="address.address1"
             label="Registered Business Address*"
             placeholder="Enter your business address"
-            error={errors.address?.address1}
+
           />
         </div>
         <div className="space-y-2">
 
           <FormField
-            register={form.register}
             name="address.unit"
             label="Unit/Floor # *"
             placeholder="Enter your unit/floor #"
-            error={errors.address?.unit}
+
           />
         </div>
       </div>
 
       <div className="space-y-2">
         <FormField
-          register={form.register}
           name="address.address2"
           label="Address 2 (optional)"
           placeholder="Enter your address 2"
-          error={errors.address?.address2}
         />
       </div>
 
@@ -89,21 +85,19 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
         <div className="space-y-2">
 
           <FormField
-            register={form.register}
             name="address.postalCode"
             label="Postal/ZIP Code*"
             placeholder="Enter your postal/ZIP code"
-            error={errors.address?.postalCode}
+
           />
         </div>
         <div className="space-y-2">
 
           <FormField
-            register={form.register}
             name="address.city"
             label="City*"
             placeholder="Enter your city"
-            error={errors.address?.city}
+
           />
         </div>
       </div>

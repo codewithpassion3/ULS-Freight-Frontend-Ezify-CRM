@@ -46,13 +46,6 @@ export function SideBar({ currentStep, setCurrentStep }: { currentStep: number, 
                             </div>
                         </div>
 
-                        {/* <div className="flex items-center gap-3 text-muted-foreground/50">
-                            <div className="w-5 h-5 border border-muted-foreground/30 text-muted-foreground/30 rounded-md p-1 bg-white dark:bg-transparent flex items-center justify-center">
-                                <FileUser size={12} />
-                            </div>
-                            <span>{currentStep === 1 ? 'Step 3: Send Request' : 'Send Request'}</span>
-                        </div> */}
-
                         <div className="flex items-center gap-3 text-[#0070c0] pt-4 cursor-pointer hover:underline text-sm font-medium">
                             <Save size={16} />
                             <span>Save For Later</span>

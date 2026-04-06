@@ -162,7 +162,6 @@ export function Step1Form({ onNext }: Step1FormProps) {
             type="email"
             placeholder="example@email.com"
           />
-          {errors.user?.email && <p className="text-xs text-red-500">{errors.user?.email.message}</p>}
         </div>
         <div className="space-y-2">
           <Label htmlFor="user.phoneNumber" className={errors.user?.phoneNumber ? "text-red-500" : ""}>Phone Number*</Label>

@@ -30,7 +30,7 @@ export default function StepperButtons({ quoteStatus, setQuoteStatus, onSubmit }
         }
     }
     return (
-        <div className="w-full flex justify-between pt-4">
+        <div className="w-full flex justify-end pt-4">
             <div className="flex gap-2">
                 <Button variant="outline" onClick={() => {
                     handleStatus("DRAFT")

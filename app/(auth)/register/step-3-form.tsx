@@ -34,8 +34,6 @@ export function Step3Form({ onBack }: Step3FormProps) {
             name="user.username"
             label="Create a Username*"
             placeholder="Enter your username"
-            register={register}
-            error={errors.user?.username}
           />
         </div>
         <div className="space-y-2 relative">
@@ -44,8 +42,6 @@ export function Step3Form({ onBack }: Step3FormProps) {
             label="Create Password*"
             type="password"
             placeholder="Enter your password"
-            register={register}
-            error={errors.user?.password}
           />
           <p className="text-xs text-muted-foreground mt-1">Must be at least 8 characters</p>
         </div>
@@ -57,8 +53,6 @@ export function Step3Form({ onBack }: Step3FormProps) {
               label="Confirm Password*"
               type="password"
               placeholder="Confirm your password"
-              register={register}
-              error={errors.user?.confirmPassword}
             />
           </div>
         </div>
