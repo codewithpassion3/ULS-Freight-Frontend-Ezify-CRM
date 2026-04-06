@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Deploy to VPS
 
 on:
   push:
@@ -6,27 +6,15 @@ on:
       - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          node-version: 20
-          cache: 'npm'
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Build Project
-        run: npm run build
-
-      - name: Run Tests
-        run: npm test
-        continue-on-error: true
-      - name: Deploy
-        run: echo "Add your deployment script here"
+          host: YOUR_SERVER_IP
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            bash /home/ulscrm/deploy.sh
