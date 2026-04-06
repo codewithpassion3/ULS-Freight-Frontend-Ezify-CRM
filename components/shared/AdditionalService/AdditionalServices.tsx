@@ -1,0 +1,183 @@
+import { GlobalForm } from "@/components/common/form/GlobalForm"
+import { FormCheckbox } from "@/components/common/forms/FormCheckbox"
+import { FormRadio } from "@/components/common/forms/FormRadio"
+import { ChevronUp, Info, ListTodo, ShieldCheck } from "lucide-react"
+import { useFormContext } from "react-hook-form"
+import InBond from "./InBond"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { useSearchParams } from "next/navigation"
+import { useQuery } from "@tanstack/react-query"
+import { getSingleQuote } from "@/api/services/quotes.api"
+import { useEffect } from "react"
+import { Loader } from "@/components/common/Loader"
+
+export default function AdditionalServices() {
+    const { watch, setValue } = useFormContext()
+    const quoteId = useSearchParams().get("id")
+    const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
+        queryKey: ["singleQuote", quoteId],
+        queryFn: () => quoteId ? getSingleQuote(quoteId) : null,
+        enabled: !!quoteId,
+        staleTime: 1000 * 60 * 5, // 5 minutes
+    })
+    useEffect(() => {
+        if (cachedSingleQuote) {
+            const services = cachedSingleQuote.quote.palletServices;
+            if (services) {
+                setValue("services", {
+                    limitedAccess: services.limitedAccess,
+                    appointmentDelivery: services.appointmentDelivery,
+                    thresholdDelivery: services.thresholdDelivery,
+                    thresholdPickup: services.thresholdPickup,
+                    inBond: services.inBond,
+                    protectFromFreeze: services.protectFromFreeze,
+                    liftGateRequired: services.liftGateRequired,
+                    residentialPickup: services.residentialPickup,
+                    residentialDelivery: services.residentialDelivery,
+                    insideDelivery: services.insideDelivery,
+                    insidePickup: services.insidePickup,
+                    insideDeliveryStairs: services.insideDeliveryStairs,
+                    insidePickupStairs: services.insidePickupStairs,
+                });
+            }
+        }
+    }, [cachedSingleQuote, setValue]);
+    if (quoteId) {
+        if (isLoading || isPending) {
+            return <Loader />
+        }
+    }
+    return (
+        <Accordion type="single" collapsible className="border border-border rounded-md bg-white dark:bg-card">
+            <AccordionItem value="insurance" className="border-none">
+                <AccordionTrigger className="group px-6 py-4 hover:no-underline items-center cursor-pointer [&>svg]:hidden!" >
+                    <h2 className="font-semibold flex items-center gap-2 text-lg text-slate-800">
+                        <ListTodo />
+                        Additional Services
+                        <ChevronUp className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                    </h2>
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-6 space-y-6 h-full">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="sm:col-span-3 ">
+                            <FormCheckbox
+                                name={"services.limitedAccess"}
+                                label="Limited Access"
+                                defaultValue={false}
+                                icon={<Info size={16} />}
+                            />
+                            {watch("services.limitedAccess") &&
+                                <div className="my-4">
+                                    <FormRadio
+
+                                        className="grid grid-cols-2 gap-4"
+                                        name="limitedAccess.location"
+                                        label="Location"
+                                        options={[
+                                            {
+                                                value: "constructionSite",
+                                                label: "Construction Site",
+                                            },
+                                            {
+                                                value: "individualStorageUnit",
+                                                label: "Individual (Mini) Storage Unit",
+                                            },
+                                            {
+                                                value: "fairAmusementPark",
+                                                label: "Fair/Amusement Park",
+                                            },
+                                            {
+                                                value: "placeOfWorship",
+                                                label: "Place of Worship",
+                                            },
+                                            {
+                                                value: "farmCountryClubEstate",
+                                                label: "Farm/Country Club/Estate",
+                                            },
+                                            {
+                                                value: "securedLocationsDelivery",
+                                                label: "Secured Locations Delivery - prisons, military bases, airport",
+                                            },
+                                            {
+                                                value: "schoolUniversity",
+                                                label: "School/University",
+                                            },
+                                            {
+                                                value: "plazaMallDeliveries",
+                                                label: "Plaza/Mall deliveries or stores with only parking lot/Street access",
+                                            },
+                                            {
+                                                value: "groceryRetailLocations",
+                                                label: "Grocery/Retail Locations (ex: Costco or Walmart)",
+                                            },
+                                            {
+                                                value: "other",
+                                                label: "Other",
+                                            },
+                                        ]}
+                                    />
+                                </div>
+                            }
+                        </div>
+
+                        <FormCheckbox
+                            name="services.appointmentDelivery"
+                            label="Appointment Delivery"
+                            defaultValue={false}
+                            icon={<Info size={16} />}
+                        />
+                        <FormCheckbox
+                            name="services.thresholdDelivery"
+                            label="Threshold Delivery"
+                            defaultValue={false}
+                            icon={<Info size={16} />}
+                        />
+                        <FormCheckbox
+                            name="services.thresholdPickup"
+                            label="Threshold Pickup"
+                            defaultValue={false}
+                            icon={<Info size={16} />}
+                        />
+                        <div className="sm:col-span-3">
+                            <FormCheckbox
+                                name="services.inBond"
+                                label="In Bond"
+                                defaultValue={false}
+                                icon={<Info size={16} />}
+                            />
+                            {watch("services.inBond") &&
+                                <div className="my-4">
+                                    <InBond />
+                                </div>
+                            }
+                        </div>
+                        <FormCheckbox
+                            name="services.protectFromFreeze"
+                            label="Protect from Freeze"
+                            defaultValue={false}
+                            icon={<Info size={16} />}
+                        />
+                        <FormCheckbox
+                            name="services.tradeShowDelivery"
+                            label="Trade Show Delivery"
+                            defaultValue={false}
+                            icon={<Info size={16} />}
+                        />
+                        <FormCheckbox
+                            name="services.amazonFbaDelivery"
+                            label="Amazon/FBA Delivery"
+                            defaultValue={false}
+                            icon={<Info size={16} />}
+                        />
+                        <FormCheckbox
+                            name="services.refrigeratedServices"
+                            label="Refrigerated Services"
+                            defaultValue={false}
+                            icon={<Info size={16} />}
+                        />
+                    </div>
+                </AccordionContent>
+            </AccordionItem>
+        </Accordion>
+    )
+}

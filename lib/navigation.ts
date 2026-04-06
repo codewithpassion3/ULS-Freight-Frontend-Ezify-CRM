@@ -4,7 +4,9 @@ export const navItems = [
     {
         title: "Quote",
         items: [
+            { title: "All Quotes", href: "/quotes" },
             { title: "Create Quote", href: "/quote/create" },
+            { title: "Create Spot Quote", href: "/spot-quote/create" },
             { title: "Saved Quotes", href: "/quote/saved" },
         ],
     },

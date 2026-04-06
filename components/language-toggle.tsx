@@ -22,7 +22,6 @@ export function LanguageToggle() {
   const { user } = useAuth()
   const [language, setLanguage] = useState("en")
 
-
   const updateUserSettingsMutation = useMutation({
     mutationFn: updateUserSettings,
     onSuccess: () => {
@@ -34,6 +33,9 @@ export function LanguageToggle() {
   })
 
   const handleLanguageChange = (lang: "en" | "fr") => {
+    if (user) {
+      updateUserSettingsMutation.mutate({ language: lang })
+    }
     setLanguage(lang)
     if (user) {
       updateUserSettingsMutation.mutate({ language: lang })
@@ -45,7 +47,7 @@ export function LanguageToggle() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="text-sm font-medium text-primary hover:text-primary/80 flex items-center gap-2 px-2"
+          className="text-sm font-medium text-black dark:text-white hover:text-primary/80 flex items-center gap-2 px-2"
         >
           <Globe className="h-4 w-4" />
           <span className="hidden sm:inline">

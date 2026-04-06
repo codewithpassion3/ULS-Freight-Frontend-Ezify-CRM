@@ -1,29 +1,30 @@
 import { z } from "zod"
 
 export const quoteSchema = z.object({
+
   shipmentType: z.enum(["LTL-Partial Truckload", "Full Truck Load", "Time Critical"], {
     message: "Please select a shipment type",
   }),
-  shippingFrom: z.object({
-    multiplePickupLocations: z.boolean().default(false),
-    address1: z.string().optional(),
-    postalCode: z.string().min(1, "Postal/ZIP Code is required"),
-    city: z.string().min(1, "City is required"),
-    province: z.string().min(1, "Province/State is required"),
-    country: z.string().min(1, "Country is required"),
-    locationType: z.string().min(1, "Location Type is required"),
-    additionalNotes: z.string().optional(),
-  }),
-  shippingTo: z.object({
-    multipleDeliveryLocations: z.boolean().default(false),
-    address1: z.string().optional(),
-    postalCode: z.string().min(1, "Postal/ZIP Code is required"),
-    city: z.string().min(1, "City is required"),
-    province: z.string().min(1, "Province/State is required"),
-    country: z.string().min(1, "Country is required"),
-    locationType: z.string().min(1, "Location Type is required"),
-    additionalNotes: z.string().optional(),
-  }),
+  // shippingFrom: z.object({
+  //   multipleLocations: z.boolean().default(false).optional(),
+  //   address1: z.string().optional(),
+  //   postalCode: z.string().min(1, "Postal/ZIP Code is required"),
+  //   city: z.string().min(1, "City is required"),
+  //   province: z.string().min(1, "Province/State is required"),
+  //   country: z.string().min(1, "Country is required"),
+  //   locationType: z.string().min(1, "Location Type is required"),
+  //   additionalNotes: z.string().optional(),
+  // }),
+  // shippingTo: z.object({
+  //   multipleLocations: z.boolean().default(false).optional(),
+  //   address1: z.string().optional(),
+  //   postalCode: z.string().min(1, "Postal/ZIP Code is required"),
+  //   city: z.string().min(1, "City is required"),
+  //   province: z.string().min(1, "Province/State is required"),
+  //   country: z.string().min(1, "Country is required"),
+  //   locationType: z.string().min(1, "Location Type is required"),
+  //   additionalNotes: z.string().optional(),
+  // }),
   equipment: z.object({
     type: z.enum(["Dry Van", "Refrigerated Services", "Flatbed", "Ventilated Trailer"], {
       message: "Please select an equipment type",
@@ -49,6 +50,7 @@ export const quoteSchema = z.object({
         nmfc: z.string().optional(),
         type: z.string().default("Pallet"),
         unitsOnPallet: z.string().optional(),
+        specialHandling: z.boolean().default(false).optional(),
       })
     ).min(1, "At least one pallet is required"),
     description: z.string().optional(),
@@ -69,7 +71,9 @@ export const quoteSchema = z.object({
   additionalInsurance: z.object({
     totalCostValue: z.coerce.number().min(0).default(0),
     currency: z.enum(["CAD", "USD"]).default("CAD"),
+    type: z.enum(["Freightcom", "ThirdParty"]).default("Freightcom").optional(),
   }).optional(),
+  signaturePreference: z.enum(["No Signature Required", "Signature Required", "Adult Signature Required"]).default("No Signature Required").optional(),
   contactInformation: z.object({
     contactName: z.string().min(1, "Contact Name is required"),
     phoneNumber: z.string().min(1, "Phone Number is required"),

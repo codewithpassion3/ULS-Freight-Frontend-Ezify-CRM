@@ -1,5 +1,5 @@
 "use client";
-import { deleteContact } from "@/api/services/quotes.api";
+import { deleteContact } from "@/api/services/address-book.api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AxiosError } from "axios";

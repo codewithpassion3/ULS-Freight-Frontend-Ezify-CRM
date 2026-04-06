@@ -1,5 +1,5 @@
 "use client"
-import { useForm, Controller, FieldValues, Path, DefaultValues, UseFormReturn } from "react-hook-form"
+import { useForm, Controller, FieldValues, Path, DefaultValues, UseFormReturn, useFormContext, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ZodType } from "zod"
 import { Input } from "@/components/ui/input"
@@ -12,6 +12,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { PhoneInput } from "@/components/common/PhoneInput"
 import { useEffect } from "react"
 import { Loader } from "@/components/common/Loader"
+import { FormSelect } from "../forms/FormSelect"
+import { DatePicker } from "../date-picker/DatePicker"
 
 export type FieldType =
   | "text"
@@ -26,33 +28,56 @@ export type FieldType =
   | "switch"
   | "phone"
 
-export interface FormField<T extends FieldValues> {
-  name: Path<T>
-  label?: string
-  type: FieldType
-  placeholder?: string
-  options?: { label: string; value: string | number }[] // for select/radio
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  defaultValue?: any
-  required?: boolean
-  className?: string
-  wrapperClassName?: string
-  labelAction?: React.ReactNode // Extra component to render next to the label (e.g. "Address book" button)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  extra?: any // extra props like min/max for numbers
-  show?: boolean // Condition to show/hide the field
+export interface SelectOptions {
+  optionKey: string
+  optionValue: string
 }
+export interface BaseField<T extends FieldValues> {
+  name: Path<T>;
+  label?: string;
+  type: FieldType;
+  placeholder?: string;
+  disabled?: boolean;
+  defaultValue?: any;
+  required?: boolean;
+  className?: string;
+  wrapperClassName?: string;
+  labelAction?: React.ReactNode;
+  extra?: any;
+  show?: boolean;
+  selectOptions?: SelectOptions;
+}
+
+export interface SelectField<T extends FieldValues> extends BaseField<T> {
+  type: "select" | "radio";
+  options: { label: string; value: string | number; icon?: React.ReactNode }[];
+}
+
+export interface CheckboxField<T extends FieldValues> extends BaseField<T> {
+  type: "checkbox";
+  icon?: React.ReactNode;
+}
+
+// Fields for all other types — options forbidden
+export interface NonSelectField<T extends FieldValues> extends BaseField<T> {
+  type: Exclude<FieldType, "select" | "radio" | "checkbox">;
+  options?: never;
+}
+
+export type FormField<T extends FieldValues> = SelectField<T> | NonSelectField<T> | CheckboxField<T>;
 
 export interface GlobalFormProps<T extends FieldValues> {
   fields: FormField<T>[]
   defaultValues?: DefaultValues<T>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   schema?: ZodType<any, any, any>
-  onSubmit?: (data: T) => void
+  // onSubmit?: (data: T) => void
+  onSubmit?: SubmitHandler<FieldValues>;
   isLoading?: boolean
   setIsValid?: (valid: boolean) => void
   className?: string
-  form?: UseFormReturn<T>
+  formWrapperClassName?: string
+  // form?: UseFormReturn<T>
 }
 
 export function GlobalForm<T extends FieldValues>({
@@ -63,7 +88,8 @@ export function GlobalForm<T extends FieldValues>({
   isLoading,
   setIsValid,
   className = "space-y-4",
-  form,
+  formWrapperClassName,
+  // form,
 }: GlobalFormProps<T>) {
 
   const internalForm = useForm<T>({
@@ -73,8 +99,9 @@ export function GlobalForm<T extends FieldValues>({
   })
 
   // Use the provided form if available, otherwise use internal
-  const methods = form || internalForm
-  const { register, handleSubmit, control, reset, formState: { errors, isValid } } = methods
+  // const methods = form || internalForm
+  const form = useFormContext()
+  const { register, handleSubmit, control, reset, formState: { errors, isValid } } = form
 
   useEffect(() => {
     if (defaultValues && !form) {
@@ -107,7 +134,7 @@ export function GlobalForm<T extends FieldValues>({
       const renderLabel = () => {
         if (!field.label && !field.labelAction) return null
         return (
-          <div className="flex justify-between items-center mb-1">
+          <div className="flex justify-between items-center mb-2">
             {field.label && <Label className={hasError ? "text-red-500" : ""}>{field.label}</Label>}
             {field.labelAction && <div>{field.labelAction}</div>}
           </div>
@@ -116,23 +143,40 @@ export function GlobalForm<T extends FieldValues>({
 
       switch (field.type) {
         case "text":
-        case "number":
         case "email":
         case "password":
-        case "date":
+        case "number":
+
           return (
             <div key={field.name} className={`space-y-1 ${field.wrapperClassName || ""}`}>
               {renderLabel()}
               <Input
+                disabled={field.disabled}
                 type={field.type}
                 placeholder={field.placeholder}
                 className={`${hasError ? "border-red-500 focus-visible:ring-red-500" : ""} ${field.className || ""}`}
-                {...register(field.name)}
+                {...register(field.name, { valueAsNumber: field.type === "number" })}
                 {...field.extra}
               />
               {hasError && <p className="text-xs text-red-500 font-medium">{errorMessage}</p>}
             </div>
           )
+        case "date":
+          <div key={field.name} className={`space-y-1 ${field.wrapperClassName || ""}`}>
+            {renderLabel()}
+            <Input
+              type={field.type}
+              placeholder={field.placeholder}
+              className={`${hasError ? "border-red-500 focus-visible:ring-red-500" : ""} ${field.className || ""}`}
+              {...register(field.name)}
+              {...field.extra}
+            />
+            {/* <DatePicker
+              name={field.name}
+            /> */}
+
+            {hasError && <p className="text-xs text-red-500 font-medium">{errorMessage}</p>}
+          </div>
 
         case "textarea":
           return (
@@ -150,29 +194,18 @@ export function GlobalForm<T extends FieldValues>({
 
         case "select":
           return (
-            <div key={field.name} className={`space-y-1 ${field.wrapperClassName || ""}`}>
-              {renderLabel()}
-              <Controller
-                name={field.name}
-                control={control}
-                defaultValue={field.defaultValue}
-                render={({ field: controllerField }) => (
-                  <Select value={controllerField.value?.toString() || ""} onValueChange={controllerField.onChange}>
-                    <SelectTrigger className={`${hasError ? "border-red-500 focus:ring-red-500" : ""} ${field.className || ""}`}>
-                      <SelectValue placeholder={field.placeholder || "Select"} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {field.options?.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value.toString()}>
-                          {opt.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              {hasError && <p className="text-xs text-red-500 font-medium">{errorMessage}</p>}
-            </div>
+            <FormSelect
+              key={field.name}
+              label={field.label}
+              name={field.name}
+              defaultValue={field.defaultValue}
+              options={field.options}
+              className={field.className}
+              placeholder={field.placeholder}
+              optionKey={field.selectOptions?.optionKey}
+              optionValue={field.selectOptions?.optionValue}
+              wrapperClassName={field.wrapperClassName}
+            />
           )
 
         case "radio":
@@ -189,7 +222,10 @@ export function GlobalForm<T extends FieldValues>({
                       {field.options?.map((opt) => (
                         <div key={opt.value} className="flex items-center gap-2">
                           <RadioGroupItem value={opt.value.toString()} id={`${field.name}-${opt.value}`} className={controllerField.value?.toString() === opt.value.toString() ? "border-amber-500 text-amber-500" : ""} />
-                          <Label htmlFor={`${field.name}-${opt.value}`} className="cursor-pointer font-normal text-sm">{opt.label}</Label>
+                          <div className="flex items-center gap-1">
+                            <Label htmlFor={`${field.name}-${opt.value}`} className="cursor-pointer font-normal text-sm">{opt.label}</Label>
+                            {opt?.icon}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -203,7 +239,7 @@ export function GlobalForm<T extends FieldValues>({
         case "switch":
           return (
             <div key={field.name} className={`flex items-center gap-3 pt-2 ${field.wrapperClassName || ""}`}>
-               {field.labelAction && <div className="mr-2">{field.labelAction}</div>}
+              {field.labelAction && <div className="mr-2">{field.labelAction}</div>}
               <Controller
                 name={field.name}
                 control={control}
@@ -223,7 +259,7 @@ export function GlobalForm<T extends FieldValues>({
         case "checkbox":
           return (
             <div key={field.name} className={`flex flex-col gap-1 ${field.wrapperClassName || ""}`}>
-              <div className="flex items-center gap-2 pt-2">
+              <div className="flex items-center gap-2  pt-2">
                 <Controller
                   name={field.name}
                   control={control}
@@ -233,11 +269,13 @@ export function GlobalForm<T extends FieldValues>({
                       id={`${field.name}`}
                       checked={!!controllerField.value}
                       onCheckedChange={(checked) => controllerField.onChange(checked)}
+                      className="cursor-pointer"
                     />
                   )}
                 />
-                {field.label && <Label htmlFor={`${field.name}`} className={hasError ? "text-red-500 leading-none cursor-pointer font-normal text-sm" : "leading-none cursor-pointer font-normal text-sm"}>{field.label}</Label>}
+                {field.label && <Label htmlFor={`${field.name}`} className={hasError ? "text-red-500 leading-none  font-normal text-sm" : "leading-none cursor-pointer font-normal text-sm"}>{field.label}</Label>}
                 {field.labelAction && <div className="ml-1">{field.labelAction}</div>}
+                {field.icon && <div>{field.icon}</div>}
               </div>
               {hasError && <p className="text-xs text-red-500 font-medium pl-6">{errorMessage}</p>}
             </div>
@@ -246,14 +284,14 @@ export function GlobalForm<T extends FieldValues>({
         case "phone":
           return (
             <div key={field.name} className={`space-y-1 ${field.wrapperClassName || ""}`}>
-               {renderLabel()}
+              {renderLabel()}
               <Controller
                 name={field.name}
                 control={control}
                 defaultValue={field.defaultValue}
                 render={({ field: controllerField }) => (
                   <div className={hasError ? "text-red-500 [&_input]:border-red-500 [&_input]:focus-visible:ring-red-500" : ""}>
-                    <PhoneInput {...controllerField} placeholder={field.placeholder} {...field.extra} />
+                    <PhoneInput className={field.className} {...controllerField} placeholder={field.placeholder} {...field.extra} />
                   </div>
                 )}
               />
@@ -268,13 +306,21 @@ export function GlobalForm<T extends FieldValues>({
   }
 
   // Render without wrapping in <form> if no onSubmit handler provided, allowing integration into larger forms
-  if (!onSubmit) {
-    return <div className={className}>{renderFields()}</div>
+  const FieldWrapper = ({ children, formWrapperClassName }: { children: React.ReactNode, formWrapperClassName?: string }) => {
+    return <div className={formWrapperClassName}>{children}</div>
   }
-
+  if (!onSubmit) {
+    return (
+      <FieldWrapper formWrapperClassName={formWrapperClassName}>
+        {renderFields()}
+      </FieldWrapper>
+    )
+  }
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={className}>
-      {renderFields()}
+      <FieldWrapper formWrapperClassName={formWrapperClassName}>
+        {renderFields()}
+      </FieldWrapper>
       <button id="global-form-submit" type="submit" className="hidden" />
     </form>
   )

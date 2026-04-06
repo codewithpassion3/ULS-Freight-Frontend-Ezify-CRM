@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { Controller, useFormContext } from "react-hook-form"
 import { RegisterSchemaTypes } from "@/lib/validations/auth/register-schema"
-import FormField from "@/components/common/FormField"
+import FormField from "@/components/common/forms/FormField"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 interface Step3FormProps {
@@ -34,8 +34,6 @@ export function Step3Form({ onBack }: Step3FormProps) {
             name="user.username"
             label="Create a Username*"
             placeholder="Enter your username"
-            register={register}
-            error={errors.user?.username}
           />
         </div>
         <div className="space-y-2 relative">
@@ -44,8 +42,6 @@ export function Step3Form({ onBack }: Step3FormProps) {
             label="Create Password*"
             type="password"
             placeholder="Enter your password"
-            register={register}
-            error={errors.user?.password}
           />
           <p className="text-xs text-muted-foreground mt-1">Must be at least 8 characters</p>
         </div>
@@ -57,8 +53,6 @@ export function Step3Form({ onBack }: Step3FormProps) {
               label="Confirm Password*"
               type="password"
               placeholder="Confirm your password"
-              register={register}
-              error={errors.user?.confirmPassword}
             />
           </div>
         </div>
@@ -74,6 +68,7 @@ export function Step3Form({ onBack }: Step3FormProps) {
                     value={field.value ? "checked" : "unchecked"}
                     checked={field.value}
                     onCheckedChange={field.onChange}
+                    className="cursor-pointer"
                   />
 
                   <FieldContent>
@@ -102,6 +97,7 @@ export function Step3Form({ onBack }: Step3FormProps) {
                     value={field.value ? "checked" : "unchecked"}
                     checked={field.value}
                     onCheckedChange={field.onChange}
+                    className="cursor-pointer"
                   />
 
                   <FieldContent>

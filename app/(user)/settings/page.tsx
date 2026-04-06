@@ -16,72 +16,75 @@ import GeneralSettings from "./GeneralSettings";
 import UserPreferences from "./(user-preference)/UserPreferences";
 import EmailNotification from "./(email-notifications)/EmailNotification";
 import { AddressBookTab } from "./(address-book)/AddressBookTab";
+import {
+    BellDot, CircleUserRound, Code, CreditCard, Settings2, User, UserCog, UserRoundCog,
+    Truck,
+    BookUser,
+    PackageOpen,
+    ShoppingBasket,
+    FileStack,
+} from "lucide-react";
+import { PackagesTable } from "../packages/MyPackages";
 
-const schema = z.object({
-    companyName: z.string().min(1),
-    contactName: z.string().min(1),
-    industry: z.string().min(1),
-    email: z.email(),
-    phone: z.string().min(7),
-    ext: z.string().optional(),
-    address1: z.string().min(1),
-    address2: z.string().optional(),
-    unit: z.string().optional(),
-    postal: z.string().min(1),
-    city: z.string().min(1),
-    province: z.string().min(1),
-    country: z.string().min(1),
-    promotions: z.boolean().default(true),
-    updates: z.boolean().default(true),
-    newsletters: z.boolean().default(true),
-});
 
-type FormValues = z.infer<typeof schema>;
 
 export default function Settings() {
-    // const form = useForm<FormValues>({
-    //     resolver: zodResolver(schema),
-    //     defaultValues: {
-    //         companyName: "ULS Freight Inc",
-    //         contactName: "Anmol Verma",
-    //         industry: "Fulfillment",
-    //         email: "",
-    //         phone: "",
-    //         ext: "",
-    //         address1: "",
-    //         address2: "",
-    //         unit: "",
-    //         postal: "",
-    //         city: "",
-    //         province: "",
-    //         country: "Canada",
-    //         promotions: true,
-    //         updates: true,
-    //         newsletters: true,
-    //     },
-    // });
-
-    function onSubmit(data: FormValues) {
-        console.log(data);
-    }
     const { data: user, isLoading, error } = useUser()
-    const getUserQuery = useQuery({
-        queryKey: ["user"],
-        queryFn: getUser,
-    })
+
     useEffect(() => {
         if (user) console.log("user updated", user)
     }, [user])
     console.log("user", user)
 
+    const settings = [
+        {
+            title: "Account Settings",
+            value: "account",
+            icon: <CircleUserRound />
+
+        },
+        {
+            title: "Shipment Settings",
+            value: "shipment",
+            icon: <UserRoundCog />
+        },
+        {
+            title: "Payment Settings",
+            value: "payment",
+            icon: <CreditCard />
+        },
+        {
+            title: "API Settings",
+            value: "api",
+            icon: <Code />
+        },
+    ]
+
+    const accountSettings = [
+        {
+            title: "General Settings",
+            value: "general-settings",
+            icon: <UserRoundCog />
+        },
+        {
+            title: "User Preferences",
+            value: "user-preference",
+            icon: <Settings />
+        },
+        {
+            title: "Email Notifications",
+            value: "email-notification",
+            icon: <BellDot />
+        },
+    ]
+
     return (
         <div className="p-4 md:p-8 w-full mx-auto">
             <Tabs defaultValue="account" className="space-y-6">
                 <TabsList className="flex flex-wrap gap-2">
-                    <TabsTrigger className="cursor-pointer" value="account">Account Settings</TabsTrigger>
-                    <TabsTrigger className="cursor-pointer" value="shipment">Shipment Settings</TabsTrigger>
-                    <TabsTrigger className="cursor-pointer" value="payment">Payment Settings</TabsTrigger>
-                    <TabsTrigger className="cursor-pointer" value="api">API Settings</TabsTrigger>
+                    {settings.map((setting) => (
+                        <TabsTrigger key={setting.value} value={setting.value} className="cursor-pointer p-2 data-[state=active]:text-primary data-[state=active]:bg-primary/10  data-[state=active]:border-primary border">{setting.icon} {setting.title}</TabsTrigger>
+                    ))}
                 </TabsList>
 
                 <TabsContent value="account">
@@ -92,9 +95,11 @@ export default function Settings() {
                             </CardHeader>
                             <CardContent className="space-y-2">
                                 <TabsList className="h-max w-full gap-4 bg-transparent">
-                                    <TabsTrigger value="general-settings" className="w-max cursor-pointer p-3">General Settings</TabsTrigger>
-                                    <TabsTrigger value="user-preference" className="w-max cursor-pointer p-3">User Preferences</TabsTrigger>
-                                    <TabsTrigger value="email-notification" className="w-max cursor-pointer p-3">Email Notifications</TabsTrigger>
+                                    {accountSettings.map((setting) => (
+                                        <TabsTrigger key={setting.value} value={setting.value} className="w-max cursor-pointer p-2 data-[state=active]:text-primary data-[state=active]:bg-primary/10  data-[state=active]:border-primary border">
+                                            {setting.title}
+                                        </TabsTrigger>
+                                    ))}
                                 </TabsList>
                             </CardContent>
                         </Card>
@@ -122,15 +127,15 @@ export default function Settings() {
                             <CardContent className="space-y-2">
                                 <TabsList className="h-max w-full gap-4 bg-transparent">
                                     {[
-                                        { title: "Shipping Preferences", value: "shipping-preferences" },
-                                        { title: "Carrier Preferences", value: "carrier-preferences" },
-                                        { title: "Address Book", value: "address-book" },
-                                        { title: "My Package & Pallets", value: "my-packages" },
-                                        { title: "My Products", value: "my-products" },
-                                        { title: "Request Shipping Supplies", value: "request-shipping-supplies" },
+                                        { title: "Shipping Preferences", value: "shipping-preferences", icon: <Settings2 /> },
+                                        { title: "Carrier Preferences", value: "carrier-preferences", icon: <Truck /> },
+                                        { title: "Address Book", value: "address-book", icon: <BookUser /> },
+                                        { title: "My Package & Pallets", value: "my-packages", icon: <PackageOpen /> },
+                                        { title: "My Products", value: "my-products", icon: <ShoppingBasket /> },
+                                        { title: "Request Shipping Supplies", value: "request-shipping-supplies", icon: <FileStack /> },
 
                                     ].map((subTab) => (
-                                        <TabsTrigger key={subTab.value} value={subTab.value} className="w-max cursor-pointer">{subTab.title}</TabsTrigger>
+                                        <TabsTrigger key={subTab.value} value={subTab.value} className="p-2 w-max cursor-pointer data-[state=active]:text-primary data-[state=active]:bg-primary/10  data-[state=active]:border-primary border data-[state=active]:shadow-lg"> {subTab.icon} {subTab.title} </TabsTrigger>
                                     ))}
 
                                 </TabsList>
@@ -145,6 +150,10 @@ export default function Settings() {
                             </TabsContent>
                             <TabsContent value="address-book" className="mt-0 pt-0">
                                 <AddressBookTab />
+                            </TabsContent>
+                            <TabsContent value="my-packages">
+                                {/* <MyPackages /> */}
+                                <PackagesTable />
                             </TabsContent>
                         </Card>
 

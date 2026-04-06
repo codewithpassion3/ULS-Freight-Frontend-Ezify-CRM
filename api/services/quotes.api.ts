@@ -1,39 +1,50 @@
-import { ContactType } from "@/app/(user)/settings/(address-book)/types/addContact.types";
+// create quote
+
 import apiClient from "../client";
 
-
-export const getAllAddressBookContacts = async ({ search }: { search: string }) => {
-    const response = await apiClient.get("/address-book", { params: { search } });
+export const createQuote = async (payload: any) => {
+    const response = await apiClient.post("/quotes", payload);
     return response.data;
 };
 
-export const createContact = async (payload: ContactType) => {
-    const response = await apiClient.post("/address-book", payload);
+export const updateQuote = async (id: string, payload: any) => {
+    const response = await apiClient.patch(`/quotes/${id}`, payload);
+    return response.data;
+};
+// delete quote
+export const deleteQuote = async (id: string) => {
+    const response = await apiClient.delete(`/quotes/${id}`);
+    return response.data;
+};
+// get all quotes
+export const getAllQuotes = async ({ search }: { search: string }) => {
+    const response = await apiClient.get(`/quotes?search=${search}`);
+    return response.data;
+};
+// get single quote
+export const getSingleQuote = async (id: string) => {
+    const response = await apiClient.get(`/quotes/${id}`);
     return response.data;
 };
 
-export const getSingleContact = async (id: string) => {
-    const response = await apiClient.get(`/address-book/${id}`);
+export const getFavoriteQuotes = async ({ search }: { search: string }) => {
+    const response = await apiClient.get(`/quotes/favorites?search=${search}`);
+    return response.data;
+};
+export const getSavedQuotes = async ({ search }: { search: string }) => {
+    const response = await apiClient.get(`/quotes/saved?search=${search}`);
+    return response.data;
+};
+export const getSpotQuotes = async ({ search }: { search: string }) => {
+    const response = await apiClient.get(`/quotes/spot?search=${search}`);
     return response.data;
 };
 
-export const updateContact = async (id: string, data: ContactType) => {
-    const response = await apiClient.patch(`/address-book/${id}`, data);
-    return response.data;
-};
 
-export const deleteContact = async (id: string) => {
-    const response = await apiClient.delete(`/address-book/${id}`);
-    return response.data;
-};
+// get single quote
 
-export const getAllPalletShippingLocationTypes = async () => {
-    const response = await apiClient.get("/pallet-shipping-location-types");
-    return response.data;
-};
-
-export const getAllSignatures = async () => {
-    const response = await apiClient.get("/signatures");
-    return response.data;
-};
-
+// // update quote
+// export const updateQuote = async (id: string, data: any) => {
+//     const response = await apiClient.patch(`/quotes/${id}`, data);
+//     return response.data;
+// };

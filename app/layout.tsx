@@ -59,10 +59,10 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
     }, [user, isLoading, router, pathname, isAuthRoute, isExceptionalRoute]);
 
     if (isLoading || isPending) {
-        return <Loader />
+        return <Loader className="min-h-screen" />
     }
     if (!user && !isAuthRoute && !isExceptionalRoute) {
-        return <Loader />
+        return <Loader className="min-h-screen" />
     }
 
 
@@ -87,7 +87,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" className={cn("font-sans", inter.variable)} suppressHydrationWarning>
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+            <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`} suppressHydrationWarning>
                 <Providers>
                     <AuthProvider>
                         <AuthWrapper>

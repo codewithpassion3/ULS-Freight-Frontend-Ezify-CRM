@@ -8,7 +8,7 @@ import { Package, Truck, ShoppingCart, Info, Check, CloudCog } from "lucide-reac
 import { useForm, Controller, useFormContext } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { registerSchema, type RegisterSchemaTypes } from "@/lib/validations/auth/register-schema"
-import FormField from "@/components/common/FormField"
+import FormField from "@/components/common/forms/FormField"
 import { PhoneInput } from "@/components/common/PhoneInput"
 
 interface Step1FormProps {
@@ -120,8 +120,6 @@ export function Step1Form({ onNext }: Step1FormProps) {
             name="user.firstName"
             label="First Name*"
             placeholder="Enter your first name"
-            register={register}
-            error={errors.user?.firstName}
           />
         </div>
         <div className="space-y-2">
@@ -129,8 +127,6 @@ export function Step1Form({ onNext }: Step1FormProps) {
             name="user.lastName"
             label="Last Name*"
             placeholder="Enter your last name"
-            register={form.register}
-            error={errors.user?.lastName}
           />
         </div>
       </div>
@@ -153,8 +149,6 @@ export function Step1Form({ onNext }: Step1FormProps) {
             name="company.industryType"
             label="Industry Type"
             placeholder="ex: Furniture"
-            register={form.register}
-            error={errors.company?.industryType}
           />
         </div>
       </div>
@@ -167,10 +161,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
             label="Email*"
             type="email"
             placeholder="example@email.com"
-            register={form.register}
-            error={errors.user?.email}
           />
-          {errors.user?.email && <p className="text-xs text-red-500">{errors.user?.email.message}</p>}
         </div>
         <div className="space-y-2">
           <Label htmlFor="user.phoneNumber" className={errors.user?.phoneNumber ? "text-red-500" : ""}>Phone Number*</Label>
@@ -201,7 +192,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
           </div>
           <Input
             {...form.register("user.signUpCode")}
-            className={errors.user?.signUpCode ? "border-red-500" : ""}
+            className={errors.user?.signUpCode ? "border-red-5select00" : ""}
           />
           {errors.user?.signUpCode && <p className="text-xs text-red-500">{errors.user?.signUpCode.message}</p>}
         </div>
@@ -336,61 +327,6 @@ export function Step1Form({ onNext }: Step1FormProps) {
             </RadioGroup>
           </div>
         )}
-
-        {/* {shippingTypes.includes("eCommerce") && (
-          <div className="mt-3 p-4 border border-primary rounded-md relative">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute top-1 right-1 h-6 w-6"
-              type="button"
-              onClick={() => toggleType("eCommerce")}
-            >
-              <span className="text-xs">✕</span>
-            </Button>
-
-            <Label className="block mb-3 font-medium text-sm">
-              Select all <span className="font-bold">additional eCommerce marketplaces</span> that you use
-            </Label>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-2">
-              {[
-                "Amazon",
-                "BigCommerce",
-                "Best Buy",
-                "eBay",
-                "Squarespace",
-                "WooCommerce",
-                "Lightspeed",
-                "Magento 2",
-                "Shopify",
-                "Etsy",
-                "Walmart",
-                "Wix",
-                "Other"
-              ].map((val) => (
-                <div key={val} className="flex items-center space-x-2">
-                  <Checkbox
-                    checked={ecommercePlatforms?.includes(val)}
-                    onCheckedChange={(checked) => {
-                      const current = form.getValues("ecommercePlatforms") || []
-
-                      if (checked) {
-                        form.setValue("ecommercePlatforms", [...current, val])
-                      } else {
-                        form.setValue(
-                          "ecommercePlatforms",
-                          current.filter((p) => p !== val)
-                        )
-                      }
-                    }}
-                  />
-                  <Label className="text-sm text-muted-foreground">{val}</Label>
-                </div>
-              ))}
-            </div>
-          </div>
-        )} */}
 
         {hasType("PTL/FTL") && isShippingTypeLast("PTL/FTL") && (
           <div className="mt-3 p-4 border border-primary rounded-md relative">

@@ -61,6 +61,7 @@ export const columns: ColumnDef<any>[] = [
                             className="cursor-pointer!"
                             onClick={() => console.log("Edit", contact)}
                         >
+
                             Edit
                         </DropdownMenuItem>
 

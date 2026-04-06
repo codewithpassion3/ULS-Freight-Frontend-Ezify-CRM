@@ -1,10 +1,10 @@
-import { useForm } from "react-hook-form"
+import { FormProvider, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
     changePasswordSchema,
     ChangePasswordFormValues
 } from "@/lib/validations/user/change-password.schema"
-import FormField from "@/components/common/FormField"
+import FormField from "@/components/common/forms/FormField"
 import { Button } from "@/components/ui/button"
 import { useMutation } from "@tanstack/react-query"
 import { changePassword } from "@/api/services/auth.api"
@@ -17,12 +17,7 @@ import { useEffect } from "react"
 // import { useLogoutMutation } from "@/components/common/user/UserProfile"
 
 export default function ChangePassword() {
-    const {
-        register,
-        handleSubmit,
-        reset,
-        formState: { errors, isValid }
-    } = useForm<ChangePasswordFormValues>({
+    const form = useForm<ChangePasswordFormValues>({
         resolver: zodResolver(changePasswordSchema),
         mode: "onChange",
         defaultValues: {
@@ -31,9 +26,6 @@ export default function ChangePassword() {
             newConfirmPassword: ""
         }
     })
-    useEffect(() => {
-        console.log("errors", errors.newPassword)
-    }, [errors])
     // console.log(errors)
     const logoutMutation = useLogoutMutation({
         onSuccess: () => toast.success("User logged out successfully"),
@@ -60,38 +52,34 @@ export default function ChangePassword() {
     return (
         <div>
             <h3 className="font-medium mb-4 text-base">Change Password</h3>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                        name="currentPassword"
-                        label="Current Password*"
-                        register={register}
-                        type="password"
-                        error={errors.currentPassword}
-                    />
-                    <FormField
-                        name="newPassword"
-                        label="New Password*"
-                        type="password"
-                        error={errors.newPassword}
-                        register={register}
-                    />
+            <FormProvider {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormField
+                            name="currentPassword"
+                            label="Current Password*"
+                            type="password"
+                        />
+                        <FormField
+                            name="newPassword"
+                            label="New Password*"
+                            type="password"
+                        />
 
-                    <FormField
-                        name="newConfirmPassword"
-                        label="Confirm New Password*"
-                        type="password"
-                        error={errors.newConfirmPassword}
-                        register={register}
-                    />
+                        <FormField
+                            name="newConfirmPassword"
+                            label="Confirm New Password*"
+                            type="password"
+                        />
 
-                </div>
-                <div className="flex gap-4 mt-6">
-                    <Button className="w-full sm:w-40" disabled={isPending || !isValid} type="submit">
-                        {isPending ? <Loader className="animate-spin" /> : "Update Password"}
-                    </Button>
-                </div>
-            </form>
+                    </div>
+                    <div className="flex gap-4 mt-6">
+                        <Button className="w-full sm:w-40" disabled={isPending || !form.formState.isValid} type="submit">
+                            {isPending ? <Loader className="animate-spin" /> : "Update Password"}
+                        </Button>
+                    </div>
+                </form>
+            </FormProvider>
         </div>
     )
 }

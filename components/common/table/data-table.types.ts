@@ -12,6 +12,7 @@ export interface DataTableToolbarProps<TData, TValue> {
     setSearch: (search: string) => void
     selectedRows: TData[]
     onBulkDelete: (selectedRows: TData[]) => void
+    placeholder?: string
 }
 
 export interface DataTablePaginationProps<TData, TValue> {

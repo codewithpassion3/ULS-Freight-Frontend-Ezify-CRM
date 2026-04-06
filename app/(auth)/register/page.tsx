@@ -75,7 +75,7 @@ export default function RegisterPage() {
   }
 
 
-  if (isLoading) return <Loader />
+  if (isLoading) return <Loader className="min-h-screen" />
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

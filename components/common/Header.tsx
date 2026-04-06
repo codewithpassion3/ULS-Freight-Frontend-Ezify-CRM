@@ -56,7 +56,7 @@ export default function Header() {
                                         <Link
                                             href={item.href!}
                                             className={`px-3 py-2 text-sm rounded-md ${pathname === item.href
-                                                ? " font-medium dark:text-black"
+                                                ? " font-medium text-black dark:text-white"
                                                 : "hover:bg-gray-50 dark:hover:text-black!"
                                                 }`}
                                         >
@@ -67,7 +67,7 @@ export default function Header() {
 
                                             {user.user.role.name.includes("admin") ?
                                                 <DropdownMenuTrigger asChild>
-                                                    <Button variant="link" className="hover:no-underline">
+                                                    <Button variant="link" className="hover:no-underline text-black dark:text-white">
                                                         {item.title}
                                                         <ChevronDown className="size-4" />
                                                     </Button>
@@ -100,7 +100,7 @@ export default function Header() {
                                             <DropdownMenuContent align="start" className="w-48">
                                                 {item.items.map((sub) => (
                                                     <DropdownMenuItem key={sub.title} asChild>
-                                                        <Link href={sub.href}>{sub.title}</Link>
+                                                        <Link href={sub.href} className="cursor-pointer">{sub.title}</Link>
                                                     </DropdownMenuItem>
                                                 ))}
                                             </DropdownMenuContent>

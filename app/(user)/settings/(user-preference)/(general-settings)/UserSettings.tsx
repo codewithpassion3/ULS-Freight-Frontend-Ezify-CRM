@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import FormField from "@/components/common/FormField";
+import FormField from "@/components/common/forms/FormField";
 import { useForm } from "react-hook-form";
 
 export default function UserSettings() {
@@ -43,7 +43,6 @@ export default function UserSettings() {
                     <FormField
                         name="phone"
                         label="Phone Number"
-                        register={register}
                     />
 
                     {/* <FormField
@@ -53,7 +52,7 @@ export default function UserSettings() {
                             /> */}
                 </div>
 
-                <Button className="mt-4">
+                <Button variant="default" className="mt-4">
                     Save Details
                 </Button>
             </div>

@@ -9,12 +9,12 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import { Button } from "@/components/ui/button"
-import { MoreVertical } from "lucide-react"
+import { MoreVertical, Trash2, UserRoundPen } from "lucide-react"
 import { EditContactModal } from "../EditContactModal"
 import { useState } from "react"
 import { useDeleteContact } from "../hooks/useDeleteContact"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { deleteContact } from "@/api/services/quotes.api"
+import { deleteContact } from "@/api/services/address-book.api"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
@@ -130,14 +130,17 @@ export const columns: ColumnDef<any>[] = [
                 onClick={() => {
                   setOpen(true)
                 }}
+                className="cursor-pointer"
               >
+                <UserRoundPen />
                 Edit
               </DropdownMenuItem>
 
               <DropdownMenuItem
-                className="text-red-500"
+                className="text-red-500 cursor-pointer"
                 onClick={() => handleDeleteContact(contact.id)}
               >
+                <Trash2 />
                 Delete
               </DropdownMenuItem>
 

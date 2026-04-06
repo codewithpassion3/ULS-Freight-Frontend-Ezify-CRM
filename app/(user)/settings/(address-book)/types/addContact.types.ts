@@ -1,4 +1,5 @@
 export type ContactType = {
+    id?: string,
     companyName: string
     contactId?: string | null
     contactName: string
@@ -15,6 +16,8 @@ export type ContactType = {
         country: string
         city: string
         state: string
+        locationType?: number,
+        additionalNotes?: string
     }
     locationTypeId: number
     signatureId: number
