@@ -36,7 +36,7 @@ export function FormRadio({ name, label, options, selectedClassName, className, 
 
                         }}
                         onChange={() => onChange}
-                        className={`flex gap-6 ${className}`}
+                        className={`flex gap-6 ${className} cursor-pointer`}
                     >
                         {options.map((opt) => {
                             const isSelected = field.value?.toString() === opt.value.toString()

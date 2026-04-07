@@ -24,7 +24,7 @@ import {
     ShoppingBasket,
     FileStack,
 } from "lucide-react";
-import { PackagesTable } from "../packages/MyPackages";
+import { MyPackages } from "../packages/MyPackages";
 
 
 
@@ -83,7 +83,7 @@ export default function Settings() {
             <Tabs defaultValue="account" className="space-y-6">
                 <TabsList className="flex flex-wrap gap-2">
                     {settings.map((setting) => (
-                        <TabsTrigger key={setting.value} value={setting.value} className="cursor-pointer p-2 data-[state=active]:text-primary data-[state=active]:bg-primary/10  data-[state=active]:border-primary border">{setting.icon} {setting.title}</TabsTrigger>
+                        <TabsTrigger key={setting.value} value={setting.value} className="cursor-pointer p-4! data-[state=active]:text-primary data-[state=active]:bg-primary/10  data-[state=active]:border-primary border">{setting.icon} {setting.title}</TabsTrigger>
                     ))}
                 </TabsList>
 
@@ -96,7 +96,7 @@ export default function Settings() {
                             <CardContent className="space-y-2">
                                 <TabsList className="h-max w-full gap-4 bg-transparent">
                                     {accountSettings.map((setting) => (
-                                        <TabsTrigger key={setting.value} value={setting.value} className="w-max cursor-pointer p-2 data-[state=active]:text-primary data-[state=active]:bg-primary/10  data-[state=active]:border-primary border">
+                                        <TabsTrigger key={setting.value} value={setting.value} className="w-max  cursor-pointer p-2 data-[state=active]:text-primary data-[state=active]:bg-primary/10  data-[state=active]:border-primary border">
                                             {setting.title}
                                         </TabsTrigger>
                                     ))}
@@ -153,7 +153,7 @@ export default function Settings() {
                             </TabsContent>
                             <TabsContent value="my-packages">
                                 {/* <MyPackages /> */}
-                                <PackagesTable />
+                                <MyPackages />
                             </TabsContent>
                         </Card>
 

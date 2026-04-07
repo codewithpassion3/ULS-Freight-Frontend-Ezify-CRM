@@ -17,7 +17,7 @@ import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
 import { deletePackage } from "@/api/services/packages.api"
-import AddPackage from "./AddPackage"
+import AddPackage, { normalText } from "./AddPackage"
 import { useState } from "react"
 
 export const columns: ColumnDef<any>[] = [
@@ -56,8 +56,8 @@ export const columns: ColumnDef<any>[] = [
         header: "Type",
         cell: ({ row }) => {
             return (
-                <span className="text-[#0070c0] font-medium whitespace-nowrap">
-                    {row.original.type}
+                <span className="text-[#0070c0] font-medium whitespace-nowrap capitalize">
+                    {normalText(row.original.type)}
                 </span>
             )
         },
@@ -74,6 +74,8 @@ export const columns: ColumnDef<any>[] = [
         id: "actions",
         header: "Actions",
         cell: ({ row }) => {
+            const [open, setOpen] = useState(false)
+            const lineItem = row.original
             const queryClient = useQueryClient()
             const mutation = useMutation({
                 mutationFn: (id: string) => deletePackage(id),
@@ -99,21 +101,37 @@ export const columns: ColumnDef<any>[] = [
                             <DropdownMenuItem className="cursor-pointer">
                                 <CircleCheck size={14} /> Book Now
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer">
-                                <AddPackage
-                                        shipmentType={row.original.type}
-                                    >
-                                        <Button variant="link" type="button">
-                                            <Edit /> Edit Package
-                                        </Button>
-                                    </AddPackage>
+                            <DropdownMenuItem onClick={() => setOpen(true)} className="cursor-pointer">
+                                <Edit /> Edit
                             </DropdownMenuItem>
                             <DropdownMenuItem className="text-red-500 cursor-pointer" onClick={() => handleDeletePackage(row.original.id)}>
-                                <Trash2 className="mr-2 h-4 w-4" />
+                                <Trash2 className="h-4 w-4" />
                                 Delete
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
+                    <AddPackage
+                        shipmentType={lineItem.type}
+                        id={lineItem.id}
+                        initialData={
+                            {
+                                name: lineItem.name,
+                                measurementUnit: lineItem.measurementUnit,
+                                length: lineItem.length,
+                                width: lineItem.width,
+                                height: lineItem.height,
+                                weight: lineItem.weight,
+                                freightClass: lineItem.freightClass,
+                                nmfc: lineItem.nmfc,
+                                shipmentType: lineItem.type,
+                                unitsOnPallet: lineItem.unitsOnPallet,
+                                palletUnitType: lineItem.palletUnitType,
+                                description: lineItem.description,
+                            }
+                        }
+                        open={open}
+                        setOpen={setOpen}
+                    />
                 </div>
             )
         },

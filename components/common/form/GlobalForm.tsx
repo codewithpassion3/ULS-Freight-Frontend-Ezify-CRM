@@ -14,6 +14,7 @@ import { useEffect } from "react"
 import { Loader } from "@/components/common/Loader"
 import { FormSelect } from "../forms/FormSelect"
 import { DatePicker } from "../date-picker/DatePicker"
+import FormField from "../forms/FormField"
 
 export type FieldType =
   | "text"
@@ -117,7 +118,7 @@ export function GlobalForm<T extends FieldValues>({
 
   const renderFields = () => {
     return fields.map((field) => {
-      if (field.show === false) return null
+      // if (field.show === false) return null
 
       // Find nested error message using path
       const errorKeys = (field.name as string).split('.')
@@ -134,7 +135,7 @@ export function GlobalForm<T extends FieldValues>({
       const renderLabel = () => {
         if (!field.label && !field.labelAction) return null
         return (
-          <div className="flex justify-between items-center mb-2">
+          <div className={`flex justify-between items-center mb-2`}>
             {field.label && <Label className={hasError ? "text-red-500" : ""}>{field.label}</Label>}
             {field.labelAction && <div>{field.labelAction}</div>}
           </div>
@@ -146,10 +147,9 @@ export function GlobalForm<T extends FieldValues>({
         case "email":
         case "password":
         case "number":
-
           return (
-            <div key={field.name} className={`space-y-1 ${field.wrapperClassName || ""}`}>
-              {renderLabel()}
+            <div key={field.name} className={`space-y-1 ${field.show === false ? "hidden" : "block"} ${field.wrapperClassName || ""}`}>
+              {/* {renderLabel()}
               <Input
                 disabled={field.disabled}
                 type={field.type}
@@ -158,11 +158,24 @@ export function GlobalForm<T extends FieldValues>({
                 {...register(field.name, { valueAsNumber: field.type === "number" })}
                 {...field.extra}
               />
-              {hasError && <p className="text-xs text-red-500 font-medium">{errorMessage}</p>}
+              {hasError && <p className="text-xs text-red-500 font-medium">{errorMessage}</p>} */}
+              <FormField
+                label={field.label}
+                name={field.name}
+                type={field.type}
+                placeholder={field.placeholder}
+                disabled={field.disabled}
+                // required={field.required}
+                className={field.className}
+                // wrapperClassName={field.wrapperClassName}
+                // labelAction={field.labelAction}
+                // extra={field.extra}
+                show={field.show}
+              />
             </div>
           )
         case "date":
-          <div key={field.name} className={`space-y-1 ${field.wrapperClassName || ""}`}>
+          <div key={field.name} className={`space-y-1 ${field.show === false ? "hidden" : "block"} ${field.wrapperClassName || ""}`}>
             {renderLabel()}
             <Input
               type={field.type}
@@ -180,7 +193,7 @@ export function GlobalForm<T extends FieldValues>({
 
         case "textarea":
           return (
-            <div key={field.name} className={`space-y-1 ${field.wrapperClassName || ""}`}>
+            <div key={field.name} className={`space-y-1 ${field.show === false ? "hidden" : "block"} ${field.wrapperClassName || ""}`}>
               {renderLabel()}
               <Textarea
                 placeholder={field.placeholder}
@@ -195,6 +208,7 @@ export function GlobalForm<T extends FieldValues>({
         case "select":
           return (
             <FormSelect
+              show={field.show}
               key={field.name}
               label={field.label}
               name={field.name}
@@ -210,7 +224,7 @@ export function GlobalForm<T extends FieldValues>({
 
         case "radio":
           return (
-            <div key={field.name} className={`space-y-1 ${field.wrapperClassName || ""}`}>
+            <div key={field.name} className={`space-y-1 ${field.show === false ? "hidden" : "block"} ${field.wrapperClassName || ""}`}>
               {renderLabel()}
               <Controller
                 name={field.name}
@@ -238,7 +252,7 @@ export function GlobalForm<T extends FieldValues>({
 
         case "switch":
           return (
-            <div key={field.name} className={`flex items-center gap-3 pt-2 ${field.wrapperClassName || ""}`}>
+            <div key={field.name} className={`flex items-center gap-3 pt-2${field.show === false ? "hidden" : "block"} ${field.wrapperClassName || ""}`}>
               {field.labelAction && <div className="mr-2">{field.labelAction}</div>}
               <Controller
                 name={field.name}
@@ -258,7 +272,7 @@ export function GlobalForm<T extends FieldValues>({
 
         case "checkbox":
           return (
-            <div key={field.name} className={`flex flex-col gap-1 ${field.wrapperClassName || ""}`}>
+            <div key={field.name} className={`flex flex-col gap-1 ${field.show === false ? "hidden" : "block"} ${field.wrapperClassName || ""}`}>
               <div className="flex items-center gap-2  pt-2">
                 <Controller
                   name={field.name}
@@ -283,7 +297,7 @@ export function GlobalForm<T extends FieldValues>({
 
         case "phone":
           return (
-            <div key={field.name} className={`space-y-1 ${field.wrapperClassName || ""}`}>
+            <div key={field.name} className={`space-y-1 ${field.show === false ? "hidden" : "block"} ${field.wrapperClassName || ""}`}>
               {renderLabel()}
               <Controller
                 name={field.name}

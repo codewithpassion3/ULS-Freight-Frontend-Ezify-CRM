@@ -1,4 +1,4 @@
-import { Controller, useFormContext } from "react-hook-form"
+import { Controller, FieldError, get, useFormContext } from "react-hook-form"
 import {
     Select,
     SelectTrigger,
@@ -22,6 +22,7 @@ type SelectOptions = {
     disabled?: boolean;
     valueType?: "string" | "number";
     wrapperClassName?: string;
+    show?: boolean;
 }
 export function FormSelect({
     name,
@@ -35,13 +36,14 @@ export function FormSelect({
     labelClassName,
     disabled,
     valueType,
-    wrapperClassName
+    wrapperClassName,
+    show
 }: SelectOptions) {
 
-    const { control } = useFormContext()
-
+    const {control, formState:{errors}} = useFormContext()
+    const error = get(errors, name) as FieldError | undefined
     return (
-        <div className={`flex flex-col gap-2 ${wrapperClassName}`}>
+        <div className={`${show ? "flex" : "hidden"} flex-col gap-2 ${wrapperClassName} `}>
             <Label className={labelClassName} htmlFor={name}>{label ? label : name}</Label>
             <Controller
                 name={name}
@@ -74,6 +76,7 @@ export function FormSelect({
 
                 )}
             />
+            {error && <p className="text-xs text-red-500 font-medium">{error.message}</p>}
         </div>
 
     )

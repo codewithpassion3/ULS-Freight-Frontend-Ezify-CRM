@@ -17,10 +17,12 @@ export const deleteQuote = async (id: string) => {
     return response.data;
 };
 // get all quotes
+
 export const getAllQuotes = async ({ search }: { search: string }) => {
     const response = await apiClient.get(`/quotes?search=${search}`);
     return response.data;
 };
+
 // get single quote
 export const getSingleQuote = async (id: string) => {
     const response = await apiClient.get(`/quotes/${id}`);

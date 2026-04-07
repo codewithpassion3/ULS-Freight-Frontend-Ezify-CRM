@@ -126,10 +126,15 @@
     padding-right: 0 !important;
     margin-right: 0 !important;
     overflow-y: scroll;
+    /* background-color: red; */
   }
 
   html {
     @apply font-sans;
     scrollbar-gutter: stable;
   }
+}
+
+.active-tab {
+  @apply border-primary! bg-primary/10!;
 }

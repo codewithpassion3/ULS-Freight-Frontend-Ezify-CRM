@@ -3,6 +3,7 @@ import apiClient from "../client";
 export type PackagePayload = {
     name: string;
     measurementUnit: "METRIC" | "IMPERIAL";
+    shipmentType: "PALLET" | "PACKAGE" | "LTL" | "TRUCKLOAD" | "AIR" | "OCEAN" | "RAIL" | "INTERMODAL" | "OTHER";
     weight: number;
     quantity: number;
     length: number;
@@ -37,9 +38,14 @@ export const deletePackage = async (id: string) => {
     const response = await apiClient.delete(`/line-item-units/${id}`);
     return response.data;
 };
-
-export const getAllPackages = async ({ search }: { search: string }) => {
-    const response = await apiClient.get("/line-item-units", { params: { search } });
+interface GetAllPackagesPayload {
+    search: string;
+    page?: number;
+    limit?: number;
+    type?: string;
+}
+export const getAllPackages = async ({ search, page, limit, type }: GetAllPackagesPayload) => {
+    const response = await apiClient.get("/line-item-units?", { params: { search, page, limit, type } });
     return response.data;
 };
 
