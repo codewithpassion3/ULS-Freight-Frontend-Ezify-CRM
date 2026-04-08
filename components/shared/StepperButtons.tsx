@@ -7,28 +7,10 @@ import { ZodObject, ZodTypeAny } from "zod"
 import { useSearchParams } from "next/navigation";
 // stepper control buttons
 export default function StepperButtons({ quoteStatus, setQuoteStatus, onSubmit }: { quoteStatus: "DRAFT" | "SAVED", setQuoteStatus: (status: "DRAFT" | "SAVED") => void, onSubmit: () => void }) {
-    const { watch } = useFormContext()
-    const schema = useContext(SchemaContext)
-    // const addresses = watch("addresses") || []
-    // const addressFields =
-    //     schema && schema instanceof ZodObject
-    //         ? Object.keys((schema as ZodObject<any>).shape.addresses.element.shape)
-    //         : []
-    // const isNextEnabled = addresses.length >= 2 && addresses?.every((addr: any) =>
-    //     addressFields.every((key) => addr[key])
-    // )
+    
     const quoteId = useSearchParams().get("id");
     const isEditing = !!quoteId
-    const handleStatus = (status: "DRAFT" | "SAVED") => {
-        if (isEditing) {
-            if (status !== quoteStatus) {
-                setQuoteStatus(status)
-            }
-        }
-        else {
-            setQuoteStatus(status)
-        }
-    }
+    
     return (
         <div className="w-full flex justify-end pt-4">
             <div className="flex gap-2">

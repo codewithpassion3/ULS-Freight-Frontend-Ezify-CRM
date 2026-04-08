@@ -1,20 +1,14 @@
 "use client"
 
-import { createContext, useEffect, useMemo, useState } from "react"
+import { createContext, useEffect, useMemo, useState, useRef } from "react"
 import { useForm, FormProvider, useFormContext } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-// import Step1Form from "./step-1-form"
-// import { Step2Form } from "./step-2-form"
-import { Eye, Truck } from "lucide-react"
 import { SideBar } from "../SideBar"
-// import { quoteStandardCourierPackSchema, quoteStandardFTLSchema, quoteStandardPackageSchema, quoteStandardPalletSchema } from "@/lib/validations/quote/standard-quote-schema"
 import z from "zod"
-import { determineSchema } from "../../../app/(user)/quote/create/utils"
+// import { determineSchema } from "../../../app/(user)/quote/create/utils"
 import StepperButtons from "../StepperButtons"
 import { createQuote, getSingleQuote, updateQuote } from "@/api/services/quotes.api"
 import { useMutation, useQuery } from "@tanstack/react-query"
-// import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-// import { Button } from "@/components/ui/button"
 import { useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
@@ -27,6 +21,9 @@ import Dimensions from "../Dimensions/Dimensions"
 import AdditionalServices from "../AdditionalService/AdditionalServices"
 import AdditionalInsurance from "../AdditionalInsurance/AdditionalInsurance"
 import SignaturePreference from "../SignaturePreference/SignaturePreference"
+import { Button } from "@/components/ui/button"
+import { quoteUnionSchema, spotShipmentSchema, standardShipmentSchema } from "@/lib/validations/quote/standard-quote-schema"
+// import { quoteSchema } from "@/lib/validations/quote/standard-quote-schema"
 
 export type QuoteTypes = "SPOT" | "STANDARD"
 export type ShipmentOptions = {
@@ -39,16 +36,39 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     initialShipmentType: ShipmentOptions[keyof ShipmentOptions]
 }) {
     const [shipmentType, setShipmentType] = useState<ShipmentOptions[keyof ShipmentOptions]>(initialShipmentType)
-    const [currentStep, setCurrentStep] = useState(1)
     const [quoteStatus, setQuoteStatus] = useState<"DRAFT" | "SAVED">("DRAFT")
     const quoteId = useSearchParams().get("id")
     const totalSteps = 2
     const isEditing = !!quoteId
+    const isSpotQuote = quoteType === "SPOT"
+    const isStandardQuote = quoteType === "STANDARD"
 
+    const fromAddressRef = useRef<any>(null)
+    const toAddressRef = useRef<any>(null)
+    const dimensionsRef = useRef<any>(null)
+    const servicesRef = useRef<any>(null)
+    const insuranceRef = useRef<any>(null)
+    const signatureRef = useRef<any>(null)
 
-    const schema = useMemo(() => {
-        return determineSchema(quoteType, shipmentType)
-    }, [quoteType, shipmentType])
+    const handleSwapAddress = () => {
+        if (fromAddressRef.current && toAddressRef.current) {
+            const fromVals = fromAddressRef.current.getValues()
+            const toVals = toAddressRef.current.getValues()
+            fromAddressRef.current.setValues({ ...toVals, type: "FROM" })
+            toAddressRef.current.setValues({ ...fromVals, type: "TO" })
+        }
+    }
+    const [currentStep, setCurrentStep] = useState(1)
+    const handleNextStep1 = async () => {
+        const fromValid = await fromAddressRef.current?.trigger()
+        const toValid = await toAddressRef.current?.trigger()
+        
+        if (fromValid && toValid) {
+            dimensionsRef.current?.open()
+            setCurrentStep(2)
+        }
+    }
+
 
     const { data: singleQuote, isLoading: isSingleQuoteLoading, isError: isSingleQuoteError, isSuccess: isSingleQuoteSuccess } = useQuery({
         queryKey: ["singleQuote", quoteId],
@@ -56,13 +76,9 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         enabled: !!quoteId,
     })
     const methods = useForm({
-        resolver: zodResolver(schema),
+        resolver: zodResolver(quoteUnionSchema),
         mode: "onChange",
     })
-
-    const { watch } = methods;
-    // const methodsWithSchema = { ...methods, schema }
-    const [formDataToSubmit, setFormDataToSubmit] = useState<any>(null)
     const createQuoteMutation = useMutation({
         mutationFn: (data: unknown) => createQuote(data),
         onSuccess: () => {
@@ -84,24 +100,47 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         }
     })
 
-    const onError = (errors: any) => {
-        console.error("Form Validation Errors:", errors)
 
-        // Find if error is in step 1 
-        // const step1Keys = ["shippingFrom", "shippingTo", "shipmentDate", "equipmentType", "contactInfo", "lineItem"]
-        // const hasStep1Error = Object.keys(errors).some(k => step1Keys.includes(k) && k !== "lineItem")
+    const getMergedPayload = () => {
+        const fromAddress = fromAddressRef.current?.getValues() || {}
+        const toAddress = toAddressRef.current?.getValues() || {}
+        const dimensions = dimensionsRef.current?.getValues() || {}
+        const services = servicesRef.current?.getValues() || {}
+        const insurance = insuranceRef.current?.getValues() || {}
+        const signature = signatureRef.current?.getValues() || {}
 
-        // if (hasStep1Error) {
-        //     alert("Validation failed: You have missed required fields on Step 1. Please go back and complete them.")
-        // } else {
-        //     alert("Validation failed: Please check the highlighted fields on this step.")
-        // }
+        const addresses = [];
+        if (Object.keys(fromAddress).length > 0) addresses.push(fromAddress)
+        if (Object.keys(toAddress).length > 0) addresses.push(toAddress)
+
+        return {
+            addresses,
+            ...dimensions,
+            ...services,
+            ...insurance,
+            ...signature,
+        };
     }
 
+    const onSubmit = async () => {
+        const fromValid = await fromAddressRef.current?.trigger()
+        const toValid = await toAddressRef.current?.trigger()
+        const dimValid = await dimensionsRef.current?.trigger()
+        
+        // We validate core sections First. Then conditionally attached ones depending on if they are rendered
+        let valid = fromValid && toValid && dimValid;
+        
+        if (servicesRef.current) valid = valid && await servicesRef.current.trigger()
+        if (insuranceRef.current) valid = valid && await insuranceRef.current.trigger()
+        if (signatureRef.current) valid = valid && await signatureRef.current.trigger()
 
-    const onSubmit = () => {
-        const data = methods.getValues()
-        payloadTransformer(data)
+        if (!valid) {
+             toast.error("Please fill in all required fields correctly.")
+             return
+        }
+
+        const mergedData = getMergedPayload()
+        payloadTransformer(mergedData)
     }
 
     const payloadTransformer = (data: any) => {
@@ -151,7 +190,16 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         // alert(`Quote submitted successfully as ${status}! Check console for details.`)
     }
 
-
+    const handleStatus = (status: "DRAFT" | "SAVED") => {
+        if (isEditing) {
+            if (status !== quoteStatus) {
+                setQuoteStatus(status)
+            }
+        }
+        else {
+            setQuoteStatus(status)
+        }
+    }
     return (
         <div className="container mx-auto py-8 px-4 max-w-7xl">
             <div className="flex justify-between items-center mb-6">
@@ -160,37 +208,42 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 <div className="lg:col-span-3">
-                    <FormProvider {...methods}>
-                        <SchemaContext.Provider value={schema}>
-                            <form onSubmit={methods.handleSubmit(onSubmit, onError)} className="space-y-8">
-                                <div className="space-y-6">
-                                    <ShippingTypeSelector quoteType={quoteType} shipmentType={shipmentType} setShipmentType={setShipmentType} />
-                                    <div className="flex flex-col md:flex-row gap-6">
-                                        <ShippingAddressSection quoteType={quoteType} shipmentType={shipmentType} type="FROM" title="Shipping From" />
-                                        <ShippingAddressSection quoteType={quoteType} shipmentType={shipmentType} type="TO" title="Shipping To" />
-                                    </div>
-                                    {quoteType === "SPOT" ?
-                                        <>
-                                            <EquimentTypeSelector
-                                                shipmentType={shipmentType}
-                                            />
-                                            <ContactInformation />
-                                        </>
-                                        : ""}
+                    {/* <FormProvider {...methods}> */}
+                    {/* <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-8"> */}
+                    {/* <SchemaContext.Provider value={schema}> */}
+                    <div className="space-y-6">
+                        <ShippingTypeSelector quoteType={quoteType} shipmentType={shipmentType} setShipmentType={setShipmentType} />
+                        <div className="flex flex-col md:flex-row gap-6">
+                            <ShippingAddressSection ref={fromAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="FROM" title="Shipping From" />
+                            <ShippingAddressSection ref={toAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="TO" title="Shipping To" />
+                        </div>
+                        <div className="flex justify-end pt-2">
+                            <Button onClick={handleNextStep1}>Next Step</Button>
+                        </div>
+                        
+                        <div className="space-y-6 mt-6">
+                            <Dimensions ref={dimensionsRef} shipmentType={shipmentType} />
+                        </div>
+                        <div className="mt-6">
+                            <AdditionalServices ref={servicesRef} shipmentType={shipmentType} />
+                        </div>
+                    </div>
+                    {isStandardQuote && <div className="mt-6"><AdditionalInsurance ref={insuranceRef} /></div>}
+                    {(shipmentType === "PALLET" || shipmentType === "COURIER_PAK") && <div className="mt-6"><SignaturePreference ref={signatureRef} /></div>}
 
-                                </div>
-                                {shipmentType !== "STANDARD_FTL" && <Dimensions shipmentType={shipmentType} />}
-                                <AdditionalServices shipmentType={shipmentType} />
-                                {quoteType === "STANDARD" && <AdditionalInsurance />}
-                                {(shipmentType === "PALLET" || shipmentType === "COURIER_PAK") && <SignaturePreference />}
-                                <StepperButtons
-                                    quoteStatus={quoteStatus}
-                                    setQuoteStatus={setQuoteStatus}
-                                    onSubmit={onSubmit}
-                                />
-                            </form>
-                        </SchemaContext.Provider>
-                    </FormProvider>
+                    <div className="w-full flex justify-end pt-8">
+                        <div className="flex gap-4">
+                            <Button variant="outline" onClick={() => {
+                                handleStatus("DRAFT")
+                                onSubmit()
+                            }} type="button">{isEditing ? "Update as Draft" : "Save as Draft"}</Button>
+
+                            <Button onClick={() => {
+                                handleStatus("SAVED")
+                                onSubmit()
+                            }} type="button">{isEditing ? "Update Quote" : "Submit Quote"}</Button>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Sidebar */}

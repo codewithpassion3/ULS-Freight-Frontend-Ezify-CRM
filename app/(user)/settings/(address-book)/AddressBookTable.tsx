@@ -73,7 +73,7 @@ export function AddressBookTable({ handleSelect, type = "all" }: { handleSelect?
             ) : (
                 addressBook?.data.length > 0 ?
                     <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 my-2">
                             <UserSquare2 className="h-6 w-6 text-primary" />
                             <h2 className="text-xl font-semiBold text-foreground">Address Book</h2>
                         </div>

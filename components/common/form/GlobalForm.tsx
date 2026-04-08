@@ -175,21 +175,16 @@ export function GlobalForm<T extends FieldValues>({
             </div>
           )
         case "date":
-          <div key={field.name} className={`space-y-1 ${field.show === false ? "hidden" : "block"} ${field.wrapperClassName || ""}`}>
-            {renderLabel()}
-            <Input
-              type={field.type}
-              placeholder={field.placeholder}
-              className={`${hasError ? "border-red-500 focus-visible:ring-red-500" : ""} ${field.className || ""}`}
-              {...register(field.name)}
-              {...field.extra}
-            />
-            {/* <DatePicker
-              name={field.name}
-            /> */}
-
-            {hasError && <p className="text-xs text-red-500 font-medium">{errorMessage}</p>}
-          </div>
+          return (
+            <div key={field.name} className={`space-y-1 ${field.show === false ? "hidden" : "block"} ${field.wrapperClassName || ""}`}>
+              <DatePicker
+                label={field.label}
+                name={field.name}
+                mode={field.mode}
+              />
+              {hasError && <p className="text-xs text-red-500 font-medium">{errorMessage}</p>}
+            </div>
+          )
 
         case "textarea":
           return (
@@ -219,6 +214,7 @@ export function GlobalForm<T extends FieldValues>({
               optionKey={field.selectOptions?.optionKey}
               optionValue={field.selectOptions?.optionValue}
               wrapperClassName={field.wrapperClassName}
+              disabled={field.disabled}
             />
           )
 

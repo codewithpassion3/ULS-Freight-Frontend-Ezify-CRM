@@ -1,10 +1,11 @@
 import { GlobalForm } from "@/components/common/form/GlobalForm";
 import FormField from "@/components/common/forms/FormField";
 import { Button } from "@/components/ui/button";
-import { quoteSchema } from "@/lib/validations/quote/spot-quote-schema";
+import { QuoteSchemaTypes } from "@/lib/validations/quote/standard-quote-schema";
+// import { quoteSchema } from "@/lib/validations/quote/spot-quote-schema";
 import { Phone, X } from "lucide-react";
 import { useFormContext } from "react-hook-form";
-import { QuoteSchemaTypes } from "@/lib/validations/quote/spot-quote-schema";
+// import { QuoteSchemaTypes } from "@/lib/validations/quote/spot-quote-schema";
 export default function ContactInformation() {
     const form = useFormContext<QuoteSchemaTypes>();
     const { formState: { isValid }, reset, getValues } = form;
@@ -25,9 +26,9 @@ export default function ContactInformation() {
             <div className="flex items-center justify-between pb-3 border-b">
                 <div className="flex items-center gap-2">
                     <Phone />
-                    <h3>
+                    <h2 className="text-lg font-semibold">
                         Contact Information
-                    </h3>
+                    </h2>
                 </div>
                 <Button variant="outline" type="button" onClick={handleClearContactInformation}>
                     <X />
@@ -39,7 +40,7 @@ export default function ContactInformation() {
 
             <GlobalForm
                 formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 gap-4"
-                schema={quoteSchema.shape.contactInformation}
+                // schema={quoteSchema.shape.contactInformation}
                 fields={[
                     {
                         name: "contactInformation.contactName",

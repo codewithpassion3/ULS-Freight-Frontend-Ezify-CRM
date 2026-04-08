@@ -1,6 +1,10 @@
 "use client"
-
-import { useFormContext, useFieldArray, Controller } from "react-hook-form"
+import z from "zod"
+import { useForm, FormProvider, useFieldArray, Controller } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { forwardRef, useImperativeHandle, useState } from "react"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { ChevronUp } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Cuboid, Info, Plus, X, PackageOpen, Save } from "lucide-react"
 import { Label } from "@/components/ui/label"
@@ -21,10 +25,134 @@ import { useQuery } from "@tanstack/react-query"
 import { getSingleQuote } from "@/api/services/quotes.api"
 import { useEffect } from "react"
 import AddPackage from "@/app/(user)/packages/AddPackage"
-import { useState } from "react"
 export type PackageType = "PACKAGE" | "PALLET" | "COURIER_PAK"
-export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }) {
-    const { register, control, watch, setValue, formState: { errors } } = useFormContext<any>()
+const packageUnitSchema = z.object({
+  quantity: z.number().min(1),
+  length: z.number().min(0, "Required"),
+  width: z.number().min(0),
+  height: z.number().min(0),
+  weight: z.number().min(0),
+  freightClass: z.string().optional(),
+  nmfc: z.string().optional(),
+  unitsOnPallet: z.number().optional(),
+  stackable: z.boolean().optional(),
+  description: z.string(),
+  specialHandlingRequired: z.boolean().optional(),
+});
+
+// Units for other shipment types (COURIER_PACK)
+const courierUnitSchema = z.object({
+  quantity: z.number().min(1),
+  weight: z.number().min(0),
+  description: z.string(),
+});
+
+// LineItem schema for PACKAGE
+const packageLineItemSchema = z.object({
+  type: z.literal("PACKAGE"),
+  description: z.string(),
+  measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
+  dangerousGoods: z.boolean().optional(),
+  units: z.array(packageUnitSchema),
+});
+
+// LineItem schema for COURIER_PACK
+const courierLineItemSchema = z.object({
+  type: z.literal("COURIER_PACK"),
+  description: z.string(),
+  measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
+  units: z.array(courierUnitSchema),
+});
+
+// Discriminated union based on lineItem.type
+const lineItemSchema = z.discriminatedUnion("type", [
+  packageLineItemSchema,
+  courierLineItemSchema,
+]);
+
+// Full shipment schema with shipmentType discrimination
+const shipmentSchema = z.discriminatedUnion("shipmentType", [
+  z.object({
+    shipmentType: z.literal("STANDARD_FTL"),
+    lineItem: z.object({
+      type: z.string(),
+      description: z.string().optional(),
+      measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
+      dangerousGoods: z.boolean().optional(),
+      stackable: z.boolean().optional(),
+      specialHandlingRequired: z.boolean().optional(),
+      quantity: z.number().optional(),
+      units: z.array(packageUnitSchema),
+    }),
+  }),
+  z.object({
+    shipmentType: z.literal("OTHER"),
+    lineItem: z.object({
+      type: z.string(),
+      description: z.string().optional(),
+      measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
+      dangerousGoods: z.boolean().optional(),
+      stackable: z.boolean().optional(),
+      specialHandlingRequired: z.boolean().optional(),
+      quantity: z.number().optional(),
+      units: z.array(courierUnitSchema),
+    }),
+  }),
+]);
+
+type PackageUnit = {
+  quantity: number;
+  length?: number | string | null;
+  width?: number | string | null;
+  height?: number | string | null;
+  weight?: number | string | null;
+  freightClass?: string;
+  nmfc?: string;
+  unitsOnPallet?: number | string;
+  stackable?: boolean;
+  description?: string;
+  specialHandlingRequired?: boolean;
+  palletUnitType?: string;
+  shipmentType?: string;
+};
+
+type ShipmentFormValues = {
+  shipmentType: "STANDARD_FTL" | "OTHER";
+  lineItem: {
+    type: string;
+    description?: string;
+    measurementUnit: "METRIC" | "IMPERIAL";
+    dangerousGoods?: boolean;
+    stackable?: boolean;
+    specialHandlingRequired?: boolean;
+    quantity?: number;
+    units: PackageUnit[];
+  };
+};
+
+const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }, ref) => {
+    const methods = useForm<ShipmentFormValues>({
+        resolver: zodResolver(shipmentSchema) as any,
+        mode: "onChange",
+        defaultValues: {
+            shipmentType: shipmentType === "STANDARD_FTL" ? "STANDARD_FTL" : "OTHER",
+            lineItem: {
+                type: "PACKAGE",
+                description: "",
+                measurementUnit: "IMPERIAL",
+                units: []
+            }
+        }
+    })
+    const { register, control, watch, setValue, formState: { errors } } = methods
+    
+    const [isOpen, setIsOpen] = useState(false)
+    useImperativeHandle(ref, () => ({
+        getValues: methods.getValues,
+        setValues: (vals: any) => methods.reset({ ...vals }),
+        trigger: methods.trigger,
+        open: () => setIsOpen(true)
+    }), [methods]);
     const quoteId = useSearchParams().get("id")
     const [open, setOpen] = useState(false);
     const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
@@ -81,12 +209,18 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
     }
 
     return (
-        <div className="space-y-6 ">
-            <div className="shadow-lg border border-border rounded-md p-6 bg-white dark:bg-card space-y-6">
-                <h2 className="flex gap-2 items-center text-lg font-semibold text-slate-800 dark:text-slate-100">
-                    <Cuboid className="w-5 h-5" />
-                    Dimensions & Weight
-                </h2>
+        <FormProvider {...methods}>
+        <form className="space-y-6 ">
+            <Accordion type="single" collapsible value={isOpen ? "dimensions" : ""} onValueChange={(val) => setIsOpen(!!val)} className="shadow-lg border border-border rounded-md bg-white dark:bg-card">
+                <AccordionItem value="dimensions" className="border-none">
+                    <AccordionTrigger className="group px-6 py-4 hover:no-underline items-center cursor-pointer [&>svg]:hidden!" >
+                        <h2 className="flex gap-2 items-center text-lg font-semibold text-slate-800 dark:text-slate-100">
+                            <Cuboid className="w-5 h-5" />
+                            Dimensions & Weight
+                            <ChevronUp className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                        </h2>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-6 pb-6 h-full">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50 dark:bg-card border p-4 rounded-md">
                     <div className="flex items-center gap-4">
                         <Label className="font-semibold text-slate-800 dark:text-slate-100 mb-0">Quantity</Label>
@@ -150,8 +284,8 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                     )} */}
                     {fields.map((field, index) => {
                         const rowErrors = (errors.lineItem as any)?.units?.[index]
-                        const measurementUnit = watch(`lineItem.measurementUnit`) || "Imperial"
-                        const isImperial = measurementUnit === "IMPERIAL" || measurementUnit === "Imperial"
+                        const measurementUnit = watch(`lineItem.measurementUnit`) || "IMPERIAL"
+                        const isImperial = measurementUnit === "IMPERIAL"
                         const lengthUnit = isImperial ? "in" : "cm"
                         const weightUnit = isImperial ? "lbs" : "kg"
 
@@ -321,14 +455,14 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                                         initialData={
                                             {
                                                 measurementUnit: watch(`lineItem.measurementUnit`),
-                                                length: watch(`lineItem.units.${index}.length`),
-                                                width: watch(`lineItem.units.${index}.width`),
-                                                height: watch(`lineItem.units.${index}.height`),
-                                                weight: watch(`lineItem.units.${index}.weight`),
+                                                length: watch(`lineItem.units.${index}.length`) as number | undefined,
+                                                width: watch(`lineItem.units.${index}.width`) as number | undefined,
+                                                height: watch(`lineItem.units.${index}.height`) as number | undefined,
+                                                weight: watch(`lineItem.units.${index}.weight`) as number | undefined,
                                                 freightClass: watch(`lineItem.units.${index}.freightClass`),
                                                 nmfc: watch(`lineItem.units.${index}.nmfc`),
-                                                shipmentType: watch(`lineItem.units.${index}.shipmentType`),
-                                                unitsOnPallet: watch(`lineItem.units.${index}.unitsOnPallet`),
+                                                shipmentType: watch(`lineItem.units.${index}.shipmentType`) as any,
+                                                unitsOnPallet: watch(`lineItem.units.${index}.unitsOnPallet`) as number | undefined,
                                                 palletUnitType: watch(`lineItem.units.${index}.palletUnitType`),
                                                 description: watch(`lineItem.units.${index}.description`),
                                             }
@@ -398,9 +532,12 @@ export default function Dimensions({ shipmentType }: { shipmentType: ShipmentOpt
                 {isDangerousGood && (
                     <DangerousGoodsForm />
                 )}
-            </div>
-
-
-        </div>
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
+        </form>
+        </FormProvider>
     )
-}
+})
+
+export default Dimensions;

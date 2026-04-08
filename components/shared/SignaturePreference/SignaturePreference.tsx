@@ -4,11 +4,26 @@ import { getSingleQuote } from "@/api/services/quotes.api"
 import { useSearchParams } from "next/navigation"
 import { useEffect } from "react"
 import { Loader } from "@/components/common/Loader"
-import { useFormContext } from "react-hook-form"
+import { FormProvider, useForm } from "react-hook-form"
 import { ChevronUp, ClipboardPen } from "lucide-react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-export default function SignaturePreference() {
-    const { setValue } = useFormContext<any>();
+import { forwardRef, useState, useImperativeHandle } from "react"
+
+const SignaturePreference = forwardRef((props, ref) => {
+    const methods = useForm({
+        defaultValues: {
+            signature: 1
+        }
+    });
+    const { setValue } = methods;
+
+    const [isOpen, setIsOpen] = useState(false);
+    useImperativeHandle(ref, () => ({
+        getValues: methods.getValues,
+        setValues: (vals: any) => methods.reset({ ...vals }),
+        trigger: methods.trigger,
+        open: () => setIsOpen(true)
+    }), [methods]);
     const quoteId = useSearchParams().get("id");
     const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
         queryKey: ["singleQuote", quoteId],
@@ -30,8 +45,9 @@ export default function SignaturePreference() {
         }
     }
     return (
-        <Accordion type="single" collapsible className="px-6 shadow-lg border border-border rounded-md bg-white dark:bg-card">
-            <AccordionItem value="signaturePreference">
+        <FormProvider {...methods}>
+        <Accordion type="single" collapsible value={isOpen ? "signaturePreference" : ""} onValueChange={(val) => setIsOpen(!!val)} className="px-6 shadow-lg border border-border rounded-md bg-white dark:bg-card">
+            <AccordionItem value="signaturePreference" className="border-none">
                 <AccordionTrigger className="group  hover:no-underline items-center cursor-pointer [&>svg]:hidden!">
                     <h2 className="font-semibold flex items-center gap-2 text-lg text-slate-800">
                         <ClipboardPen />
@@ -54,5 +70,8 @@ export default function SignaturePreference() {
                 </AccordionContent>
             </AccordionItem>
         </Accordion>
+        </FormProvider>
     )
-}
+})
+
+export default SignaturePreference;

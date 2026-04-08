@@ -12,9 +12,28 @@ import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { Loader } from "@/components/common/Loader";
 
-export default function AdditionalInsurance() {
+import { FormProvider, useForm } from "react-hook-form";
+import { forwardRef, useImperativeHandle, useState } from "react";
 
-    const { register, control, setValue } = useFormContext<any>();
+const AdditionalInsurance = forwardRef((props, ref) => {
+    const methods = useForm({
+        defaultValues: {
+            insurance: {
+                amount: 0,
+                currency: "CAD",
+                type: "Freightcom"
+            }
+        }
+    });
+    const { register, control, setValue } = methods;
+
+    const [isOpen, setIsOpen] = useState(false);
+    useImperativeHandle(ref, () => ({
+        getValues: methods.getValues,
+        setValues: (vals: any) => methods.reset({ ...vals }),
+        trigger: methods.trigger,
+        open: () => setIsOpen(true)
+    }), [methods]);
     const quoteId = useSearchParams().get("id");
     const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
         queryKey: ["singleQuote", quoteId],
@@ -40,7 +59,8 @@ export default function AdditionalInsurance() {
         }
     }
     return (
-        <Accordion type="single" collapsible className="shadow-lg border border-border rounded-md bg-white dark:bg-card">
+        <FormProvider {...methods}>
+        <Accordion type="single" collapsible value={isOpen ? "insurance" : ""} onValueChange={(val) => setIsOpen(!!val)} className="shadow-lg border border-border rounded-md bg-white dark:bg-card">
             <AccordionItem value="insurance" className="border-none">
                 <AccordionTrigger className="group px-6 py-4 hover:no-underline items-center cursor-pointer [&>svg]:hidden!" >
                     <h2 className="font-semibold flex items-center gap-2 text-lg text-slate-800">
@@ -122,5 +142,8 @@ export default function AdditionalInsurance() {
                 </AccordionContent>
             </AccordionItem>
         </Accordion>
+        </FormProvider>
     )
-}
+})
+
+export default AdditionalInsurance;

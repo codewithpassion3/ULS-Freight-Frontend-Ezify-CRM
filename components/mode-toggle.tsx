@@ -23,7 +23,7 @@ export function ModeToggle() {
   const { user } = useAuth()
   useEffect(() => {
     if (user) {
-      setTheme(user.settings?.dark_mode || "light")
+      setTheme(user.settings?.dark_mode || "system")
     }
   }, [user])
   const updateUserSettingsMutation = useMutation({
