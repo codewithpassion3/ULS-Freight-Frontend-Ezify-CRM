@@ -43,7 +43,7 @@ export function FormSelect({
     const {control, formState:{errors}} = useFormContext()
     const error = get(errors, name) as FieldError | undefined
     return (
-        <div className={`${show ? "flex" : "hidden"} flex-col gap-2 ${wrapperClassName} `}>
+        <div className={`${show === false ? "hidden" : "flex"} flex-col gap-2 ${wrapperClassName} `}>
             <Label className={labelClassName} htmlFor={name}>{label ? label : name}</Label>
             <Controller
                 name={name}

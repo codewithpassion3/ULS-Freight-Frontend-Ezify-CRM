@@ -11,7 +11,7 @@ import { ArrowLeftRight, X } from "lucide-react"
 import { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import z, { ZodType } from "zod"
 import { useEffect, useMemo, useState } from "react"
-import { useSearchParams } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import { getSingleQuote } from "@/api/services/quotes.api"
 import { addressSchema } from "@/lib/validations/quote/standard-quote-schema"
 
@@ -37,7 +37,9 @@ function getRequiredFields(schema: z.ZodObject<any>) {
 
 import { forwardRef, useImperativeHandle } from "react"
 export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, type, title, onNextStep, onSwap }: { quoteType: keyof ShipmentOptions, shipmentType: ShipmentOptions[keyof ShipmentOptions], type: "TO" | "FROM", title: string, onNextStep?: (data: any) => void, onSwap?: () => void }, ref) => {
-
+  // check if route includes shipment to check if it quote or shipment
+  const pathname = usePathname()
+  const isShipment = pathname.includes("shipment")
   const quoteId = useSearchParams().get("id")
   const markContactAsRecent = useMarkContactAsRecent()
   const [addressLocked, setAddressLocked] = useState(false)
@@ -52,7 +54,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
 
   const localSchema = useMemo(() => {
     let schema = addressSchema;
-    if (shipmentType === "STANDARD_FTL") {
+    if (showLocationType) {
       schema = schema.extend({ locationType: z.string("Location type is required") }) as any;
     }
     return schema;
@@ -96,7 +98,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
         city: quoteAddress.city,
         state: quoteAddress.state,
         country: quoteAddress.country,
-        ...(shipmentType === "STANDARD_FTL" && { locationType: quoteAddress.locationType }),
+        ...(showLocationType && { locationType: quoteAddress.locationType }),
       });
     }
 
@@ -115,7 +117,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       city: contact.address?.city || "",
       state: contact.address?.state || "",
       country: contact.address?.country || "",
-      ...(shipmentType === "STANDARD_FTL" && { locationType: contact?.locationTypeId || "" }),
+      ...(showLocationType && { locationType: contact?.locationTypeId || "" }),
     });
   }
 

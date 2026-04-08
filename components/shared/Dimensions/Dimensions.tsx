@@ -269,7 +269,7 @@ const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="IMPERIAL" id="imperial-global" className="text-amber-500 border-amber-500" />
-                                    <Label htmlFor="imperial-global" className="font-semibold cursor-pointer text-slate-800">
+                                    <Label htmlFor="imperial-global" className="font-semibold cursor-pointer text-slate-800 dark:text-slate-100">
                                         Imperial <span className="hidden sm:inline">(in & lbs)</span>
                                     </Label>
                                 </div>
@@ -291,13 +291,13 @@ const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions
 
                         return (
                             <div key={field.id} className="space-y-4 pb-6 border-b last:border-0 relative group">
-                                <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between bg-slate-50 dark:bg-card border p-3 rounded-md">
+                                <div className="flex flex-col sm:flex-row mt-4 gap-4 items-start sm:items-center justify-between bg-slate-50 dark:bg-card border p-3 rounded-md">
                                     <div className="flex items-center gap-4">
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-3 ">
                                             <div className="bg-white border shadow-sm dark:bg-card dark:text-slate-100 font-medium h-8 w-8 rounded-full flex items-center justify-center">
                                                 {index + 1}
                                             </div>
-                                            <span className="font-semibold text-slate-800 dark:text-slate-100">Package {index + 1}</span>
+                                            <span className="font-semibold text-slate-800 dark:text-slate-100 ">Package {index + 1}</span>
 
                                             {/* Keep a hidden input for per-row quantity so schema validation passes if it expects it */}
                                             <input type="hidden" {...register(`lineItem.quantity`, { valueAsNumber: true })} value={fields.length} />
@@ -493,7 +493,7 @@ const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions
                                 )}
                             />
                             <Label htmlFor={`special-handling`} className="font-normal flex items-center gap-1 cursor-pointer">
-                                Special Handling Required <Info size={14} className="text-slate-800" />
+                                Special Handling Required <Info size={14} className="text-slate-800 dark:text-white" />
                             </Label>
                         </div> : null}
 
@@ -517,14 +517,14 @@ const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions
                                 label: "Dangerous Goods",
                                 type: "checkbox",
                                 defaultValue: false,
-                                icon: <Info size={14} className="text-slate-800" />,
+                                icon: <Info size={14} className="text-slate-800 dark:text-white" />,
                             },
                             {
                                 name: "lineItem.stackable",
                                 label: "Stackable",
                                 type: "checkbox",
                                 defaultValue: false,
-                                icon: <Info size={14} className="text-slate-800" />,
+                                icon: <Info size={14} className="text-slate-800 dark:text-white" />,
                             },
                         ]}
                     />
