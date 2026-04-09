@@ -17,7 +17,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 
-import FormField from "@/components/common/forms/FormField"
+import FormField from "@/components/common/form/fields/FormField"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useEffect, useState } from "react"
 import { createUser, editUserAdmin, getAllUsers } from "@/api/services/auth.api"
@@ -152,32 +152,52 @@ export default function AddUser({ open, setOpen, mode, setMode, selectedUser, se
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 
                             {mode === "create" ? <FormField
-                                name="email"
-                                label="Email"
-                                placeholder="Enter email"
+                                field={
+                                    {
+                                        name: "email",
+                                        label: "Email",
+                                        placeholder: "Enter email",
+                                        type: "email",
+                                    }
+                                }
 
 
 
                             /> : ""}
 
                             <FormField
-                                name="firstName"
-                                label="First Name"
-                                placeholder="Enter first name"
+                                field={
+                                    {
+                                        name: "firstName",
+                                        label: "First Name",
+                                        placeholder: "Enter first name",
+                                        type: "text",
+                                    }
+                                }
 
                             />
 
                             <FormField
-                                name="lastName"
-                                label="Last Name"
-                                placeholder="Enter last name"
+                                field={
+                                    {
+                                        name: "lastName",
+                                        label: "Last Name",
+                                        placeholder: "Enter last name",
+                                        type: "text",
+                                    }
+                                }
 
                             />
 
                             {mode === "create" ? <FormField
-                                name="phoneNumber"
-                                label="Phone Number"
-                                placeholder="Enter phone number"
+                                field={
+                                    {
+                                        name: "phoneNumber",
+                                        label: "Phone Number",
+                                        placeholder: "Enter phone number",
+                                        type: "text",
+                                    }
+                                }
 
                             /> : ""}
 

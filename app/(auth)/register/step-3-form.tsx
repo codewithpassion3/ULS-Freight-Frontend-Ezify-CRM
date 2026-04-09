@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { Controller, useFormContext } from "react-hook-form"
 import { RegisterSchemaTypes } from "@/lib/validations/auth/register-schema"
-import FormField from "@/components/common/forms/FormField"
+import FormField from "@/components/common/form/fields/FormField"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 interface Step3FormProps {

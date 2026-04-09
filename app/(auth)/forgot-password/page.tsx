@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import FormField from "@/components/common/forms/FormField"
+import FormField from "@/components/common/form/fields/FormField"
 import { Button } from "@/components/ui/button"
 import { Loader } from "@/components/common/Loader"
 import { AuthLayout } from "../AuthLayout"
@@ -65,9 +65,12 @@ export default function ForgotPasswordPage() {
             <FormProvider {...form}>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                     <FormField
-                        name="email"
-                        label="Email*"
-                        placeholder="Enter your email"
+                        field={{
+                            name: "email",
+                            label: "Email*",
+                            placeholder: "Enter your email",
+                            type: "email",
+                        }}
                     />
                     <Button disabled={forgotMutation.isPending || Object.keys(errors).length > 0} type="submit" className="w-full">
                         Send Reset OTP

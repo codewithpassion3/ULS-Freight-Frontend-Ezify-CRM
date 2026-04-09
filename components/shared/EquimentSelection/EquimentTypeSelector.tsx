@@ -6,8 +6,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Info } from "lucide-react"
 // import { QuoteSchemaTypes } from "@/lib/validations/quote/spot-quote-schema"
-import { FormRadio } from "@/components/common/forms/FormRadio"
-import { FormCheckbox } from "@/components/common/forms/FormCheckbox"
+import { FormRadio } from "@/components/common/form/fields/FormRadio"
+import { FormCheckbox } from "@/components/common/form/fields/FormCheckbox"
 import { useFormContext } from "react-hook-form"
 
 interface EquimentTypeSelectorProps {

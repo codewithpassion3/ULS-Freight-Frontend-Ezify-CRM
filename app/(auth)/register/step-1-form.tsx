@@ -8,7 +8,7 @@ import { Package, Truck, ShoppingCart, Info, Check, CloudCog } from "lucide-reac
 import { useForm, Controller, useFormContext } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { registerSchema, type RegisterSchemaTypes } from "@/lib/validations/auth/register-schema"
-import FormField from "@/components/common/forms/FormField"
+import FormField from "@/components/common/form/fields/FormField"
 import { PhoneInput } from "@/components/common/PhoneInput"
 
 interface Step1FormProps {
@@ -39,7 +39,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
     ])
 
     if (valid) onNext()
-    console.log(form.getValues())
+    // console.log(form.getValues())
   }
   const shippingPreference = watch("shippingPreference") || []
   const hasType = (type: string) => shippingPreference.some(p => p.shippingType === type);
@@ -117,16 +117,23 @@ export function Step1Form({ onNext }: Step1FormProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <FormField
-            name="user.firstName"
-            label="First Name*"
-            placeholder="Enter your first name"
+            field={{
+              name: "user.firstName",
+              label: "First Name*",
+              placeholder: "Enter your first name",
+              type: "text",
+            }}
           />
         </div>
         <div className="space-y-2">
           <FormField
-            name="user.lastName"
-            label="Last Name*"
-            placeholder="Enter your last name"
+            field={{
+              name: "user.lastName",
+              label: "Last Name*",
+              placeholder: "Enter your last name",
+              type: "text",
+            }}
+            
           />
         </div>
       </div>
@@ -146,9 +153,12 @@ export function Step1Form({ onNext }: Step1FormProps) {
         </div>
         <div className="space-y-2">
           <FormField
-            name="company.industryType"
-            label="Industry Type"
-            placeholder="ex: Furniture"
+            field={{
+              name: "company.industryType",
+              label: "Industry Type",
+              placeholder: "ex: Furniture",
+              type: "text",
+            }}
           />
         </div>
       </div>
@@ -157,17 +167,18 @@ export function Step1Form({ onNext }: Step1FormProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <FormField
-            name="user.email"
-            label="Email*"
-            type="email"
-            placeholder="example@email.com"
+            field={{
+              name: "user.email",
+              label: "Email*",
+              placeholder: "example@email.com",
+              type: "email",
+            }}
           />
         </div>
         <div className="space-y-2">
           <Label htmlFor="user.phoneNumber" className={errors.user?.phoneNumber ? "text-red-500" : ""}>Phone Number*</Label>
           <Controller
             name="user.phoneNumber"
-
             control={control}
             render={({ field }) => (
               <PhoneInput

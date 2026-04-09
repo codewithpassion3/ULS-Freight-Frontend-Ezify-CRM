@@ -20,12 +20,12 @@ import { useAuth } from "@/context/auth.context"
 
 export function ModeToggle() {
   const { setTheme } = useTheme()
-  const { user } = useAuth()
-  useEffect(() => {
-    if (user) {
-      setTheme(user.settings?.dark_mode || "system")
-    }
-  }, [user])
+  const { user, isLoading, isPending } = useAuth()
+useEffect(() => {
+  if (!isLoading && !isPending && user?.settings) {
+    setTheme(user.settings.dark_mode)
+  }
+}, [user, isLoading, isPending])
   const updateUserSettingsMutation = useMutation({
     mutationFn: updateUserSettings,
     onSuccess: () => {

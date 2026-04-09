@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import FormField from "@/components/common/forms/FormField";
+import FormField from "@/components/common/form/fields/FormField";
 import { Loader } from "@/components/common/Loader";
 import { AuthLayout } from "../AuthLayout";
 
@@ -93,14 +93,20 @@ export default function ResetPasswordPage() {
             <FormProvider {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                     <FormField
-                        name="password"
-                        label="New Password*"
-                        placeholder="Enter new password"
+                        field={{
+                            name: "password",
+                            label: "New Password*",
+                            placeholder: "Enter new password",
+                            type: "password",
+                        }}
                     />
                     <FormField
-                        name="confirmPassword"
-                        label="Confirm Password*"
-                        placeholder="Confirm your password"
+                        field={{
+                            name: "confirmPassword",
+                            label: "Confirm Password*",
+                            placeholder: "Confirm your password",
+                            type: "password",
+                        }}
                     />
                     <Button disabled={resetMutation.isPending || !form.formState.isValid} type="submit" className="w-full">
                         Reset Password

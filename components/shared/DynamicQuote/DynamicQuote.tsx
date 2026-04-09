@@ -9,7 +9,7 @@ import z from "zod"
 import StepperButtons from "../StepperButtons"
 import { createQuote, getSingleQuote, updateQuote } from "@/api/services/quotes.api"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { useSearchParams } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
@@ -35,6 +35,8 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     quoteType: keyof ShipmentOptions,
     initialShipmentType: ShipmentOptions[keyof ShipmentOptions]
 }) {
+    const pathname = usePathname()
+    const isShipment = pathname.includes("shipment")
     const [shipmentType, setShipmentType] = useState<ShipmentOptions[keyof ShipmentOptions]>(initialShipmentType)
     const [quoteStatus, setQuoteStatus] = useState<"DRAFT" | "SAVED">("DRAFT")
     const quoteId = useSearchParams().get("id")
@@ -130,16 +132,17 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         // We validate core sections First. Then conditionally attached ones depending on if they are rendered
         let valid = fromValid && toValid && dimValid;
         
-        if (servicesRef.current) valid = valid && await servicesRef.current.trigger()
-        if (insuranceRef.current) valid = valid && await insuranceRef.current.trigger()
-        if (signatureRef.current) valid = valid && await signatureRef.current.trigger()
+        // if (servicesRef.current) valid = valid && await servicesRef.current.trigger()
+        // if (insuranceRef.current) valid = valid && await insuranceRef.current.trigger()
+        // if (signatureRef.current) valid = valid && await signatureRef.current.trigger()
 
-        if (!valid) {
-             toast.error("Please fill in all required fields correctly.")
-             return
-        }
+        // if (!valid) {
+        //      toast.error("Please fill in all required fields correctly.")
+        //      return
+        // }
 
         const mergedData = getMergedPayload()
+        console.log("mergedData", mergedData)
         payloadTransformer(mergedData)
     }
 
@@ -202,12 +205,12 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     }
     return (
         <div className="container mx-auto py-8 px-4 max-w-7xl">
-            <div className="flex justify-between items-center mb-6">
+            {!isShipment ? <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold capitalize">{isEditing ? `Edit ${quoteType.toLowerCase()} Quote` : `Create New ${quoteType.toLowerCase()} Quote`}</h1>
-            </div>
+            </div> : ""}
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                <div className="lg:col-span-3">
+                <div className={`${isShipment ? "lg:col-span-4" : "lg:col-span-3"}`}>
                     {/* <FormProvider {...methods}> */}
                     {/* <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-8"> */}
                     {/* <SchemaContext.Provider value={schema}> */}
@@ -217,9 +220,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                             <ShippingAddressSection ref={fromAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="FROM" title="Shipping From" />
                             <ShippingAddressSection ref={toAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="TO" title="Shipping To" />
                         </div>
-                        <div className="flex justify-end pt-2">
-                            <Button onClick={handleNextStep1}>Next Step</Button>
-                        </div>
+                        
                         
                         <div className="space-y-6 mt-6">
                             <Dimensions ref={dimensionsRef} shipmentType={shipmentType} />
@@ -231,7 +232,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                     {isStandardQuote && <div className="mt-6"><AdditionalInsurance ref={insuranceRef} /></div>}
                     {(shipmentType === "PALLET" || shipmentType === "COURIER_PAK") && <div className="mt-6"><SignaturePreference ref={signatureRef} /></div>}
 
-                    <div className="w-full flex justify-end pt-8">
+                    <div className="w-full flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
                         <div className="flex gap-4">
                             <Button variant="outline" onClick={() => {
                                 handleStatus("DRAFT")
@@ -247,7 +248,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                 </div>
 
                 {/* Sidebar */}
-                <SideBar currentStep={currentStep} setCurrentStep={setCurrentStep} />
+                {!isShipment ? <SideBar currentStep={currentStep} setCurrentStep={setCurrentStep} /> :""}
             </div>
         </div>
     )

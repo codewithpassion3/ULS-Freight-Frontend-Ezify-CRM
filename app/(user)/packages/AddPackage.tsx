@@ -8,8 +8,7 @@ import * as z from "zod";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Info, PackageIcon, PackagePlus } from "lucide-react";
-import FormField from "@/components/common/forms/FormField";
-import { FormSelect } from "@/components/common/forms/FormSelect";
+import FormField from "@/components/common/form/fields/FormField";
 import { useState, useEffect, useMemo } from "react";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
 import { createPackage, CreatePackagePayload, PackagePayload, updatePackage, UpdatePackagePayload } from "@/api/services/packages.api";
@@ -317,7 +316,7 @@ export default function AddPackage({ id, shipmentType, initialData, onSave, chil
                             formWrapperClassName="grid grid-cols-1 md:grid-cols-4 gap-6"
                             fields={fields}
                         />
-                        
+
 
                         {/* {methods.formState.errors.freightClass?.message} */}
                         <div className="flex justify-end gap-2 mt-6">

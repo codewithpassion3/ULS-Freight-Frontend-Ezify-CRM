@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Bell, Boxes, Clock, Info, Mail, Package, Truck, WalletCards } from "lucide-react"
+import { ArrowRight, Bell, Boxes, CircleArrowRight, Clock, Info, Mail, Package, Truck, WalletCards } from "lucide-react"
 import { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import { useQuery } from "@tanstack/react-query"
 import { getSingleQuote } from "@/api/services/quotes.api"
 import { useEffect } from "react"
-import { useSearchParams } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import { Loader } from "@/components/common/Loader"
 
 interface QuoteShippingTypeSelectorProps {
@@ -18,6 +18,8 @@ interface QuoteShippingTypeSelectorProps {
 export const ShippingTypeSelector = ({ shipmentType, setShipmentType, quoteType }: QuoteShippingTypeSelectorProps) => {
     const quoteId = useSearchParams().get("id")
     const isEditing = !!quoteId
+    const pathname = usePathname()
+    const isShipment = pathname.includes("shipment")
     const shipmentTypes = () => {
         if (quoteType === "SPOT") {
             return [
@@ -33,7 +35,7 @@ export const ShippingTypeSelector = ({ shipmentType, setShipmentType, quoteType 
             { name: "STANDARD_FTL", label: "FTL", icon: <Truck /> },
         ]
     }
-    console.log("shipmentTypes", shipmentTypes())
+    // console.log("shipmentTypes", shipmentTypes())
     const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
         queryKey: ["singleQuote", quoteId],
         queryFn: () => quoteId ? getSingleQuote(quoteId) : null,
@@ -46,20 +48,20 @@ export const ShippingTypeSelector = ({ shipmentType, setShipmentType, quoteType 
             setShipmentType(cachedSingleQuote.quote.shipmentType)
         }
     }, [cachedSingleQuote])
-    console.log("cachedSingleQuote", cachedSingleQuote)
+    // console.log("cachedSingleQuote", cachedSingleQuote)
     if (quoteId) {
         if (isLoading || isPending) {
             return <Loader />
         }
     }
     return (
-        <div className="border border-border rounded-md p-4 bg-white dark:bg-card">
+        <div className="border border-border rounded-md p-4 bg-white dark:bg-card shadow-lg">
             <div className="flex items-center justify-between pb-4">
                 <h2 className="font-semibold flex items-center gap-2 text-lg">
                     <span>
-                        <ArrowRight />
+                        <CircleArrowRight />
                     </span>
-                    Select Shipment Type
+                    {isShipment ? "Packaging" : "Select Shipment Type"}
                 </h2>
                 <button type="button" className="text-sm text-[#0070c0] flex items-center gap-1 hover:underline font-medium"><Info size={14} /> Shipment Types</button>
             </div>

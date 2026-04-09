@@ -8,7 +8,9 @@ import {
 } from "@/components/ui/carousel"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 export function SideBar({ currentStep, setCurrentStep }: { currentStep: number, setCurrentStep: (step: number) => void }) {
+
     return (
         <div className="lg:col-span-1">
             <div className="border border-border p-5 rounded-md sticky top-24 bg-white dark:bg-card space-y-4 shadow-lg">

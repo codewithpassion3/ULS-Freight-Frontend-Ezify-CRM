@@ -7,7 +7,7 @@ import { SelectAddressBookModal } from "./SelectAddressBookModal"
 import { useQuery } from "@tanstack/react-query"
 import { useMarkContactAsRecent } from "../../../app/(user)/quote/create/hooks"
 import { Button } from "@/components/ui/button"
-import { ArrowLeftRight, X } from "lucide-react"
+import { ArrowLeftRight, InfoIcon, X } from "lucide-react"
 import { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import z, { ZodType } from "zod"
 import { useEffect, useMemo, useState } from "react"
@@ -43,7 +43,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   const quoteId = useSearchParams().get("id")
   const markContactAsRecent = useMarkContactAsRecent()
   const [addressLocked, setAddressLocked] = useState(false)
-  const showLocationType = quoteType === "SPOT" || shipmentType === "STANDARD_FTL";
+  const showLocationType = quoteType === "SPOT" || shipmentType === "STANDARD_FTL" || isShipment;
   const showAdditionalNotes = quoteType === "SPOT";
   const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
     queryKey: ["singleQuote", quoteId],
@@ -155,14 +155,44 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
     if (onNextStep) {
       onNextStep(data);
     }
-  };  
+  };
 
   const formFields: any[] = [
+    {
+      name: "companyName",
+      label: "Company Name",
+      type: "text",
+      placeholder: "Company Name",
+      disabled: addressLocked,
+      show: isShipment,
+    },
+    {
+      name: "contactId",
+      label: "Contact ID",
+      type: "text",
+      placeholder: "Contact ID",
+      disabled: addressLocked,
+      show: isShipment,
+    },
     {
       name: "address1",
       label: "Address",
       type: "text",
       placeholder: "Address",
+      disabled: addressLocked,
+    },
+    {
+      name: "address2",
+      label: "Address 2 (optional)",
+      type: "text",
+      // placeholder: "Address",
+      disabled: addressLocked,
+    },
+    {
+      name: "unitfloor",
+      label: "Unit/Floor #",
+      type: "text",
+      // placeholder: "Address",
       disabled: addressLocked,
     },
     {
@@ -204,7 +234,67 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       })),
       disabled: addressLocked,
       show: showLocationType,
-    }
+    },
+    {
+      name: "isResidential",
+      label: "Residential Address",
+      type: "checkbox",
+      placeholder: "Location Type",
+      icon: <InfoIcon size={16} />,
+      disabled: addressLocked,
+      show: isShipment,
+      wrapperClassName: "col-span-2",
+    },
+    {
+      name: "contactName",
+      label: "Contact Name",
+      type: "text",
+      placeholder: "Contact Name",
+      disabled: addressLocked,
+      show: isShipment,
+    },
+    {
+      name: "phoneNumber",
+      label: "Phone Number",
+      type: "phone",
+      placeholder: "Phone Number",
+      disabled: addressLocked,
+      show: isShipment,
+    },
+    // instructions
+    {
+      name: "instructions",
+      label: "Instructions",
+      type: "text",
+      placeholder: "Instructions",
+      disabled: addressLocked,
+      show: isShipment,
+      wrapperClassName: "col-span-2",
+    },
+    
+    // email optional
+    {
+      name: "email",
+      label: "Email Address (optional)",
+      type: "text",
+      placeholder: "Email",
+      disabled: addressLocked,
+      show: isShipment,
+      wrapperClassName: "col-span-2",
+    },
+    {
+      name: "shipDate",
+      label: "Ship Date",
+      type: "date",
+      placeholder: "Ship Date",
+      disabled: addressLocked,
+      show: isShipment,
+      wrapperClassName: "col-span-2",
+    },
+
+
+
+
   ];
 
   return (

@@ -1,0 +1,68 @@
+export type FieldTypes = {
+
+}
+export type FormFieldTypes = {
+    name: string
+    label?: string
+    type?: string
+    placeholder?: string
+    className?: string
+    labelClassName?: string
+    disabled?: boolean
+    inputClassName?: string
+    wrapperClassName?: string;
+}
+export type FormSelectTypes = {
+    name: string;
+    options: { label: string; value: string | number }[];
+    optionKey?: string;
+    optionValue?: string;
+    placeholder?: string;
+    defaultValue?: string;
+    className?: string;
+    label?: string;
+    labelClassName?: string;
+    disabled?: boolean;
+    valueType?: "string" | "number";
+    wrapperClassName?: string;
+    show?: boolean;
+}
+export type FormCheckboxTypes = {
+    name: string
+    label?: string
+    description?: string
+    selectedClassName?: string
+    icon?: React.ReactNode
+    defaultValue?: boolean
+    wrapperClassName?:string
+}
+// Radio
+type RadioOption = {
+    label: string
+    value: string | number
+}
+
+export type FormRadioTypes = {
+    name: string
+    label?: string
+    options: RadioOption[],
+    className?: string
+    selectedClassName?: string
+    onChange?: (value: string) => void
+    valueType?: "string" | "number"
+    defaultValue?: string
+    wrapperClassName?: string;
+}
+
+export type FormDateTypes = {
+    name: string
+    label?: string
+    mode?: "single" | "multiple" | "range"
+    // className?: string
+    // selectedClassName?: string
+    onChange: (value: Date | undefined) => void
+    // valueType?: "string" | "number"
+    // defaultValue?: string
+    onSelect: (value: Date | undefined) => void
+    wrapperClassName?: string;
+}

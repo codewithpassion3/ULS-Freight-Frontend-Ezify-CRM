@@ -1,5 +1,5 @@
 import { GlobalForm } from "@/components/common/form/GlobalForm";
-import FormField from "@/components/common/forms/FormField";
+import FormField from "@/components/common/form/fields/FormField";
 import { Button } from "@/components/ui/button";
 import { QuoteSchemaTypes } from "@/lib/validations/quote/standard-quote-schema";
 // import { quoteSchema } from "@/lib/validations/quote/spot-quote-schema";

@@ -3,7 +3,7 @@
 import { FormProvider, useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import FormField from "@/components/common/forms/FormField"
+import FormField from "@/components/common/form/fields/FormField"
 import { useUser } from "@/hooks/useUser"
 import { Loader } from "@/components/common/Loader"
 // import { Loader } from "lucide-react"
