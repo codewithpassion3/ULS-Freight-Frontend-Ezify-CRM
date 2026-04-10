@@ -1,100 +1,75 @@
-// "use client"
+"use client"
 
-// import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-// import { Label } from "@/components/ui/label"
-// import { memo } from "react"
-// import { FormRadioTypes } from "./fields.types"
-// import { useFieldController } from "../useFieldController"
+import { Label } from "@/components/ui/label"
+import { memo } from "react"
+import { useFieldController } from "../useFieldController"
+import { Input } from "@/components/ui/input"
+import { FormTimeProps } from "./fields.types"
 
-// type FormTimeProps = {
-//     label: string
-//     hourName: string
-//     minuteName: string
-//     ampmName: string
-//     register: any
-//     control: any
-//     errors: any
-// }
+const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
+    const { field: hourField, error: hourError } = useFieldController(config.hourName)
+    const { field: minuteField, error: minuteError } = useFieldController(config.minuteName)
+    const { field: ampmField, error: ampmError } = useFieldController(config.ampmName)
+    return (
+        <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground font-medium">
+                {config.label}
+            </Label>
 
-// const FormTime = ({
-//     label,
-//     hourName,
-//     minuteName,
-//     ampmName,
-//     register,
-//     control,
-//     errors
-// }: FormTimeProps) => {
-//     const hourError = errors?.[hourName]
-//     const minuteError = errors?.[minuteName]
-//     const ampmError = errors?.[ampmName]
+            <div className="flex items-center gap-2">
+                <Input
+                    {...hourField}
+                    type="number"
+                    min={0}
+                    max={11}
+                    className={`w-14 px-2 text-center ${hourError ? "border-red-500" : ""}`}
+                    value={hourField.value ?? ""}
+                />
 
-//     const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
-//         const { field } = useFieldController(config.name)
-//         return (
-//             <div className="space-y-2">
-//                 <Label className="text-xs text-muted-foreground font-medium">
-//                     {label}
-//                 </Label>
+                <span>:</span>
 
-//                 <div className="flex items-center gap-2">
-//                     <Input
-//                         {...register(hourName, { valueAsNumber: true })}
-//                         type="number"
-//                         min={0}
-//                         max={11}
-//                         className={`w-14 px-2 text-center ${hourError ? "border-red-500" : ""}`}
-//                     />
+                <Input
+                    {...minuteField}
+                    type="number"
+                    min={0}
+                    max={59}
+                    className={`w-14 px-2 text-center ${minuteError ? "border-red-500" : ""}`}
+                    value={minuteField.value ?? ""}
+                />
 
-//                     <span>:</span>
 
-//                     <Input
-//                         {...register(minuteName, { valueAsNumber: true })}
-//                         type="number"
-//                         min={0}
-//                         max={59}
-//                         className={`w-14 px-2 text-center ${minuteError ? "border-red-500" : ""}`}
-//                     />
+                <div className="flex border border-border rounded-md bg-background w-max">
+                    <button
+                        type="button"
+                        onClick={() => ampmField.onChange("AM")}
+                        className={`px-3 py-2 text-xs font-semibold ${ampmField.value === "AM"
+                            ? "bg-muted text-[#4aa0e3]"
+                            : "hover:bg-muted/50"
+                            }`}
+                    >
+                        AM
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => ampmField.onChange("PM")}
+                        className={`px-3 py-2 text-xs font-semibold ${ampmField.value === "PM"
+                            ? "bg-muted text-[#4aa0e3]"
+                            : "hover:bg-muted/50"
+                            }`}
+                    >
+                        PM
+                    </button>
+                </div>
 
-//                     <Controller
-//                         name={ampmName}
-//                         control={control}
-//                         render={({ field }) => (
-//                             <div className="flex border border-border rounded-md bg-background w-max">
-//                                 <button
-//                                     type="button"
-//                                     onClick={() => field.onChange("AM")}
-//                                     className={`px-3 py-2 text-xs font-semibold ${field.value === "AM"
-//                                             ? "bg-muted text-[#4aa0e3]"
-//                                             : "hover:bg-muted/50"
-//                                         }`}
-//                                 >
-//                                     AM
-//                                 </button>
-//                                 <button
-//                                     type="button"
-//                                     onClick={() => field.onChange("PM")}
-//                                     className={`px-3 py-2 text-xs font-semibold ${field.value === "PM"
-//                                             ? "bg-muted text-[#4aa0e3]"
-//                                             : "hover:bg-muted/50"
-//                                         }`}
-//                                 >
-//                                     PM
-//                                 </button>
-//                             </div>
-//                         )}
-//                     />
-//                 </div>
+            </div>
 
-//                 {(hourError || minuteError || ampmError) && (
-//                     <p className="text-xs text-red-500">
-//                         {hourError?.message || minuteError?.message || ampmError?.message}
-//                     </p>
-//                 )}
-//             </div>
-//         )
-//     }
-//         </div >
-//     )
-// })
-// export default FormRadio
+            {(hourError || minuteError || ampmError) && (
+                <p className="text-xs text-red-500">
+                    {hourError?.message || minuteError?.message || ampmError?.message}
+                </p>
+            )}
+        </div>
+    )
+})
+
+export default FormTime

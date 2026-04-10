@@ -1,21 +1,21 @@
 import { z } from "zod"
 
-export const contactSchema = z.object({
-    companyName: z.string().min(1, "Company/Name is required"),
+export const shippingAddressSchema = z.object({
+    companyName: z.string().nonempty("Company/Name is required"),
     contactId: z.string().optional(),
-    phone: z.string().min(1, "Phone Number is required"),
+    phone: z.string().nonempty("Phone Number is required"),
     email: z.email("Invalid email").optional(),
     defaultInstructions: z.string().optional(),
     address: z.object({
-        address1: z.string().min(1, "Address 1 is required"),
+        address1: z.string().nonempty("Address 1 is required"),
         address2: z.string().optional(),
         unit: z.string().optional(),
-        postalCode: z.string().min(1, "Postal/ZIP Code is required"),
-        city: z.string().min(1, "City is required"),
-        state: z.string().min(1, "Province/State is required"),
-        country: z.string().min(1, "Country is required"),
+        postalCode: z.string().nonempty("Postal/ZIP Code is required"),
+        city: z.string().nonempty("City is required"),
+        state: z.string().nonempty("Province/State is required"),
+        country: z.string().nonempty("Country is required"),
     }),
-    contactName: z.string().min(1, "Contact Name is required"),
+    contactName: z.string().nonempty("Contact Name is required"),
 
     // Pallet Shipping preferences
     readyTimeHour: z.string().min(0).max(12),
@@ -30,12 +30,14 @@ export const contactSchema = z.object({
     signatureId: z.number(),
     isResidential: z.boolean().optional(),
 })
-export type ContactFormProps = {
-    defaultValues?: ContactFormValues
-    onSubmit?: (data: ContactFormValues) => void
+
+export type ShipmentAddressFormProps = {
+    defaultValues?: ShippingAddressSchemaType
+    onSubmit?: (data: ShippingAddressSchemaType) => void
     isLoading?: boolean
     open?: boolean
     setOpen?: (open: boolean) => void
     setIsValid?: (isValid: boolean) => void
 }
-export type ContactFormValues = z.infer<typeof contactSchema>
+
+export type ShippingAddressSchemaType = z.infer<typeof shippingAddressSchema>

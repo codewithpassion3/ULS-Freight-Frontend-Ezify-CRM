@@ -16,12 +16,15 @@ import {
 import { PhoneInput } from "@/components/common/PhoneInput"
 import { useQuery } from "@tanstack/react-query"
 import { getAllPalletShippingLocationTypes, getAllSignatures } from "@/api/services/address-book.api"
-import { ContactFormProps, ContactFormValues } from "../schemas/addContact.schema"
-import { LocationType, Signature } from "../types/addContact.types"
+// import { ContactFormProps, ContactFormValues } from "../schemas/addContact.schema"
+// import { LocationType, Signature } from "../types/addContact.types"
 import { Loader } from "@/components/common/Loader"
-import { contactSchema } from "../schemas/addContact.schema"
-import { useEffect } from "react"
+// import { contactSchema } from "../schemas/addContact.schema"
+import { useEffect, useState } from "react"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
+import { ShipmentAddressFormProps, shippingAddressSchema, ShippingAddressSchemaType } from "./shipmentAddress.schema"
+import { LocationType, Signature } from "../../settings/(address-book)/types/addContact.types"
+import { forwardRef, useImperativeHandle } from "react"
 
 export function ContactForm({
     defaultValues,
@@ -30,7 +33,7 @@ export function ContactForm({
     open,
     setOpen,
     setIsValid
-}: ContactFormProps) {
+}: ShipmentAddressFormProps) {
 
     const {
         register,
@@ -40,8 +43,8 @@ export function ContactForm({
         watch,
         getValues,
         formState: { isValid, errors }
-    } = useForm<ContactFormValues>({
-        resolver: zodResolver(contactSchema),
+    } = useForm<ShippingAddressSchemaType>({
+        resolver: zodResolver(shippingAddressSchema),
         mode: "onChange",
 
     })
@@ -67,11 +70,95 @@ export function ContactForm({
         queryKey: ["signatures"],
         queryFn: getAllSignatures
     })
+  const [addressLocked, setAddressLocked] = useState(false)
 
     useEffect(() => {
         setIsValid?.(isValid)
     }, [isValid])
 
+      useImperativeHandle(ref, () => ({
+        getValues: methods.getValues,
+        setValues: (vals: any) => methods.reset({ ...vals }),
+        trigger: methods.trigger
+      }), [methods]);
+    
+      const index = type === "FROM" ? 0 : 1
+    
+      useEffect(() => {
+        if (!cachedSingleQuote) return;
+    
+        const quoteAddress = cachedSingleQuote.quote.addresses[index]?.address
+          ?? cachedSingleQuote.quote.addresses[index]?.addressBookEntry?.address;
+        const isAddressBookEntry = cachedSingleQuote.quote.addresses[index]?.addressBookEntry?.address;
+    
+        if (quoteAddress) {
+          setAddressLocked(true);
+          methods.reset({
+            type,
+            ...(isAddressBookEntry && { addressBookId: quoteAddress.id ?? null }),
+            address1: quoteAddress.address1,
+            postalCode: quoteAddress.postalCode,
+            city: quoteAddress.city,
+            state: quoteAddress.state,
+            country: quoteAddress.country,
+            ...(showLocationType && { locationType: quoteAddress.locationType }),
+          });
+        }
+    
+      }, [cachedSingleQuote, index, type, shipmentType, methods]);
+    
+      const handleAddressSelect = (contact: ContactType) => {
+        markContactAsRecent.mutate(contact.id || "")
+        setAddressLocked(true)
+        const currentValues = methods.getValues();
+        methods.reset({
+          ...currentValues,
+          type: type,
+          addressBookId: Number(contact.id),
+          address1: contact.address?.address1 || "",
+          postalCode: contact.address?.postalCode || "",
+          city: contact.address?.city || "",
+          state: contact.address?.state || "",
+          country: contact.address?.country || "",
+          ...(showLocationType && { locationType: contact?.locationTypeId || "" }),
+        });
+      }
+    
+    
+      const { data: locationTypeData, isLoading: locationTypeLoading, isPending: locationTypeIsPending } = useQuery({
+        queryKey: ["palletShippingLocationTypes"],
+        queryFn: getAllPalletShippingLocationTypes
+      })
+    
+      const handleClearAddress = () => {
+        setAddressLocked(false)
+        methods.reset({
+          type,
+          address1: "",
+          city: "",
+          state: "",
+          postalCode: "",
+          country: "",
+        });
+      };
+    
+      const handleSwap = () => {
+        // Parent handles the actual swapping by fetching from refs
+        if (onSwap) {
+          onSwap();
+        }
+      }
+      if (quoteId) {
+        if (isLoading || isPending) {
+          return <></>
+        }
+      }
+    
+      const handleNext = (data: any) => {
+        if (onNextStep) {
+          onNextStep(data);
+        }
+      };
 
 
     return (
@@ -351,214 +438,7 @@ export function ContactForm({
                 <button type="submit" className="hidden" />
             </form>
 
-        // put these inputs and labels in global form
-        // <GlobalForm
-        //     schema={contactSchema}
-        //     defaultValues={defaultValues}
-        //     onSubmit={onSubmit}
-        //     isLoading={isLoading}
-        //     open={open}
-        //     setOpen={setOpen}
-        //     setIsValid={setIsValid}
-        //     fields={[
-        //         {
-        //             name: "firstName",
-        //             label: "First Name*",
-        //             type: "text",
-        //             placeholder: "First Name",
-        //             register: register,
-        //             error: errors.firstName
-        //         },
-        //         {
-        //             name: "lastName",
-        //             label: "Last Name*",
-        //             type: "text",
-        //             placeholder: "Last Name",
-        //             register: register,
-        //             error: errors.lastName
-        //         },
-        //         {
-        //             name: "email",
-        //             label: "Email*",
-        //             type: "text",
-        //             placeholder: "Email",
-        //             register: register,
-        //             error: errors.email
-        //         },
-        //         {
-        //             name: "phone",
-        //             label: "Phone*",
-        //             type: "text",
-        //             placeholder: "Phone",
-        //             register: register,
-        //             error: errors.phone
-        //         },
-        //         {
-        //             name: "address.address1",
-        //             label: "Address 1*",
-        //             type: "text",
-        //             placeholder: "Address 1",
-        //             register: register,
-        //             error: errors.address?.address1
-        //         },
-        //         {
-        //             name: "address.address2",
-        //             label: "Address 2",
-        //             type: "text",
-        //             placeholder: "Address 2",
-        //             register: register,
-        //             error: errors.address?.address2
-        //         },
-        //         {
-        //             name: "address.city",
-        //             label: "City*",
-        //             type: "text",
-        //             placeholder: "City",
-        //             register: register,
-        //             error: errors.address?.city
-        //         },
-        //         {
-        //             name: "address.state",
-        //             label: "State/Province*",
-        //             type: "text",
-        //             placeholder: "State/Province",
-        //             register: register,
-        //             error: errors.address?.state
-        //         },
-        //         {
-        //             name: "address.postalCode",
-        //             label: "Postal/ZIP Code*",
-        //             type: "text",
-        //             placeholder: "Postal/ZIP Code",
-        //             register: register,
-        //             error: errors.address?.postalCode
-        //         },
-        //         {
-        //             name: "address.country",
-        //             label: "Country*",
-        //             type: "text",
-        //             placeholder: "Country",
-        //             register: register,
-        //             error: errors.address?.country
-        //         },
-        //         {
-        //             name: "address.locationTypeId",
-        //             label: "Location Type*",
-        //             type: "select",
-        //             placeholder: "Location Type",
-        //             register: register,
-        //             error: errors.address?.locationTypeId,
-        //             options: palletShippingLocationTypesRes.palletShippingLocationTypes.map((palletShipping: LocationType) => ({
-        //                 value: palletShipping.id.toString(),
-        //                 label: palletShipping.name
-        //             }))
-        //         },
-        //         {
-        //             name: "isResidential",
-        //             label: "Residential Address",
-        //             type: "checkbox",
-        //             placeholder: "Residential Address",
-        //             register: register,
-        //             error: errors.isResidential
-        //         },
-        //         {
-        //             name: "signatureId",
-        //             label: "Signature*",
-        //             type: "radio",
-        //             placeholder: "Signature",
-        //             register: register,
-        //             error: errors.signatureId,
-        //             options: signatures.map((signature: Signature) => ({
-        //                 value: signature.id.toString(),
-        //                 label: signature.name
-        //             }))
-        //         }
-        //     ]}
-        // >
-        //     <div className="space-y-4">
-        //         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        //             <FormField
-        //                 name="firstName"
-        //                 label="First Name*"
-        //                 placeholder="First Name"
-        //                 register={register}
-        //                 error={errors.firstName}
-        //             />
-        //             <FormField
-        //                 name="lastName"
-        //                 label="Last Name*"
-        //                 placeholder="Last Name"
-        //                 register={register}
-        //                 error={errors.lastName}
-        //             />
-        //         </div>
-        //         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        //             <FormField
-        //                 name="email"
-        //                 label="Email*"
-        //                 placeholder="Email"
-        //                 register={register}
-        //                 error={errors.email}
-        //             />
-        //             <FormField
-        //                 name="phone"
-        //                 label="Phone*"
-        //                 placeholder="Phone"
-        //                 register={register}
-        //                 error={errors.phone}
-        //             />
-        //         </div>
-        //         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        //             <FormField
-        //                 name="address1"
-        //                 label="Address 1*"
-        //                 placeholder="Address 1"
-        //                 register={register}
-        //                 error={errors.address1}
-        //             />
-        //             <FormField
-        //                 name="address2"
-        //                 label="Address 2"
-        //                 placeholder="Address 2"
-        //                 register={register}
-        //                 error={errors.address2}
-        //             />
-        //         </div>
-        //         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        //             <FormField
-        //                 name="city"
-        //                 label="City*"
-        //                 placeholder="City"
-        //                 register={register}
-        //                 error={errors.city}
-        //             />
-        //             <FormField
-        //                 name="postalCode"
-        //                 label="Postal/ZIP Code*"
-        //                 placeholder="Postal/ZIP Code"
-        //                 register={register}
-        //                 error={errors.postalCode}
-        //             />
-        //         </div>
-        //         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        //             <FormField
-        //                 name="province"
-        //                 label="Province/State*"
-        //                 placeholder="Province/State"
-        //                 register={register}
-        //                 error={errors.province}
-        //             />
-        //             <FormField
-        //                 name="country"
-        //                 label="Country*"
-        //                 placeholder="Country"
-        //                 register={register}
-        //                 error={errors.country}
-        //             />
-        //         </div>
-        //     </div>
-        // </GlobalForm>
-
+       
 
     )
 }

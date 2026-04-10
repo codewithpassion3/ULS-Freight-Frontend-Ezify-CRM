@@ -8,25 +8,28 @@ import { useEffect } from "react"
 import { getSingleQuote } from "@/api/services/quotes.api"
 // import { shipmentSchema, ShipmentFormValues } from "./Dimensions.schema"
 import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
-import { lineItemSchema } from "./Dimensions.schema"
+import { lineItemSchema, palletLineItemSchema } from "./Dimensions.schema"
 
 export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOptions]) {
-    const methods = useForm<ShipmentFormValues>({
-        resolver: zodResolver(lineItemSchema) as any,
+    const methods = useForm<any>({
+        resolver: zodResolver(palletLineItemSchema) as any,
         mode: "onChange",
-        defaultValues: {
-            shipmentType: shipmentType,
-            lineItem: {
-                type: "PACKAGE",
-                description: "",
-                measurementUnit: "IMPERIAL",
-                units: [],
-            },
-        },
+        // defaultValues: {
+        //     shipmentType: shipmentType,
+        //     description: "",
+        //     measurementUnit: "IMPERIAL",
+        //     units: [{
+        //         length: 0,
+        //         width: 0,
+        //         height: 0,
+        //         weight: 0,
+        //         description: "",
+        //     }],
+        // },
     })
 
-    const { control, setValue } = methods
-    const fieldArray = useFieldArray({ control, name: "lineItem.units" })
+    const { control, setValue, formState: { errors } } = methods
+    const fieldArray = useFieldArray({ control, name: "units" })
 
     const quoteId = useSearchParams().get("id")
     const { data: cachedSingleQuote } = useQuery({
@@ -35,26 +38,27 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
         enabled: !!quoteId,
         staleTime: 1000 * 60 * 5,
     })
+    console.log("grand-parent errors", errors)
 
-    useEffect(() => {
-        if (!cachedSingleQuote) return
-        const units = cachedSingleQuote.quote.lineItems?.units ?? []
+    // useEffect(() => {
+    //     if (!cachedSingleQuote) return
+    //     const units = cachedSingleQuote.quote.lineItems?.units ?? []
 
-        setValue(
-            "lineItem.units",
-            units.length === 0
-                ? [{ quantity: 1, length: 0, width: 0, height: 0, weight: 0, description: "" }]
-                : units
-        )
-        setValue("lineItem.measurementUnit", cachedSingleQuote.lineItem?.measurementUnit ?? "IMPERIAL")
-        setValue("lineItem.dangerousGoods", cachedSingleQuote.lineItem?.dangerousGoods ?? false)
-        setValue("lineItem.stackable", cachedSingleQuote.lineItem?.stackable ?? false)
-        setValue("lineItem.specialHandlingRequired", cachedSingleQuote.lineItem?.specialHandlingRequired ?? false)
-        setValue("lineItem.quantity", cachedSingleQuote.lineItem?.quantity ?? 1)
-    }, [cachedSingleQuote, setValue])
+    //     setValue(
+    //         "lineItem.units",
+    //         units.length === 0
+    //             ? [{ quantity: 1, length: 0, width: 0, height: 0, weight: 0, description: "" }]
+    //             : units
+    //     )
+    //     setValue("lineItem.measurementUnit", cachedSingleQuote.lineItem?.measurementUnit ?? "IMPERIAL")
+    //     setValue("lineItem.dangerousGoods", cachedSingleQuote.lineItem?.dangerousGoods ?? false)
+    //     setValue("lineItem.stackable", cachedSingleQuote.lineItem?.stackable ?? false)
+    //     setValue("lineItem.specialHandlingRequired", cachedSingleQuote.lineItem?.specialHandlingRequired ?? false)
+    //     setValue("lineItem.quantity", cachedSingleQuote.lineItem?.quantity ?? 1)
+    // }, [cachedSingleQuote, setValue])
 
     const handleAddPackage = () =>
-        fieldArray.append({ quantity: 1, length: 0, width: 0, height: 0, weight: 0, description: "" })
+        fieldArray.append({ length: 0, width: 0, height: 0, weight: 0, description: "" })
 
     const handleClearDimensions = (index: number) => {
         setValue(`lineItem.units.${index}.length`, null)

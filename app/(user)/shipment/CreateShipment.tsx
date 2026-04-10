@@ -3,27 +3,30 @@
 import { createContext, useEffect, useMemo, useState, useRef } from "react"
 import { useForm, FormProvider, useFormContext } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { SideBar } from "../SideBar"
+import { SideBar } from "@/components/shared/SideBar"
 import z from "zod"
 // import { determineSchema } from "../../../app/(user)/quote/create/utils"
-import StepperButtons from "../StepperButtons"
+import StepperButtons from "@/components/shared/StepperButtons"
 import { createQuote, getSingleQuote, updateQuote } from "@/api/services/quotes.api"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { usePathname, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
-import { ShippingTypeSelector } from "../Shipping/ShippingTypeSelector"
-import { ShippingAddressSection } from "../Shipping/ShippingAddressSection"
-import { EquimentTypeSelector } from "../EquimentSelection/EquimentTypeSelector"
-import ContactInformation from "../ContactInformation/ContactInformation"
-import Dimensions from "../Dimensions/Dimensions"
-import AdditionalServices from "../AdditionalService/AdditionalServices"
-import AdditionalInsurance from "../AdditionalInsurance/AdditionalInsurance"
-import SignaturePreference from "../SignaturePreference/SignaturePreference"
+import { ShippingTypeSelector } from "@/components/shared/Shipping/ShippingTypeSelector"
+import { ShippingAddressSection } from "@/components/shared/Shipping/ShippingAddressSection"
+import { EquimentTypeSelector } from "@/components/shared/EquimentSelection/EquimentTypeSelector"
+import ContactInformation from "@/components/shared/ContactInformation/ContactInformation"
+import Dimensions from "@/components/shared/Dimensions/Dimensions"
+import AdditionalServices from "@/components/shared/AdditionalService/AdditionalServices"
+import AdditionalInsurance from "@/components/shared/AdditionalInsurance/AdditionalInsurance"
+import SignaturePreference from "@/components/shared/SignaturePreference/SignaturePreference"
 import { Button } from "@/components/ui/button"
 import { quoteUnionSchema, spotShipmentSchema, standardShipmentSchema } from "@/lib/validations/quote/standard-quote-schema"
 import { createShipment, updateShipment } from "@/api/services/shipment.api"
+import ShipmentContactInformation from "./create/ShipmentContactInformation"
+import FormTime from "@/components/common/form/fields/FormTime"
+import { ContactForm } from "../settings/(address-book)/components/ContactForm"
 // import { quoteSchema } from "@/lib/validations/quote/standard-quote-schema"
 
 export type QuoteTypes = "SPOT" | "STANDARD"
@@ -32,7 +35,7 @@ export type ShipmentOptions = {
     STANDARD: "PALLET" | "PACKAGE" | "COURIER_PAK" | "STANDARD_FTL",
 };
 export const SchemaContext = createContext<z.ZodType<any> | null>(null)
-export default function DynamicQuote({ quoteType, initialShipmentType }: {
+export default function DynamicShipment({ quoteType, initialShipmentType }: {
     quoteType: keyof ShipmentOptions,
     initialShipmentType: ShipmentOptions[keyof ShipmentOptions]
 }) {
@@ -147,9 +150,6 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         const fromValid = await fromAddressRef.current?.trigger()
         const toValid = await toAddressRef.current?.trigger()
         const dimValid = await dimensionsRef.current?.trigger()
-        // console.log("fromValid", fromValid)
-        // console.log("toValid", toValid)
-        console.log("dimValid", dimValid)
 
         // We validate core sections First. Then conditionally attached ones depending on if they are rendered
         let valid = fromValid && toValid && dimValid;
@@ -166,8 +166,6 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         const mergedData = getMergedPayload()
         console.log("mergedData", mergedData)
         payloadTransformer(mergedData)
-
-        
     }
 
     const payloadTransformer = (data: any) => {
@@ -210,7 +208,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         console.log("Submitting Payload:", payloadTransformed)
 
         const shipmentPayload = {
-            shipDate: new Date(),
+            shipDate: "",
             mode: "SHIPMENT",
             shipmentType: shipmentType,
             quote: {
@@ -219,13 +217,13 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         }
         if (isEditing) {
             if (isShipment) {
-                updateShipmentMutation.mutate(shipmentPayload)
+                updateShipmentMutation.mutate(payloadTransformed)
             } else {
                 updateQuoteMutation.mutate(payloadTransformed)
             }
         } else {
             if (isShipment) {
-                createShipmentMutation.mutate(shipmentPayload)
+                createShipmentMutation.mutate(payloadTransformed)
             } else {
                 createQuoteMutation.mutate(payloadTransformed)
             }
@@ -250,15 +248,17 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             </div> : ""}
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                <div className={`${isShipment ? "lg:col-span-3" : "lg:col-span-3"}`}>
+                <div className={`${isShipment ? "lg:col-span-4" : "lg:col-span-3"}`}>
                     <div className="space-y-6">
                         <ShippingTypeSelector quoteType={quoteType} shipmentType={shipmentType} setShipmentType={setShipmentType} />
                         <div className="flex flex-col md:flex-row gap-6">
                             <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
-                                <ShippingAddressSection ref={fromAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="FROM" title="Shipping From" />
+                                <ShippingAddressSection title="Shipping From" onSwap={handleSwapAddress} ref={fromAddressRef} type="FROM" />
+                                
                             </div>
                             <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
-                                <ShippingAddressSection ref={toAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="TO" title="Shipping To" />
+                                <ShippingAddressSection title="Shipping To" onSwap={handleSwapAddress} ref={toAddressRef} type="TO" />
+                                
                             </div>
 
                         </div>
@@ -271,7 +271,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                         </div>
                     </div>
                     {isStandardQuote && <div className="mt-6"><AdditionalInsurance ref={insuranceRef} /></div>}
-                    {(shipmentType === "PALLET" || shipmentType === "COURIER_PAK" || isShipment) && <div className="mt-6"><SignaturePreference ref={signatureRef} /></div>}
+                    {(shipmentType === "PALLET" || shipmentType === "COURIER_PAK") && <div className="mt-6"><SignaturePreference ref={signatureRef} /></div>}
 
                     <div className="w-full flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
                         <div className="flex gap-4">
@@ -297,7 +297,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                 </div>
 
                 {/* Sidebar */}
-                <SideBar currentStep={currentStep} setCurrentStep={setCurrentStep} />
+                {!isShipment ? <SideBar currentStep={currentStep} setCurrentStep={setCurrentStep} /> : ""}
             </div>
         </div>
     )

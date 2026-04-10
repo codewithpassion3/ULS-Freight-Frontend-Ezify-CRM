@@ -11,6 +11,7 @@ export type FormFieldTypes = {
     disabled?: boolean
     inputClassName?: string
     wrapperClassName?: string;
+    show?: boolean;
 }
 export type FormSelectTypes = {
     name: string;
@@ -66,3 +67,12 @@ export type FormDateTypes = {
     onSelect: (value: Date | undefined) => void
     wrapperClassName?: string;
 }
+
+export type FormTimeProps = {
+    label: string
+    hourName: string
+    minuteName: string
+    ampmName: string
+}
+
+export type FormFieldUnion = FormFieldTypes | FormSelectTypes | FormCheckboxTypes | FormRadioTypes | FormDateTypes | FormTimeProps

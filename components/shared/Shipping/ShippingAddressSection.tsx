@@ -7,7 +7,7 @@ import { SelectAddressBookModal } from "./SelectAddressBookModal"
 import { useQuery } from "@tanstack/react-query"
 import { useMarkContactAsRecent } from "../../../app/(user)/quote/create/hooks"
 import { Button } from "@/components/ui/button"
-import { ArrowLeftRight, InfoIcon, X } from "lucide-react"
+import { ArrowLeftRight, BookUser, InfoIcon, X } from "lucide-react"
 import { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import z, { ZodType } from "zod"
 import { useEffect, useMemo, useState } from "react"
@@ -36,6 +36,7 @@ function getRequiredFields(schema: z.ZodObject<any>) {
 }
 
 import { forwardRef, useImperativeHandle } from "react"
+import { FormFieldTypes, FormFieldUnion } from "@/components/common/form/fields/fields.types"
 export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, type, title, onNextStep, onSwap }: { quoteType: keyof ShipmentOptions, shipmentType: ShipmentOptions[keyof ShipmentOptions], type: "TO" | "FROM", title: string, onNextStep?: (data: any) => void, onSwap?: () => void }, ref) => {
   // check if route includes shipment to check if it quote or shipment
   const pathname = usePathname()
@@ -105,6 +106,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   }, [cachedSingleQuote, index, type, shipmentType, methods]);
 
   const handleAddressSelect = (contact: ContactType) => {
+    console.log(contact)
     markContactAsRecent.mutate(contact.id || "")
     setAddressLocked(true)
     const currentValues = methods.getValues();
@@ -117,7 +119,9 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       city: contact.address?.city || "",
       state: contact.address?.state || "",
       country: contact.address?.country || "",
+
       ...(showLocationType && { locationType: contact?.locationTypeId || "" }),
+
     });
   }
 
@@ -157,7 +161,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
     }
   };
 
-  const formFields: any[] = [
+  const formFields: FormFieldUnion[] = [
     {
       name: "companyName",
       label: "Company Name",
@@ -187,6 +191,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       type: "text",
       // placeholder: "Address",
       disabled: addressLocked,
+      show: isShipment,
     },
     {
       name: "unitfloor",
@@ -194,6 +199,8 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       type: "text",
       // placeholder: "Address",
       disabled: addressLocked,
+      show: isShipment,
+
     },
     {
       name: "postalCode",
@@ -242,88 +249,41 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       placeholder: "Location Type",
       icon: <InfoIcon size={16} />,
       disabled: addressLocked,
-      show: isShipment,
+      show: false,
       wrapperClassName: "col-span-2",
     },
-    {
-      name: "contactName",
-      label: "Contact Name",
-      type: "text",
-      placeholder: "Contact Name",
-      disabled: addressLocked,
-      show: isShipment,
-    },
-    {
-      name: "phoneNumber",
-      label: "Phone Number",
-      type: "phone",
-      placeholder: "Phone Number",
-      disabled: addressLocked,
-      show: isShipment,
-    },
-    // instructions
-    {
-      name: "instructions",
-      label: "Instructions",
-      type: "text",
-      placeholder: "Instructions",
-      disabled: addressLocked,
-      show: isShipment,
-      wrapperClassName: "col-span-2",
-    },
-    
-    // email optional
-    {
-      name: "email",
-      label: "Email Address (optional)",
-      type: "text",
-      placeholder: "Email",
-      disabled: addressLocked,
-      show: isShipment,
-      wrapperClassName: "col-span-2",
-    },
-    {
-      name: "shipDate",
-      label: "Ship Date",
-      type: "date",
-      placeholder: "Ship Date",
-      disabled: addressLocked,
-      show: isShipment,
-      wrapperClassName: "col-span-2",
-    },
-
-
 
 
   ];
 
   return (
-    <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
-      <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold">{title}</h2>
-        <div className="flex gap-2">
-          <Button variant="destructive" type="button" onClick={handleClearAddress}>
-            <X />
-            Clear
-          </Button>
-          <Button variant="outline" type="button" onClick={handleSwap}>
-            <ArrowLeftRight />
-            Swap
-          </Button>
-        </div>
-      </div>
-      <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(handleNext)} className="space-y-4 mt-2">
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-sm font-medium">Select Address</p>
-            <SelectAddressBookModal onSelect={handleAddressSelect} />
+      <>
+        <div className="flex justify-between items-center">
+          <h2 className="text-lg font-semibold">{title}</h2>
+          <div className="flex gap-2">
+            <Button variant="destructive" type="button" onClick={handleClearAddress}>
+              <X />
+              Clear
+            </Button>
+            <Button variant="outline" type="button" onClick={handleSwap}>
+              <ArrowLeftRight />
+              Swap
+            </Button>
           </div>
-          <GlobalForm
-            formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 gap-4"
-            fields={formFields}
-          />
-        </form>
-      </FormProvider>
-    </div>
+        </div>
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(handleNext)} className="space-y-4 mt-2">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-sm font-medium">Select Address</p>
+              <SelectAddressBookModal onSelect={handleAddressSelect} />
+            </div>
+            <GlobalForm
+              formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 gap-6"
+              fields={formFields}
+            />
+            
+          </form>
+        </FormProvider>
+      </>
   )
 })

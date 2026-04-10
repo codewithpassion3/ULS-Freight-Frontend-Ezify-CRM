@@ -7,6 +7,7 @@ import AddPackage from "@/app/(user)/packages/AddPackage"
 import { FREIGHT_CLASS_OPTIONS } from "./constants"
 import type { ShipmentFormValues } from "./Dimensions.schema"
 import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
+import { usePathname } from "next/navigation"
 
 type Props = {
     index: number
@@ -20,29 +21,31 @@ type Props = {
 }
 
 export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, onClear, open, setOpen }: Props) {
-    const { register, watch, formState: { errors } } = useFormContext<ShipmentFormValues>()
+    const { register, watch, formState: { errors } } = useFormContext<any>()
 
-    const measurementUnit = watch("lineItem.measurementUnit") ?? "IMPERIAL"
+    const measurementUnit = watch("measurementUnit") ?? "IMPERIAL"
     const isImperial = measurementUnit === "IMPERIAL"
     const lengthUnit = isImperial ? "in" : "cm"
     const weightUnit = isImperial ? "lbs" : "kg"
-    const rowErrors = (errors.lineItem as any)?.units?.[index]
-
+    const rowErrors = (errors as any)?.units?.[index]
+    console.log("child errors", errors.units)
+    const pathname = usePathname()
+    const isShipment = pathname.includes("shipment")
     // Snapshot current row values for the SavePackage dialog
     const rowSnapshot = {
         measurementUnit,
-        length: watch(`lineItem.units.${index}.length`) as number | undefined,
-        width: watch(`lineItem.units.${index}.width`) as number | undefined,
-        height: watch(`lineItem.units.${index}.height`) as number | undefined,
-        weight: watch(`lineItem.units.${index}.weight`) as number | undefined,
-        freightClass: watch(`lineItem.units.${index}.freightClass`),
-        nmfc: watch(`lineItem.units.${index}.nmfc`),
-        shipmentType: watch(`lineItem.units.${index}.shipmentType`) as any,
-        unitsOnPallet: watch(`lineItem.units.${index}.unitsOnPallet`) as number | undefined,
-        palletUnitType: watch(`lineItem.units.${index}.palletUnitType`),
-        description: watch(`lineItem.units.${index}.description`),
+        length: watch(`units.${index}.length`) as number | undefined,
+        width: watch(`units.${index}.width`) as number | undefined,
+        height: watch(`units.${index}.height`) as number | undefined,
+        weight: watch(`units.${index}.weight`) as number | undefined,
+        freightClass: watch(`units.${index}.freightClass`),
+        nmfc: watch(`units.${index}.nmfc`),
+        shipmentType: watch(`units.${index}.shipmentType`) as any,
+        unitsOnPallet: watch(`units.${index}.unitsOnPallet`) as number | undefined,
+        palletUnitType: watch(`units.${index}.palletUnitType`),
+        description: watch(`units.${index}.description`),
     }
-
+    console.log("rowErrors", rowErrors)
     return (
         <div key={fieldId} className="space-y-4 pb-6 border-b last:border-0 relative group">
             {/* Row header */}
@@ -52,8 +55,8 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                         {index + 1}
                     </div>
                     <span className="font-semibold text-slate-800 dark:text-slate-100">Package {index + 1}</span>
-                    <input type="hidden" {...register("lineItem.quantity", { valueAsNumber: true })} />
-                    <input type="hidden" value={shipmentType as string} {...register("lineItem.type")} />
+                    <input type="hidden" {...register("quantity", { valueAsNumber: true })} />
+                    <input type="hidden" value={shipmentType as string} {...register("type")} />
                 </div>
                 {canRemove && (
                     <Button variant="ghost" size="icon" type="button" onClick={() => onRemove(index)}
@@ -62,42 +65,41 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                     </Button>
                 )}
             </div>
-
             {/* Dimension fields */}
             <GlobalForm
                 formWrapperClassName="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 xl:grid-cols-8 gap-4 items-start"
                 fields={[
                     {
-                        name: `lineItem.units.${index}.length`,
+                        name: `units.${index}.length`,
                         label: `Length (${lengthUnit})*`,
                         type: "number",
                         placeholder: "L",
                         labelClassName: "text-xs text-muted-foreground"
                     },
 
-                    { name: `lineItem.units.${index}.width`, label: `Width (${lengthUnit})*`, type: "number", placeholder: "W", labelClassName: "text-xs text-muted-foreground", className: rowErrors?.width ? "border-red-500" : "" },
-                    { name: `lineItem.units.${index}.height`, label: `Height (${lengthUnit})*`, type: "number", placeholder: "H", labelClassName: "text-xs text-muted-foreground", className: rowErrors?.height ? "border-red-500" : "" },
-                    { name: `lineItem.units.${index}.weight`, label: `Weight (${weightUnit})*`, type: "number", placeholder: "W", labelClassName: "text-xs text-muted-foreground", className: rowErrors?.weight ? "border-red-500" : "" },
+                    { name: `units.${index}.width`, label: `Width (${lengthUnit})*`, type: "number", placeholder: "W", labelClassName: "text-xs text-muted-foreground", className: rowErrors?.width ? "border-red-500" : "" },
+                    { name: `units.${index}.height`, label: `Height (${lengthUnit})*`, type: "number", placeholder: "H", labelClassName: "text-xs text-muted-foreground", className: rowErrors?.height ? "border-red-500" : "" },
+                    { name: `units.${index}.weight`, label: `Weight (${weightUnit})*`, type: "number", placeholder: "W", labelClassName: "text-xs text-muted-foreground", className: rowErrors?.weight ? "border-red-500" : "" },
                     {
                         label: "Freight Class*",
                         type: "select",
-                        name: `lineItem.units.${index}.freightClass`,
+                        name: `units.${index}.freightClass`,
                         options: FREIGHT_CLASS_OPTIONS,
                         labelClassName: "text-xs text-muted-foreground",
                         placeholder: "Select Freight Class",
                         show: shipmentType === "PALLET" || shipmentType === "SPOT_LTL"
                     },
                     {
-                        name: `lineItem.units.${index}.nmfc`,
-                        label: `NMFC*`,
+                        name: `units.${index}.nmfc`,
+                        label: `NMFC`,
                         type: "text",
                         placeholder: "NMFC",
                         labelClassName: "text-xs text-muted-foreground",
                         show: shipmentType === "PALLET"
                     },
                     {
-                        name: `lineItem.units.${index}.palletUnitType`,
-                        label: "Pallet Unit Type*",
+                        name: `units.${index}.palletUnitType`,
+                        label: "Type*",
                         type: "select",
                         options: [
                             { value: "PALLET", label: "Pallet" },
@@ -119,7 +121,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                         show: shipmentType === "PALLET" || shipmentType === "SPOT_LTL" || shipmentType === "SPOT_FTL" || shipmentType === "TIME_CRITICAL"
                     },
                     {
-                        name: `lineItem.units.${index}.unitsOnPallet`,
+                        name: `units.${index}.unitsOnPallet`,
                         label: "Units on Pallet*",
                         type: "number",
                         placeholder: "Units on Pallet",
@@ -128,7 +130,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
 
                     },
                     {
-                        name: `lineItem.units.${index}.description`,
+                        name: `units.${index}.description`,
                         label: "Description*",
                         type: "text",
                         placeholder: "Description",
@@ -137,7 +139,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                     },
                     // specialHandlingRequired
                     {
-                        name: `lineItem.units.${index}.specialHandlingRequired`,
+                        name: `units.${index}.specialHandlingRequired`,
                         label: "Special Handling Required",
                         type: "checkbox",
                         labelClassName: "text-xs text-muted-foreground",

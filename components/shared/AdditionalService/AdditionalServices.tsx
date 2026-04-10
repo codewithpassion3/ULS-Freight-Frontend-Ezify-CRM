@@ -25,10 +25,10 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                 appointmentDelivery: false,
                 thresholdDelivery: false,
                 thresholdPickup: false,
-                inBond: false,
+                inbound: false,
                 protectFromFreeze: false,
                 tradeShowDelivery: false,
-                amazonFbaDelivery: false,
+                amazonOrFBADelivery: false,
                 refrigeratedServices: false,
                 looseFreight: false,
                 pallets: false,
@@ -69,10 +69,10 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                     appointmentDelivery: services.appointmentDelivery,
                     thresholdDelivery: services.thresholdDelivery,
                     thresholdPickup: services.thresholdPickup,
-                    inBond: services.inBond,
+                    inbound: services.inbound,
                     protectFromFreeze: services.protectFromFreeze,
                     tradeShowDelivery: services.tradeShowDelivery,
-                    amazonFbaDelivery: services.amazonFbaDelivery,
+                    amazonOrFBADelivery: services.amazonOrFBADelivery,
                     refrigeratedServices: services.refrigeratedServices,
                     looseFreight: services.looseFreight,
                     pallets: services.pallets,
@@ -97,7 +97,7 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
             <Accordion type="single" collapsible value={isOpen ? "insurance" : ""} onValueChange={(val) => setIsOpen(!!val)} className="shadow-lg border border-border rounded-md bg-white dark:bg-card">
                 <AccordionItem value="insurance" className="border-none">
                     <AccordionTrigger className="group px-6 py-4 hover:no-underline items-center cursor-pointer [&>svg]:hidden!" >
-                        <h2 className="font-semibold flex items-center gap-2 text-lg text-black dark:text-white ">
+                        <h2 className="font-semibold flex items-center gap-2 text-lg text-slate-700 dark:text-white ">
                             <ListTodo />
                             Additional Services
                             <ChevronUp className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
@@ -202,7 +202,7 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                                         icon: <Info size={16} />
                                     }}
                                 />
-                                {watch("services.inBond") &&
+                                {watch("services.inbound") &&
                                     <div className="my-4">
                                         <InBond />
                                     </div>
@@ -226,7 +226,7 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                             />
                             <FormCheckbox
                                 field={{
-                                    name: "services.amazonFbaDelivery",
+                                    name: "services.amazonOrFBADelivery",
                                     label: "Amazon/FBA Delivery",
                                     defaultValue: false,
                                     icon: <Info size={16} />

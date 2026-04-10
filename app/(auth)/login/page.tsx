@@ -14,6 +14,7 @@ import { Loader } from "@/components/common/Loader"
 import Link from "next/link"
 import { AuthLayout } from "../AuthLayout"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
+import { Loader2 } from "lucide-react"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -30,7 +31,7 @@ export default function LoginPage() {
       setTimeout(() => router.replace("/"), 300)
     },
     onError: (error: AxiosError<ApiError>) => {
-      toast.error(error?.response?.data?.message)
+      toast.error(error?.response?.data?.message || "Unexpected error occurred")
     },
   })
 
@@ -93,7 +94,7 @@ export default function LoginPage() {
             </Link>
           </div>
           <Button type="submit" variant="default" className="w-full">
-            Start Shipping!
+            {loginMutation.isPending ? <Loader2 className="animate-spin" /> : "Start Shipping!"}
           </Button>
         </form>
       </FormProvider>

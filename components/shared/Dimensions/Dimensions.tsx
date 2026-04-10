@@ -2,7 +2,7 @@
 import { forwardRef, useImperativeHandle, useState } from "react"
 import { FormProvider } from "react-hook-form"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Cuboid, ChevronUp, Info } from "lucide-react"
+import { Cuboid, ChevronUp, Info, PackageCheck } from "lucide-react"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
 import DangerousGoodsForm from "./DangerousGoodDetails"
 import { useDimensions } from "./Dimensions.hooks"
@@ -10,6 +10,7 @@ import { DimensionsMeasurementControls } from "./DimensionsMesurementControls"
 import { PackageRow } from "./PackageRow"
 import { DimensionsFooter } from "./DimensionsFooter"
 import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
+import { usePathname } from "next/navigation"
 
 const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }, ref) => {
   const { methods, fieldArray, handleAddPackage, handleClearDimensions } = useDimensions(shipmentType)
@@ -18,13 +19,23 @@ const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions
 
   const [isOpen, setIsOpen] = useState(false)
   const [packageDialogOpen, setPackageDialogOpen] = useState(false)
-
+ // isShipment
+ const pathname = usePathname()
+ const isShipment = pathname.includes("shipment")
   useImperativeHandle(ref, () => ({
     getValues: methods.getValues,
     setValues: (vals: any) => methods.reset({ ...vals }),
     trigger: methods.trigger,
     open: () => setIsOpen(true),
   }), [methods])
+
+  // show error
+  const { formState: { errors } } = methods
+  console.log("parent errors", errors)
+
+  // values
+  console.log("values", methods.getValues())
+
 
   const handleQuantityChange = (targetCount: number) => {
     const currentCount = fields.length
@@ -45,8 +56,8 @@ const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions
           <AccordionItem value="dimensions" className="border-none">
             <AccordionTrigger className="group px-6 py-4 hover:no-underline items-center cursor-pointer [&>svg]:hidden!">
               <h2 className="flex gap-2 items-center text-lg font-semibold text-slate-800 dark:text-slate-100">
-                <Cuboid className="w-5 h-5" />
-                Dimensions & Weight
+                <PackageCheck />
+                {isShipment ? " Packaging Details" :"Dimensions & Weight"}
                 <ChevronUp className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
               </h2>
             </AccordionTrigger>
@@ -75,6 +86,7 @@ const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions
                 <GlobalForm
                   formWrapperClassName="flex items-center gap-4"
                   fields={[
+                    // { name: "lineItem.units.0.length", label: "Length", type: "number", defaultValue: 1, icon: <Info size={14} className="text-slate-800 dark:text-white" /> },
                     { name: "lineItem.dangerousGoods", label: "Dangerous Goods", type: "checkbox", defaultValue: false, icon: <Info size={14} className="text-slate-800 dark:text-white" /> },
                     { name: "lineItem.stackable",      label: "Stackable",       type: "checkbox", defaultValue: false, icon: <Info size={14} className="text-slate-800 dark:text-white" /> },
                   ]}

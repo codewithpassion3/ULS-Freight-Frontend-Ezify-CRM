@@ -5,6 +5,7 @@ import FormCheckbox from "./fields/FormCheckbox"
 import FormRadio from "./fields/FormRadio"
 import FormPhone from "./fields/FormPhone"
 import FormDate from "./fields/FormDate"
+import FormTime from "./fields/FormTime"
 
 export const FieldRenderer = memo(({ field, type }: any) => {
   if (field.show === false) return null
@@ -29,8 +30,8 @@ export const FieldRenderer = memo(({ field, type }: any) => {
     //   return <FormField name={field.name} label={field.label} placeholder={field.placeholder} type="textarea" />
     // case "datetime":
     //   return <FormField name={field.name} label={field.label} placeholder={field.placeholder} type="datetime" />
-    // case "time":
-    //   return <FormField name={field.name} label={field.label} placeholder={field.placeholder} type="time" />
+    case "time":
+      return <FormTime field={field} />
     // case "file":
     //   return <FormField name={field.name} label={field.label} placeholder={field.placeholder} type="file" />
     // case "image":
