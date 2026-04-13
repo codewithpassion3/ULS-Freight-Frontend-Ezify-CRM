@@ -22,7 +22,7 @@ type Props = {
 export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, onClear, open, setOpen }: Props) {
     const { register, watch, formState: { errors } } = useFormContext<any>()
 
-    const measurementUnit = watch("measurementUnit") ?? "IMPERIAL"
+    const measurementUnit = watch("lineItem.measurementUnit")
     const isImperial = measurementUnit === "IMPERIAL"
     const lengthUnit = isImperial ? "in" : "cm"
     const weightUnit = isImperial ? "lbs" : "kg"
@@ -74,11 +74,38 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                         type: "number",
                         placeholder: "L",
                         min: 0,
-                        labelClassName: "text-xs text-muted-foreground"
+                        labelClassName: "text-xs text-muted-foreground",
+                        show: !(isShipment && shipmentType === "COURIER_PAK")
                     },
-                    { name: `units.${index}.width`, label: `Width (${lengthUnit})*`, type: "number", placeholder: "W", min: 0, labelClassName: "text-xs text-muted-foreground", className: rowErrors?.width ? "border-red-500" : "" },
-                    { name: `units.${index}.height`, label: `Height (${lengthUnit})*`, type: "number", placeholder: "H", min: 0, labelClassName: "text-xs text-muted-foreground", className: rowErrors?.height ? "border-red-500" : "" },
-                    { name: `units.${index}.weight`, label: `Weight (${weightUnit})*`, type: "number", placeholder: "W", min: 0, labelClassName: "text-xs text-muted-foreground", className: rowErrors?.weight ? "border-red-500" : "" },
+                    {
+                        name: `units.${index}.width`,
+                        label: `Width (${lengthUnit})*`,
+                        type: "number",
+                        placeholder: "W",
+                        min: 0,
+                        labelClassName: "text-xs text-muted-foreground",
+                        className: rowErrors?.width ? "border-red-500" : "",
+                        show: !(isShipment && shipmentType === "COURIER_PAK")
+                    },
+                    {
+                        name: `units.${index}.height`,
+                        label: `Height (${lengthUnit})*`,
+                        type: "number",
+                        placeholder: "H",
+                        min: 0,
+                        labelClassName: "text-xs text-muted-foreground",
+                        className: rowErrors?.height ? "border-red-500" : "",
+                        show: !(isShipment && shipmentType === "COURIER_PAK")
+                    },
+                    {
+                        name: `units.${index}.weight`,
+                        label: `Weight (${weightUnit})*`,
+                        type: "number",
+                        placeholder: "W",
+                        min: 0,
+                        labelClassName: "text-xs text-muted-foreground",
+                        className: rowErrors?.weight ? "border-red-500" : "",
+                    },
                     {
                         label: "Freight Class*",
                         type: "select",
@@ -124,7 +151,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                         label: "Units on Pallet*",
                         type: "number",
                         placeholder: "Units on Pallet",
-                        min:0,
+                        min: 0,
                         labelClassName: "text-xs text-muted-foreground",
                         show: shipmentType === "PALLET" || shipmentType === "SPOT_LTL" || shipmentType === "SPOT_FTL" || shipmentType === "TIME_CRITICAL"
 

@@ -9,12 +9,13 @@ import { useFieldController } from "../useFieldController"
 const FormRadio = memo(({ field: config }: { field: FormRadioTypes }) => {
     const { field } = useFieldController(config.name)
     return (
-        <div className={config.wrapperClassName}> 
+        <div className={config.wrapperClassName}>
             <RadioGroup
                 onValueChange={(value) => {
                     field.onChange(config.valueType === "number" ? Number(value) : value)
 
                 }}
+                defaultValue={config.defaultValue?.toString()}
                 onChange={() => field.onChange}
                 className={`flex gap-6 ${config.className} cursor-pointer`}
             >
@@ -23,6 +24,7 @@ const FormRadio = memo(({ field: config }: { field: FormRadioTypes }) => {
                     return (
                         <div key={opt.value} className="flex items-center gap-2 ">
                             <RadioGroupItem
+                                disabled={config.disabled}
                                 value={opt.value.toString()}
                                 id={`${config.name}-${opt.value}`}
                                 className={`${isSelected ? config.selectedClassName : ""} cursor-pointer`}

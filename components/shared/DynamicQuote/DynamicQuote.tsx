@@ -41,6 +41,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     const [shipmentType, setShipmentType] = useState<ShipmentOptions[keyof ShipmentOptions]>(initialShipmentType)
     const [quoteStatus, setQuoteStatus] = useState<"DRAFT" | "SAVED">("DRAFT")
     const quoteId = useSearchParams().get("id")
+    const [shipmentId, setShipmentId] = useState<string | null>(null)
     const totalSteps = 2
     const isEditing = !!quoteId
     const isSpotQuote = quoteType === "SPOT"
@@ -80,7 +81,9 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
 
     useEffect(() => {
         console.log("singleQuote", singleQuote)
-
+        if(singleQuote?.quote?.shipment?.id){
+            setShipmentId(singleQuote.quote.shipment.id)
+        }
     }, [singleQuote])
 
     const createQuoteMutation = useMutation({
@@ -115,7 +118,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         }
     })
     const updateShipmentMutation = useMutation({
-        mutationFn: (data: unknown) => updateShipment("1", data),
+        mutationFn: (data: unknown) => updateShipment(shipmentId!, data),
         onSuccess: () => {
             toast.success("Shipment updated successfully")
             // router.push("/shipments")

@@ -3,7 +3,7 @@ import { DataTable } from "@/components/common/table/DataTable"
 import { DataTablePagination } from "@/components/common/table/DataTablePagination"
 import { columns } from "./components/ColumnsTableQuotes"
 import { SortingState } from "@tanstack/react-table"
-import { CircleSlash, Plus, Trash2, Truck } from "lucide-react"
+import { CircleSlash, Plus, RefreshCcw, Trash2, Truck } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 import { MOCK_QUOTES, QuoteCategory } from "./page"
 import { useDebounce } from "../../../hooks/useDebounce.hook"
@@ -56,7 +56,7 @@ export default function DynamicQuotesTable({ setCount, quoteCategory }: Props) {
         description="Failed to fetch quotes"
         action={
             <Button variant="outline" className="text-muted-foreground border-border">
-                <Plus size={16} /> Retry
+                <RefreshCcw size={16} /> Retry
             </Button>
         }
     />

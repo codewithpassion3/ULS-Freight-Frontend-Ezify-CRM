@@ -75,18 +75,19 @@ export default function AddPackage({ id, shipmentType, initialData, onSave, chil
         shouldUnregister: false,
         defaultValues: {
             measurementUnit: "METRIC",
-            shipmentType: "PALLET",
+            shipmentType: shipmentType as ShipmentFormValues["shipmentType"],
         }
     });
 
     useEffect(() => {
         if (open && initialData) {
+            console.log("initialData", initialData)
             methods.reset({ ...initialData });
         } else if (open && !initialData) {
             methods.reset({
                 measurementUnit: "METRIC",
                 name: "",
-                shipmentType: "PALLET",
+                shipmentType: shipmentType as any,
             });
         }
     }, [open]);
@@ -130,25 +131,27 @@ export default function AddPackage({ id, shipmentType, initialData, onSave, chil
             createMutation.mutate(data as CreatePackagePayload);
         }
     };
-    const ShipmentValueType = methods.watch("shipmentType");
+    console.log("shipmentType", shipmentType)
+    const ShipmentValueType = methods.watch("shipmentType") || shipmentType;
     const fields: any = useMemo(() => [
         {
             name: "shipmentType",
             type: "radio",
             label: "Packaging Type",
-            defaultValue: "PALLET",
+            defaultValue: shipmentType,
             options: [
                 { value: "PALLET", label: "Pallet" },
                 { value: "PACKAGE", label: "Package" },
                 { value: "COURIER_PAK", label: "Courier Pak" },
             ],
             wrapperClassName: "col-span-2",
-            show: isNew
+            disabled: !isNew
         },
         {
             name: "measurementUnit",
             type: "radio",
             label: "Unit of Measurement",
+            defaultValue: measurementUnit,
             options: [
                 { value: "METRIC", label: "Metric (cm & kg)" },
                 { value: "IMPERIAL", label: "Imperial (in & lbs)" },
