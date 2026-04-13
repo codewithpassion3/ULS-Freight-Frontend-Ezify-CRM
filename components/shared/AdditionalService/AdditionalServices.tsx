@@ -40,9 +40,6 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                 insideDeliveryStairs: false,
                 insidePickupStairs: false
             },
-            limitedAccess: {
-                location: undefined
-            }
         }
     })
     const { watch, setValue } = methods

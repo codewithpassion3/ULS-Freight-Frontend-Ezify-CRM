@@ -17,13 +17,13 @@ import { forwardRef, useImperativeHandle, useState } from "react";
 
 const AdditionalInsurance = forwardRef((props, ref) => {
     const methods = useForm({
-        defaultValues: {
-            insurance: {
-                amount: 0,
-                currency: "CAD",
-                type: "Freightcom"
-            }
-        }
+        // defaultValues: {
+        //     insurance: {
+        //         amount: 0,
+        //         currency: "CAD",
+        //         type: "Freightcom"
+        //     }
+        // }
     });
     const { register, control, setValue } = methods;
 

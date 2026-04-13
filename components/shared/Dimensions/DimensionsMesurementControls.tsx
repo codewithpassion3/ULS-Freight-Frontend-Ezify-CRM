@@ -3,12 +3,12 @@ import { Controller, useFormContext } from "react-hook-form"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import type { ShipmentFormValues } from "./Dimensions.schema"
+// import type { ShipmentFormValues } from "./Dimensions.schema"
 
 type Props = { fieldCount: number; onQuantityChange: (count: number) => void }
 
 export function DimensionsMeasurementControls({ fieldCount, onQuantityChange }: Props) {
-    const { control } = useFormContext<ShipmentFormValues>()
+    const { control } = useFormContext<any>()
 
     return (
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50 dark:bg-card border p-4 rounded-md">

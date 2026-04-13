@@ -13,11 +13,10 @@ import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import { usePathname } from "next/navigation"
 
 const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }, ref) => {
-  const { methods, fieldArray, handleAddPackage, handleClearDimensions } = useDimensions(shipmentType)
+  const { methods, fieldArray, handleAddPackage, handleClearDimensions, isOpen, setIsOpen } = useDimensions(shipmentType)
   const { watch } = methods
   const { fields, append, remove } = fieldArray
 
-  const [isOpen, setIsOpen] = useState(false)
   const [packageDialogOpen, setPackageDialogOpen] = useState(false)
  // isShipment
  const pathname = usePathname()
@@ -30,12 +29,6 @@ const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions
   }), [methods])
 
   // show error
-  const { formState: { errors } } = methods
-  console.log("parent errors", errors)
-
-  // values
-  console.log("values", methods.getValues())
-
 
   const handleQuantityChange = (targetCount: number) => {
     const currentCount = fields.length

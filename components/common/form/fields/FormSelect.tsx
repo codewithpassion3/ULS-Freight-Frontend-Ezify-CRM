@@ -13,7 +13,7 @@ import { FormSelectTypes } from "./fields.types";
 const FormSelect = memo(({ field: config }: { field: FormSelectTypes }) => {
     if (!config) return null  // safely skip undefined
     const { field, error } = useFieldController(config.name);
-
+    console.log(field.value)
     return (
         <div>
             <Label className={`${config.labelClassName} ${error ? "text-red-500" : ""}`} htmlFor={config.name}>{config.label ? config.label : config.name}</Label>

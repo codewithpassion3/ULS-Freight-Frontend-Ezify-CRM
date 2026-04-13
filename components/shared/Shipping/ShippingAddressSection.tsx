@@ -37,7 +37,8 @@ function getRequiredFields(schema: z.ZodObject<any>) {
 
 import { forwardRef, useImperativeHandle } from "react"
 import { FormFieldTypes, FormFieldUnion } from "@/components/common/form/fields/fields.types"
-export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, type, title, onNextStep, onSwap }: { quoteType: keyof ShipmentOptions, shipmentType: ShipmentOptions[keyof ShipmentOptions], type: "TO" | "FROM", title: string, onNextStep?: (data: any) => void, onSwap?: () => void }, ref) => {
+import FormDate from "@/components/common/form/fields/FormDate"
+export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, type, title, onNextStep, onSwap, setShipDate }: { quoteType: keyof ShipmentOptions, shipmentType: ShipmentOptions[keyof ShipmentOptions], type: "TO" | "FROM", title: string, onNextStep?: (data: any) => void, onSwap?: () => void, setShipDate?: (date: Date | undefined) => void }, ref) => {
   // check if route includes shipment to check if it quote or shipment
   const pathname = usePathname()
   const isShipment = pathname.includes("shipment")
@@ -85,21 +86,30 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   useEffect(() => {
     if (!cachedSingleQuote) return;
 
-    const quoteAddress = cachedSingleQuote.quote.addresses[index]?.address
-      ?? cachedSingleQuote.quote.addresses[index]?.addressBookEntry?.address;
+    const quoteAddress = cachedSingleQuote.quote.addresses[index].address
+      ? cachedSingleQuote.quote.addresses[index] : cachedSingleQuote.quote.addresses[index]?.addressBookEntry;
     const isAddressBookEntry = cachedSingleQuote.quote.addresses[index]?.addressBookEntry?.address;
+    // const completeAddressFromAddressBook = cachedSingleQuote.quote.addresses[index]?.addressBookEntry;
 
     if (quoteAddress) {
       setAddressLocked(true);
       methods.reset({
         type,
         ...(isAddressBookEntry && { addressBookId: quoteAddress.id ?? null }),
-        address1: quoteAddress.address1,
-        postalCode: quoteAddress.postalCode,
-        city: quoteAddress.city,
-        state: quoteAddress.state,
-        country: quoteAddress.country,
+        address1: quoteAddress.address.address1 || "",
+        postalCode: quoteAddress.address.postalCode || "",
+        city: quoteAddress.address.city || "",
+        state: quoteAddress.address.state || "",
+        country: quoteAddress.address.country || "",
         ...(showLocationType && { locationType: quoteAddress.locationType }),
+        ...(isShipment && { companyName: quoteAddress.companyName }),
+        ...(isShipment && { contactId: quoteAddress.contactId }),
+        ...(isShipment && { address2: quoteAddress.address2 }),
+        ...(isShipment && { unit: quoteAddress.unit }),
+        ...(isShipment && { contactName: quoteAddress.contactName }),
+        ...(isShipment && { email: quoteAddress.email }),
+        ...(isShipment && { phoneNumber: quoteAddress.phoneNumber }),
+
       });
     }
 
@@ -121,6 +131,14 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       country: contact.address?.country || "",
 
       ...(showLocationType && { locationType: contact?.locationTypeId || "" }),
+      ...(isShipment && { companyName: contact.companyName }),
+      // ...(isShipment && { contactId: contact.id }),
+      ...(isShipment && { address2: contact.address?.address2 || "" }),
+      ...(isShipment && { unit: contact.address?.unit || "" }),
+      // contact information
+      ...(isShipment && { contactName: contact.contactName || "" }),
+      ...(isShipment && { email: contact.email || "" }),
+      ...(isShipment && { phoneNumber: contact.phoneNumber || "" }),
 
     });
   }
@@ -194,7 +212,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       show: isShipment,
     },
     {
-      name: "unitfloor",
+      name: "unit",
       label: "Unit/Floor #",
       type: "text",
       // placeholder: "Address",
@@ -252,38 +270,73 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       show: false,
       wrapperClassName: "col-span-2",
     },
+    // contact information
+    {
+      name: "contactName",
+      label: "Contact Name",
+      type: "text",
+      placeholder: "Contact Name",
+      disabled: addressLocked,
+    },
+    {
+      name: "email",
+      label: "Email",
+      type: "email",
+      placeholder: "Email",
+      disabled: addressLocked,
+    },
+    {
+      name: "phoneNumber",
+      label: "Phone",
+      type: "phone",
+      placeholder: "Phone",
+      disabled: addressLocked,
+    },
 
 
   ];
 
   return (
-      <>
-        <div className="flex justify-between items-center">
-          <h2 className="text-lg font-semibold">{title}</h2>
-          <div className="flex gap-2">
-            <Button variant="destructive" type="button" onClick={handleClearAddress}>
-              <X />
-              Clear
-            </Button>
-            <Button variant="outline" type="button" onClick={handleSwap}>
-              <ArrowLeftRight />
-              Swap
-            </Button>
-          </div>
+    <>
+      <div className="flex justify-between items-center">
+        <h2 className="text-lg font-semibold">{title}</h2>
+        <div className="flex gap-2">
+          <Button variant="destructive" type="button" onClick={handleClearAddress}>
+            <X />
+            Clear
+          </Button>
+          <Button variant="outline" type="button" onClick={handleSwap}>
+            <ArrowLeftRight />
+            Swap
+          </Button>
         </div>
-        <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(handleNext)} className="space-y-4 mt-2">
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-sm font-medium">Select Address</p>
-              <SelectAddressBookModal onSelect={handleAddressSelect} />
-            </div>
-            <GlobalForm
-              formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 gap-6"
-              fields={formFields}
-            />
-            
-          </form>
-        </FormProvider>
-      </>
+      </div>
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(handleNext)} className="space-y-4 mt-2">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm font-medium">Select Address</p>
+            <SelectAddressBookModal onSelect={handleAddressSelect} />
+          </div>
+          <GlobalForm
+            formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 gap-6"
+            fields={formFields}
+          />
+          {type === "FROM" && <FormDate
+            field={
+              {
+                name: "shipDate",
+                label: "Ship Date",
+                placeholder: "Ship Date",
+                disabled: addressLocked,
+                wrapperClassName: "w-1/2",
+                setShipDate:setShipDate
+
+
+              }}
+          />}
+
+        </form>
+      </FormProvider>
+    </>
   )
 })

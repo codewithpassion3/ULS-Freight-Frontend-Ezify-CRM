@@ -13,6 +13,7 @@ const FormPhone = memo(({ field: config }: { field: FormRadioTypes }) => {
                 {...field}
                 placeholder="Phone number"
                 defaultCountry="CA"
+                disabled={config.disabled}
             />
         </div>
     )

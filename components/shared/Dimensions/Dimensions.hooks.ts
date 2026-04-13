@@ -4,28 +4,34 @@ import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useSearchParams } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { getSingleQuote } from "@/api/services/quotes.api"
 // import { shipmentSchema, ShipmentFormValues } from "./Dimensions.schema"
 import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import { lineItemSchema, palletLineItemSchema } from "./Dimensions.schema"
 
 export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOptions]) {
+    const [isOpen, setIsOpen] = useState(false)
+
     const methods = useForm<any>({
-        resolver: zodResolver(palletLineItemSchema) as any,
+        resolver: zodResolver(lineItemSchema) as any,
         mode: "onChange",
-        // defaultValues: {
-        //     shipmentType: shipmentType,
-        //     description: "",
-        //     measurementUnit: "IMPERIAL",
-        //     units: [{
-        //         length: 0,
-        //         width: 0,
-        //         height: 0,
-        //         weight: 0,
-        //         description: "",
-        //     }],
-        // },
+        defaultValues: {
+            lineItem: {
+                shipmentType: shipmentType,
+                description: "",
+                measurementUnit: "IMPERIAL",
+                dangerousGoods: false,
+                stackable: false,
+                units: [{
+                    length: 0,
+                    width: 0,
+                    height: 0,
+                    weight: 0,
+                    description: "",
+                }],
+            }
+        },
     })
 
     const { control, setValue, formState: { errors } } = methods
@@ -40,22 +46,24 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
     })
     console.log("grand-parent errors", errors)
 
-    // useEffect(() => {
-    //     if (!cachedSingleQuote) return
-    //     const units = cachedSingleQuote.quote.lineItems?.units ?? []
+    useEffect(() => {
+        if (!cachedSingleQuote) return
+        const units = cachedSingleQuote.quote.lineItems?.units ?? []
 
-    //     setValue(
-    //         "lineItem.units",
-    //         units.length === 0
-    //             ? [{ quantity: 1, length: 0, width: 0, height: 0, weight: 0, description: "" }]
-    //             : units
-    //     )
-    //     setValue("lineItem.measurementUnit", cachedSingleQuote.lineItem?.measurementUnit ?? "IMPERIAL")
-    //     setValue("lineItem.dangerousGoods", cachedSingleQuote.lineItem?.dangerousGoods ?? false)
-    //     setValue("lineItem.stackable", cachedSingleQuote.lineItem?.stackable ?? false)
-    //     setValue("lineItem.specialHandlingRequired", cachedSingleQuote.lineItem?.specialHandlingRequired ?? false)
-    //     setValue("lineItem.quantity", cachedSingleQuote.lineItem?.quantity ?? 1)
-    // }, [cachedSingleQuote, setValue])
+        setValue(
+            "units",
+            units.length === 0
+                ? [{ quantity: 1, length: 0, width: 0, height: 0, weight: 0, description: "" }]
+                : units
+        )
+        setValue("lineItem.measurementUnit", cachedSingleQuote.lineItem?.measurementUnit ?? "IMPERIAL")
+        setValue("lineItem.dangerousGoods", cachedSingleQuote.lineItem?.dangerousGoods ?? false)
+        setValue("lineItem.stackable", cachedSingleQuote.lineItem?.stackable ?? false)
+        // cachedSingleQuote.lineItem?.specialHandlingRequired && setValue("specialHandlingRequired", cachedSingleQuote.lineItem?.specialHandlingRequired ?? false)
+        setValue("lineItem.quantity", cachedSingleQuote.lineItem?.quantity ?? 1)
+        setIsOpen(true)
+
+    }, [cachedSingleQuote, setValue])
 
     const handleAddPackage = () =>
         fieldArray.append({ length: 0, width: 0, height: 0, weight: 0, description: "" })
@@ -68,5 +76,5 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
         setValue(`lineItem.units.${index}.description`, "")
     }
 
-    return { methods, fieldArray, handleAddPackage, handleClearDimensions }
+    return { methods, fieldArray, handleAddPackage, handleClearDimensions, isOpen, setIsOpen }
 }

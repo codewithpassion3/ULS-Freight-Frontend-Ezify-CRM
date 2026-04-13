@@ -41,6 +41,8 @@ const FormField = memo(({ field: config }: { field: FormFieldTypes }) => {
                             field.onChange(value)
                         }}
                         value={field.value ?? ""}
+                        min={config.min}
+                        max={config.max}
                     />
 
                     {isPassword && (

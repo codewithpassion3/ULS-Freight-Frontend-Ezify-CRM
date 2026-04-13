@@ -12,6 +12,8 @@ export type FormFieldTypes = {
     inputClassName?: string
     wrapperClassName?: string;
     show?: boolean;
+    min?: number;
+    max?: number;
 }
 export type FormSelectTypes = {
     name: string;
@@ -53,6 +55,7 @@ export type FormRadioTypes = {
     valueType?: "string" | "number"
     defaultValue?: string
     wrapperClassName?: string;
+    disabled?: boolean;
 }
 
 export type FormDateTypes = {
@@ -61,10 +64,10 @@ export type FormDateTypes = {
     mode?: "single" | "multiple" | "range"
     // className?: string
     // selectedClassName?: string
-    onChange: (value: Date | undefined) => void
+    onChange?: (value: Date | undefined) => void
     // valueType?: "string" | "number"
     // defaultValue?: string
-    onSelect: (value: Date | undefined) => void
+    onSelect?: (value: Date | undefined) => void
     wrapperClassName?: string;
 }
 

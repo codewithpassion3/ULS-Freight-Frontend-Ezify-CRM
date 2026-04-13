@@ -5,7 +5,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
-import type { ShipmentFormValues } from "./Dimensions.schema"
 import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 
 type Props = {
@@ -14,7 +13,7 @@ type Props = {
 }
 
 export function DimensionsFooter({ shipmentType, onAddPackage }: Props) {
-    const { control } = useFormContext<ShipmentFormValues>()
+    const { control } = useFormContext<any>()
 
     return (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">

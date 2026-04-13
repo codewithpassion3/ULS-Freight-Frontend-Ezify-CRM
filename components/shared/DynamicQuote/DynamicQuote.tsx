@@ -51,7 +51,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     const servicesRef = useRef<any>(null)
     const insuranceRef = useRef<any>(null)
     const signatureRef = useRef<any>(null)
-
+    const [shipDate, setShipDate] = useState<Date | undefined>(undefined)
     const handleSwapAddress = () => {
         if (fromAddressRef.current && toAddressRef.current) {
             const fromVals = fromAddressRef.current.getValues()
@@ -78,6 +78,10 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         enabled: !!quoteId,
     })
 
+    useEffect(() => {
+        console.log("singleQuote", singleQuote)
+
+    }, [singleQuote])
 
     const createQuoteMutation = useMutation({
         mutationFn: (data: unknown) => createQuote(data),
@@ -130,18 +134,32 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         const insurance = insuranceRef.current?.getValues() || {}
         const signature = signatureRef.current?.getValues() || {}
 
+
+        
+        console.log("dimensions", dimensions)
+        
         const addresses = [];
         if (Object.keys(fromAddress).length > 0) addresses.push(fromAddress)
         if (Object.keys(toAddress).length > 0) addresses.push(toAddress)
 
+        if (Object.keys(insurance).length > 0) {
+            return {
+                addresses,
+                ...dimensions,
+                ...insurance,
+                ...services,
+                ...signature,
+            }
+        }
         return {
             addresses,
             ...dimensions,
             ...services,
-            ...insurance,
+            ...services,
             ...signature,
-        };
+        }
     }
+
 
     const onSubmit = async () => {
         const fromValid = await fromAddressRef.current?.trigger()
@@ -167,7 +185,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         console.log("mergedData", mergedData)
         payloadTransformer(mergedData)
 
-        
+
     }
 
     const payloadTransformer = (data: any) => {
@@ -191,6 +209,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                 "lineItem": {
                     ...data.lineItem,
                     "type": shipmentType,
+                    "units": data.units
                 },
             },
         }
@@ -208,15 +227,15 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             addresses: transformedAddresses,
         };
         console.log("Submitting Payload:", payloadTransformed)
-
         const shipmentPayload = {
-            shipDate: new Date(),
+            shipDate: shipDate,
             mode: "SHIPMENT",
             shipmentType: shipmentType,
             quote: {
                 ...payloadTransformed
             }
         }
+
         if (isEditing) {
             if (isShipment) {
                 updateShipmentMutation.mutate(shipmentPayload)
@@ -255,7 +274,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                         <ShippingTypeSelector quoteType={quoteType} shipmentType={shipmentType} setShipmentType={setShipmentType} />
                         <div className="flex flex-col md:flex-row gap-6">
                             <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
-                                <ShippingAddressSection ref={fromAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="FROM" title="Shipping From" />
+                                <ShippingAddressSection setShipDate={setShipDate} ref={fromAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="FROM" title="Shipping From" />
                             </div>
                             <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
                                 <ShippingAddressSection ref={toAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="TO" title="Shipping To" />
@@ -286,7 +305,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                                 <Button onClick={() => {
 
                                     onSubmit()
-                                }} type="button">{isEditing ? "Update Shipment" : "Submit Shipment"}</Button> :
+                                }} type="button">{isEditing ? "Update Shipment" : "Create Shipment"}</Button> :
                                 <Button onClick={() => {
                                     onSubmit()
                                 }} type="button">{isEditing ? "Update Quote" : "Submit Quote"}</Button>

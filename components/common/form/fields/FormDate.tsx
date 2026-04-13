@@ -13,7 +13,8 @@ import { CalendarIcon } from "lucide-react"
 
 const FormDate = memo(({ field: config }: { field: any }) => {
     const [open, setOpen] = useState(false)
-    const { field, error } = useFieldController(config.name)
+    console.log(config)
+    const { field, error } = useFieldController(config?.name)
     return (
         <div className={`${config.wrapperClassName} space-y-2`}>
             <Label>{config.label ? config.label : "Date"}</Label>
@@ -25,7 +26,7 @@ const FormDate = memo(({ field: config }: { field: any }) => {
                     <Calendar
                         mode={config.mode ? config.mode : "single"}
                         selected={field.value}
-                        onSelect={(date: Date | undefined) => { field.onChange(date), setOpen(false) }}
+                        onSelect={(date: Date | undefined) => { field.onChange(date), setOpen(false), config.setShipDate?.(date) }}
 
                     // defaultMonth={value || undefined}
                     />
