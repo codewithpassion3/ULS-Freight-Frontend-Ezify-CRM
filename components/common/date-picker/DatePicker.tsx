@@ -12,31 +12,36 @@ import {
 } from "@/components/ui/popover"
 import { useState } from "react"
 import { Controller, useFormContext } from "react-hook-form"
+import { Label } from "@/components/ui/label"
 
-export function DatePicker({ name, mode }: { name: string, mode?: any }) {
-    const { control } = useFormContext();
-    const [date, setDate] = useState<Date>()
-
+export function DatePicker({ label, name, mode }: { label?: string, name: string, mode?: any }) {
+    const { control, formState: { errors } } = useFormContext();
+    const [open, setOpen] = useState(false);
     return (
-        <Popover>
-            <PopoverTrigger asChild>
-                <Button variant={"outline"} data-empty={!date} className="w-[212px] justify-between text-left font-normal data-[empty=true]:text-muted-foreground">{date ? format(date, "PPP") : <span>Pick a date</span>}<CalendarIcon data-icon="inline-end" /></Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-                <Controller
-                    name={name}
-                    control={control}
-                    defaultValue={null}
-                    render={({ field: { value, onChange } }) => (
-                        <Calendar
-                            mode={mode ? mode : "single"}
-                            selected={value}
-                            onSelect={onChange}
-                        // defaultMonth={value || undefined}
-                        />
-                    )}
-                />
-            </PopoverContent>
-        </Popover>
+        <div className="flex flex-col gap-2">
+            <Label>{label ? label : "Date"}</Label>
+            <Controller
+                name={name}
+                control={control}
+                defaultValue={null}
+                render={({ field: { value, onChange } }) => (
+                    <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                            <Button variant={"outline"} data-empty={!value} className="w-full justify-between text-left font-normal data-[empty=true]:text-muted-foreground">{value ? format(value, "PPP") : <span>Pick a date</span>}<CalendarIcon data-icon="inline-end" /></Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                                mode={mode ? mode : "single"}
+                                selected={value}
+                                onSelect={(date: Date | undefined) => { onChange(date), setOpen(false) }}
+
+                            // defaultMonth={value || undefined}
+                            />
+                        </PopoverContent>
+                    </Popover>
+                )}
+            />
+            {errors[name] && <p className="text-xs text-red-500 font-medium">{errors[name]?.message as string}</p>}
+        </div>
     )
 }

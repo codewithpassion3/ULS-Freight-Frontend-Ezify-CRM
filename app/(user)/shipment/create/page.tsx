@@ -1,7 +1,11 @@
+import DynamicQuote from "@/components/shared/DynamicQuote/DynamicQuote";
+import DynamicShipment from "../CreateShipment";
+
 export default function CreateShipment() {
     return (
-        <div>
-            <h1>Create Shipment</h1>
-        </div>
+        <DynamicQuote
+            quoteType="STANDARD"
+            initialShipmentType="PALLET"
+        />
     )
 }

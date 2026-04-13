@@ -16,6 +16,9 @@ import { deleteQuote } from "@/api/services/quotes.api"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
+import { deletePackage } from "@/api/services/packages.api"
+import AddPackage, { normalText } from "./AddPackage"
+import { useState } from "react"
 
 export const columns: ColumnDef<any>[] = [
     {
@@ -43,112 +46,49 @@ export const columns: ColumnDef<any>[] = [
         cell: ({ row }) => {
             return (
                 <span className="text-[#0070c0] font-medium whitespace-nowrap">
-                    {row.original.quoteId}
+                    {row.original.name}
                 </span>
             )
         },
     },
     {
-        accessorKey: "weight",
-        header: "Weight",
+        accessorKey: "type",
+        header: "Type",
         cell: ({ row }) => {
             return (
-                <span className="text-[#0070c0] font-medium whitespace-nowrap">
-                    {row.original.quoteId}
+                <span className="text-[#0070c0] font-medium whitespace-nowrap capitalize">
+                    {normalText(row.original.type)}
                 </span>
             )
         },
     },
     {
-        accessorKey: "transactionId",
-        header: "Transaction #",
+        accessorKey: "dimensions",
+        header: "Dimensions",
         cell: ({ row }) => {
-            return <span className="text-foreground whitespace-nowrap">{row.original.transactionId}</span>
-        },
-    },
-    {
-        accessorKey: "dateCreated",
-        header: "Date Created",
-        cell: ({ row }) => {
-            // show time first and date after and use 12 hour format
-            const createdAt = row.original.createdAt
-            const dateObj = new Date(createdAt);
-
-            // Format time in 12-hour format
-            const time = dateObj.toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true,
-            });
-
-            // Format date
-            const formattedDate = dateObj.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-            });
-            return (
-                <div className="leading-tight whitespace-nowrap">
-                    {time}<br />
-                    <span className="text-muted-foreground">{formattedDate}</span>
-                </div>
-            )
-        },
-    },
-    {
-        accessorKey: "shipFrom",
-        header: "Ship From",
-        cell: ({ row }) => {
-            return (
-                <span className="text-[#0070c0] font-medium whitespace-nowrap">
-                    {/* {row.original.addresses[0].address.city} */}
-                    Lahore
-                </span>
-            )
-        },
-    },
-    {
-        accessorKey: "shipTo",
-        header: "Ship To",
-        cell: ({ row }) => {
-            return (
-                <span className="text-[#0070c0] font-medium whitespace-nowrap">
-                    {/* {row.original.addresses[1].address.city} */}
-                    Karachi
-                </span>
-            )
-        },
-    },
-    {
-        accessorKey: "packagingDetails",
-        header: "Packaging Details",
-        cell: ({ row }) => {
-            const quoteType = row.original.quoteType.toLowerCase()
-            const shipmentType = row.original.shipmentType.toLowerCase()
-            return (
-                <div className="leading-tight capitalize">
-                    {quoteType} - {shipmentType}
-                </div>
-            )
+            const unit = row.original.measurementUnit === "IMPERIAL" ? "in" : "cm"
+            return <span className="text-foreground whitespace-nowrap font-semibold">L:   {row.original.length} {unit} x W:{row.original.width} {unit} x H:{row.original.height} {unit}</span>
         },
     },
     {
         id: "actions",
         header: "Actions",
         cell: ({ row }) => {
+            const [open, setOpen] = useState(false)
+            const lineItem = row.original
             const queryClient = useQueryClient()
             const mutation = useMutation({
-                mutationFn: (id: string) => deleteQuote(id),
+                mutationFn: (id: string) => deletePackage(id),
                 onSuccess: () => {
-                    toast.success("Contact deleted successfully")
-                    queryClient.invalidateQueries({ queryKey: ["quotes"] })
+                    toast.success("Package deleted successfully")
+                    queryClient.invalidateQueries({ queryKey: ["packages"] })
                 },
                 onError: (error: AxiosError<ApiError>) => {
                     toast.error(error.response?.data.message)
                 }
             })
 
-            const handleDeleteQuote = (id: string) => {
+            const handleDeletePackage = (id: string) => {
                 mutation.mutate(id)
             }
             return (
@@ -161,17 +101,37 @@ export const columns: ColumnDef<any>[] = [
                             <DropdownMenuItem className="cursor-pointer">
                                 <CircleCheck size={14} /> Book Now
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer">
-                                <Link className="flex gap-2 items-center w-full" href={`/quote/create?id=${row.original.id}`}>
-                                    <Edit size={14} /> Edit
-                                </Link>
+                            <DropdownMenuItem onClick={() => setOpen(true)} className="cursor-pointer">
+                                <Edit /> Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="text-red-500 cursor-pointer" onClick={() => handleDeleteQuote(row.original.id)}>
-                                <Trash2 className="mr-2 h-4 w-4" />
+                            <DropdownMenuItem className="text-red-500 cursor-pointer" onClick={() => handleDeletePackage(row.original.id)}>
+                                <Trash2 className="h-4 w-4" />
                                 Delete
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
+                    <AddPackage
+                        shipmentType={lineItem.type}
+                        id={lineItem.id}
+                        initialData={
+                            {
+                                name: lineItem.name,
+                                measurementUnit: lineItem.measurementUnit,
+                                length: lineItem.length,
+                                width: lineItem.width,
+                                height: lineItem.height,
+                                weight: lineItem.weight,
+                                freightClass: lineItem.freightClass,
+                                nmfc: lineItem.nmfc,
+                                shipmentType: lineItem.type,
+                                unitsOnPallet: lineItem.unitsOnPallet,
+                                palletUnitType: lineItem.palletUnitType,
+                                description: lineItem.description,
+                            }
+                        }
+                        open={open}
+                        setOpen={setOpen}
+                    />
                 </div>
             )
         },

@@ -7,18 +7,46 @@ export const addressSchema = z.object({
     state: z.string().min(1, "State is required"),
     postalCode: z.string().min(1, "Postal Code is required"),
     country: z.string().min(1, "Country is required"),
+    addressBookId: z.number().optional()
 })
 
-export const quoteSchema = z.object({
-    quoteType: z.enum(["Spot Quote", "Standard Quote"]),
-    addresses: z.array(addressSchema),
+
+export const addressesSchema = z.array(addressSchema).length(2)
+export type AddressesSchemaTypes = z.infer<typeof addressesSchema>
+
+
+
+export const ftlAddressSchema = z.object({
+    addresses: addressesSchema,
+    locationType: z.string().min(1, "Location type required"),
 })
-export const quoteStandardSchema = quoteSchema.extend({
-    shipmentType: z.enum(["Pallet", "Package", "Courier Pack", "Envelope", "FTL", "White Glove"], {
-        message: "Please select a shipment type",
-    }),
+export const contactInformation = z.object({
+    contactName: z.string().min(1, "Contact name is required"),
+    phoneNumber: z.string().min(1, "Phone number is required"),
+    shipDate: z.string().min(1, "Ship date is required"),
+    emailAddress: z.email("Invalid email address"),
+    spotQuoteName: z.string().min(1, "Spot quote name is required"),
 })
-export const quoteStandardPalletSchema = quoteStandardSchema.extend({
+export const spotLTLSchema = z.object({
+    addresses: addressesSchema,
+    shipmentType: z.literal("SPOT_LTL")
+})
+export const spotFTLSchema = z.object({
+    addresses: addressesSchema,
+    shipmentType: z.literal("SPOT_FTL")
+})
+export const spotTimeCriticalSchema = z.object({
+    addresses: addressesSchema,
+    shipmentType: z.literal("TIME_CRITICAL")
+})
+export const spotShipmentSchema = z.discriminatedUnion("shipmentType", [
+    spotLTLSchema,
+    spotFTLSchema,
+    spotTimeCriticalSchema
+])
+export const standardPalletSchema = z.object({
+    addresses: addressesSchema,
+    shipmentType: z.literal("PALLET"),
     lineItems:
         z.object({
             type: z.string().default("Pallet"),
@@ -41,7 +69,9 @@ export const quoteStandardPalletSchema = quoteStandardSchema.extend({
         "thresholdPickup": z.boolean().default(false),
     })
 })
-export const quoteStandardPackageSchema = quoteStandardSchema.extend({
+export const standardPackageSchema = z.object({
+    addresses: addressesSchema,
+    shipmentType: z.literal("PACKAGE"),
     lineItems: z.object({
         type: z.string().default("Package"),
         description: z.string().optional(),
@@ -69,7 +99,9 @@ export const quoteStandardPackageSchema = quoteStandardSchema.extend({
         "thresholdPickup": z.boolean().default(false),
     })
 })
-export const quoteStandardCourierPackSchema = quoteStandardSchema.extend({
+export const standardCourierPackSchema = z.object({
+    addresses: addressesSchema,
+    shipmentType: z.literal("COURIER_PAK"),
     knownShipper: z.boolean().default(false),
     lineItem: z.object({
         type: z.string().default("Courier Pack"),
@@ -87,11 +119,9 @@ export const quoteStandardCourierPackSchema = quoteStandardSchema.extend({
         currency: z.enum(["CAD", "USD"]).default("CAD"),
     }).optional(),
 })
-export const ftlAddressSchema = addressSchema.extend({
-    locationType: z.string().min(1, "Location type required"),
-})
-export const quoteStandardFTLSchema = quoteStandardSchema.extend({
-    addresses: z.array(ftlAddressSchema),
+export const standardFTLSchema = z.object({
+    addresses: ftlAddressSchema,
+    shipmentType: z.literal("STANDARD_FTL"),
     knownShipper: z.boolean().default(false),
     includeStraps: z.boolean().default(false),
     appointmentDelivery: z.boolean().default(false),
@@ -105,8 +135,34 @@ export const quoteStandardFTLSchema = quoteStandardSchema.extend({
     })
 })
 
-export type QuoteStandardPalletSchema = z.infer<typeof quoteStandardPalletSchema>
-export type QuoteStandardPackageSchema = z.infer<typeof quoteStandardPackageSchema>
-export type QuoteStandardCourierPackSchema = z.infer<typeof quoteStandardCourierPackSchema>
-export type QuoteStandardFTLSchema = z.infer<typeof quoteStandardFTLSchema>
+export const standardShipmentSchema = z.discriminatedUnion("shipmentType", [
+    standardPalletSchema,
+    standardPackageSchema,
+    standardCourierPackSchema,
+    standardFTLSchema,
+])
+
+export const spotQuoteSchema = z.object({
+    quoteType: z.literal("SPOT"),
+    contact: contactInformation,
+}).extend({
+    shipment: spotShipmentSchema,
+})
+
+// Standard quote schema
+export const standardQuoteSchema = z.object({
+    quoteType: z.literal("STANDARD"),
+    contact: contactInformation,
+}).extend({
+    shipment: standardShipmentSchema,
+})
+
+// Top-level union
+export const quoteUnionSchema = z.discriminatedUnion("quoteType", [
+    spotQuoteSchema,
+    standardQuoteSchema,
+])
+
+export type QuoteUnionSchemaTypes = z.infer<typeof quoteUnionSchema>
+
 

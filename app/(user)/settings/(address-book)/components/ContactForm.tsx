@@ -55,7 +55,7 @@ export function ContactForm({
     console.log("current values", getValues())
     const handleOpenChange = (newOpen: boolean) => {
         if (!newOpen) reset()
-        setOpen(newOpen)
+        setOpen?.(newOpen)
     }
 
     const { data: palletShippingLocationTypesRes, isLoading: isLoadingPallet, isPending: isPendingPallet } = useQuery({
@@ -77,7 +77,8 @@ export function ContactForm({
     return (
         isLoading ?
             <Loader /> :
-            <form id="contact-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-1">
+            
+            <form id="contact-form" onSubmit={onSubmit ? handleSubmit(onSubmit) : () => {}} className="space-y-6 p-1">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label>Company/Name*</Label>

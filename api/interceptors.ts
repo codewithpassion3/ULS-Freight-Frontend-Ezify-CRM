@@ -12,7 +12,7 @@ function logoutUser() {
 
 export function interceptors(api: AxiosInstance) {
     api.interceptors.request.use((config) => {
-        console.log(config.url)
+        // console.log(config.url)
         return config
     },
         (error) => Promise.reject(error)

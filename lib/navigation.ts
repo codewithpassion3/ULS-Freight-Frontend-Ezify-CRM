@@ -14,8 +14,8 @@ export const navItems = [
     {
         title: "Ship",
         items: [
-            { title: "Create Shipment", href: "/ship/create" },
-            { title: "Bulk Shipping", href: "/ship/bulk" },
+            { title: "Create Shipment", href: "/shipment/create" },
+            { title: "Bulk Shipping", href: "/shipment/bulk" },
         ],
     },
 

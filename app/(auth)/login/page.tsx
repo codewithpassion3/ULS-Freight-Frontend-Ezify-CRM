@@ -6,7 +6,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { loginUser, getUser } from "@/api/services/auth.api"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import FormField from "@/components/common/forms/FormField"
 import { Button } from "@/components/ui/button"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
@@ -14,9 +13,8 @@ import { useEffect, useState } from "react"
 import { Loader } from "@/components/common/Loader"
 import Link from "next/link"
 import { AuthLayout } from "../AuthLayout"
-import { FormCheckbox } from "@/components/common/forms/FormCheckbox"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
+import { GlobalForm } from "@/components/common/form/GlobalForm"
+import { Loader2 } from "lucide-react"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -33,7 +31,7 @@ export default function LoginPage() {
       setTimeout(() => router.replace("/"), 300)
     },
     onError: (error: AxiosError<ApiError>) => {
-      toast.error(error?.response?.data?.message)
+      toast.error(error?.response?.data?.message || "Unexpected error occurred")
     },
   })
 
@@ -68,33 +66,35 @@ export default function LoginPage() {
     >
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          <FormField
-            name="email"
-            label="Email*"
-            placeholder="Enter your email"
+          <GlobalForm
+            formWrapperClassName="space-y-5"
+            fields={[
+              {
+                name: "email",
+                label: "Email*",
+                placeholder: "Enter your email",
+                type: "text",
+              },
+              {
+                name: "password",
+                label: "Password*",
+                placeholder: "Enter your password",
+                type: "password",
+              },
+              {
+                name: "rememberMe",
+                label: "Remember me",
+                type: "checkbox",
+              },
+            ]}
           />
-          <FormField
-            name="password"
-            label="Password*"
-            placeholder="Enter your password"
-            type="password"
-          />
-          <div className="flex items-center gap-2">
-            <Checkbox
-              className="cursor-pointer"
-              {...register("rememberMe")}
-            />
-            <Label>
-              Remember me
-            </Label>
-          </div>
           <div className="my-6 flex items-center justify-end">
             <Link href="/forgot-password" className="text-sm text-primary hover:underline">
               Forgot Password?
             </Link>
           </div>
           <Button type="submit" variant="default" className="w-full">
-            Start Shipping!
+            {loginMutation.isPending ? <Loader2 className="animate-spin" /> : "Start Shipping!"}
           </Button>
         </form>
       </FormProvider>

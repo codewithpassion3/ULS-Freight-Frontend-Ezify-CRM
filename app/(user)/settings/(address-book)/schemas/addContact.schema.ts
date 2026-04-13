@@ -32,10 +32,10 @@ export const contactSchema = z.object({
 })
 export type ContactFormProps = {
     defaultValues?: ContactFormValues
-    onSubmit: (data: ContactFormValues) => void
+    onSubmit?: (data: ContactFormValues) => void
     isLoading?: boolean
-    open: boolean
-    setOpen: (open: boolean) => void
-    setIsValid: (isValid: boolean) => void
+    open?: boolean
+    setOpen?: (open: boolean) => void
+    setIsValid?: (isValid: boolean) => void
 }
 export type ContactFormValues = z.infer<typeof contactSchema>

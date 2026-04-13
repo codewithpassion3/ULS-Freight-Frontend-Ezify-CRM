@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import FormField from "@/components/common/forms/FormField"
+import FormField from "@/components/common/form/fields/FormField"
 import { Controller, useForm, useFormContext } from "react-hook-form"
 import { registerSchema, RegisterSchemaTypes } from "@/lib/validations/auth/register-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -48,7 +48,7 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
     ])
 
     if (valid) onNext()
-    console.log(form.getValues())
+    // console.log(form.getValues())
   }
   return (
     <div className="space-y-6">
@@ -56,18 +56,24 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
         <div className="space-y-2">
 
           <FormField
-            name="address.address1"
-            label="Registered Business Address*"
-            placeholder="Enter your business address"
+            field={{
+              name: "address.address1",
+              label: "Registered Business Address*",
+              placeholder: "Enter your business address",
+              type: "text",
+            }}
 
           />
         </div>
         <div className="space-y-2">
 
           <FormField
-            name="address.unit"
-            label="Unit/Floor # *"
-            placeholder="Enter your unit/floor #"
+            field={{
+              name: "address.unit",
+              label: "Unit/Floor # *",
+              placeholder: "Enter your unit/floor #",
+              type: "text",
+            }}
 
           />
         </div>
@@ -75,9 +81,12 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
 
       <div className="space-y-2">
         <FormField
-          name="address.address2"
-          label="Address 2 (optional)"
-          placeholder="Enter your address 2"
+          field={{
+            name: "address.address2",
+            label: "Address 2 (optional)",
+            placeholder: "Enter your address 2",
+            type: "text",
+          }}
         />
       </div>
 
@@ -85,19 +94,24 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
         <div className="space-y-2">
 
           <FormField
-            name="address.postalCode"
-            label="Postal/ZIP Code*"
-            placeholder="Enter your postal/ZIP code"
+            field={{
+              name: "address.postalCode",
+              label: "Postal/ZIP Code*",
+              placeholder: "Enter your postal/ZIP code",
+              type: "text",
+            }}
 
           />
         </div>
         <div className="space-y-2">
 
           <FormField
-            name="address.city"
-            label="City*"
-            placeholder="Enter your city"
-
+            field={{
+              name: "address.city",
+              label: "City*",
+              placeholder: "Enter your city",
+              type: "text",
+            }}
           />
         </div>
       </div>

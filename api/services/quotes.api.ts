@@ -17,10 +17,12 @@ export const deleteQuote = async (id: string) => {
     return response.data;
 };
 // get all quotes
+
 export const getAllQuotes = async ({ search }: { search: string }) => {
     const response = await apiClient.get(`/quotes?search=${search}`);
     return response.data;
 };
+
 // get single quote
 export const getSingleQuote = async (id: string) => {
     const response = await apiClient.get(`/quotes/${id}`);
@@ -39,12 +41,3 @@ export const getSpotQuotes = async ({ search }: { search: string }) => {
     const response = await apiClient.get(`/quotes/spot?search=${search}`);
     return response.data;
 };
-
-
-// get single quote
-
-// // update quote
-// export const updateQuote = async (id: string, data: any) => {
-//     const response = await apiClient.patch(`/quotes/${id}`, data);
-//     return response.data;
-// };

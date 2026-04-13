@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import FormField from "@/components/common/forms/FormField";
+import FormField from "@/components/common/form/fields/FormField";
 import { useForm } from "react-hook-form";
 
 export default function UserSettings() {

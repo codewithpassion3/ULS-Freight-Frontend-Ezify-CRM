@@ -28,7 +28,7 @@ export default function OTPVerificationPage() {
     const { email, purpose, setToken } = useOTPFlow()
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(true)
-    console.log(email, purpose)
+    // console.log(email, purpose)
 
     useEffect(() => {
         const t = setTimeout(() => setIsLoading(false), 300)

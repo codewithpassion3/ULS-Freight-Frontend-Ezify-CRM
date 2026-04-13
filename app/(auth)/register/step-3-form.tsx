@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { Controller, useFormContext } from "react-hook-form"
 import { RegisterSchemaTypes } from "@/lib/validations/auth/register-schema"
-import FormField from "@/components/common/forms/FormField"
+import FormField from "@/components/common/form/fields/FormField"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 interface Step3FormProps {
@@ -43,7 +43,6 @@ export function Step3Form({ onBack }: Step3FormProps) {
             type="password"
             placeholder="Enter your password"
           />
-          <p className="text-xs text-muted-foreground mt-1">Must be at least 8 characters</p>
         </div>
 
         <div className="space-y-2 relative">

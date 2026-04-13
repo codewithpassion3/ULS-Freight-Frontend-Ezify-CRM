@@ -274,7 +274,7 @@ export default function QuotesDashboardPage() {
 
       {/* Tabs */}
       <Tabs defaultValue="all">
-        <TabsList className="gap-2 bg-white border border-blue-200 p-1" >
+        <TabsList className="gap-2 bg-white dark:bg-slate-800 border border-blue-200 p-1" >
           {[
             { icon: Heart, label: "All Quotes", value: "all", count: count.all },
             { icon: SaveIcon, label: "Saved", value: "saved", count: count.saved },

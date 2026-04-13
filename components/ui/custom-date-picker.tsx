@@ -75,7 +75,7 @@ export function CustomDateRangePicker({ value, onChange }: CustomDateRangePicker
           </Button>
           <Button
             type="button"
-            className="rounded-l-none bg-[#0070c0] hover:bg-[#005999] px-3"
+            className="rounded-l-none bg-[#0070c0]  px-3"
             aria-label="Open date range picker"
           >
             <CalendarIcon size={16} />
@@ -94,7 +94,7 @@ export function CustomDateRangePicker({ value, onChange }: CustomDateRangePicker
             >
               Today
             </Button>
-            <Button type="button" className="bg-[#0070c0] hover:bg-[#005999]" onClick={() => setLastDays(7)}>
+            <Button type="button" className="bg-white hover:bg-white hover:text-black text-[#0070c0] border-[#0070c0]" onClick={() => setLastDays(7)}>
               Last 7 days
             </Button>
             <Button
