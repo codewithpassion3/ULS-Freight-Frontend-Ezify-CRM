@@ -15,7 +15,7 @@ const FormCheckbox = memo(({ field: config }: { field: FormCheckboxTypes }) => {
         <div className={`flex items-center gap-2 ${config.wrapperClassName || ""}`}>
             <Checkbox
                 id={field.name}
-                checked={field.value}
+                checked={field.value || false}
                 onCheckedChange={(checked) => field.onChange(checked)}
                 className={`${field.value ? config.selectedClassName : ""} border-border cursor-pointer`}
             />

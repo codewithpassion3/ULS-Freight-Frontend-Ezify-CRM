@@ -17,6 +17,7 @@ const FormSelect = memo(({ field: config }: { field: FormSelectTypes }) => {
         <div>
             <Label className={`${config.labelClassName} ${error ? "text-red-500" : ""}`} htmlFor={config.name}>{config.label ? config.label : config.name}</Label>
             <Select
+                defaultValue={config.defaultValue}
                 value={field.value?.toString()}
                 onValueChange={(value) => config.valueType === "number" ? field.onChange(Number(value)) : field.onChange(value)}
                 disabled={config.disabled}

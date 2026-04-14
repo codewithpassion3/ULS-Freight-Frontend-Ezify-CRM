@@ -98,9 +98,7 @@ export const columns: ColumnDef<any>[] = [
                             <MoreVertical size={16} className="cursor-pointer" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem className="cursor-pointer">
-                                <CircleCheck size={14} /> Book Now
-                            </DropdownMenuItem>
+                           
                             <DropdownMenuItem onClick={() => setOpen(true)} className="cursor-pointer">
                                 <Edit /> Edit
                             </DropdownMenuItem>
@@ -137,3 +135,5 @@ export const columns: ColumnDef<any>[] = [
         },
     },
 ]
+
+

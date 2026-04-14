@@ -79,7 +79,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
 
     useEffect(() => {
         console.log("singleQuote", singleQuote)
-        if(singleQuote?.quote?.shipment?.id){
+        if (singleQuote?.quote?.shipment?.id) {
             setShipmentId(singleQuote.quote.shipment.id)
         }
     }, [singleQuote])
@@ -131,34 +131,32 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         const fromAddress = fromAddressRef.current?.getValues() || {}
         const toAddress = toAddressRef.current?.getValues() || {}
         const dimensions = dimensionsRef.current?.getValues() || {}
+        // these are optional only include if they have some values
         const services = servicesRef.current?.getValues() || {}
         const insurance = insuranceRef.current?.getValues() || {}
         const signature = signatureRef.current?.getValues() || {}
 
+        let completePayload = {
+            addresses: [fromAddress, toAddress],
+            ...dimensions,
+        }
 
-        
-        console.log("dimensions", dimensions)
-        
         const addresses = [];
         if (Object.keys(fromAddress).length > 0) addresses.push(fromAddress)
         if (Object.keys(toAddress).length > 0) addresses.push(toAddress)
-
         if (Object.keys(insurance).length > 0) {
-            return {
-                addresses,
-                ...dimensions,
-                ...insurance,
-                ...services,
-                ...signature,
-            }
+            // print insurance
+            console.log("insurance", insurance)
+            completePayload = { ...completePayload, ...insurance }
         }
-        return {
-            addresses,
-            ...dimensions,
-            ...services,
-            ...services,
-            ...signature,
+        if (Object.keys(services).length > 0) {
+            completePayload = { ...completePayload, ...services }
         }
+        if (Object.keys(signature).length > 0) {
+            completePayload = { ...completePayload, ...signature }
+        }
+
+        return completePayload
     }
 
 
@@ -168,18 +166,22 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         const dimValid = await dimensionsRef.current?.trigger()
         // console.log("fromValid", fromValid)
         // console.log("toValid", toValid)
-        console.log("dimValid", dimValid)
 
         // We validate core sections First. Then conditionally attached ones depending on if they are rendered
         let valid = fromValid && toValid && dimValid;
 
-        // if (servicesRef.current) valid = valid && await servicesRef.current.trigger()
-        // if (insuranceRef.current) valid = valid && await insuranceRef.current.trigger()
-        // if (signatureRef.current) valid = valid && await signatureRef.current.trigger()
+        // print every validation
+        console.log("fromValid", fromValid)
+        console.log("toValid", toValid)
+        console.log("dimValid", dimValid)
+
+        if (servicesRef.current) valid = valid && await servicesRef.current.trigger()
+        if (insuranceRef.current) valid = valid && await insuranceRef.current.trigger()
+        if (signatureRef.current) valid = valid && await signatureRef.current.trigger()
 
         // if (!valid) {
-        //      toast.error("Please fill in all required fields correctly.")
-        //      return
+        //     toast.error("Please fill in all required fields correctly.")
+        //     return
         // }
 
         const mergedData = getMergedPayload()
@@ -235,6 +237,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             quote: {
                 ...payloadTransformed
             }
+
         }
 
         if (isEditing) {

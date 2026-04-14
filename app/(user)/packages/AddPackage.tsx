@@ -74,6 +74,7 @@ export default function AddPackage({ id, shipmentType, initialData, onSave, chil
         mode: "onChange",
         shouldUnregister: false,
         defaultValues: {
+
             measurementUnit: "METRIC",
             shipmentType: shipmentType as ShipmentFormValues["shipmentType"],
         }
@@ -85,6 +86,7 @@ export default function AddPackage({ id, shipmentType, initialData, onSave, chil
             methods.reset({ ...initialData });
         } else if (open && !initialData) {
             methods.reset({
+                
                 measurementUnit: "METRIC",
                 name: "",
                 shipmentType: shipmentType as any,

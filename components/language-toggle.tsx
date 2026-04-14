@@ -56,13 +56,13 @@ export function LanguageToggle() {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent className="w-max" align="end">
         <DropdownMenuItem onClick={() => handleLanguageChange("en")}>
           English
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={() => handleLanguageChange("fr")}>
-          Français
+        <DropdownMenuItem disabled onClick={() => handleLanguageChange("fr")}>
+          Français (Coming Soon)
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

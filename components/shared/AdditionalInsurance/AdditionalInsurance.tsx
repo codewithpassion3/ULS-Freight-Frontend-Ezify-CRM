@@ -45,11 +45,9 @@ const AdditionalInsurance = forwardRef((props, ref) => {
         if (cachedSingleQuote) {
             const insurance = cachedSingleQuote.quote.insurance;
             if (insurance) {
-                setValue("insurance", {
-                    amount: insurance.amount,
-                    currency: insurance.currency,
-                    type: insurance.type,
-                });
+                setValue("insurance.amount", insurance.amount)
+                setValue("insurance.currency", insurance.currency)
+                setValue("insurance.type", insurance.type)
             }
         }
     }, [cachedSingleQuote, setValue]);

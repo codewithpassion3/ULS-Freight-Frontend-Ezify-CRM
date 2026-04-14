@@ -7,6 +7,7 @@ import AddPackage from "@/app/(user)/packages/AddPackage"
 import { FREIGHT_CLASS_OPTIONS } from "./constants"
 import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import { usePathname } from "next/navigation"
+import PackageSelectionModal from "@/app/(user)/packages/PackageSelectionModal"
 
 type Props = {
     index: number
@@ -55,7 +56,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                     </div>
                     <span className="font-semibold text-slate-800 dark:text-slate-100">Package {index + 1}</span>
                     {/* <input type="hidden" {...register("quantity", { valueAsNumber: true })} /> */}
-                    <input type="hidden" value={shipmentType as string} {...register("type")} />
+                    {/* <input type="hidden" value={shipmentType as string} {...register("type")} /> */}
                 </div>
                 {canRemove && (
                     <Button variant="ghost" size="icon" type="button" onClick={() => onRemove(index)}
@@ -98,7 +99,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                         show: !(isShipment && shipmentType === "COURIER_PAK")
                     },
                     {
-                        name: `units.${index}.weight`,
+                        name: `lineItem.units.${index}.weight`,
                         label: `Weight (${weightUnit})*`,
                         type: "number",
                         placeholder: "W",
@@ -169,6 +170,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                         name: `lineItem.units.${index}.specialHandlingRequired`,
                         label: "Special Handling Required",
                         type: "checkbox",
+                        defaultValue: false,
                         labelClassName: "text-xs text-muted-foreground",
                         wrapperClassName: "col-span-8",
                         show: shipmentType === "PACKAGE"
@@ -179,7 +181,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
 
             {/* Row actions */}
             <div className="flex items-center gap-4 text-sm mt-2 sm:mt-0">
-                <Button variant="link" type="button"><PackageOpen /> My Packages</Button>
+                <PackageSelectionModal selectedPackage={shipmentType} />
                 <AddPackage shipmentType={shipmentType} open={open} setOpen={setOpen} initialData={rowSnapshot}>
                     <Button variant="link" type="button"><Save /> Save Package</Button>
                 </AddPackage>

@@ -57,7 +57,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   const localSchema = useMemo(() => {
     let schema = addressSchema;
     if (showLocationType) {
-      schema = schema.extend({ locationType: z.string("Location type is required") }) as any;
+      schema = schema.extend({ locationTypeId: z.number("Location type is required") }) as any;
     }
     return schema;
   }, [shipmentType]);
@@ -101,7 +101,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
         city: quoteAddress.address.city || "",
         state: quoteAddress.address.state || "",
         country: quoteAddress.address.country || "",
-        ...(showLocationType && { locationType: quoteAddress.locationType }),
+        ...(showLocationType && { locationTypeId: quoteAddress.locationTypeId }),
         ...(isShipment && { companyName: quoteAddress.companyName }),
         ...(isShipment && { contactId: quoteAddress.contactId }),
         ...(isShipment && { address2: quoteAddress.address2 }),
@@ -130,7 +130,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       state: contact.address?.state || "",
       country: contact.address?.country || "",
 
-      ...(showLocationType && { locationType: contact?.locationTypeId || "" }),
+      ...(showLocationType && { locationTypeId: contact?.locationTypeId || "" }),
       ...(isShipment && { companyName: contact.companyName }),
       // ...(isShipment && { contactId: contact.id }),
       ...(isShipment && { address2: contact.address?.address2 || "" }),
@@ -161,8 +161,20 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       state: "",
       postalCode: "",
       country: "",
+      ...(showLocationType && { locationTypeId: "" }),
+      ...(isShipment && { companyName: "" }),
+      ...(isShipment && { contactId: "" }),
+      ...(isShipment && { address2: "" }),
+      ...(isShipment && { unit: "" }),
+      ...(isShipment && { contactName: "" }),
+      ...(isShipment && { email: "" }),
+      ...(isShipment && { phoneNumber: "" }),
     });
   };
+
+  // show all values and errors
+  console.log("Address Values", methods.getValues())
+  console.log("Address Errors", methods.formState.errors)
 
   const handleSwap = () => {
     // Parent handles the actual swapping by fetching from refs
@@ -252,7 +264,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       disabled: addressLocked,
     },
     {
-      name: "locationType",
+      name: "locationTypeId",
       label: "Location Type*",
       type: "select",
       placeholder: "Location Type",
@@ -262,6 +274,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       })),
       disabled: addressLocked,
       show: showLocationType,
+      valueType: "number"
     },
     {
       name: "isResidential",
@@ -280,12 +293,14 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       type: "text",
       placeholder: "Contact Name",
       disabled: addressLocked,
+      show: isShipment,
     },
     {
       name: "email",
       label: "Email",
       type: "email",
       placeholder: "Email",
+      show: isShipment,
       disabled: addressLocked,
     },
     {
@@ -293,6 +308,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       label: "Phone",
       type: "phone",
       placeholder: "Phone",
+      show: isShipment,
       disabled: addressLocked,
     },
 
@@ -324,7 +340,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
             formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 gap-6"
             fields={formFields}
           />
-          {type === "FROM" && <FormDate
+          {isShipment && type === "FROM" && <FormDate
             field={
               {
                 name: "shipDate",

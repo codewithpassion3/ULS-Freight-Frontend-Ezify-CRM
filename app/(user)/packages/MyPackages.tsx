@@ -16,12 +16,12 @@ import { getAllPackages } from "@/api/services/packages.api"
 import AddPackage from "./AddPackage"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export function MyPackages({ handleSelect }: { handleSelect?: (contact: any) => void }) {
+export function MyPackages({ selectedPackage, handleSelect }: { selectedPackage?: string, handleSelect?: (contact: any) => void }) {
     const [search, setSearch] = useState("")
     const [page, setPage] = useState(1)
     const [sorting, setSorting] = useState([])
     const [open, setOpen] = useState(false)
-    const [packageType, setPackageType] = useState("all")
+    const [packageType, setPackageType] = useState(selectedPackage ? selectedPackage : "all")
 
     const debouncedSearch = useDebounce(search, 500)
 
@@ -51,14 +51,17 @@ export function MyPackages({ handleSelect }: { handleSelect?: (contact: any) => 
                             setOpen={setOpen}
                         />
                     </div>
-                    <div className="flex gap-2 rounded-md bg-black/5 p-1 w-max">
+                    <div className={`flex gap-2 rounded-md bg-black/5 p-1 w-max ${!!selectedPackage ? "opacity-50 cursor-not-allowed" : ""}`}>
                         {[
                             { value: "all", label: "All" },
                             { value: "PALLET", label: "Pallet" },
                             { value: "PACKAGE", label: "Package" },
                             { value: "COURIER_PAK", label: "Courier Pak" },
                         ].map((tab) => (
-                            <div onClick={() => setPackageType(tab.value)}
+                            <button
+                            type="button"
+                            disabled={!!selectedPackage}
+                            onClick={() => setPackageType(tab.value)}
                                 className={`
                                     cursor-pointer px-2 py-1 
                                     rounded-md
@@ -68,7 +71,7 @@ export function MyPackages({ handleSelect }: { handleSelect?: (contact: any) => 
                                     border 
                                      ${packageType === tab.value ? " border-primary bg-primary/10 text-primary" : "border-transparent"}`} key={tab.value}>
                                 {tab.label}
-                            </div>
+                            </button>
                         ))}
                     </div>
                     {packages?.data.length > 0 ?
