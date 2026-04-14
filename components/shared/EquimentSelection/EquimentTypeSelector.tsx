@@ -6,9 +6,11 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Info } from "lucide-react"
 // import { QuoteSchemaTypes } from "@/lib/validations/quote/spot-quote-schema"
-import { FormRadio } from "@/components/common/form/fields/FormRadio"
-import { FormCheckbox } from "@/components/common/form/fields/FormCheckbox"
+// import { FormRadio } from "@/components/common/form/fields/FormRadio"
+// import { FormCheckbox } from "@/components/common/form/fields/FormCheckbox"
 import { useFormContext } from "react-hook-form"
+import FormRadio from "@/components/common/form/fields/FormRadio"
+import FormCheckbox from "@/components/common/form/fields/FormCheckbox"
 
 interface EquimentTypeSelectorProps {
     shipmentType: "SPOT_LTL" | "SPOT_FTL" | "TIME_CRITICAL"
@@ -38,22 +40,26 @@ export const EquimentTypeSelector = ({ shipmentType }: EquimentTypeSelectorProps
             <div className="space-y-6">
                 <div className="space-y-3">
                     <FormRadio
-                        name="equipment.type"
-                        label="Please describe the equipment required for this shipment"
-                        options={isTimeCritical ? timeCriticalOptions : ltlOptions}
+                        field={{
+                            name: "equipment.type",
+                            label: "Please describe the equipment required for this shipment",
+                            options: isTimeCritical ? timeCriticalOptions : ltlOptions
+                        }}
                     />
                 </div>
 
                 {isRefrigerated && (
                     <div className="bg-blue-50/20 p-4 border border-blue-50 rounded-md space-y-3 shadow-sm">
                         <FormRadio
-                            name="equipment.refrigeratedType"
-                            label="Please specify what kind of Refrigerated Service is required:"
-                            options={[
-                                { label: "Fresh (32°F / 0°C)", value: "Fresh" },
-                                { label: "Frozen (0°F / -17°C)", value: "Frozen" },
-                            ]}
-                            selectedClassName="text-amber-500 border-amber-500"
+                            field={{
+                                name: "equipment.refrigeratedType",
+                                label: "Please specify what kind of Refrigerated Service is required:",
+                                options: [
+                                    { label: "Fresh (32°F / 0°C)", value: "Fresh" },
+                                    { label: "Frozen (0°F / -17°C)", value: "Frozen" },
+                                ],
+                                selectedClassName: "text-amber-500 border-amber-500"
+                            }}
                         />
                     </div>
                 )}
@@ -62,12 +68,14 @@ export const EquimentTypeSelector = ({ shipmentType }: EquimentTypeSelectorProps
                     <div className="bg-blue-50/20 p-4 border border-blue-50 rounded-md space-y-3 shadow-sm">
                         <p className="text-sm text-muted-foreground">For <b>Next Flight Out</b> service, please verify if you are a known shipper</p>
                         <FormRadio
-                            name="equipment.isKnownShipper"
-                            options={[
-                                { label: "Yes, I am a known shipper", value: "Yes" },
-                                { label: "No, I am not a known shipper", value: "No" },
-                            ]}
-                            selectedClassName="text-amber-500 border-amber-500"
+                            field={{
+                                name: "equipment.isKnownShipper",
+                                options: [
+                                    { label: "Yes, I am a known shipper", value: "Yes" },
+                                    { label: "No, I am not a known shipper", value: "No" },
+                                ],
+                                selectedClassName: "text-amber-500 border-amber-500"
+                            }}
                         />
                     </div>
                 )}
@@ -83,9 +91,11 @@ export const EquimentTypeSelector = ({ shipmentType }: EquimentTypeSelectorProps
                             ].map((item) => (
                                 <FormCheckbox
                                     key={item.name}
-                                    name={item.name}
-                                    label={item.label}
-                                    icon={<Info size={14} className="text-[#0070c0]" />}
+                                    field={{
+                                        name: item.name,
+                                        label: item.label,
+                                        icon: <Info size={14} className="text-[#0070c0]" />
+                                    }}
                                 />
                             ))
 
@@ -95,12 +105,15 @@ export const EquimentTypeSelector = ({ shipmentType }: EquimentTypeSelectorProps
                                 { name: "equipment.allPalletsStackable", label: "All Pallets are Stackable" },
                                 { name: "equipment.somePalletsStackable", label: "Some Pallets are Stackable" },
                             ].map((item) => (
-                                <FormCheckbox
-                                    key={item.name}
-                                    name={item.name}
-                                    label={item.label}
-                                    icon={<Info size={14} className="text-[#0070c0]" />}
-                                />
+                                <div key={item.name}>
+                                    <FormCheckbox
+                                        field={{
+                                            name: item.name,
+                                            label: item.label,
+                                            icon: <Info size={14} className="text-[#0070c0]" />
+                                        }}
+                                    />
+                                </div>
                             ))
                         )}
                     </div>

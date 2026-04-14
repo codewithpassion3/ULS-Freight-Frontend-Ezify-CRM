@@ -80,28 +80,38 @@ export default function GeneralSettings() {
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                                     <FormField
-                                        name="companyName"
-                                        label="Company Name"
+                                        field={{
+                                            name: "companyName",
+                                            label: "Company Name",
+                                        }}
                                     />
 
                                     <FormField
-                                        name="contactName"
-                                        label="Contact Name*"
+                                        field={{
+                                            name: "contactName",
+                                            label: "Contact Name*",
+                                        }}
                                     />
 
                                     <FormField
-                                        name="industryType"
-                                        label="Industry Type"
+                                        field={{
+                                            name: "industryType",
+                                            label: "Industry Type",
+                                        }}
                                     />
 
                                     <FormField
-                                        name="email"
-                                        label="Email"
+                                        field={{
+                                            name: "email",
+                                            label: "Email",
+                                        }}
                                     />
 
                                     <FormField
-                                        name="phone"
-                                        label="Phone Number"
+                                        field={{
+                                            name: "phone",
+                                            label: "Phone Number",
+                                        }}
                                     />
 
                                     {/* <FormField
@@ -136,38 +146,53 @@ export default function GeneralSettings() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
                             <FormField
-                                name="address"
-                                label="Address*"
+                                field={{
+                                    name: "address",
+                                    label: "Address*",
+                                }}
                             />
 
                             <FormField
-                                name="address2"
-                                label="Address 2 (optional)"
+                                field={{
+                                    name: "address2",
+                                    label: "Address 2 (optional)",
+                                }}
                             />
 
                             <FormField
-                                name="unit"
-                                label="Unit/Floor #"
+                                field={{
+                                    name: "unit",
+                                    label: "Unit/Floor #",
+                                }}
                             />
 
                             <FormField
-                                name="postalCode"
-                                label="Postal Code"
+                                field={{
+                                    name: "postalCode",
+                                    label: "Postal Code",
+                                }}
                             />
 
                             <FormField
-                                name="city"
-                                label="City"
+                                field={{
+                                    name: "city",
+                                    label: "City",
+                                }}
                             />
 
                             <FormField
-                                name="province"
-                                label="Province"
+                                field={{
+                                    name: "province",
+                                    label: "Province",
+                                }}
+                               
                             />
 
                             <FormField
-                                name="country"
-                                label="Country"
+                                field={{
+                                    name: "country",
+                                    label: "Country",
+                                }}
                             />
 
                         </div>
