@@ -141,7 +141,10 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       ...(isShipment && { phoneNumber: contact.phoneNumber || "" }),
 
     });
+    // print location type
+    console.log(contact)
   }
+
 
 
   const { data: locationTypeData, isLoading: locationTypeLoading, isPending: locationTypeIsPending } = useQuery({
@@ -329,7 +332,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
                 placeholder: "Ship Date",
                 disabled: addressLocked,
                 wrapperClassName: "w-1/2",
-                setShipDate:setShipDate
+                setShipDate: setShipDate
 
 
               }}

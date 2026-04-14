@@ -41,7 +41,7 @@ export const ftlUnitSchema = z.object({
 // ─── LineItem schemas (one per tab) ───────────────────────────────────────────
 
 export const palletLineItemSchema = z.object({
-  shipmentType: z.literal("PALLET"),
+  type: z.literal("PALLET"),
   lineItem: z.object({
     description: z.string(),
     measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
@@ -66,7 +66,7 @@ export const palletLineItemSchema = z.object({
 })
 
 export const packageLineItemSchema = z.object({
-  shipmentType: z.literal("PACKAGE"),
+  type: z.literal("PACKAGE"),
   lineItem: z.object({
     description: z.string(),
     measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
@@ -76,7 +76,7 @@ export const packageLineItemSchema = z.object({
 })
 
 export const courierLineItemSchema = z.object({
-  shipmentType: z.literal("COURIER_PACK"),
+  type: z.literal("COURIER_PACK"),
   lineItem: z.object({
     measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
     units: z.array(courierUnitSchema).min(1, "Add at least one item"),
@@ -84,7 +84,7 @@ export const courierLineItemSchema = z.object({
 })
 
 export const ftlLineItemSchema = z.object({
-  shipmentType: z.literal("STANDARD_FTL"),
+  type: z.literal("STANDARD_FTL"),
   lineItem: z.object({
     measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
     units: z.array(ftlUnitSchema).min(1, "Add at least one item"),
@@ -93,7 +93,7 @@ export const ftlLineItemSchema = z.object({
 
 // ─── Discriminated union — the single source of truth ─────────────────────────
 
-export const lineItemSchema = z.discriminatedUnion("shipmentType", [
+export const lineItemSchema = z.discriminatedUnion("type", [
   palletLineItemSchema,
   packageLineItemSchema,
   courierLineItemSchema,

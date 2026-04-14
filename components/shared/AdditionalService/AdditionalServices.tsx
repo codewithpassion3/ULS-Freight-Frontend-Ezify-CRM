@@ -115,7 +115,7 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                                     <div className="my-4">
                                         <FormRadio
                                             field={{
-                                                wrapperClassName: "grid grid-cols-2 gap-4",
+                                                className: "grid grid-cols-2 gap-4",
                                                 name: "limitedAccess.location",
                                                 label: "Location",
                                                 options: [

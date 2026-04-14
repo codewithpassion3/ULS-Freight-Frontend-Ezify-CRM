@@ -13,6 +13,7 @@ import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import { usePathname } from "next/navigation"
 
 const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }, ref) => {
+  console.log("shipmentType", shipmentType)
   const { methods, fieldArray, handleAddPackage, handleClearDimensions, isOpen, setIsOpen } = useDimensions(shipmentType)
   const { watch } = methods
   const { fields, append, remove } = fieldArray

@@ -206,13 +206,13 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             "quoteType": quoteType,
             "shipmentType": shipmentType,
             ...(!isEditing && quoteStatus !== singleQuote?.quote.status && { "status": quoteStatus }),
-            ...(shipmentType !== "STANDARD_FTL") && {
-                "lineItem": {
-                    ...data.lineItem,
-                    "type": shipmentType,
-                    "units": data.units
-                },
-            },
+            // ...(shipmentType !== "STANDARD_FTL") && {
+            //     "lineItem": {
+            //         ...data.lineItem,
+            //         "type": shipmentType,
+            //         "units": data.units
+            //     },
+            // },
         }
         const transformedAddresses = payload.addresses.map((addr: any) => {
             if (addr.addressBookId) {

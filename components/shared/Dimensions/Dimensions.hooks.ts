@@ -18,7 +18,7 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
         mode: "onChange",
         defaultValues: {
             lineItem: {
-                shipmentType: shipmentType,
+                type: shipmentType,
                 description: "",
                 measurementUnit: "IMPERIAL",
                 dangerousGoods: false,
@@ -62,8 +62,11 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
         // cachedSingleQuote.lineItem?.specialHandlingRequired && setValue("specialHandlingRequired", cachedSingleQuote.lineItem?.specialHandlingRequired ?? false)
         setValue("lineItem.quantity", cachedSingleQuote.lineItem?.quantity ?? 1)
         setIsOpen(true)
-
-    }, [cachedSingleQuote, setValue])
+    }, [cachedSingleQuote, setValue, shipmentType])
+    
+    useEffect(() => {
+        setValue("lineItem.type", shipmentType)
+    }, [shipmentType])
 
     const handleAddPackage = () =>
         fieldArray.append({ length: 0, width: 0, height: 0, weight: 0, description: "" })
