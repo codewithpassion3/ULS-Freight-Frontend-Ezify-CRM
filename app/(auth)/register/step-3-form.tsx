@@ -31,27 +31,34 @@ export function Step3Form({ onBack }: Step3FormProps) {
       <div className="space-y-4">
         <div className="space-y-2">
           <FormField
-            name="user.username"
-            label="Create a Username*"
-            placeholder="Enter your username"
+            field={{
+              name: "user.username",
+              label: "Create a Username*",
+              placeholder: "Enter your username",
+              type: "text",
+            }}
           />
         </div>
         <div className="space-y-2 relative">
           <FormField
-            name="user.password"
-            label="Create Password*"
-            type="password"
-            placeholder="Enter your password"
+            field={{
+              name: "user.password",
+              label: "Create Password*",
+              type: "password",
+              placeholder: "Enter your password",
+            }}
           />
         </div>
 
         <div className="space-y-2 relative">
           <div className="relative">
             <FormField
-              name="user.confirmPassword"
-              label="Confirm Password*"
-              type="password"
-              placeholder="Confirm your password"
+              field={{
+                name: "user.confirmPassword",
+                label: "Confirm Password*",
+                type: "password",
+                placeholder: "Confirm your password",
+              }}
             />
           </div>
         </div>

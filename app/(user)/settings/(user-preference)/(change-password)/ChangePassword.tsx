@@ -56,20 +56,26 @@ export default function ChangePassword() {
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FormField
-                            name="currentPassword"
-                            label="Current Password*"
-                            type="password"
+                            field={{
+                                name: "currentPassword",
+                                label: "Current Password*",
+                                type: "password",
+                            }}
                         />
                         <FormField
-                            name="newPassword"
-                            label="New Password*"
-                            type="password"
+                            field={{
+                                name: "newPassword",
+                                label: "New Password*",
+                                type: "password",
+                            }}
                         />
 
                         <FormField
-                            name="newConfirmPassword"
-                            label="Confirm New Password*"
-                            type="password"
+                            field={{
+                                name: "newConfirmPassword",
+                                label: "Confirm New Password*",
+                                type: "password",
+                            }}
                         />
 
                     </div>
