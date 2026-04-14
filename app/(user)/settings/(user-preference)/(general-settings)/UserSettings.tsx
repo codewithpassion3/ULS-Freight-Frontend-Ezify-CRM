@@ -41,8 +41,11 @@ export default function UserSettings() {
                     /> */}
 
                     <FormField
-                        name="phone"
-                        label="Phone Number"
+                        field={{
+                            name: "phone",
+                            label: "Phone Number",
+                            type:"phone"
+                        }}
                     />
 
                     {/* <FormField
