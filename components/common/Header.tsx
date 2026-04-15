@@ -25,22 +25,23 @@ import { useAuth } from "@/context/auth.context"
 import { useEffect, useState } from "react"
 import { User } from "@/app/(user)/settings/(user-preference)/UserTable"
 import { Loader } from "./Loader"
+import NotificationsWidget from "@/app/(user)/home/NotificationsWidget"
 
 
 export default function Header() {
     const { user } = useAuth();
     const pathname = usePathname()
     return (
-        <header className="w-full fixed bg-white/10 backdrop-blur-md border-b border-b-black/20 dark:border-b-white/20 z-10">
-            <div className="flex h-20 items-center justify-between px-4 lg:px-6">
+        <header className="w-full  fixed bg-white/10 backdrop-blur-md border-b border-b-black/20 dark:border-b-white/20 z-10">
+            <div className="flex h-20 container mx-auto items-center justify-between">
                 {/* LEFT */}
                 <div className="flex items-center gap-6">
                     <Link href="/">
                         <Image
                             src="/logo.png"
                             alt="logo"
-                            width={64}
-                            height={64}
+                            width={100}
+                            height={100}
                         />
                     </Link>
 
@@ -117,8 +118,9 @@ export default function Header() {
                 {/* <p>User Role : {currentUser.role.id}</p> */}
                 {/* RIGHT SIDE */}
                 <div className="flex items-center gap-8">
-                    <div className="flex gap-2">
+                    <div className="flex gap-4">
                         <LanguageToggle />
+                        <NotificationsWidget/>
                         <ModeToggle />
                     </div>
                     <UserProfile />

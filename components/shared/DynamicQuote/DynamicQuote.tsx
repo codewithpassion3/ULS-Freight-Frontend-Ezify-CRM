@@ -144,11 +144,11 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         const addresses = [];
         if (Object.keys(fromAddress).length > 0) addresses.push(fromAddress)
         if (Object.keys(toAddress).length > 0) addresses.push(toAddress)
-        console.log("INSURANCE", insurance.amount > 0)
-        if (Object.keys(insurance).length > 1) {
+
+        if (insurance.insurance.amount) {
             completePayload = { ...completePayload, ...insurance }
         }
-        if (Object.keys(services).length > 1) {
+        if (Object.keys(services).length > 0) {
             completePayload = { ...completePayload, ...services }
         }
         if (Object.keys(signature).length > 0) {

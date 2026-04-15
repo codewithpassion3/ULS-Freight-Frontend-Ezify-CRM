@@ -5,8 +5,8 @@ export const navItems = [
         title: "Quote",
         items: [
             { title: "All Quotes", href: "/quotes" },
-            { title: "Create Quote", href: "/quote/create" },
-            { title: "Create Spot Quote", href: "/spot-quote/create" },
+            { title: "Create Quote", href: "/quote" },
+            { title: "Create Spot Quote", href: "/spot-quote" },
             { title: "Saved Quotes", href: "/quote/saved" },
         ],
     },
@@ -14,7 +14,7 @@ export const navItems = [
     {
         title: "Ship",
         items: [
-            { title: "Create Shipment", href: "/shipment/create" },
+            { title: "Create Shipment", href: "/shipment" },
             { title: "Bulk Shipping", href: "/shipment/bulk" },
         ],
     },

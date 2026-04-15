@@ -13,7 +13,7 @@ import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import { usePathname } from "next/navigation"
 
 const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }, ref) => {
-  console.log("shipmentType", shipmentType)
+  
   const { methods, fieldArray, handleAddPackage, handleClearDimensions, isOpen, setIsOpen } = useDimensions(shipmentType)
   const { watch, setValue } = methods
   const { fields, append, remove } = fieldArray
@@ -31,11 +31,11 @@ const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions
 
   // show error
   const errors = methods.formState.errors
-  console.log("errors", errors)
+  
 
   // is valid
   const isValid = methods.formState.isValid
-  console.log("isValid", isValid)
+  
 
   
 

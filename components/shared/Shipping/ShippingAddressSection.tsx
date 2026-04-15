@@ -5,7 +5,7 @@ import { ContactType } from "../../../app/(user)/settings/(address-book)/types/a
 import { GlobalForm } from "@/components/common/form/GlobalForm"
 import { SelectAddressBookModal } from "./SelectAddressBookModal"
 import { useQuery } from "@tanstack/react-query"
-import { useMarkContactAsRecent } from "../../../app/(user)/quote/create/hooks"
+import { useMarkContactAsRecent } from "../../../app/(user)/quote/hooks"
 import { Button } from "@/components/ui/button"
 import { ArrowLeftRight, BookUser, InfoIcon, X } from "lucide-react"
 import { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
@@ -116,7 +116,6 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   }, [cachedSingleQuote, index, type, shipmentType, methods]);
 
   const handleAddressSelect = (contact: ContactType) => {
-    console.log(contact)
     markContactAsRecent.mutate(contact.id || "")
     setAddressLocked(true)
     const currentValues = methods.getValues();
@@ -142,7 +141,6 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
 
     });
     // print location type
-    console.log(contact)
   }
 
 
@@ -173,8 +171,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   };
 
   // show all values and errors
-  console.log("Address Values", methods.getValues())
-  console.log("Address Errors", methods.formState.errors)
+
 
   const handleSwap = () => {
     // Parent handles the actual swapping by fetching from refs

@@ -92,7 +92,7 @@ export default function DynamicQuotesTable({ setCount, quoteCategory }: Props) {
                 title="No Quotes Found"
                 description="You have no quotes yet. Create one to get started."
                 action={
-                    <Link href="/quote/create">
+                    <Link href="/quote">
                         <Button variant="outline" className="text-muted-foreground border-border">
                             <Plus size={16} /> Create Quote
                         </Button>

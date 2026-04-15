@@ -28,7 +28,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
     const lengthUnit = isImperial ? "in" : "cm"
     const weightUnit = isImperial ? "lbs" : "kg"
     const rowErrors = (errors as any)?.lineItem?.units?.[index]
-    console.log("child errors", errors.lineItem)
+    
     const pathname = usePathname()
     const isShipment = pathname.includes("shipment")
     // Snapshot current row values for the SavePackage dialog
@@ -45,7 +45,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
         palletUnitType: watch(`lineItem.units.${index}.palletUnitType`),
         description: watch(`lineItem.units.${index}.description`),
     }
-    console.log("rowErrors", rowErrors)
+    
     return (
         <div key={fieldId} className="space-y-4 pb-6 border-b last:border-0 relative group">
             {/* Row header */}

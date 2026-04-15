@@ -163,7 +163,7 @@ export const columns: ColumnDef<any>[] = [
                 <CircleCheck size={14} /> Book Now
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer">
-                <Link className="flex gap-2 items-center w-full" href={row.original.shipment ? `/shipment/create?id=${row.original.id}` : `/quote/create?id=${row.original.id}`}>
+                <Link className="flex gap-2 items-center w-full" href={row.original.shipment ? `/shipment?id=${row.original.id}` : `/quote?id=${row.original.id}`}>
                   <Edit size={14} /> Edit
                 </Link>
               </DropdownMenuItem>
