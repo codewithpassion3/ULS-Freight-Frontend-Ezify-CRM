@@ -29,10 +29,6 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
         return dynamicSchema(shipmentType)
     }, [shipmentType])
 
-
-    
-    console.log("Schema Type:", shipmentType)
-    console.log("Schema Shape:", schema?._def)
     const methods = useForm<any>({
         resolver: zodResolver(schema as any) as any,
         mode: "onChange",
@@ -52,12 +48,7 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
         },
     })
 
-    console.log("SCHEMA:", schema)
-    console.log("ZOD SAFE PARSE:", schema?.safeParse(methods.getValues()))
-    useEffect(() => {
-        console.log("FORM VALUES:", methods.getValues())
-        console.log("FORM ERRORS:", methods.formState.errors)
-    }, [methods.formState.errors])
+
 
     const { control, setValue, formState: { errors } } = methods
     const fieldArray = useFieldArray({ control, name: "lineItem.units" })

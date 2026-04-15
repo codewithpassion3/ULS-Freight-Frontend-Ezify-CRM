@@ -16,6 +16,7 @@ import { deleteQuote } from "@/api/services/quotes.api"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
+import { normalText } from "../../packages/AddPackage"
 
 export const columns: ColumnDef<any>[] = [
   {
@@ -123,8 +124,8 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "packagingDetails",
     header: "Packaging Details",
     cell: ({ row }) => {
-      const quoteType = row.original.quoteType.toLowerCase()
-      const shipmentType = row.original.shipmentType.toLowerCase()
+      const quoteType = normalText(row.original.quoteType)
+      const shipmentType = normalText(row.original.shipmentType)
       return (
         <div className="leading-tight capitalize">
           {quoteType} - {shipmentType}
