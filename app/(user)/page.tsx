@@ -6,7 +6,6 @@ import InvoicingUpdatesWidget from "./home/components/InvoicingUpdatesWidget";
 import TrackShipmentsWidget from "./home/components/TrackShipmentsWidget";
 import PickupSummaryWidget from "./home/components/PickupSummaryWidget";
 import PromoBannerWidget from "./home/components/PromoBannerWidget";
-import SSETest from "./Notification";
 
 export default function Home() {
     return (
@@ -28,8 +27,6 @@ export default function Home() {
                     </div>
                 </div>
             </div>
-            {/* Hidden/Background Services */}
-            <SSETest />
         </div>
     );
 }

@@ -7,13 +7,13 @@ import { useEffect } from "react"
 import { usePathname, useSearchParams } from "next/navigation"
 import { Loader } from "@/components/common/Loader"
 
+import { PackagingTypesModal } from "./PackagingTypesModal"
+
 interface QuoteShippingTypeSelectorProps {
     shipmentType: ShipmentOptions[keyof ShipmentOptions]
     setShipmentType: (type: ShipmentOptions[keyof ShipmentOptions]) => void
     quoteType: keyof ShipmentOptions
 }
-
-
 
 export const ShippingTypeSelector = ({ shipmentType, setShipmentType, quoteType }: QuoteShippingTypeSelectorProps) => {
     const quoteId = useSearchParams().get("id")
@@ -63,7 +63,7 @@ export const ShippingTypeSelector = ({ shipmentType, setShipmentType, quoteType 
                     </span>
                     {isShipment ? "Packaging" : "Select Shipment Type"}
                 </h2>
-                <button type="button" className="text-sm text-[#0070c0] flex items-center gap-1 hover:underline font-medium"><Info size={14} /> Shipment Types</button>
+                <PackagingTypesModal />
             </div>
             {/* Use tab instead of buttons */}
             <div className="flex flex-wrap gap-4">

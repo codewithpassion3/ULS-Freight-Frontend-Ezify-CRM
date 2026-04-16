@@ -118,7 +118,7 @@ export default function Header() {
                 {/* <p>User Role : {currentUser.role.id}</p> */}
                 {/* RIGHT SIDE */}
                 <div className="flex items-center gap-8">
-                    <div className="flex gap-4">
+                    <div className="flex gap-2">
                         <LanguageToggle />
                         <NotificationsWidget/>
                         <ModeToggle />

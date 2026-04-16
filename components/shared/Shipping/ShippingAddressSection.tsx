@@ -38,6 +38,7 @@ function getRequiredFields(schema: z.ZodObject<any>) {
 import { forwardRef, useImperativeHandle } from "react"
 import { FormFieldTypes, FormFieldUnion } from "@/components/common/form/fields/fields.types"
 import FormDate from "@/components/common/form/fields/FormDate"
+import { contactSchema } from "@/app/(user)/settings/(address-book)/schemas/addContact.schema"
 export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, type, title, onNextStep, onSwap, setShipDate }: { quoteType: keyof ShipmentOptions, shipmentType: ShipmentOptions[keyof ShipmentOptions], type: "TO" | "FROM", title: string, onNextStep?: (data: any) => void, onSwap?: () => void, setShipDate?: (date: Date | undefined) => void }, ref) => {
   // check if route includes shipment to check if it quote or shipment
   const pathname = usePathname()
@@ -55,24 +56,58 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   })
 
   const localSchema = useMemo(() => {
-    let schema = addressSchema;
-    if (showLocationType) {
-      schema = schema.extend({ locationTypeId: z.number("Location type is required") }) as any;
-    }
-    return schema;
-  }, [shipmentType]);
+    if (isShipment) {
+      let schema = contactSchema;
 
-  const methods = useForm({
-    resolver: zodResolver(localSchema),
-    mode: "onChange",
-    defaultValues: {
-      type: type,
+      return schema;
+    }
+    else {
+      let schema = contactSchema.pick({
+        address: true,
+      });
+
+      if (showLocationType) {
+        schema = schema.extend({ locationTypeId: z.number("Location type is required") }) as any;
+      }
+      return schema;
+    }
+  }, [shipmentType]);
+  const addressDefaultValues = {
+    // @ts-ignore
+    type: type,
+    address: {
       address1: "",
       city: "",
       state: "",
       postalCode: "",
       country: "",
-    }
+    },
+  }
+
+  const shipmentDefaultValues = {
+    companyName: "",
+    contactId: "",
+    phone: "",
+    email: "",
+    contactName: "",
+    // @ts-ignore
+    type: type,
+    address: {
+      address1: "",
+      city: "",
+      state: "",
+      postalCode: "",
+      country: "",
+    },
+  }
+
+  const defaultValues = isShipment ? shipmentDefaultValues : addressDefaultValues;
+
+  const methods = useForm({
+    // @ts-ignore
+    resolver: zodResolver(localSchema),
+    mode: "onChange",
+    defaultValues: defaultValues
   });
 
   useImperativeHandle(ref, () => ({
@@ -82,7 +117,8 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   }), [methods]);
 
   const index = type === "FROM" ? 0 : 1
-
+  // print errors
+  console.log("errors", methods.formState.errors);
   useEffect(() => {
     if (!cachedSingleQuote) return;
 
@@ -96,11 +132,13 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       methods.reset({
         type,
         ...(isAddressBookEntry && { addressBookId: quoteAddress.id ?? null }),
-        address1: quoteAddress.address.address1 || "",
-        postalCode: quoteAddress.address.postalCode || "",
-        city: quoteAddress.address.city || "",
-        state: quoteAddress.address.state || "",
-        country: quoteAddress.address.country || "",
+        address: {
+          address1: quoteAddress.address.address1 || "",
+          postalCode: quoteAddress.address.postalCode || "",
+          city: quoteAddress.address.city || "",
+          state: quoteAddress.address.state || "",
+          country: quoteAddress.address.country || "",
+        },
         ...(showLocationType && { locationTypeId: quoteAddress.locationTypeId }),
         ...(isShipment && { companyName: quoteAddress.companyName }),
         ...(isShipment && { contactId: quoteAddress.contactId }),
@@ -121,13 +159,16 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
     const currentValues = methods.getValues();
     methods.reset({
       ...currentValues,
-      type: type,
+      // @ts-ignore
       addressBookId: Number(contact.id),
-      address1: contact.address?.address1 || "",
-      postalCode: contact.address?.postalCode || "",
-      city: contact.address?.city || "",
-      state: contact.address?.state || "",
-      country: contact.address?.country || "",
+      type: type,
+      address: {
+        address1: contact.address?.address1 || "",
+        postalCode: contact.address?.postalCode || "",
+        city: contact.address?.city || "",
+        state: contact.address?.state || "",
+        country: contact.address?.country || "",
+      },
 
       ...(showLocationType && { locationTypeId: contact?.locationTypeId || "" }),
       ...(isShipment && { companyName: contact.companyName }),
@@ -153,12 +194,13 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   const handleClearAddress = () => {
     setAddressLocked(false)
     methods.reset({
-      type,
-      address1: "",
-      city: "",
-      state: "",
-      postalCode: "",
-      country: "",
+      address: {
+        address1: "",
+        city: "",
+        state: "",
+        postalCode: "",
+        country: "",
+      },
       ...(showLocationType && { locationTypeId: "" }),
       ...(isShipment && { companyName: "" }),
       ...(isShipment && { contactId: "" }),
@@ -167,6 +209,9 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       ...(isShipment && { contactName: "" }),
       ...(isShipment && { email: "" }),
       ...(isShipment && { phoneNumber: "" }),
+      ...(isShipment && { read: "" }),
+
+
     });
   };
 
@@ -209,14 +254,14 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       show: isShipment,
     },
     {
-      name: "address1",
+      name: "address.address1",
       label: "Address",
       type: "text",
       placeholder: "Address",
       disabled: addressLocked,
     },
     {
-      name: "address2",
+      name: "address.address2",
       label: "Address 2 (optional)",
       type: "text",
       // placeholder: "Address",
@@ -224,7 +269,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       show: isShipment,
     },
     {
-      name: "unit",
+      name: "address.unit",
       label: "Unit/Floor #",
       type: "text",
       // placeholder: "Address",
@@ -233,28 +278,28 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
 
     },
     {
-      name: "postalCode",
+      name: "address.postalCode",
       label: "Postal/ZIP Code *",
       type: "text",
       placeholder: "A1A 1A1",
       disabled: addressLocked,
     },
     {
-      name: "city",
+      name: "address.city",
       label: "City",
       type: "text",
       placeholder: "City Name",
       disabled: addressLocked,
     },
     {
-      name: "state",
+      name: "address.state",
       label: "Province/State",
       type: "text",
       placeholder: "State/Province",
       disabled: addressLocked,
     },
     {
-      name: "country",
+      name: "address.country",
       label: "Country",
       type: "text",
       placeholder: "Country",
@@ -308,7 +353,79 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       show: isShipment,
       disabled: addressLocked,
     },
-
+    {
+      name: "defaultInstructions",
+      label: "Default Instructions",
+      type: "text",
+      placeholder: "Default Instructions",
+      show: isShipment,
+      disabled: addressLocked,
+      wrapperClassName: "col-span-2",
+    },
+    // ready time
+    {
+      name: "palletShippingReadyTime",
+      label: "Ready Time",
+      type: "time",
+      placeholder: "Ready Time",
+      show: isShipment && shipmentType === "PALLET",
+      disabled: addressLocked,
+      hourName: "readyTimeHour",
+      minuteName: "readyTimeMinute",
+      ampmName: "readyTimeAmPm",
+    },
+    {
+      name: "palletShippingCloseTime",
+      label: "Close Time",
+      type: "time",
+      placeholder: "Close Time",
+      hourName: "closeTimeHour",
+      minuteName: "closeTimeMinute",
+      ampmName: "closeTimeAmPm",
+      show: isShipment && shipmentType === "PALLET",
+      disabled: addressLocked,
+    },
+    // save contact to address book
+    {
+      name: "saveToAddressBook",
+      label: "Save Contact to Address Book",
+      type: "checkbox",
+      placeholder: "Save Contact to Address Book",
+      show: isShipment,
+      // disabled: addressLocked,
+      icon: <InfoIcon size={16} />,
+      wrapperClassName: "col-span-2",
+    },
+    // save as new default
+    {
+      name: "saveAsNewDefault",
+      label: "Save as New Default",
+      type: "checkbox",
+      placeholder: "Save as New Default",
+      show: isShipment && type === "FROM",
+      // disabled: addressLocked,
+      icon: <InfoIcon size={16} />,
+      wrapperClassName: "col-span-2",
+    },
+    // billing reference code optional
+    {
+      name: "billingReferenceCode",
+      label: "Billing Reference Code (Optional)",
+      type: "text",
+      placeholder: "Billing Reference Code",
+      show: isShipment && type === "TO",
+      // disabled: addressLocked,
+      wrapperClassName: "col-span-2",
+    },
+    // ship date
+    {
+      name: "shipDate",
+      label: "Ship Date",
+      type: "date",
+      placeholder: "Ship Date",
+      show: isShipment && type === "FROM",
+      // disabled: addressLocked,
+    },
 
   ];
 
@@ -337,20 +454,6 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
             formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 gap-6"
             fields={formFields}
           />
-          {isShipment && type === "FROM" && <FormDate
-            field={
-              {
-                name: "shipDate",
-                label: "Ship Date",
-                placeholder: "Ship Date",
-                disabled: addressLocked,
-                wrapperClassName: "w-1/2",
-                setShipDate: setShipDate
-
-
-              }}
-          />}
-
         </form>
       </FormProvider>
     </>

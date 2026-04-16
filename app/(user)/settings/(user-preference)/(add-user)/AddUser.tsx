@@ -27,6 +27,7 @@ import { ApiError } from "next/dist/server/api-utils"
 import { Loader } from "@/components/common/Loader"
 import { User } from "../UserTable"
 import { FormFieldWrapper } from "@/components/common/forms/FormFieldWrapper"
+import { GlobalForm } from "@/components/common/form/GlobalForm"
 
 export type AddUserFormValues = {
     id?: number
@@ -150,56 +151,38 @@ export default function AddUser({ open, setOpen, mode, setMode, selectedUser, se
                     </DialogHeader>
                     <FormProvider {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-
-                            {mode === "create" ? <FormField
-                                field={
+                            <GlobalForm
+                                formWrapperClassName="flex flex-col gap-4"
+                                fields={[
                                     {
                                         name: "email",
                                         label: "Email",
                                         placeholder: "Enter email",
                                         type: "email",
-                                    }
-                                }
-
-
-
-                            /> : ""}
-
-                            <FormField
-                                field={
+                                        show: mode === "create",
+                                    },
                                     {
                                         name: "firstName",
                                         label: "First Name",
                                         placeholder: "Enter first name",
                                         type: "text",
-                                    }
-                                }
-
-                            />
-
-                            <FormField
-                                field={
+                                    },
                                     {
                                         name: "lastName",
                                         label: "Last Name",
                                         placeholder: "Enter last name",
                                         type: "text",
-                                    }
-                                }
-
-                            />
-
-                            {mode === "create" ? <FormField
-                                field={
+                                    },
                                     {
                                         name: "phoneNumber",
                                         label: "Phone Number",
                                         placeholder: "Enter phone number",
-                                        type: "text",
+                                        type: "phone",
+                                        show: mode === "create",
                                     }
-                                }
-
-                            /> : ""}
+                                ]}
+                            />
+                            
 
                             {/* Role */}
                             <div>

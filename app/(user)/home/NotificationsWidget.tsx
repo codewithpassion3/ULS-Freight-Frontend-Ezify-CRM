@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { Bell, X, AlertCircle, Info, OctagonAlert, ChevronDown, BellDot } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
@@ -15,117 +15,143 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
 interface Notification {
-    id: string
-    type: 'critical' | 'warning' | 'info'
-    title: string
-    description: string
-    expandedContent: string
-    isUnread: boolean
-    isImportant: boolean
-    isNews: boolean
+    userNotificationId: number;
+    notificationId: number;
+    type: string;
+    severity: string;
+    payload: {
+        title: string;
+        message: string;
+        actionUrl?: string;
+        entityType?: string;
+        entityId?: number;
+        metaData?: any;
+    };
+    createdAt: string;
+    actorId?: number;
 }
 
-const INITIAL_NOTIFICATIONS: Notification[] = [
-    {
-        id: "1",
-        type: "critical",
-        title: "Steel, Aluminum and Copper Ex...",
-        description: "Important updates regarding steel and aluminum exports.",
-        expandedContent: "Due to new trade regulations, all steel, aluminum, and copper exports will require additional documentation starting next month. Please ensure all compliance forms are updated in your dashboard.",
-        isUnread: false,
-        isImportant: true,
-        isNews: false
-    },
-    {
-        id: "2",
-        type: "critical",
-        title: "FedEx Alert: Due to changing m...",
-        description: "FedEx has announced changes to pricing models.",
-        expandedContent: "FedEx is updating its dynamic fuel surcharge and peak season regional surcharges. These changes will impact international shipping rates effective immediately.",
-        isUnread: true,
-        isImportant: true,
-        isNews: false
-    },
-    {
-        id: "3",
-        type: "warning",
-        title: "Customs Alert: Delays...",
-        description: "Expected delays at major ports due to customs backlog.",
-        expandedContent: "We are seeing significant backlogs at the Port of Long Beach. Expect 3-5 days additional transit time for all incoming shipments from Asia.",
-        isUnread: true,
-        isImportant: false,
-        isNews: false
-    },
-    {
-        id: "4",
-        type: "critical",
-        title: "UPS ALERT: Please be advised t...",
-        description: "UPS operational alert for regional deliveries.",
-        expandedContent: "UPS is experiencing service disruptions in the Northeast region due to severe weather conditions. Deliveries may be delayed by up to 48 hours.",
-        isUnread: false,
-        isImportant: true,
-        isNews: false
-    },
-    {
-        id: "5",
-        type: "critical",
-        title: "Important Updates U....",
-        description: "Universal Logistics Service system maintenance.",
-        expandedContent: "The ULS dashboard will be down for scheduled maintenance this Sunday from 2 AM to 6 AM EST. Please complete all pending quotes before this window.",
-        isUnread: true,
-        isImportant: true,
-        isNews: false
-    },
-    {
-        id: "6",
-        type: "critical",
-        title: "Important UPS Shippi...",
-        description: "New UPS label requirements for international cargo.",
-        expandedContent: "New regulatory requirements for UPS labels are now in effect. All international cargo must include HTS codes directly on the label to avoid rejection at customs.",
-        isUnread: true,
-        isImportant: true,
-        isNews: false
-    },
-    {
-        id: "7",
-        type: "warning",
-        title: "Please be advised that ...",
-        description: "Warehouse capacity notification.",
-        expandedContent: "Our central hub is currently at 95% capacity. We recommend pre-booking storage space for June shipments to ensure availability.",
-        isUnread: false,
-        isImportant: false,
-        isNews: false
-    },
-    {
-        id: "8",
-        type: "info",
-        title: "Please be advised that ...",
-        description: "Warehouse capacity notification.",
-        expandedContent: "Our central hub is currently at 95% capacity. We recommend pre-booking storage space for June shipments to ensure availability.",
-        isUnread: false,
-        isImportant: false,
-        isNews: false
-    },
-
-    // paste more mock data
-
-]
-
 export default function NotificationsWidget() {
-    const [notifications, setNotifications] = useState<Notification[]>(INITIAL_NOTIFICATIONS)
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
+    const [clientId, setClientId] = useState<string>('');
+    const [unreadCount, setUnreadCount] = useState(0);
+    const eventSourceRef = useRef<EventSource | null>(null);
+
+    useEffect(() => {
+        connectSSE();
+
+        // Cleanup on unmount
+        return () => {
+            eventSourceRef.current?.close();
+        };
+    }, []);
+
+    const connectSSE = () => {
+        setConnectionStatus('connecting');
+
+        // Replace with your actual companyId or get from context
+        const companyId = 1;
+        const es = new EventSource(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/notifications/stream?companyId=${companyId}`,
+            { withCredentials: true } // Important for cookie-based auth
+        );
+
+        eventSourceRef.current = es;
+
+        // Connection opened
+        es.onopen = () => {
+            setConnectionStatus('connected');
+            console.log(':white_check_mark: SSE Connected');
+        };
+
+        // Handle specific events
+        es.addEventListener('connected', (e) => {
+            const data = JSON.parse(e.data);
+            setClientId(data.clientId);
+            console.log(':link: Session:', data);
+        });
+
+        // Handle new notifications
+        es.addEventListener('notification.new', (e) => {
+            const data: Notification = JSON.parse(e.data);
+            console.log(':bell: New Notification:', data);
+
+            setNotifications(prev => [data, ...prev]);
+            setUnreadCount(prev => prev + 1);
+
+            // Show browser notification if permitted
+            if (Notification.permission === 'granted') {
+                new Notification(data.payload.title, {
+                    body: data.payload.message,
+                    icon: '/favicon.ico'
+                });
+            }
+        });
+
+        // Default message handler (fallback)
+        es.onmessage = (e) => {
+            console.log(':incoming_envelope: Raw message:', e.data);
+        };
+
+        // Error/Disconnect
+        es.onerror = (error) => {
+            console.error(':x: SSE Error:', error);
+            setConnectionStatus('disconnected');
+            es.close();
+
+            // Auto-reconnect after 3 seconds
+            setTimeout(() => {
+                console.log(':arrows_counterclockwise: Attempting reconnect...');
+                connectSSE();
+            }, 3000);
+        };
+    };
+
+    const markAsRead = async (userNotificationId: number) => {
+        try {
+            await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/notifications/${userNotificationId}/read`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+            setUnreadCount(prev => Math.max(0, prev - 1));
+
+            // Update local state to show as read
+            setNotifications(prev =>
+                prev.map(n =>
+                    n.userNotificationId === userNotificationId
+                        ? { ...n, read: true }
+                        : n
+                )
+            );
+        } catch (err) {
+            console.error('Failed to mark as read:', err);
+        }
+    };
+
+    const requestBrowserPermission = () => {
+        Notification.requestPermission();
+    };
+
+    const clearNotifications = () => {
+        setNotifications([]);
+        setUnreadCount(0);
+    };
+
+    // const [notifications, setNotifications] = useState<Notification[]>(INITIAL_NOTIFICATIONS)
     const [isOpen, setIsOpen] = useState(true)
 
-    const dismissNotification = (id: string) => {
-        setNotifications(prev => prev.filter(n => n.id !== id))
-    }
+    // const dismissNotification = (id: string) => {
+    //     setNotifications(prev => prev.filter(n => n.id !== id))
+    // }
 
-    const dismissAll = () => {
-        setNotifications([])
-    }
+    // const dismissAll = () => {
+    //     setNotifications([])
+    // }
 
-    const unreadCount = notifications.filter(n => n.isUnread).length
-    const importantCount = notifications.filter(n => n.isImportant).length
-    const newsCount = notifications.filter(n => n.isNews).length
+    // const unreadCount = notifications.filter(n => n.isUnread).length
+    // const importantCount = notifications.filter(n => n.isImportant).length
+    // const newsCount = notifications.filter(n => n.isNews).length
 
     const renderNotification = (notif: Notification) => {
         const isCritical = notif.type === 'critical'
@@ -133,8 +159,8 @@ export default function NotificationsWidget() {
 
         return (
             <AccordionItem
-                key={notif.id}
-                value={notif.id}
+                key={notif.userNotificationId}
+                value={notif.userNotificationId.toString()}
                 className={cn(
                     "mb-3 rounded-xl border-2 transition-colors overflow-hidden",
                     isCritical && "border-[#FDA29B] bg-[#FFFBFA] dark:bg-[#fDa29b]/10",
@@ -157,32 +183,32 @@ export default function NotificationsWidget() {
                             isCritical && "text-[#912018] dark:text-[#ff4437]",
                             isWarning && "text-[#93370D] dark:text-[#ff4437]"
                         )}>
-                            {notif.title}
+                            {notif.payload.title}
                         </p>
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                        <AccordionTrigger className="p-0 hover:no-underline [&_svg]:hidden">
-                            <Button variant="outline">
+                        <Button variant="outline" asChild>
+                            <AccordionTrigger className="hover:no-underline [&_svg]:hidden">
                                 View
-                            </Button>
-                        </AccordionTrigger>
+                            </AccordionTrigger>
+                        </Button>
 
-                        {(isWarning || notif.isUnread) && (
-                            <Button 
+                        {/* {(isWarning || notif.isUnread) && (
+                            <Button
                                 onClick={() => dismissNotification(notif.id)}
                                 variant="destructive"
-                                // className="text-sm font-semibold text-red-600 hover:text-red-700 underline underline-offset-2"
+                            // className="text-sm font-semibold text-red-600 hover:text-red-700 underline underline-offset-2"
                             >
                                 Dismiss
                             </Button>
-                        )}
+                        )} */}
                     </div>
                 </div>
 
                 <AccordionContent className="px-15 pb-4 pt-0">
                     <div className="text-sm text-slate-600 border-t border-dashed border-slate-300 dark:border-slate-800 pt-3 mt-1">
-                        {notif.expandedContent}
+                        {notif.payload.message}
                     </div>
                 </AccordionContent>
             </AccordionItem>
@@ -192,49 +218,45 @@ export default function NotificationsWidget() {
     return (
 
         <DropdownMenu>
-            <DropdownMenuTrigger className="focus:outline-none">
-                <div className='relative w-fit cursor-pointer'>
-                    <Avatar className='size-9 rounded-sm'>
-                        <AvatarFallback className='bg-white dark:bg-transparent rounded-full'>
-                            <Bell className='size-5 bg-white dark:bg-transparent' />
-                        </AvatarFallback>
-                    </Avatar>
-                    {notifications.length > 0 ? 
-                    <div className='absolute -top-2 -right-2 h-5 min-w-5 px-1 bg-primary dark:bg-card rounded-full text-white text-xs flex items-center justify-center'>
-                        {notifications.length}
-                    </div> : ""}
-                </div>
-            </DropdownMenuTrigger>
+            <Button asChild variant="outline" className='relative w-fit cursor-pointer rounded-full'>
+                <DropdownMenuTrigger className="focus:outline-none">
+                    <Bell />
+                    {notifications.length > 0 ?
+                        <div className='absolute -top-2 -right-2 h-5 min-w-5 px-1 bg-primary dark:bg-card rounded-full text-white text-xs flex items-center justify-center'>
+                            {notifications.length}
+                        </div> : ""}
+                </DropdownMenuTrigger>
+            </Button>
             <DropdownMenuContent className="w-max rounded-b-none">
                 <Tabs defaultValue="all" className="w-full">
                     <TabsList className="w-full justify-start gap-4 cursor-pointer">
                         <TabsTrigger
                             value="all"
                             className="px-2 cursor-pointer data-[state=active]:text-primary data-[state=active]:bg-primary/10  data-[state=active]:border-primary"
-                            
+
                         >
                             All: {notifications.length}
                         </TabsTrigger>
                         <TabsTrigger
                             value="unread"
                             className="px-2 cursor-pointer data-[state=active]:text-primary data-[state=active]:bg-primary/10  data-[state=active]:border-primary"
-                            
+
                         >
                             Unread: {unreadCount}
                         </TabsTrigger>
                         <TabsTrigger
                             value="important"
                             className="px-2 cursor-pointer data-[state=active]:text-primary data-[state=active]:bg-primary/10  data-[state=active]:border-primary"
-                            
+
                         >
-                            Important: {importantCount}
+                            Important: 0
                         </TabsTrigger>
                         <TabsTrigger
                             value="news"
                             className="px-2 cursor-pointer data-[state=active]:text-primary data-[state=active]:bg-primary/10  data-[state=active]:border-primary"
-                            
+
                         >
-                            News: {newsCount}
+                            News: 0
                         </TabsTrigger>
                     </TabsList>
 
@@ -254,31 +276,31 @@ export default function NotificationsWidget() {
 
                             <TabsContent value="unread" className="mt-0 focus-visible:outline-none">
                                 <Accordion type="single" collapsible className="w-full">
-                                    {notifications.filter(n => n.isUnread).length > 0 ? (
+                                    {/* {notifications.filter(n => n.isUnread).length > 0 ? (
                                         notifications.filter(n => n.isUnread).map(renderNotification)
                                     ) : (
                                         <p className="text-center py-10 text-slate-400">No unread notifications</p>
-                                    )}
+                                    )} */}
                                 </Accordion>
                             </TabsContent>
 
                             <TabsContent value="important" className="mt-0 focus-visible:outline-none">
                                 <Accordion type="single" collapsible className="w-full">
-                                    {notifications.filter(n => n.isImportant).length > 0 ? (
+                                    {/* {notifications.filter(n => n.isImportant).length > 0 ? (
                                         notifications.filter(n => n.isImportant).map(renderNotification)
                                     ) : (
                                         <p className="text-center py-10 text-slate-400">No important notifications</p>
-                                    )}
+                                    )} */}
                                 </Accordion>
                             </TabsContent>
 
                             <TabsContent value="news" className="mt-0 focus-visible:outline-none">
                                 <Accordion type="single" collapsible className="w-full">
-                                    {notifications.filter(n => n.isNews).length > 0 ? (
+                                    {/* {notifications.filter(n => n.isNews).length > 0 ? (
                                         notifications.filter(n => n.isNews).map(renderNotification)
                                     ) : (
                                         <p className="text-center py-10 text-slate-400">No news updates</p>
-                                    )}
+                                    )} */}
                                 </Accordion>
                             </TabsContent>
                         </div>
@@ -287,7 +309,7 @@ export default function NotificationsWidget() {
                         {notifications.length > 0 && (
                             <div className="p-4 bg-slate-50 dark:bg-card border-t border-slate-100 dark:border-slate-800 flex justify-end">
                                 <Button
-                                    onClick={dismissAll}
+                                    onClick={clearNotifications}
                                     variant="destructive"
                                 >
                                     Clear All

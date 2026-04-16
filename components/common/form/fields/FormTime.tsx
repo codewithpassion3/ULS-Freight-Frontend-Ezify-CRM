@@ -25,7 +25,6 @@ const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
                     className={`w-14 px-2 text-center ${hourError ? "border-red-500" : ""}`}
                     value={hourField.value ?? ""}
                 />
-
                 <span>:</span>
 
                 <Input
@@ -55,7 +54,7 @@ const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
                         className={`px-3 py-2 text-xs font-semibold ${ampmField.value === "PM"
                             ? "bg-muted text-[#4aa0e3]"
                             : "hover:bg-muted/50"
-                            }`}
+                            } ${ampmError ? "border-red-500" : ""}`}
                     >
                         PM
                     </button>
@@ -63,11 +62,11 @@ const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
 
             </div>
 
-            {(hourError || minuteError || ampmError) && (
+            {/* {(hourError || minuteError || ampmError) && (
                 <p className="text-xs text-red-500">
                     {hourError?.message || minuteError?.message || ampmError?.message}
                 </p>
-            )}
+            )} */}
         </div>
     )
 })

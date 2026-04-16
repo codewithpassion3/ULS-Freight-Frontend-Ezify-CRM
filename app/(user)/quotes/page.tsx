@@ -16,6 +16,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import FavouriteQuotesTable from "./DynamicQuotesTable"
 import AllQuotesTable from "./DynamicQuotesTable"
 import DynamicQuotesTable from "./DynamicQuotesTable"
+import FormDate from "@/components/common/form/fields/FormDate"
+import { DatePicker } from "@/components/common/date-picker/DatePicker"
 
 export const MOCK_QUOTES = [
   {
@@ -237,6 +239,7 @@ export default function QuotesDashboardPage() {
             <div className="space-y-1">
               <label className="text-sm text-muted-foreground block">Search by Date Range:</label>
               <CustomDateRangePicker value={dateRange} onChange={setDateRange} />
+
             </div>
 
             <div className="space-y-1">

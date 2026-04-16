@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { BellRing, CalendarDays } from "lucide-react"
+import { GlobalForm } from "@/components/common/form/GlobalForm"
 
 const RECIPIENTS = [
     "Myself",
@@ -85,7 +86,7 @@ export function CreateReminderDialog({ children }: Props) {
 
                 <form onSubmit={handleSubmit(onSubmit)} className="p-6">
                     <div className="space-y-6">
-                        
+
                         {/* Recipients */}
                         <div>
                             <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-4">Send Reminder to</p>
@@ -127,9 +128,9 @@ export function CreateReminderDialog({ children }: Props) {
                             <div>
                                 <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">Set Reminder Date*</label>
                                 <div className="flex">
-                                    <Input 
-                                        type="date" 
-                                        {...register("date")} 
+                                    <Input
+                                        type="date"
+                                        {...register("date")}
                                         className="rounded-r-none focus-visible:ring-0 focus-visible:border-[#0072BC]"
                                     />
                                     <div className="bg-[#0072BC] px-3 flex items-center justify-center rounded-r border border-[#0072BC]">
@@ -142,16 +143,16 @@ export function CreateReminderDialog({ children }: Props) {
                             <div>
                                 <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">Set Reminder Time*</label>
                                 <div className="flex items-center gap-2">
-                                    <Input 
-                                        {...register("hour")} 
-                                        maxLength={2} 
-                                        className="w-14 text-center focus-visible:ring-0 focus-visible:border-[#0072BC] bg-transparent" 
+                                    <Input
+                                        {...register("hour")}
+                                        maxLength={2}
+                                        className="w-14 text-center focus-visible:ring-0 focus-visible:border-[#0072BC] bg-transparent"
                                     />
                                     <span className="font-bold text-slate-600 dark:text-slate-400">:</span>
-                                    <Input 
-                                        {...register("minute")} 
-                                        maxLength={2} 
-                                        className="w-14 text-center focus-visible:ring-0 focus-visible:border-[#0072BC] bg-transparent" 
+                                    <Input
+                                        {...register("minute")}
+                                        maxLength={2}
+                                        className="w-14 text-center focus-visible:ring-0 focus-visible:border-[#0072BC] bg-transparent"
                                     />
                                     <Controller
                                         control={control}
@@ -175,9 +176,9 @@ export function CreateReminderDialog({ children }: Props) {
                         {/* Title */}
                         <div>
                             <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">Reminder Title*</label>
-                            <Input 
-                                {...register("title")} 
-                                className="focus-visible:ring-0 focus-visible:border-[#0072BC] max-w-sm bg-transparent" 
+                            <Input
+                                {...register("title")}
+                                className="focus-visible:ring-0 focus-visible:border-[#0072BC] max-w-sm bg-transparent"
                             />
                             {errors.title && <p className="text-sm text-red-600 mt-1">{errors.title.message}</p>}
                         </div>
@@ -187,9 +188,9 @@ export function CreateReminderDialog({ children }: Props) {
                             <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
                                 Reminder Message *
                             </label>
-                            <Textarea 
-                                {...register("message")} 
-                                className="min-h-[120px] resize-none focus-visible:ring-0 focus-visible:border-[#0072BC] bg-transparent" 
+                            <Textarea
+                                {...register("message")}
+                                className="min-h-[120px] resize-none focus-visible:ring-0 focus-visible:border-[#0072BC] bg-transparent"
                             />
                             {errors.message && <p className="text-sm text-red-600 mt-1">{errors.message.message}</p>}
                         </div>
@@ -197,18 +198,42 @@ export function CreateReminderDialog({ children }: Props) {
 
                     </div>
 
+                    {/* <GlobalForm
+                        fields={
+                            [
+                                {
+                                    name: "recipients",
+                                    type: "checkbox",
+                                    label: "Recipients",
+                                    options: RECIPIENTS.map((r) => ({ label: r, value: r })),
+                                },
+                                // reminder title
+                                {
+                                    name: "title",
+                                    type: "text",
+                                    label: "Reminder Title",
+                                    placeholder: "Enter reminder title",
+                                },
+
+
+
+
+
+                            ]}
+                    /> */}
+
                     {/* Footer Actions */}
-                    <div className="flex items-center justify-end gap-4 mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
-                        <Button 
-                            type="button" 
-                            variant="outline" 
+                    < div className="flex items-center justify-end gap-4 mt-8 pt-6 border-t border-slate-100 dark:border-slate-800" >
+                        <Button
+                            type="button"
+                            variant="outline"
                             onClick={() => setIsOpen(false)}
                             className="w-28 font-semibold border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 dark:bg-transparent"
                         >
                             Cancel
                         </Button>
-                        <Button 
-                            type="submit" 
+                        <Button
+                            type="submit"
                             className="bg-[#0072BC] hover:bg-[#005f9e] text-white font-semibold flex-1 max-w-[180px]"
                         >
                             Create Reminder
@@ -216,6 +241,6 @@ export function CreateReminderDialog({ children }: Props) {
                     </div>
                 </form>
             </DialogContent>
-        </Dialog>
+        </Dialog >
     )
 }

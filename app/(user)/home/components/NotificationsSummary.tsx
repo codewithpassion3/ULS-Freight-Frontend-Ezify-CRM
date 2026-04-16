@@ -25,7 +25,7 @@ export default function NotificationsSummary() {
                     <TabsList className="bg-transparent h-auto flex flex-wrap gap-6 text-sm w-max justify-start border-none">
                         <TabsTrigger
                             value="all"
-                            className="bg-transparent font-semibold text-slate-500 dark:text-slate-400 data-[state=active]:text-slate-800 dark:data-[state=active]:text-slate-200 data-[state=active]:border-b-2 data-[state=active]:border-b-orange-400 rounded-none pb-2 -mb-[2px] shadow-none data-[state=active]:shadow-none! cursor-pointer!"
+                            className="bg-transparent font-semibold text-slate-500 dark:text-slate-400 data-[state=active]:text-slate-800 dark:data-[state=active]:text-slate-200  rounded-none pb-2 -mb-[2px] shadow-none data-[state=active]:shadow-none! cursor-pointer! border-x-none! border-t-none! px-4"
                         >
                             All (28)
                         </TabsTrigger>

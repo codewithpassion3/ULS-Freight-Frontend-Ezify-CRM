@@ -66,7 +66,7 @@ export function AddContactModal() {
                             Cancel
                         </Button>
                     </DialogClose>
-                    <Button disabled={!isValid || mutation.isPending} type="submit" form="contact-form" className="bg-[#0070c0] hover:bg-[#005999] text-white w-[140px]">
+                    <Button type="submit" form="contact-form" className="bg-[#0070c0] hover:bg-[#005999] text-white w-[140px]">
                         Save Contact
                     </Button>
                 </DialogFooter>}

@@ -15,12 +15,12 @@ export default function DashboardHeader() {
                     Click here for a quick tour
                 </Link>
             </div>
-            <Link href="/shipment">
-                <Button>
+            <Button asChild>
+                <Link href="/shipment">
                     <Plus className="size-4" />
                     Create New Quote
-                </Button>
-            </Link>
+                </Link>
+            </Button>
         </div>
     )
 }

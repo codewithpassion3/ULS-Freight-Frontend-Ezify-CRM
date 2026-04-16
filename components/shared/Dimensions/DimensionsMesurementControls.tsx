@@ -1,5 +1,6 @@
 // Quantity select + metric/imperial radio — zero business logic here.
 import { Controller, useFormContext } from "react-hook-form"
+import { DensityCalculatorModal } from "./DensityCalculatorModal"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -29,27 +30,30 @@ export function DimensionsMeasurementControls({ fieldCount, onQuantityChange }: 
                 </Select>
             </div>
 
-            <Controller
-                control={control}
-                name="lineItem.measurementUnit"
-                defaultValue="IMPERIAL"
-                render={({ field }) => (
-                    <RadioGroup value={field.value} onValueChange={field.onChange} className="flex space-x-6">
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="METRIC" id="metric-global" />
-                            <Label htmlFor="metric-global" className="font-normal cursor-pointer flex items-center gap-1 text-slate-500">
-                                Metric <span className="hidden sm:inline">(cm & kg)</span>
-                            </Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="IMPERIAL" id="imperial-global" className="text-amber-500 border-amber-500" />
-                            <Label htmlFor="imperial-global" className="font-semibold cursor-pointer text-slate-800 dark:text-slate-100">
-                                Imperial <span className="hidden sm:inline">(in & lbs)</span>
-                            </Label>
-                        </div>
-                    </RadioGroup>
-                )}
-            />
+            <div className="flex flex-col sm:items-end space-y-3">
+                <Controller
+                    control={control}
+                    name="lineItem.measurementUnit"
+                    defaultValue="IMPERIAL"
+                    render={({ field }) => (
+                        <RadioGroup value={field.value} onValueChange={field.onChange} className="flex space-x-6">
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="METRIC" id="metric-global" />
+                                <Label htmlFor="metric-global" className="font-normal cursor-pointer flex items-center gap-1 text-slate-500">
+                                    Metric <span className="hidden sm:inline">(cm & kg)</span>
+                                </Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="IMPERIAL" id="imperial-global" className="text-amber-500 border-amber-500" />
+                                <Label htmlFor="imperial-global" className="font-semibold cursor-pointer text-slate-800 dark:text-slate-100">
+                                    Imperial <span className="hidden sm:inline">(in & lbs)</span>
+                                </Label>
+                            </div>
+                        </RadioGroup>
+                    )}
+                />
+                <DensityCalculatorModal />
+            </div>
         </div>
     )
 }
