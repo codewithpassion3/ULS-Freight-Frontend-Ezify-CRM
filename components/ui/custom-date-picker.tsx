@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { CalendarIcon } from "lucide-react"
+import { Calendar } from "./calendar"
+import { format } from "date-fns"
 
 export type DateRangeValue = {
   from?: string
@@ -110,14 +112,39 @@ export function CustomDateRangePicker({ value, onChange }: CustomDateRangePicker
 
         <div className="flex flex-wrap gap-6 items-end">
           <div className="space-y-1 w-[220px]">
-            <label className="text-sm text-muted-foreground block">From</label>
-            <Input type="date" value={draft.from || ""} onChange={(e) => setDraft((s) => ({ ...s, from: e.target.value }))} />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant={"outline"} data-empty={!value} className="w-full justify-between text-left font-normal data-[empty=true]:text-muted-foreground">
+                  {draft.from ? format(draft.from, "PPP") : <span>FROM</span>}
+                  <CalendarIcon data-icon="inline-end" /></Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={draft.from ? new Date(draft.from) : undefined}
+                  onSelect={(date) => setDraft((s) => ({ ...s, from: date?.toISOString().slice(0, 10) }))}
+                />
+              </PopoverContent>
+            </Popover>
           </div>
           <div className="space-y-1 w-[220px]">
-            <label className="text-sm text-muted-foreground block">To</label>
-            <Input type="date" value={draft.to || ""} onChange={(e) => setDraft((s) => ({ ...s, to: e.target.value }))} />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant={"outline"} data-empty={!value} className="w-full justify-between text-left font-normal data-[empty=true]:text-muted-foreground">
+                  {draft.to ? format(draft.to, "PPP") : <span>TO</span>}
+                  <CalendarIcon data-icon="inline-end" /></Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={draft.to ? new Date(draft.to) : undefined}
+                  onSelect={(date) => setDraft((s) => ({ ...s, to: date?.toISOString().slice(0, 10) }))}
+                />
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
+
 
         <div className="mt-6 flex justify-end gap-2">
           <Button

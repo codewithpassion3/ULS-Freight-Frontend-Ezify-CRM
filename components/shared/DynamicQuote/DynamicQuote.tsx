@@ -26,7 +26,7 @@ import { useRouter } from "next/navigation"
 import { Loader, LoaderCircle } from "lucide-react"
 import { formatTime12h } from "@/app/(user)/settings/(address-book)/mappers/contact.mapper"
 // import { quoteSchema } from "@/lib/validations/quote/standard-quote-schema"
-
+export type ShipmentTypes = "PALLET" | "PACKAGE" | "COURIER_PAK" | "STANDARD_FTL" | "SPOT_LTL" | "SPOT_FTL" | "TIME_CRITICAL"
 export type QuoteTypes = "SPOT" | "STANDARD"
 export type ShipmentOptions = {
     SPOT: "SPOT_LTL" | "SPOT_FTL" | "TIME_CRITICAL",

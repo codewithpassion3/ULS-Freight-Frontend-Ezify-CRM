@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { useForm, Controller } from "react-hook-form"
+import { useForm, Controller, FormProvider } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { BellRing, CalendarDays } from "lucide-react"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
+import { Label } from "@/components/ui/label"
+import { useAuth } from "@/context/auth.context"
 
 const RECIPIENTS = [
     "Myself",
@@ -39,13 +41,7 @@ interface Props {
 export function CreateReminderDialog({ children }: Props) {
     const [isOpen, setIsOpen] = useState(false)
 
-    const {
-        control,
-        register,
-        handleSubmit,
-        reset,
-        formState: { errors }
-    } = useForm<ReminderFormValues>({
+    const methods = useForm<ReminderFormValues>({
         resolver: zodResolver(reminderSchema),
         defaultValues: {
             recipients: [],
@@ -58,19 +54,22 @@ export function CreateReminderDialog({ children }: Props) {
         }
     })
 
+    // get reciepients list from user
+    const { user } = useAuth()
+    console.log(user.team)
     const onSubmit = (data: ReminderFormValues) => {
         console.log("Reminder Created:", data)
         setIsOpen(false)
-        reset()
+        methods.reset()
     }
 
     const handleOpenChange = (open: boolean) => {
         setIsOpen(open)
         if (!open) {
-            reset()
+            methods.reset()
         }
     }
-
+    const recipients = methods.watch("recipients")
     return (
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
@@ -83,163 +82,90 @@ export function CreateReminderDialog({ children }: Props) {
                         Create Reminder
                     </DialogTitle>
                 </DialogHeader>
-
-                <form onSubmit={handleSubmit(onSubmit)} className="p-6">
-                    <div className="space-y-6">
-
-                        {/* Recipients */}
-                        <div>
-                            <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-4">Send Reminder to</p>
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-y-4 gap-x-6">
-                                <Controller
-                                    name="recipients"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <>
-                                            {RECIPIENTS.map((recipient) => (
-                                                <div key={recipient} className="flex items-center gap-2">
-                                                    <Checkbox
-                                                        id={`recipient-${recipient}`}
-                                                        checked={field.value.includes(recipient)}
-                                                        onCheckedChange={(checked) => {
-                                                            const updated = checked
-                                                                ? [...field.value, recipient]
-                                                                : field.value.filter((val) => val !== recipient)
-                                                            field.onChange(updated)
-                                                        }}
-                                                    />
-                                                    <label
-                                                        htmlFor={`recipient-${recipient}`}
-                                                        className="text-sm text-slate-600 dark:text-slate-400 font-medium cursor-pointer"
-                                                    >
-                                                        {recipient}
-                                                    </label>
-                                                </div>
-                                            ))}
-                                        </>
-                                    )}
-                                />
-                            </div>
-                            {errors.recipients && <p className="text-sm text-red-600 mt-2">{errors.recipients.message}</p>}
-                        </div>
-
-                        {/* Date and Time */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div>
-                                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">Set Reminder Date*</label>
-                                <div className="flex">
-                                    <Input
-                                        type="date"
-                                        {...register("date")}
-                                        className="rounded-r-none focus-visible:ring-0 focus-visible:border-[#0072BC]"
+                <FormProvider {...methods}>
+                    <form onSubmit={methods.handleSubmit(onSubmit)} className="p-6">
+                        {/* map recipient as checkbox */}
+                        <div className="flex flex-wrap gap-8">
+                            {user?.user?.teamMembers?.map((member: any) => (
+                                <div key={member.id} className="flex items-center gap-2">
+                                    <Checkbox
+                                        id={member.id}
+                                        name="recipients"
+                                        checked={recipients.includes(member.id)}
+                                        onCheckedChange={(checked) => {
+                                            const current = recipients
+                                            if (checked) {
+                                                methods.setValue("recipients", [...current, member.id])
+                                            } else {
+                                                methods.setValue("recipients", current.filter((item) => item !== member.id))
+                                            }
+                                        }}
+                                        className="border-border cursor-pointer"
                                     />
-                                    <div className="bg-[#0072BC] px-3 flex items-center justify-center rounded-r border border-[#0072BC]">
-                                        <CalendarDays className="size-5 text-white" />
-                                    </div>
+                                    <Label htmlFor={member.id} className="cursor-pointer">
+                                        {user?.user?.id === member.id ? "Me" : member.firstName}{" "}{member.lastName}
+                                    </Label>
                                 </div>
-                                {errors.date && <p className="text-sm text-red-600 mt-1">{errors.date.message}</p>}
-                            </div>
-
-                            <div>
-                                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">Set Reminder Time*</label>
-                                <div className="flex items-center gap-2">
-                                    <Input
-                                        {...register("hour")}
-                                        maxLength={2}
-                                        className="w-14 text-center focus-visible:ring-0 focus-visible:border-[#0072BC] bg-transparent"
-                                    />
-                                    <span className="font-bold text-slate-600 dark:text-slate-400">:</span>
-                                    <Input
-                                        {...register("minute")}
-                                        maxLength={2}
-                                        className="w-14 text-center focus-visible:ring-0 focus-visible:border-[#0072BC] bg-transparent"
-                                    />
-                                    <Controller
-                                        control={control}
-                                        name="period"
-                                        render={({ field }) => (
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                className="w-[60px] border-[#0072BC] text-[#0072BC] font-bold hover:bg-[#dbeaf4]"
-                                                onClick={() => field.onChange(field.value === "AM" ? "PM" : "AM")}
-                                            >
-                                                {field.value}
-                                            </Button>
-                                        )}
-                                    />
-                                </div>
-                                {(errors.hour || errors.minute) && <p className="text-sm text-red-600 mt-1">Invalid time format</p>}
-                            </div>
+                            ))}
                         </div>
+                        <GlobalForm
+                            formWrapperClassName="grid grid-cols-2 gap-4 mt-4"
+                            fields={
+                                [
+                                    {
+                                        name: "date",
+                                        type: "date",
+                                        label: "Reminder Date",
+                                        placeholder: "Enter reminder date",
+                                    },
+                                    {
+                                        name: "time",
+                                        type: "time",
+                                        label: "Reminder Time",
+                                        placeholder: "Enter reminder time",
+                                        hourName: "hour",
+                                        minuteName: "minute",
+                                        ampmName: "amPm",
+                                    },
+                                    {
+                                        name: "title",
+                                        type: "text",
+                                        label: "Reminder Title",
+                                        placeholder: "Enter reminder title",
+                                        wrapperClassName: "col-span-2",
+                                        className: "w-1/2",
+                                    },
+                                    {
+                                        name: "message",
+                                        type: "textarea",
+                                        label: "Reminder Message",
+                                        placeholder: "Enter reminder message",
+                                        wrapperClassName: "col-span-2",
+                                    },
 
-                        {/* Title */}
-                        <div>
-                            <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">Reminder Title*</label>
-                            <Input
-                                {...register("title")}
-                                className="focus-visible:ring-0 focus-visible:border-[#0072BC] max-w-sm bg-transparent"
-                            />
-                            {errors.title && <p className="text-sm text-red-600 mt-1">{errors.title.message}</p>}
+
+                                ]}
+                        />
+
+                        {/* Footer Actions */}
+                        < div className="flex items-center justify-end gap-4 mt-8 pt-6 border-t border-slate-100 dark:border-slate-800" >
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setIsOpen(false)}
+                                className="w-28 font-semibold border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 dark:bg-transparent"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                className="bg-[#0072BC] hover:bg-[#005f9e] text-white font-semibold flex-1 max-w-[180px]"
+                            >
+                                Create Reminder
+                            </Button>
                         </div>
-
-                        {/* Message */}
-                        <div>
-                            <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
-                                Reminder Message *
-                            </label>
-                            <Textarea
-                                {...register("message")}
-                                className="min-h-[120px] resize-none focus-visible:ring-0 focus-visible:border-[#0072BC] bg-transparent"
-                            />
-                            {errors.message && <p className="text-sm text-red-600 mt-1">{errors.message.message}</p>}
-                        </div>
-
-
-                    </div>
-
-                    {/* <GlobalForm
-                        fields={
-                            [
-                                {
-                                    name: "recipients",
-                                    type: "checkbox",
-                                    label: "Recipients",
-                                    options: RECIPIENTS.map((r) => ({ label: r, value: r })),
-                                },
-                                // reminder title
-                                {
-                                    name: "title",
-                                    type: "text",
-                                    label: "Reminder Title",
-                                    placeholder: "Enter reminder title",
-                                },
-
-
-
-
-
-                            ]}
-                    /> */}
-
-                    {/* Footer Actions */}
-                    < div className="flex items-center justify-end gap-4 mt-8 pt-6 border-t border-slate-100 dark:border-slate-800" >
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => setIsOpen(false)}
-                            className="w-28 font-semibold border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 dark:bg-transparent"
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            type="submit"
-                            className="bg-[#0072BC] hover:bg-[#005f9e] text-white font-semibold flex-1 max-w-[180px]"
-                        >
-                            Create Reminder
-                        </Button>
-                    </div>
-                </form>
+                    </form>
+                </FormProvider>
             </DialogContent>
         </Dialog >
     )

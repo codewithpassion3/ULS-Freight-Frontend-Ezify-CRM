@@ -13,10 +13,16 @@ import { cn } from "@/lib/utils"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { dismissNotification, getNotifications } from "@/api/services/notification.api"
+import { toast } from "sonner"
+import { AxiosError } from "axios"
+import { ApiError } from "next/dist/server/api-utils"
 
 interface Notification {
     userNotificationId: number;
     notificationId: number;
+    id: number;
     type: string;
     severity: string;
     payload: {
@@ -37,6 +43,15 @@ export default function NotificationsWidget() {
     const [clientId, setClientId] = useState<string>('');
     const [unreadCount, setUnreadCount] = useState(0);
     const eventSourceRef = useRef<EventSource | null>(null);
+    const queryClient = useQueryClient();
+    // get all notifications from api using tanstack query
+    const { data: notificationsListing, isLoading, error } = useQuery({
+        queryKey: ["notifications"],
+        queryFn: () => getNotifications(),
+    });
+
+    console.log("notificationsListing", notificationsListing);
+
 
     useEffect(() => {
         connectSSE();
@@ -137,6 +152,22 @@ export default function NotificationsWidget() {
         setNotifications([]);
         setUnreadCount(0);
     };
+    // dismiss notification mutation
+
+    const mutation = useMutation({
+        mutationFn: (id: number) => dismissNotification(id),
+        onSuccess: () => {
+            toast.success("Notification dismissed successfully")
+            queryClient.invalidateQueries({ queryKey: ["notifications"] })
+        },
+        onError: (error: AxiosError<ApiError>) => {
+            toast.error(error.response?.data.message)
+        }
+    })
+
+
+
+
 
     // const [notifications, setNotifications] = useState<Notification[]>(INITIAL_NOTIFICATIONS)
     const [isOpen, setIsOpen] = useState(true)
@@ -159,22 +190,22 @@ export default function NotificationsWidget() {
 
         return (
             <AccordionItem
-                key={notif.userNotificationId}
-                value={notif.userNotificationId.toString()}
+                key={notif.id ? notif.id : notif.userNotificationId}
+                value={notif.id ? notif.id.toString() : notif.userNotificationId.toString()}
                 className={cn(
-                    "mb-3 rounded-xl border-2 transition-colors overflow-hidden",
+                    "mb-3 rounded-md border-2 transition-colors overflow-hidden bg-primary/10! text-primary border-primary!",
                     isCritical && "border-[#FDA29B] bg-[#FFFBFA] dark:bg-[#fDa29b]/10",
                     isWarning && "border-[#FEDF89] bg-[#FFFCF5] dark:bg-[#fEdF89]/10",
                     !isCritical && !isWarning && "border-slate-200 dark:border-slate-800 bg-white dark:bg-card"
                 )}
             >
-                <div className="flex items-center gap-3 px-4 py-3">
+                <div className="flex items-center px-4 py-3">
                     <div className={cn(
                         "flex shrink-0 items-center justify-center size-8 rounded-full",
                         isCritical && "bg-red-100 text-[#D92D20] dark:bg-[#fDa29b]/10 dark:text-[#ff4437]",
                         isWarning && "bg-orange-100 text-[#B54708] dark:bg-[#fEdF89]/10 dark:text-[#ff4437]"
                     )}>
-                        {isCritical ? <OctagonAlert className="size-5" /> : <AlertCircle className="size-5" />}
+                        {isCritical ? <OctagonAlert className="size-5 text-primary" /> : <AlertCircle className="size-5 text-primary" />}
                     </div>
 
                     <div className="flex-1 min-w-0 pr-2">
@@ -188,21 +219,19 @@ export default function NotificationsWidget() {
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                        <Button variant="outline" asChild>
+                        <Button asChild>
                             <AccordionTrigger className="hover:no-underline [&_svg]:hidden">
                                 View
                             </AccordionTrigger>
                         </Button>
+                        <Button
+                            onClick={() => mutation.mutate(notif.id)}
+                            variant="destructive"
+                        // className="text-sm font-semibold text-red-600 hover:text-red-700 underline underline-offset-2"
+                        >
+                            Dismiss
+                        </Button>
 
-                        {/* {(isWarning || notif.isUnread) && (
-                            <Button
-                                onClick={() => dismissNotification(notif.id)}
-                                variant="destructive"
-                            // className="text-sm font-semibold text-red-600 hover:text-red-700 underline underline-offset-2"
-                            >
-                                Dismiss
-                            </Button>
-                        )} */}
                     </div>
                 </div>
 
@@ -235,7 +264,7 @@ export default function NotificationsWidget() {
                             className="px-2 cursor-pointer data-[state=active]:text-primary data-[state=active]:bg-primary/10  data-[state=active]:border-primary"
 
                         >
-                            All: {notifications.length}
+                            All: {notificationsListing?.notifications.length}
                         </TabsTrigger>
                         <TabsTrigger
                             value="unread"
@@ -266,11 +295,15 @@ export default function NotificationsWidget() {
                         <div className="p-4 overflow-y-auto custom-scrollbar flex-1">
                             <TabsContent value="all" className="mt-0 focus-visible:outline-none">
                                 <Accordion type="single" collapsible className="w-full">
-                                    {notifications.length > 0 ? (
+                                    {notifications.length || notificationsListing?.notifications.length > 0 ? (
                                         notifications.map(renderNotification)
                                     ) : (
                                         <p className="text-center py-10 text-slate-400">No notifications</p>
                                     )}
+                                    {notificationsListing?.notifications.length > 0 ? (
+                                        notificationsListing?.notifications.map(renderNotification)
+                                    ) : ""}
+
                                 </Accordion>
                             </TabsContent>
 

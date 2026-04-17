@@ -20,6 +20,8 @@ export const FieldRenderer = memo(({ field, type }: any) => {
       return <FormSelect field={field} />
     case "checkbox":
       return <FormCheckbox field={field} />
+    // case "checkbox-group":
+    //   return <FormCheckbox field={field} />
     case "radio":
       return <FormRadio field={field} />
     case "phone":

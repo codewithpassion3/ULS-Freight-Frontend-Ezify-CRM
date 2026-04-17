@@ -46,9 +46,9 @@ export const PackagingTypesModal = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button type="button" className="text-sm text-[#0070c0] flex items-center gap-1 hover:underline font-medium">
+        <Button variant="outline">
           <Info size={14} /> Shipment Types
-        </button>
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl! p-0 gap-0">
         <DialogHeader className="p-4 pb-2">

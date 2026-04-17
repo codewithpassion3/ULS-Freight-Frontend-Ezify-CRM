@@ -31,14 +31,43 @@ export function MyPackages({ selectedPackage, handleSelect }: { selectedPackage?
         staleTime: 5 * 60 * 1000,
         retry: 1
     })
-    
+
+    let updatedColumns = columns
+    if (handleSelect) {
+        updatedColumns = columns.map((column) => {
+            if (column.id === "actions") {
+                const originalCell = column.cell
+
+                return {
+                    ...column,
+                    cell: (props: any) => (
+                        <>
+                            {/* @ts-ignore */}
+                            {originalCell?.(props)}
+
+                            <Button
+                                size="sm"
+                                onClick={() => handleSelect(props.row.original)}
+                                className="bg-[#0070c0] hover:bg-[#005999]"
+                            >
+                                Select
+                            </Button>
+                        </>
+                    ),
+                }
+            }
+
+            return column
+        })
+    }
+
     return (
         <div className="h-full">
             {isLoading || isPending ? (
-                    <Loader className="h-full" />
+                <Loader className="h-full" />
             ) : (
                 <div className="space-y-4 w-full">
-                    <div className="flex justify-between gap-2">
+                    <div className="flex justify-between gap-2 w-9/10">
                         <DataTableToolbar
                             search={search}
                             setSearch={setSearch}
@@ -59,12 +88,13 @@ export function MyPackages({ selectedPackage, handleSelect }: { selectedPackage?
                             { value: "COURIER_PAK", label: "Courier Pak" },
                         ].map((tab) => (
                             <button
-                            type="button"
-                            disabled={!!selectedPackage}
-                            onClick={() => setPackageType(tab.value)}
+                                type="button"
+                                disabled={!!selectedPackage}
+                                onClick={() => setPackageType(tab.value)}
                                 className={`
                                     cursor-pointer px-2 py-1 
                                     rounded-md
+                                    disabled:cursor-not-allowed
                                  data-[state=active]:border-primary
                                   data-[state=active]:bg-primary/10
                                    data-[state=active]:text-primary
@@ -77,7 +107,7 @@ export function MyPackages({ selectedPackage, handleSelect }: { selectedPackage?
                     {packages?.data.length > 0 ?
                         <>
                             <DataTable
-                                columns={columns}
+                                columns={updatedColumns}
                                 data={packages.data ?? []}
                                 sorting={sorting}
                                 // @ts-ignore

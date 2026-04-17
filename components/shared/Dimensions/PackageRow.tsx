@@ -28,7 +28,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
     const lengthUnit = isImperial ? "in" : "cm"
     const weightUnit = isImperial ? "lbs" : "kg"
     const rowErrors = (errors as any)?.lineItem?.units?.[index]
-    
+
     const pathname = usePathname()
     const isShipment = pathname.includes("shipment")
     // Snapshot current row values for the SavePackage dialog
@@ -45,7 +45,37 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
         palletUnitType: watch(`lineItem.units.${index}.palletUnitType`),
         description: watch(`lineItem.units.${index}.description`),
     }
-    
+
+    //   const handlePackageSelect = (contact: ContactType) => {
+    //     setAddressLocked(true)
+    //     const currentValues = methods.getValues();
+    //     methods.reset({
+    //       ...currentValues,
+    //       // @ts-ignore
+    //       addressBookId: Number(contact.id),
+    //       type: type,
+    //       address: {
+    //         address1: contact.address?.address1 || "",
+    //         postalCode: contact.address?.postalCode || "",
+    //         city: contact.address?.city || "",
+    //         state: contact.address?.state || "",
+    //         country: contact.address?.country || "",
+    //       },
+
+    //       ...(showLocationType && { locationTypeId: contact?.locationTypeId || "" }),
+    //       ...(isShipment && { companyName: contact.companyName }),
+    //       // ...(isShipment && { contactId: contact.id }),
+    //       ...(isShipment && { address2: contact.address?.address2 || "" }),
+    //       ...(isShipment && { unit: contact.address?.unit || "" }),
+    //       // contact information
+    //       ...(isShipment && { contactName: contact.contactName || "" }),
+    //       ...(isShipment && { email: contact.email || "" }),
+    //       ...(isShipment && { phoneNumber: contact.phoneNumber || "" }),
+
+    //     });
+    //     // print location type
+    //   }
+
     return (
         <div key={fieldId} className="space-y-4 pb-6 border-b last:border-0 relative group">
             {/* Row header */}
