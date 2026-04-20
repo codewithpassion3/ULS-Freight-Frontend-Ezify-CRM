@@ -9,13 +9,13 @@ import { useDebounce } from "../../../hooks/useDebounce.hook"
 import { useQuery } from "@tanstack/react-query"
 import { getAllQuotes, getFavoriteQuotes, getSavedQuotes, getSpotQuotes } from "@/api/services/quotes.api"
 import { Loader } from "@/components/common/Loader"
-import { Empty } from "@/components/ui/empty"
 import EmptyUI from "@/components/common/empty/Empty"
 import Link from "next/link"
 import { ShipmentTypes } from "@/components/shared/DynamicQuote/DynamicQuote"
+import { QuoteCategory } from "./page"
 interface Props {
     search: string
-    selectedPackaging: ShipmentTypes[]
+    selectedPackaging: string[]
     setCount: (count: { all: number; saved: number; spot: number }) => void
     quoteCategory: QuoteCategory
 }

@@ -34,8 +34,8 @@ export type QuoteCategory = "all" | "saved" | "spot" | "favorite"
 export default function QuotesDashboardPage() {
   const [selectedTab, setSelectedTab] = useState<QuoteCategory>("all")
   const [search, setSearch] = useState("")
-  const [dateRange, setDateRange] = useState<{ from: string; to?: string }>()
-  const [selectedPackaging, setSelectedPackaging] = useState<ShipmentTypes[]>([])
+  const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>()
+  const [selectedPackaging, setSelectedPackaging] = useState<string[]>([])
   const [showFilters, setShowFilters] = useState(true)
   const [count, setCount] = useState({
     all: 0,
@@ -78,11 +78,11 @@ export default function QuotesDashboardPage() {
               <button
                 type="button"
                 className="flex items-center gap-1 hover:underline"
-                onClick={() => {
-                  setSearch("")
-                  setDateRange({ from: "" })
-                  setSelectedPackaging([])
-                }}
+              // onClick={() => {
+              //   setSearch("")
+              //   setDateRange({ from: new Date() })
+              //   setSelectedPackaging([])
+              // }}
               >
                 <span className="text-xl leading-none -mt-1">&times;</span> Clear Filters
               </button>
@@ -96,7 +96,7 @@ export default function QuotesDashboardPage() {
             <div className="space-y-1">
               <label className="text-sm text-muted-foreground block">Search by Date Range:</label>
               {/* <CustomDateRangePicker value={dateRange} onChange={setDateRange} /> */}
-              <DateRangePicker value={dateRange} onChange={setDateRange} />
+              {/* <DateRangePicker value={dateRange} onChange={setDateRange} /> */}
 
             </div>
 
