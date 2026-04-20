@@ -13,17 +13,17 @@ import { FormSelectTypes } from "./fields.types";
 const FormSelect = memo(({ field: config }: { field: FormSelectTypes }) => {
     if (!config) return null  // safely skip undefined
     const { field, error } = useFieldController(config.name);
-    console.log(field.value)
     return (
         <div>
             <Label className={`${config.labelClassName} ${error ? "text-red-500" : ""}`} htmlFor={config.name}>{config.label ? config.label : config.name}</Label>
             <Select
+                defaultValue={config.defaultValue}
                 value={field.value?.toString()}
                 onValueChange={(value) => config.valueType === "number" ? field.onChange(Number(value)) : field.onChange(value)}
                 disabled={config.disabled}
 
             >
-                <SelectTrigger className={`mt-2 w-full cursor-pointer ${error ? "border border-red-500" : ""} ${config.className}`}>
+                <SelectTrigger className={`mt-2 w-full cursor-pointer ${error ? "border border-red-500 bg-red-50 placeholder:text-red-500" : ""} ${config.className}`}>
                     <SelectValue placeholder={config.placeholder} />
                 </SelectTrigger>
 

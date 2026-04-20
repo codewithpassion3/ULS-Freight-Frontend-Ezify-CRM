@@ -5,7 +5,7 @@ function pad2(value: string) {
     return value.trim().padStart(2, "0")
 }
 
-function formatTime12h(hour: string, minute: string, ampm: "AM" | "PM") {
+export function formatTime12h(hour: string, minute: string, ampm: "AM" | "PM") {
     // API expects strings like "08:00 AM"
     return `${pad2(hour)}:${pad2(minute)} ${ampm}`
 }

@@ -1,6 +1,7 @@
 "use client";
 import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
+import Infobar from "@/components/common/Infobar";
 import { Loader } from "@/components/common/Loader";
 import { useUser } from "@/hooks/useUser";
 import Link from "next/link";
@@ -19,7 +20,8 @@ export default function UserLayout({
     !isExceptionalRoute ?
       <>
         <Header />
-        <main className="mx-auto max-w-[1600px] px-4 py-6 md:px-6 lg:px-8 pt-16 flex flex-col min-h-screen bg-[#FAFAFA] dark:bg-[#242424]">
+        {/* <Infobar/> */}
+        <main className="mx-auto container pt-20 flex flex-col min-h-screen bg-[#FAFAFA] dark:bg-[#242424]">
           {children}
         </main>
         <Footer />

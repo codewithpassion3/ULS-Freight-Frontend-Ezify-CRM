@@ -1,5 +1,6 @@
 // create quote
 
+import { ShipmentTypes } from "@/components/shared/DynamicQuote/DynamicQuote";
 import apiClient from "../client";
 
 export const createQuote = async (payload: any) => {
@@ -18,8 +19,8 @@ export const deleteQuote = async (id: string) => {
 };
 // get all quotes
 
-export const getAllQuotes = async ({ search }: { search: string }) => {
-    const response = await apiClient.get(`/quotes?search=${search}`);
+export const getAllQuotes = async ({ search, shipmentType }: { search: string, shipmentType: ShipmentTypes[] }) => {
+    const response = await apiClient.get(`/quotes?search=${search}&shipmentType=${shipmentType.join(", ")}`);
     return response.data;
 };
 
@@ -29,15 +30,15 @@ export const getSingleQuote = async (id: string) => {
     return response.data;
 };
 
-export const getFavoriteQuotes = async ({ search }: { search: string }) => {
-    const response = await apiClient.get(`/quotes/favorites?search=${search}`);
+export const getFavoriteQuotes = async ({ search, shipmentType }: { search: string, shipmentType: ShipmentTypes[] }) => {
+    const response = await apiClient.get(`/quotes/favorites?search=${search}&shipmentType=${shipmentType}`);
     return response.data;
 };
-export const getSavedQuotes = async ({ search }: { search: string }) => {
-    const response = await apiClient.get(`/quotes/saved?search=${search}`);
+export const getSavedQuotes = async ({ search, shipmentType }: { search: string, shipmentType: ShipmentTypes[] }) => {
+    const response = await apiClient.get(`/quotes/saved?search=${search}&shipmentType=${shipmentType}`);
     return response.data;
 };
-export const getSpotQuotes = async ({ search }: { search: string }) => {
-    const response = await apiClient.get(`/quotes/spot?search=${search}`);
+export const getSpotQuotes = async ({ search, shipmentType }: { search: string, shipmentType: ShipmentTypes[] }) => {
+    const response = await apiClient.get(`/quotes/spot?search=${search}&shipmentType=${shipmentType}`);
     return response.data;
 };

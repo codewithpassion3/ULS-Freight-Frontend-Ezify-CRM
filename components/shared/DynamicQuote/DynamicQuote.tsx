@@ -22,8 +22,11 @@ import SignaturePreference from "../SignaturePreference/SignaturePreference"
 import { Button } from "@/components/ui/button"
 import { quoteUnionSchema, spotShipmentSchema, standardShipmentSchema } from "@/lib/validations/quote/standard-quote-schema"
 import { createShipment, updateShipment } from "@/api/services/shipment.api"
+import { useRouter } from "next/navigation"
+import { Loader, LoaderCircle } from "lucide-react"
+import { formatTime12h } from "@/app/(user)/settings/(address-book)/mappers/contact.mapper"
 // import { quoteSchema } from "@/lib/validations/quote/standard-quote-schema"
-
+export type ShipmentTypes = "PALLET" | "PACKAGE" | "COURIER_PAK" | "STANDARD_FTL" | "SPOT_LTL" | "SPOT_FTL" | "TIME_CRITICAL"
 export type QuoteTypes = "SPOT" | "STANDARD"
 export type ShipmentOptions = {
     SPOT: "SPOT_LTL" | "SPOT_FTL" | "TIME_CRITICAL",
@@ -35,10 +38,12 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     initialShipmentType: ShipmentOptions[keyof ShipmentOptions]
 }) {
     const pathname = usePathname()
+    const router = useRouter()
     const isShipment = pathname.includes("shipment")
     const [shipmentType, setShipmentType] = useState<ShipmentOptions[keyof ShipmentOptions]>(initialShipmentType)
     const [quoteStatus, setQuoteStatus] = useState<"DRAFT" | "SAVED">("DRAFT")
     const quoteId = useSearchParams().get("id")
+    const [shipmentId, setShipmentId] = useState<string | null>(null)
     const totalSteps = 2
     const isEditing = !!quoteId
     const isSpotQuote = quoteType === "SPOT"
@@ -78,14 +83,16 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
 
     useEffect(() => {
         console.log("singleQuote", singleQuote)
-
+        if (singleQuote?.quote?.shipment?.id) {
+            setShipmentId(singleQuote.quote.shipment.id)
+        }
     }, [singleQuote])
 
     const createQuoteMutation = useMutation({
         mutationFn: (data: unknown) => createQuote(data),
         onSuccess: () => {
             toast.success("Quote created successfully")
-            // router.push("/quotes")
+            router.push("/quotes")
         },
         onError: (error: AxiosError<ApiError>) => {
             toast.error(error.response?.data.message)
@@ -95,7 +102,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         mutationFn: (data: unknown) => updateQuote(quoteId!, data),
         onSuccess: () => {
             toast.success("Quote updated successfully")
-            // router.push("/quotes")
+            router.push("/quotes")
         },
         onError: (error: AxiosError<ApiError>) => {
             toast.error(error.response?.data.message)
@@ -106,17 +113,17 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         mutationFn: (data: unknown) => createShipment(data),
         onSuccess: () => {
             toast.success("Shipment created successfully")
-            // router.push("/shipments")
+            router.push("/shipments")
         },
         onError: (error: AxiosError<ApiError>) => {
             toast.error(error.response?.data.message)
         }
     })
     const updateShipmentMutation = useMutation({
-        mutationFn: (data: unknown) => updateShipment("1", data),
+        mutationFn: (data: unknown) => updateShipment(shipmentId!, data),
         onSuccess: () => {
             toast.success("Shipment updated successfully")
-            // router.push("/shipments")
+            router.push("/shipments")
         },
         onError: (error: AxiosError<ApiError>) => {
             toast.error(error.response?.data.message)
@@ -128,34 +135,31 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         const fromAddress = fromAddressRef.current?.getValues() || {}
         const toAddress = toAddressRef.current?.getValues() || {}
         const dimensions = dimensionsRef.current?.getValues() || {}
+        // these are optional only include if they have some values
         const services = servicesRef.current?.getValues() || {}
         const insurance = insuranceRef.current?.getValues() || {}
         const signature = signatureRef.current?.getValues() || {}
 
+        let completePayload = {
+            addresses: [fromAddress, toAddress],
+            ...dimensions,
+        }
 
-        
-        console.log("dimensions", dimensions)
-        
         const addresses = [];
         if (Object.keys(fromAddress).length > 0) addresses.push(fromAddress)
         if (Object.keys(toAddress).length > 0) addresses.push(toAddress)
 
-        if (Object.keys(insurance).length > 0) {
-            return {
-                addresses,
-                ...dimensions,
-                ...insurance,
-                ...services,
-                ...signature,
-            }
+        if (insurance.insurance.amount) {
+            completePayload = { ...completePayload, ...insurance }
         }
-        return {
-            addresses,
-            ...dimensions,
-            ...services,
-            ...services,
-            ...signature,
+        if (Object.keys(services).length > 0) {
+            completePayload = { ...completePayload, ...services }
         }
+        if (Object.keys(signature).length > 0) {
+            completePayload = { ...completePayload, ...signature }
+        }
+
+        return completePayload
     }
 
 
@@ -165,18 +169,20 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         const dimValid = await dimensionsRef.current?.trigger()
         // console.log("fromValid", fromValid)
         // console.log("toValid", toValid)
-        console.log("dimValid", dimValid)
 
         // We validate core sections First. Then conditionally attached ones depending on if they are rendered
-        let valid = fromValid && toValid && dimValid;
 
-        // if (servicesRef.current) valid = valid && await servicesRef.current.trigger()
-        // if (insuranceRef.current) valid = valid && await insuranceRef.current.trigger()
-        // if (signatureRef.current) valid = valid && await signatureRef.current.trigger()
+        let valid = fromValid && toValid && dimValid;
+        // print every validation
+
+
+        if (servicesRef.current) valid = valid && await servicesRef.current.trigger()
+        if (insuranceRef.current) valid = valid && await insuranceRef.current.trigger()
+        if (signatureRef.current) valid = valid && await signatureRef.current.trigger()
 
         // if (!valid) {
-        //      toast.error("Please fill in all required fields correctly.")
-        //      return
+        //     toast.error("Please fill in all required fields correctly.")
+        //     return
         // }
 
         const mergedData = getMergedPayload()
@@ -188,13 +194,31 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
 
     const payloadTransformer = (data: any) => {
         const formattedAddresses = data.addresses?.map((address: any) => {
+
             if (address.addressBookId) {
                 return {
                     addressBookId: address.addressBookId,
                     type: address.type
                 }
             }
-            return address
+            const palletShippingReadyTime = formatTime12h(
+                address.readyTimeHour,
+                address.readyTimeMinute,
+                address.readyTimeAmPm
+            )
+            const palletShippingCloseTime = formatTime12h(
+                address.closeTimeHour,
+                address.closeTimeMinute,
+                address.closeTimeAmPm
+            )
+
+            return {
+
+                ...address,
+                palletShippingReadyTime,
+                palletShippingCloseTime,
+                type: address.type
+            }
         })
 
         const payload = {
@@ -203,13 +227,13 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             "quoteType": quoteType,
             "shipmentType": shipmentType,
             ...(!isEditing && quoteStatus !== singleQuote?.quote.status && { "status": quoteStatus }),
-            ...(shipmentType !== "STANDARD_FTL") && {
-                "lineItem": {
-                    ...data.lineItem,
-                    "type": shipmentType,
-                    "units": data.units
-                },
-            },
+            // ...(shipmentType !== "STANDARD_FTL") && {
+            //     "lineItem": {
+            //         ...data.lineItem,
+            //         "type": shipmentType,
+            //         "units": data.units
+            //     },
+            // },
         }
         const transformedAddresses = payload.addresses.map((addr: any) => {
             if (addr.addressBookId) {
@@ -232,6 +256,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             quote: {
                 ...payloadTransformed
             }
+
         }
 
         if (isEditing) {
@@ -300,13 +325,24 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
 
 
                             {isShipment ?
-                                <Button onClick={() => {
 
-                                    onSubmit()
-                                }} type="button">{isEditing ? "Update Shipment" : "Create Shipment"}</Button> :
-                                <Button onClick={() => {
-                                    onSubmit()
-                                }} type="button">{isEditing ? "Update Quote" : "Submit Quote"}</Button>
+                                <Button
+                                    disabled={createShipmentMutation.isPending || updateShipmentMutation.isPending}
+                                    onClick={() => {
+
+                                        onSubmit()
+                                    }} type="button">
+                                    {createShipmentMutation.isPending || updateShipmentMutation.isPending ? <LoaderCircle className="animate-spin" size={16} /> : isEditing ? "Update Shipment" : "Create Shipment"}
+                                </Button>
+                                :
+
+                                <Button
+                                    disabled={createQuoteMutation.isPending || updateQuoteMutation.isPending}
+                                    onClick={() => {
+                                        onSubmit()
+                                    }} type="button">
+                                    {createQuoteMutation.isPending || updateQuoteMutation.isPending ? <LoaderCircle className="animate-spin" size={16} /> : isEditing ? "Update Quote" : "Create Quote"}
+                                </Button>
 
                             }
                         </div>

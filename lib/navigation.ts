@@ -4,42 +4,42 @@ export const navItems = [
     {
         title: "Quote",
         items: [
-            { title: "All Quotes", href: "/quotes" },
-            { title: "Create Quote", href: "/quote/create" },
-            { title: "Create Spot Quote", href: "/spot-quote/create" },
-            { title: "Saved Quotes", href: "/quote/saved" },
+            { title: "Create Quote", href: "/quote" },
+            { title: "Create Spot Quote", href: "/spot-quote" },
+            { title: "Quotes Dashboard", href: "/quotes" },
         ],
     },
 
     {
         title: "Ship",
         items: [
-            { title: "Create Shipment", href: "/shipment/create" },
-            { title: "Bulk Shipping", href: "/shipment/bulk" },
+            { title: "Create Shipment", href: "/shipment" },
         ],
     },
 
     {
         title: "Track",
         items: [
-            { title: "Track Shipment", href: "/track" },
-            { title: "Tracking History", href: "/track/history" },
+            { title: "Tracking Dashboard", href: "/track" },
+            { title: "Pickups Dashboard", href: "/pickups" },
         ],
     },
 
     {
         title: "Invoices",
         items: [
-            { title: "All Invoices", href: "/invoices" },
-            { title: "Payment History", href: "/payments" },
+            { title: "Invoice Dashboard", href: "/invoices" },
+            { title: "Search Shipment Charges", href: "/payments" },
+            // reporting
+            { title: "Reporting", href: "/reporting" },
         ],
     },
 
     {
         title: "Claims",
         items: [
-            { title: "File Claim", href: "/claims/new" },
-            { title: "Claim History", href: "/claims/history" },
+            { title: "Claims Dashboard", href: "/claims" },
+            { title: "Submit New Claim", href: "/claims/new" },
         ],
     },
 ]

@@ -27,7 +27,7 @@ const FormField = memo(({ field: config }: { field: FormFieldTypes }) => {
                         type={isPassword ? (showPassword ? "text" : "password") : config.type || "text"}
                         placeholder={config.placeholder}
                         {...field}
-                        className={`${config.inputClassName} ${error ? "border-red-500" : ""} ${isPassword ? "pr-10" : ""}`}
+                        className={`${config.inputClassName} ${error ? "border-red-500 bg-red-50 placeholder:text-red-500 focus:outline-red-100" : ""} ${isPassword ? "pr-10" : ""}`}
                         disabled={config.disabled}
                         onChange={(e) => {
                             let value
@@ -60,7 +60,7 @@ const FormField = memo(({ field: config }: { field: FormFieldTypes }) => {
                         placeholder={config.placeholder}
                         {...field}
                         value={field.value ?? ""}
-                        className={`${config.className} ${error ? "border-red-500" : ""}`}
+                        className={`${config.className} ${error ? "border-red-500 bg-red-50 placeholder:text-red-500" : ""}`}
                     />}
 
                 {error && <p className="text-xs text-red-500">{error.message}</p>}

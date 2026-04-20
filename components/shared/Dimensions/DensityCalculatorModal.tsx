@@ -1,0 +1,183 @@
+"use client"
+import { useState } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Calculator } from "lucide-react"
+
+import { NmfcCodeRequestModal } from "./NmfcCodeRequestModal"
+
+export const DensityCalculatorModal = () => {
+    const [unit, setUnit] = useState<"IMPERIAL" | "METRIC">("IMPERIAL")
+    const [length, setLength] = useState("")
+    const [width, setWidth] = useState("")
+    const [height, setHeight] = useState("")
+    const [weight, setWeight] = useState("")
+    const [result, setResult] = useState<{ density: number, classEstim: string } | null>(null)
+
+    const handleReset = () => {
+        setLength("")
+        setWidth("")
+        setHeight("")
+        setWeight("")
+        setResult(null)
+    }
+
+    const calculateClass = () => {
+        const l = parseFloat(length) || 0
+        const w = parseFloat(width) || 0
+        const h = parseFloat(height) || 0
+        const wt = parseFloat(weight) || 0
+
+        if (!l || !w || !h || !wt) return
+
+        let lbs = wt;
+        let cuFt = (l * w * h) / 1728;
+
+        if (unit === "METRIC") {
+            // Convert to Imperial for standard US freight class calculation
+            const lIn = l * 0.393701
+            const wIn = w * 0.393701
+            const hIn = h * 0.393701
+            lbs = wt * 2.20462
+            cuFt = (lIn * wIn * hIn) / 1728
+        }
+
+        const density = lbs / cuFt
+
+        let estimatedClass = "500"
+        if (density >= 50) estimatedClass = "50"
+        else if (density >= 35) estimatedClass = "55"
+        else if (density >= 30) estimatedClass = "60"
+        else if (density >= 22.5) estimatedClass = "65"
+        else if (density >= 15) estimatedClass = "70"
+        else if (density >= 13.5) estimatedClass = "77.5"
+        else if (density >= 12) estimatedClass = "85"
+        else if (density >= 10.5) estimatedClass = "92.5"
+        else if (density >= 9) estimatedClass = "100"
+        else if (density >= 8) estimatedClass = "110"
+        else if (density >= 7) estimatedClass = "125"
+        else if (density >= 6) estimatedClass = "150"
+        else if (density >= 5) estimatedClass = "175"
+        else if (density >= 4) estimatedClass = "200"
+        else if (density >= 3) estimatedClass = "250"
+        else if (density >= 2) estimatedClass = "300"
+        else if (density >= 1) estimatedClass = "400"
+        
+        setResult({ density: Number(density.toFixed(2)), classEstim: estimatedClass })
+    }
+
+    return (
+        <Dialog onOpenChange={(open) => !open && handleReset()}>
+            <DialogTrigger asChild>
+                <button type="button" className="text-sm font-semibold flex items-center gap-1 hover:underline text-[#0070c0]">
+                    <Calculator size={16} /> Class & Density Calculator
+                </button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl! p-0 gap-0 border-0 rounded-lg overflow-hidden">
+                <DialogHeader className="p-4 border-b bg-gray-50/50">
+                    <DialogTitle className="flex items-center gap-2 text-lg font-bold text-gray-800">
+                        <Calculator size={20} className="text-gray-800" /> Class & Density Calculator
+                    </DialogTitle>
+                </DialogHeader>
+                
+                <div className="p-6 overflow-y-auto max-h-[80vh]">
+                    <div className="border border-gray-200 rounded-md p-4 mb-6 bg-white shrink-0">
+                        <h4 className="font-semibold mb-3 text-slate-800">Please Note:</h4>
+                        <p className="text-slate-600 text-sm mb-3">
+                            <strong className="text-slate-800">A)</strong> The density calculator is available only as an <strong className="text-slate-800">estimation</strong> tool to provide the recommended freight class.
+                        </p>
+                        <p className="text-slate-600 text-sm">
+                            <strong className="text-slate-800">B)</strong> If you're unsure of your product's <strong className="text-slate-800">Freight Class and/or NMFC Class</strong> and require assistance, please <NmfcCodeRequestModal />.
+                        </p>
+                    </div>
+
+                    <div className="border border-gray-200 rounded-md p-6 bg-white shadow-sm shrink-0">
+                        <div className="flex justify-end mb-6 w-full">
+                            <RadioGroup value={unit} onValueChange={(val: "IMPERIAL" | "METRIC") => { setUnit(val); handleReset() }} className="flex space-x-6">
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="METRIC" id="metric-calc" className={unit === "METRIC" ? "text-amber-500 border-amber-500" : ""} />
+                                    <Label htmlFor="metric-calc" className={`cursor-pointer flex items-center gap-1 ${unit === "METRIC" ? "font-semibold text-slate-800" : "font-normal text-slate-500"}`}>
+                                        Metric <span className="hidden sm:inline">(cm & kg)</span>
+                                    </Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="IMPERIAL" id="imperial-calc" className={unit === "IMPERIAL" ? "text-amber-500 border-amber-500" : ""} />
+                                    <Label htmlFor="imperial-calc" className={`cursor-pointer ${unit === "IMPERIAL" ? "font-semibold text-slate-800" : "font-normal text-slate-500"}`}>
+                                        Imperial <span className="hidden sm:inline">(in & lbs)</span>
+                                    </Label>
+                                </div>
+                            </RadioGroup>
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                            <div>
+                                <Label className="text-slate-500 font-normal mb-1 block">Length ({unit === "IMPERIAL" ? "in" : "cm"})*</Label>
+                                <Input 
+                                    type="number" 
+                                    placeholder={`00 (${unit === "IMPERIAL" ? "in" : "cm"})`} 
+                                    value={length} onChange={(e) => setLength(e.target.value)} 
+                                    className="focus-visible:ring-amber-500 border-gray-300"
+                                />
+                            </div>
+                            <div>
+                                <Label className="text-slate-500 font-normal mb-1 block">Width ({unit === "IMPERIAL" ? "in" : "cm"})*</Label>
+                                <Input 
+                                    type="number" 
+                                    placeholder={`00 (${unit === "IMPERIAL" ? "in" : "cm"})`} 
+                                    value={width} onChange={(e) => setWidth(e.target.value)} 
+                                    className="focus-visible:ring-amber-500 border-gray-300"
+                                />
+                            </div>
+                            <div>
+                                <Label className="text-slate-500 font-normal mb-1 block">Height ({unit === "IMPERIAL" ? "in" : "cm"})*</Label>
+                                <Input 
+                                    type="number" 
+                                    placeholder={`00 (${unit === "IMPERIAL" ? "in" : "cm"})`} 
+                                    value={height} onChange={(e) => setHeight(e.target.value)} 
+                                    className="focus-visible:ring-amber-500 border-gray-300"
+                                />
+                            </div>
+                            <div>
+                                <Label className="text-slate-500 font-normal mb-1 block">Weight ({unit === "IMPERIAL" ? "lbs" : "kg"})*</Label>
+                                <Input 
+                                    type="number" 
+                                    placeholder={`00 (${unit === "IMPERIAL" ? "lbs" : "kg"})`} 
+                                    value={weight} onChange={(e) => setWeight(e.target.value)} 
+                                    className="focus-visible:ring-amber-500 border-gray-300"
+                                />
+                            </div>
+                        </div>
+
+                        {result && (
+                            <div className="bg-blue-50 border border-blue-100 rounded-md p-4 mb-6 flex justify-between items-center">
+                                <div>
+                                    <p className="text-sm text-blue-700">Calculated Density: <span className="font-semibold">{result.density} lbs/ft³</span></p>
+                                </div>
+                                <div>
+                                    <p className="text-lg text-blue-800 font-bold">Estimated Class: {result.classEstim}</p>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="flex justify-end items-center gap-4 border-t pt-4">
+                            <button type="button" onClick={handleReset} className="text-[#0070c0] text-sm font-medium hover:underline">
+                                Reset
+                            </button>
+                            <Button type="button" onClick={calculateClass} className="bg-[#4fa2d2] hover:bg-[#3d91c1] text-white font-medium px-6">
+                                Calculate Class
+                            </Button>
+                        </div>
+                    </div>
+
+                    <div className="mt-6 text-xs text-slate-500 leading-relaxed bg-slate-50 p-4 rounded-md border text-center md:text-left">
+                        <strong>Disclaimer:</strong> While density is the primary determinant in establishing the class using the National Motor Freight Classification system, other factors such as the value of the product, handling characteristics (storability on a trailer), claim susceptibility, etc., are also relevant. The recommended NMFC class is NOT an absolute. The most effective way to determine an accurate class is to abide by the NMFC codes and their associated class for that particular commodity.
+                    </div>
+                </div>
+
+            </DialogContent>
+        </Dialog>
+    )
+}

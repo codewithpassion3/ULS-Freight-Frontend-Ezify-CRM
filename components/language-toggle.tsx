@@ -46,7 +46,7 @@ export function LanguageToggle() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="ghost"
+          variant="outline"
           className="text-sm font-medium text-black dark:text-white hover:text-primary/80 flex items-center gap-2 px-2"
         >
           <Globe className="h-4 w-4" />
@@ -56,13 +56,13 @@ export function LanguageToggle() {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent className="w-max" align="end">
         <DropdownMenuItem onClick={() => handleLanguageChange("en")}>
           English
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={() => handleLanguageChange("fr")}>
-          Français
+        <DropdownMenuItem disabled onClick={() => handleLanguageChange("fr")}>
+          Français (Coming Soon)
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -3,9 +3,8 @@ import { DataTable } from "@/components/common/table/DataTable"
 import { DataTablePagination } from "@/components/common/table/DataTablePagination"
 import { columns } from "./components/ColumnsTableQuotes"
 import { SortingState } from "@tanstack/react-table"
-import { CircleSlash, Plus, Trash2, Truck } from "lucide-react"
+import { CircleSlash, Plus, RefreshCcw, Trash2, Truck } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
-import { MOCK_QUOTES, QuoteCategory } from "./page"
 import { useDebounce } from "../../../hooks/useDebounce.hook"
 import { useQuery } from "@tanstack/react-query"
 import { getAllQuotes, getFavoriteQuotes, getSavedQuotes, getSpotQuotes } from "@/api/services/quotes.api"
@@ -13,12 +12,14 @@ import { Loader } from "@/components/common/Loader"
 import { Empty } from "@/components/ui/empty"
 import EmptyUI from "@/components/common/empty/Empty"
 import Link from "next/link"
+import { ShipmentTypes } from "@/components/shared/DynamicQuote/DynamicQuote"
 interface Props {
+    search: string
+    selectedPackaging: ShipmentTypes[]
     setCount: (count: { all: number; saved: number; spot: number }) => void
     quoteCategory: QuoteCategory
 }
-export default function DynamicQuotesTable({ setCount, quoteCategory }: Props) {
-    const [search, setSearch] = useState("")
+export default function DynamicQuotesTable({ search, selectedPackaging, setCount, quoteCategory }: Props) {
     const [sorting, setSorting] = useState<SortingState>([])
     const [page, setPage] = useState(1)
     const debouncedSearch = useDebounce(search, 500)
@@ -28,16 +29,18 @@ export default function DynamicQuotesTable({ setCount, quoteCategory }: Props) {
         queryFn: () => {
             switch (quoteCategory) {
                 case "all":
-                    return getAllQuotes({ search: debouncedSearch })
+                    return getAllQuotes({ search: debouncedSearch, shipmentType: [] })
                 case "saved":
-                    return getSavedQuotes({ search: debouncedSearch })
+                    return getSavedQuotes({ search: debouncedSearch, shipmentType: [] })
                 case "spot":
-                    return getSpotQuotes({ search: debouncedSearch })
+                    return getSpotQuotes({ search: debouncedSearch, shipmentType: [] })
                 case "favorite":
-                    return getFavoriteQuotes({ search: debouncedSearch })
+                    return getFavoriteQuotes({ search: debouncedSearch, shipmentType: [] })
             }
         },
-        retry: 1
+        retry: 1,
+        // dependency
+        enabled: selectedPackaging.length > 0
     })
     console.log("quotes", quotes)
     useEffect(() => {
@@ -56,7 +59,7 @@ export default function DynamicQuotesTable({ setCount, quoteCategory }: Props) {
         description="Failed to fetch quotes"
         action={
             <Button variant="outline" className="text-muted-foreground border-border">
-                <Plus size={16} /> Retry
+                <RefreshCcw size={16} /> Retry
             </Button>
         }
     />
@@ -92,7 +95,7 @@ export default function DynamicQuotesTable({ setCount, quoteCategory }: Props) {
                 title="No Quotes Found"
                 description="You have no quotes yet. Create one to get started."
                 action={
-                    <Link href="/quote/create">
+                    <Link href="/quote">
                         <Button variant="outline" className="text-muted-foreground border-border">
                             <Plus size={16} /> Create Quote
                         </Button>

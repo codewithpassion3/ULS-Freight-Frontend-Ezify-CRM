@@ -7,6 +7,7 @@ import AddPackage from "@/app/(user)/packages/AddPackage"
 import { FREIGHT_CLASS_OPTIONS } from "./constants"
 import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import { usePathname } from "next/navigation"
+import PackageSelectionModal from "@/app/(user)/packages/PackageSelectionModal"
 
 type Props = {
     index: number
@@ -22,29 +23,59 @@ type Props = {
 export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, onClear, open, setOpen }: Props) {
     const { register, watch, formState: { errors } } = useFormContext<any>()
 
-    const measurementUnit = watch("measurementUnit") ?? "IMPERIAL"
+    const measurementUnit = watch("lineItem.measurementUnit")
     const isImperial = measurementUnit === "IMPERIAL"
     const lengthUnit = isImperial ? "in" : "cm"
     const weightUnit = isImperial ? "lbs" : "kg"
-    const rowErrors = (errors as any)?.units?.[index]
-    console.log("child errors", errors.lineItem)
+    const rowErrors = (errors as any)?.lineItem?.units?.[index]
+
     const pathname = usePathname()
     const isShipment = pathname.includes("shipment")
     // Snapshot current row values for the SavePackage dialog
     const rowSnapshot = {
         measurementUnit,
-        length: watch(`units.${index}.length`) as number | undefined,
-        width: watch(`units.${index}.width`) as number | undefined,
-        height: watch(`units.${index}.height`) as number | undefined,
-        weight: watch(`units.${index}.weight`) as number | undefined,
-        freightClass: watch(`units.${index}.freightClass`),
-        nmfc: watch(`units.${index}.nmfc`),
-        shipmentType: watch(`units.${index}.shipmentType`) as any,
-        unitsOnPallet: watch(`units.${index}.unitsOnPallet`) as number | undefined,
-        palletUnitType: watch(`units.${index}.palletUnitType`),
-        description: watch(`units.${index}.description`),
+        length: watch(`lineItem.units.${index}.length`) as number | undefined,
+        width: watch(`lineItem.units.${index}.width`) as number | undefined,
+        height: watch(`lineItem.units.${index}.height`) as number | undefined,
+        weight: watch(`lineItem.units.${index}.weight`) as number | undefined,
+        freightClass: watch(`lineItem.units.${index}.freightClass`),
+        nmfc: watch(`lineItem.units.${index}.nmfc`),
+        shipmentType: watch(`lineItem.units.${index}.shipmentType`) as any,
+        unitsOnPallet: watch(`lineItem.units.${index}.unitsOnPallet`) as number | undefined,
+        palletUnitType: watch(`lineItem.units.${index}.palletUnitType`),
+        description: watch(`lineItem.units.${index}.description`),
     }
-    console.log("rowErrors", rowErrors)
+
+    //   const handlePackageSelect = (contact: ContactType) => {
+    //     setAddressLocked(true)
+    //     const currentValues = methods.getValues();
+    //     methods.reset({
+    //       ...currentValues,
+    //       // @ts-ignore
+    //       addressBookId: Number(contact.id),
+    //       type: type,
+    //       address: {
+    //         address1: contact.address?.address1 || "",
+    //         postalCode: contact.address?.postalCode || "",
+    //         city: contact.address?.city || "",
+    //         state: contact.address?.state || "",
+    //         country: contact.address?.country || "",
+    //       },
+
+    //       ...(showLocationType && { locationTypeId: contact?.locationTypeId || "" }),
+    //       ...(isShipment && { companyName: contact.companyName }),
+    //       // ...(isShipment && { contactId: contact.id }),
+    //       ...(isShipment && { address2: contact.address?.address2 || "" }),
+    //       ...(isShipment && { unit: contact.address?.unit || "" }),
+    //       // contact information
+    //       ...(isShipment && { contactName: contact.contactName || "" }),
+    //       ...(isShipment && { email: contact.email || "" }),
+    //       ...(isShipment && { phoneNumber: contact.phoneNumber || "" }),
+
+    //     });
+    //     // print location type
+    //   }
+
     return (
         <div key={fieldId} className="space-y-4 pb-6 border-b last:border-0 relative group">
             {/* Row header */}
@@ -55,7 +86,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                     </div>
                     <span className="font-semibold text-slate-800 dark:text-slate-100">Package {index + 1}</span>
                     {/* <input type="hidden" {...register("quantity", { valueAsNumber: true })} /> */}
-                    <input type="hidden" value={shipmentType as string} {...register("type")} />
+                    {/* <input type="hidden" value={shipmentType as string} {...register("type")} /> */}
                 </div>
                 {canRemove && (
                     <Button variant="ghost" size="icon" type="button" onClick={() => onRemove(index)}
@@ -69,27 +100,54 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                 formWrapperClassName="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 xl:grid-cols-8 gap-4 items-start"
                 fields={[
                     {
-                        name: `units.${index}.length`,
+                        name: `lineItem.units.${index}.length`,
                         label: `Length (${lengthUnit})*`,
                         type: "number",
                         placeholder: "L",
                         min: 0,
-                        labelClassName: "text-xs text-muted-foreground"
+                        labelClassName: "text-xs text-muted-foreground",
+                        show: !(isShipment && shipmentType === "COURIER_PAK")
                     },
-                    { name: `units.${index}.width`, label: `Width (${lengthUnit})*`, type: "number", placeholder: "W", min: 0, labelClassName: "text-xs text-muted-foreground", className: rowErrors?.width ? "border-red-500" : "" },
-                    { name: `units.${index}.height`, label: `Height (${lengthUnit})*`, type: "number", placeholder: "H", min: 0, labelClassName: "text-xs text-muted-foreground", className: rowErrors?.height ? "border-red-500" : "" },
-                    { name: `units.${index}.weight`, label: `Weight (${weightUnit})*`, type: "number", placeholder: "W", min: 0, labelClassName: "text-xs text-muted-foreground", className: rowErrors?.weight ? "border-red-500" : "" },
+                    {
+                        name: `lineItem.units.${index}.width`,
+                        label: `Width (${lengthUnit})*`,
+                        type: "number",
+                        placeholder: "W",
+                        min: 0,
+                        labelClassName: "text-xs text-muted-foreground",
+                        className: rowErrors?.width ? "border-red-500" : "",
+                        show: !(isShipment && shipmentType === "COURIER_PAK")
+                    },
+                    {
+                        name: `lineItem.units.${index}.height`,
+                        label: `Height (${lengthUnit})*`,
+                        type: "number",
+                        placeholder: "H",
+                        min: 0,
+                        labelClassName: "text-xs text-muted-foreground",
+                        className: rowErrors?.height ? "border-red-500" : "",
+                        show: !(isShipment && shipmentType === "COURIER_PAK")
+                    },
+                    {
+                        name: `lineItem.units.${index}.weight`,
+                        label: `Weight (${weightUnit})*`,
+                        type: "number",
+                        placeholder: "W",
+                        min: 0,
+                        labelClassName: "text-xs text-muted-foreground",
+                        className: rowErrors?.weight ? "border-red-500" : "",
+                    },
                     {
                         label: "Freight Class*",
                         type: "select",
-                        name: `units.${index}.freightClass`,
+                        name: `lineItem.units.${index}.freightClass`,
                         options: FREIGHT_CLASS_OPTIONS,
                         labelClassName: "text-xs text-muted-foreground",
                         placeholder: "Select Freight Class",
                         show: shipmentType === "PALLET" || shipmentType === "SPOT_LTL"
                     },
                     {
-                        name: `units.${index}.nmfc`,
+                        name: `lineItem.units.${index}.nmfc`,
                         label: `NMFC`,
                         type: "text",
                         placeholder: "NMFC",
@@ -97,7 +155,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                         show: shipmentType === "PALLET"
                     },
                     {
-                        name: `units.${index}.palletUnitType`,
+                        name: `lineItem.units.${index}.palletUnitType`,
                         label: "Type*",
                         type: "select",
                         options: [
@@ -120,17 +178,17 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                         show: shipmentType === "PALLET" || shipmentType === "SPOT_LTL" || shipmentType === "SPOT_FTL" || shipmentType === "TIME_CRITICAL"
                     },
                     {
-                        name: `units.${index}.unitsOnPallet`,
+                        name: `lineItem.units.${index}.unitsOnPallet`,
                         label: "Units on Pallet*",
                         type: "number",
                         placeholder: "Units on Pallet",
-                        min:0,
+                        min: 0,
                         labelClassName: "text-xs text-muted-foreground",
                         show: shipmentType === "PALLET" || shipmentType === "SPOT_LTL" || shipmentType === "SPOT_FTL" || shipmentType === "TIME_CRITICAL"
 
                     },
                     {
-                        name: `units.${index}.description`,
+                        name: `lineItem.units.${index}.description`,
                         label: "Description*",
                         type: "text",
                         placeholder: "Description",
@@ -139,9 +197,10 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                     },
                     // specialHandlingRequired
                     {
-                        name: `units.${index}.specialHandlingRequired`,
+                        name: `lineItem.units.${index}.specialHandlingRequired`,
                         label: "Special Handling Required",
                         type: "checkbox",
+                        defaultValue: false,
                         labelClassName: "text-xs text-muted-foreground",
                         wrapperClassName: "col-span-8",
                         show: shipmentType === "PACKAGE"
@@ -152,7 +211,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
 
             {/* Row actions */}
             <div className="flex items-center gap-4 text-sm mt-2 sm:mt-0">
-                <Button variant="link" type="button"><PackageOpen /> My Packages</Button>
+                <PackageSelectionModal selectedPackage={shipmentType} />
                 <AddPackage shipmentType={shipmentType} open={open} setOpen={setOpen} initialData={rowSnapshot}>
                     <Button variant="link" type="button"><Save /> Save Package</Button>
                 </AddPackage>
@@ -162,7 +221,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
             </div>
 
             {rowErrors && Object.keys(rowErrors).length > 0 && (
-                <p className="text-xs text-red-500">Please fill required dimensions (number &gt; 0)</p>
+                <p className="text-xs text-red-500">Please fill required dimensions</p>
             )}
         </div>
     )

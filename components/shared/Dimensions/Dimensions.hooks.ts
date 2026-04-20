@@ -4,29 +4,43 @@ import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useSearchParams } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { getSingleQuote } from "@/api/services/quotes.api"
 // import { shipmentSchema, ShipmentFormValues } from "./Dimensions.schema"
 import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
-import { lineItemSchema, palletLineItemSchema } from "./Dimensions.schema"
+import { courierLineItemSchema, ftlLineItemSchema, lineItemSchema, packageLineItemSchema, palletLineItemSchema } from "./Dimensions.schema"
 
 export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOptions]) {
-    const [isOpen, setIsOpen] = useState(false)
+    const [isOpen, setIsOpen] = useState(true)
+    const dynamicSchema = (shipmentType: string) => {
+        switch (shipmentType) {
+            case "PALLET":
+                return palletLineItemSchema
+            case "PACKAGE":
+                return packageLineItemSchema
+            case "COURIER_PAK":
+                return courierLineItemSchema
+            case "STANDARD_FTL":
+                return ftlLineItemSchema
+        }
+    }
+
+    const schema = useMemo(() => {
+        return dynamicSchema(shipmentType)
+    }, [shipmentType])
 
     const methods = useForm<any>({
-        resolver: zodResolver(lineItemSchema) as any,
+        resolver: zodResolver(schema as any) as any,
         mode: "onChange",
         defaultValues: {
+            shipmentType: shipmentType,
             lineItem: {
-                shipmentType: shipmentType,
+                type: shipmentType,
                 description: "",
                 measurementUnit: "IMPERIAL",
                 dangerousGoods: false,
                 stackable: false,
                 units: [{
-                    length: 0,
-                    width: 0,
-                    height: 0,
                     weight: 0,
                     description: "",
                 }],
@@ -34,8 +48,10 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
         },
     })
 
+
+
     const { control, setValue, formState: { errors } } = methods
-    const fieldArray = useFieldArray({ control, name: "units" })
+    const fieldArray = useFieldArray({ control, name: "lineItem.units" })
 
     const quoteId = useSearchParams().get("id")
     const { data: cachedSingleQuote } = useQuery({
@@ -44,14 +60,13 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
         enabled: !!quoteId,
         staleTime: 1000 * 60 * 5,
     })
-    console.log("grand-parent errors", errors)
 
     useEffect(() => {
         if (!cachedSingleQuote) return
         const units = cachedSingleQuote.quote.lineItems?.units ?? []
 
         setValue(
-            "units",
+            "lineItem.units",
             units.length === 0
                 ? [{ quantity: 1, length: 0, width: 0, height: 0, weight: 0, description: "" }]
                 : units
@@ -62,11 +77,17 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
         // cachedSingleQuote.lineItem?.specialHandlingRequired && setValue("specialHandlingRequired", cachedSingleQuote.lineItem?.specialHandlingRequired ?? false)
         setValue("lineItem.quantity", cachedSingleQuote.lineItem?.quantity ?? 1)
         setIsOpen(true)
+    }, [cachedSingleQuote, setValue, shipmentType])
 
-    }, [cachedSingleQuote, setValue])
+    useEffect(() => {
+        setValue("shipmentType", shipmentType)
+        setValue("lineItem.type", shipmentType)
+    }, [shipmentType])
 
-    const handleAddPackage = () =>
+    const handleAddPackage = () => {
         fieldArray.append({ length: 0, width: 0, height: 0, weight: 0, description: "" })
+        setValue("lineItem.quantity", fieldArray.fields.length)
+    }
 
     const handleClearDimensions = (index: number) => {
         setValue(`lineItem.units.${index}.length`, null)

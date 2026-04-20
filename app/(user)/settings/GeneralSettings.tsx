@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import FormField from "@/components/common/form/fields/FormField"
 import { useUser } from "@/hooks/useUser"
 import { Loader } from "@/components/common/Loader"
+import { GlobalForm } from "@/components/common/form/GlobalForm"
 // import { Loader } from "lucide-react"
 
 type SettingsFormValues = {
@@ -77,8 +78,32 @@ export default function GeneralSettings() {
                                         Request Company Name Change
                                     </Button>
                                 </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                <GlobalForm
+                                    formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+                                    fields={[
+                                        {
+                                            name: "companyName",
+                                            label: "Company Name",
+                                        },
+                                        {
+                                            name: "contactName",
+                                            label: "Contact Name*",
+                                        },
+                                        {
+                                            name: "industryType",
+                                            label: "Industry Type",
+                                        },
+                                        {
+                                            name: "email",
+                                            label: "Email",
+                                        },
+                                        {
+                                            name: "phone",
+                                            label: "Phone Number",
+                                        },
+                                    ]}
+                                />
+                                {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                                     <FormField
                                         field={{
                                             name: "companyName",
@@ -114,12 +139,8 @@ export default function GeneralSettings() {
                                         }}
                                     />
 
-                                    {/* <FormField
-                                name="ext"
-                                label="Ext."
-                                register={register}
-                            /> */}
-                                </div>
+
+                                </div> */}
 
                                 <Button
                                     disabled
@@ -127,76 +148,77 @@ export default function GeneralSettings() {
                                     Save Details
                                 </Button>
                             </div>
+
+
+                            {/* Company Address */}
+                            <div>
+                                <div className="flex justify-between items-center mb-4">
+                                    <h2 className="font-semibold text-base">Company Address</h2>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        disabled
+                                    >
+                                        Request Company Address Change
+                                    </Button>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                                    <FormField
+                                        field={{
+                                            name: "address",
+                                            label: "Address*",
+                                        }}
+                                    />
+
+                                    <FormField
+                                        field={{
+                                            name: "address2",
+                                            label: "Address 2 (optional)",
+                                        }}
+                                    />
+
+                                    <FormField
+                                        field={{
+                                            name: "unit",
+                                            label: "Unit/Floor #",
+                                        }}
+                                    />
+
+                                    <FormField
+                                        field={{
+                                            name: "postalCode",
+                                            label: "Postal Code",
+                                        }}
+                                    />
+
+                                    <FormField
+                                        field={{
+                                            name: "city",
+                                            label: "City",
+                                        }}
+                                    />
+
+                                    <FormField
+                                        field={{
+                                            name: "province",
+                                            label: "Province",
+                                        }}
+
+                                    />
+
+                                    <FormField
+                                        field={{
+                                            name: "country",
+                                            label: "Country",
+                                        }}
+                                    />
+
+                                </div>
+                            </div>
                         </form>
                     </FormProvider>
-
-                    {/* Company Address */}
-                    <div>
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="font-semibold text-base">Company Address</h2>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                disabled
-                            >
-                                Request Company Address Change
-                            </Button>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-
-                            <FormField
-                                field={{
-                                    name: "address",
-                                    label: "Address*",
-                                }}
-                            />
-
-                            <FormField
-                                field={{
-                                    name: "address2",
-                                    label: "Address 2 (optional)",
-                                }}
-                            />
-
-                            <FormField
-                                field={{
-                                    name: "unit",
-                                    label: "Unit/Floor #",
-                                }}
-                            />
-
-                            <FormField
-                                field={{
-                                    name: "postalCode",
-                                    label: "Postal Code",
-                                }}
-                            />
-
-                            <FormField
-                                field={{
-                                    name: "city",
-                                    label: "City",
-                                }}
-                            />
-
-                            <FormField
-                                field={{
-                                    name: "province",
-                                    label: "Province",
-                                }}
-                               
-                            />
-
-                            <FormField
-                                field={{
-                                    name: "country",
-                                    label: "Country",
-                                }}
-                            />
-
-                        </div>
-                    </div>
 
                     {/* Account Overview */}
                     <div>

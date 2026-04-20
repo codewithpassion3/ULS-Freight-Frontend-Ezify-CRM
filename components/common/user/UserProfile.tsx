@@ -26,7 +26,7 @@ import {
     AvatarImage,
 } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { CreditCard, FileQuestionMark, LogOut, Menu, User, UserRound } from "lucide-react"
+import { CreditCard, DollarSign, FileQuestionMark, Info, LogOut, Menu, User, UserRound } from "lucide-react"
 import { navItems } from "@/lib/navigation"
 import Link from "next/link"
 import { useUser } from "@/hooks/useUser"
@@ -78,9 +78,16 @@ export default function UserProfile() {
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent className="w-full" align="end">
+                            {/* account balance */}
+                            <DropdownMenuItem className="cursor-pointer">
+                                <DollarSign />
+                                <Link href="/billing">
+                                    Account Balance
+                                </Link>
+                            </DropdownMenuItem>
                             <DropdownMenuItem className="cursor-pointer" onClick={() => handleNavigate("/settings")}>
                                 <UserRound />
-                                Profile
+                                Settings
                             </DropdownMenuItem>
 
                             <DropdownMenuItem className="cursor-pointer">
@@ -90,8 +97,8 @@ export default function UserProfile() {
                                 </Link>
                             </DropdownMenuItem>
 
-                            <DropdownMenuItem className="cursor-pointer"    >
-                                <FileQuestionMark />
+                            <DropdownMenuItem className="cursor-pointer">
+                                <Info />
                                 <Link href="/faqs">
                                     FAQs and resources
                                 </Link>

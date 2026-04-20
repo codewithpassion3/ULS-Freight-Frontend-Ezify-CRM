@@ -13,8 +13,9 @@ import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import { usePathname } from "next/navigation"
 
 const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }, ref) => {
+  
   const { methods, fieldArray, handleAddPackage, handleClearDimensions, isOpen, setIsOpen } = useDimensions(shipmentType)
-  const { watch } = methods
+  const { watch, setValue } = methods
   const { fields, append, remove } = fieldArray
 
   const [packageDialogOpen, setPackageDialogOpen] = useState(false)
@@ -29,9 +30,18 @@ const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions
   }), [methods])
 
   // show error
+  const errors = methods.formState.errors
+  
+
+  // is valid
+  const isValid = methods.formState.isValid
+  
+
+  
 
   const handleQuantityChange = (targetCount: number) => {
     const currentCount = fields.length
+    setValue("lineItem.quantity", targetCount)
     if (targetCount > currentCount) {
       append(Array(targetCount - currentCount).fill({ quantity: 1, length: 0, width: 0, height: 0, weight: 0, description: "" }))
     } else {
@@ -42,7 +52,7 @@ const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions
   const isDangerousGood = watch("lineItem.dangerousGoods")
 
   return (
-    <FormProvider {...methods}>
+    <FormProvider {...methods} key={shipmentType}>
       <form className="space-y-6">
         <Accordion type="single" collapsible value={isOpen ? "dimensions" : ""} onValueChange={(val) => setIsOpen(!!val)}
           className="shadow-lg border border-border rounded-md bg-white dark:bg-card">

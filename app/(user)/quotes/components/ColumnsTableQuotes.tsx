@@ -16,6 +16,7 @@ import { deleteQuote } from "@/api/services/quotes.api"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
+import { normalText } from "../../packages/AddPackage"
 
 export const columns: ColumnDef<any>[] = [
   {
@@ -123,8 +124,8 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "packagingDetails",
     header: "Packaging Details",
     cell: ({ row }) => {
-      const quoteType = row.original.quoteType.toLowerCase()
-      const shipmentType = row.original.shipmentType.toLowerCase()
+      const quoteType = normalText(row.original.quoteType)
+      const shipmentType = normalText(row.original.shipmentType)
       return (
         <div className="leading-tight capitalize">
           {quoteType} - {shipmentType}
@@ -162,7 +163,7 @@ export const columns: ColumnDef<any>[] = [
                 <CircleCheck size={14} /> Book Now
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer">
-                <Link className="flex gap-2 items-center w-full" href={row.original.shipment ? `/shipment/create?id=${row.original.id}` : `/quote/create?id=${row.original.id}`}>
+                <Link className="flex gap-2 items-center w-full" href={row.original.shipment ? `/shipment?id=${row.original.id}` : `/quote?id=${row.original.id}`}>
                   <Edit size={14} /> Edit
                 </Link>
               </DropdownMenuItem>

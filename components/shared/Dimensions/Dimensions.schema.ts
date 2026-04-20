@@ -18,7 +18,6 @@ import * as z from "zod"
 // })
 
 export const packageUnitSchema = z.object({
-  quantity: z.number("Required").min(1),
   length: z.number("Required").min(1, "Must be > 0"),
   width: z.number("Required").min(1, "Must be > 0"),
   height: z.number("Required").min(1, "Must be > 0"),
@@ -43,11 +42,12 @@ export const ftlUnitSchema = z.object({
 export const palletLineItemSchema = z.object({
   shipmentType: z.literal("PALLET"),
   lineItem: z.object({
-    description: z.string(),
+    type: z.literal("PALLET"),
+    description: z.string().optional(),
     measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
     dangerousGoods: z.boolean().optional(),
     stackable: z.boolean().optional(),
-    quantity: z.number(),
+    quantity: z.number().default(1),
     units: z.array(
       z.object({
         length: z.coerce.number(" ").min(1),
@@ -68,7 +68,8 @@ export const palletLineItemSchema = z.object({
 export const packageLineItemSchema = z.object({
   shipmentType: z.literal("PACKAGE"),
   lineItem: z.object({
-    description: z.string(),
+    type: z.literal("PACKAGE"),
+    description: z.string().optional(),
     measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
     dangerousGoods: z.boolean().optional(),
     units: z.array(packageUnitSchema).min(1, "Add at least one package"),
@@ -76,8 +77,9 @@ export const packageLineItemSchema = z.object({
 })
 
 export const courierLineItemSchema = z.object({
-  shipmentType: z.literal("COURIER_PACK"),
+  shipmentType: z.literal("COURIER_PAK"),
   lineItem: z.object({
+    type: z.literal("COURIER_PAK"),
     measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
     units: z.array(courierUnitSchema).min(1, "Add at least one item"),
   })
@@ -86,6 +88,7 @@ export const courierLineItemSchema = z.object({
 export const ftlLineItemSchema = z.object({
   shipmentType: z.literal("STANDARD_FTL"),
   lineItem: z.object({
+    type: z.literal("STANDARD_FTL"),
     measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
     units: z.array(ftlUnitSchema).min(1, "Add at least one item"),
   })

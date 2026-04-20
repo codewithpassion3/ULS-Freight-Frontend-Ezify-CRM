@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const contactSchema = z.object({
-    companyName: z.string().min(1, "Company/Name is required"),
+    companyName: z.string().nonempty("Company/Name is required"),
     contactId: z.string().optional(),
     phone: z.string().min(1, "Phone Number is required"),
     email: z.email("Invalid email").optional(),
@@ -18,11 +18,11 @@ export const contactSchema = z.object({
     contactName: z.string().min(1, "Contact Name is required"),
 
     // Pallet Shipping preferences
-    readyTimeHour: z.string().min(0).max(12),
-    readyTimeMinute: z.string().min(0).max(59),
+    readyTimeHour: z.string().min(0, "Ready Time is required").max(12),
+    readyTimeMinute: z.string().min(0, "Ready Time is required").max(59),
     readyTimeAmPm: z.enum(["AM", "PM"]),
-    closeTimeHour: z.string().min(0).max(12),
-    closeTimeMinute: z.string().min(0).max(59),
+    closeTimeHour: z.string().min(0, "Close Time is required").max(12),
+    closeTimeMinute: z.string().min(0, "Close Time is required").max(59),
     closeTimeAmPm: z.enum(["AM", "PM"]),
 
     // Courier Shipping preferences
@@ -30,6 +30,11 @@ export const contactSchema = z.object({
     signatureId: z.number(),
     isResidential: z.boolean().optional(),
 })
+export const addressSchema = contactSchema.extend({
+    address: contactSchema.shape.address.extend({
+        type: z.enum(["TO", "FROM"]),
+    }),
+});
 export type ContactFormProps = {
     defaultValues?: ContactFormValues
     onSubmit?: (data: ContactFormValues) => void
@@ -39,3 +44,4 @@ export type ContactFormProps = {
     setIsValid?: (isValid: boolean) => void
 }
 export type ContactFormValues = z.infer<typeof contactSchema>
+export type AddressFormValues = z.infer<typeof addressSchema>

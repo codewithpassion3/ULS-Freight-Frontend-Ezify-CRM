@@ -50,7 +50,7 @@ const SignaturePreference = forwardRef((props, ref) => {
             <Accordion type="single" collapsible value={isOpen ? "signaturePreference" : ""} onValueChange={(val) => setIsOpen(!!val)} className="px-6 shadow-lg border border-border rounded-md bg-white dark:bg-card">
                 <AccordionItem value="signaturePreference" className="border-none">
                     <AccordionTrigger className="group  hover:no-underline items-center cursor-pointer [&>svg]:hidden!">
-                        <h2 className="font-semibold flex items-center gap-2 text-lg text-slate-800">
+                        <h2 className="font-semibold flex items-center gap-2 text-lg text-slate-800 dark:text-white">
                             <ClipboardPen />
                             Signature Preference
                             <ChevronUp className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
@@ -64,10 +64,11 @@ const SignaturePreference = forwardRef((props, ref) => {
                                 valueType: "number",
                                 defaultValue: "1",
                                 options: [
-                                { value: 1, label: "No Signature Required" },
-                                { value: 2, label: "Signature Required" },
-                                { value: 3, label: "Adult Signature Required" },
-                            ]}}
+                                    { value: 1, label: "No Signature Required" },
+                                    { value: 2, label: "Signature Required" },
+                                    { value: 3, label: "Adult Signature Required" },
+                                ]
+                            }}
                         />
                     </AccordionContent>
                 </AccordionItem>

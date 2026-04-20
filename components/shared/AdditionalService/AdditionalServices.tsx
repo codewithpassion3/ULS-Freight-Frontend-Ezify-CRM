@@ -15,32 +15,55 @@ import { FormProvider, useForm } from "react-hook-form"
 import { forwardRef, useImperativeHandle, useState } from "react"
 import FormCheckbox from "@/components/common/form/fields/FormCheckbox"
 import FormRadio from "@/components/common/form/fields/FormRadio"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }, ref) => {
+    // const additionalServicesSchema = z.object({
+    //     services: z.object({
+    //         limitedAccess: z.boolean(),
+    //         appointmentDelivery: z.boolean(),
+    //         thresholdDelivery: z.boolean(),
+    //         thresholdPickup: z.boolean(),
+    //         inbound: z.boolean(),
+    //         protectFromFreeze: z.boolean(),
+    //         tradeShowDelivery: z.boolean(),
+    //         amazonOrFBADelivery: z.boolean(),
+    //         refrigeratedServices: z.boolean(),
+    //         looseFreight: z.boolean(),
+    //         pallets: z.boolean(),
+    //         liftGateRequired: z.boolean(),
+    //         residentialPickup: z.boolean(),
+    //         residentialDelivery: z.boolean(),
+    //         insideDelivery: z.boolean(),
+    //         insidePickup: z.boolean(),
+    //         insideDeliveryStairs: z.boolean(),
+    //         insidePickupStairs: z.boolean()
+    //     })
+    // })
     const methods = useForm({
+        // resolver: zodResolver(additionalServicesSchema),
         mode: "onChange",
-        defaultValues: {
-            services: {
-                limitedAccess: false,
-                appointmentDelivery: false,
-                thresholdDelivery: false,
-                thresholdPickup: false,
-                inbound: false,
-                protectFromFreeze: false,
-                tradeShowDelivery: false,
-                amazonOrFBADelivery: false,
-                refrigeratedServices: false,
-                looseFreight: false,
-                pallets: false,
-                liftGateRequired: false,
-                residentialPickup: false,
-                residentialDelivery: false,
-                insideDelivery: false,
-                insidePickup: false,
-                insideDeliveryStairs: false,
-                insidePickupStairs: false
-            },
-        }
+        // defaultValues: {
+        //     limitedAccess: false,
+        //     appointmentDelivery: false,
+        //     thresholdDelivery: false,
+        //     thresholdPickup: false,
+        //     inbound: false,
+        //     protectFromFreeze: false,
+        //     tradeShowDelivery: false,
+        //     amazonOrFBADelivery: false,
+        //     refrigeratedServices: false,
+        //     looseFreight: false,
+        //     pallets: false,
+        //     liftGateRequired: false,
+        //     residentialPickup: false,
+        //     residentialDelivery: false,
+        //     insideDelivery: false,
+        //     insidePickup: false,
+        //     insideDeliveryStairs: false,
+        //     insidePickupStairs: false
+        // }
     })
     const { watch, setValue } = methods
     const [isOpen, setIsOpen] = useState(false)
@@ -61,26 +84,24 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
         if (cachedSingleQuote) {
             const services = cachedSingleQuote.quote.palletServices;
             if (services) {
-                setValue("services", {
-                    limitedAccess: services.limitedAccess,
-                    appointmentDelivery: services.appointmentDelivery,
-                    thresholdDelivery: services.thresholdDelivery,
-                    thresholdPickup: services.thresholdPickup,
-                    inbound: services.inbound,
-                    protectFromFreeze: services.protectFromFreeze,
-                    tradeShowDelivery: services.tradeShowDelivery,
-                    amazonOrFBADelivery: services.amazonOrFBADelivery,
-                    refrigeratedServices: services.refrigeratedServices,
-                    looseFreight: services.looseFreight,
-                    pallets: services.pallets,
-                    liftGateRequired: services.liftGateRequired,
-                    residentialPickup: services.residentialPickup,
-                    residentialDelivery: services.residentialDelivery,
-                    insideDelivery: services.insideDelivery,
-                    insidePickup: services.insidePickup,
-                    insideDeliveryStairs: services.insideDeliveryStairs,
-                    insidePickupStairs: services.insidePickupStairs,
-                });
+                setValue("limitedAccess", services.limitedAccess)
+                setValue("appointmentDelivery", services.appointmentDelivery)
+                setValue("thresholdDelivery", services.thresholdDelivery)
+                setValue("thresholdPickup", services.thresholdPickup)
+                setValue("inbound", services.inbound)
+                setValue("protectFromFreeze", services.protectFromFreeze)
+                setValue("tradeShowDelivery", services.tradeShowDelivery)
+                setValue("amazonOrFBADelivery", services.amazonOrFBADelivery)
+                setValue("refrigeratedServices", services.refrigeratedServices)
+                setValue("looseFreight", services.looseFreight)
+                setValue("pallets", services.pallets)
+                setValue("liftGateRequired", services.liftGateRequired)
+                setValue("residentialPickup", services.residentialPickup)
+                setValue("residentialDelivery", services.residentialDelivery)
+                setValue("insideDelivery", services.insideDelivery)
+                setValue("insidePickup", services.insidePickup)
+                setValue("insideDeliveryStairs", services.insideDeliveryStairs)
+                setValue("insidePickupStairs", services.insidePickupStairs)
             }
         }
     }, [cachedSingleQuote, setValue]);
@@ -111,11 +132,11 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                                         icon: <Info size={16} />,
                                     }}
                                 />
-                                {watch("services.limitedAccess") &&
+                                {watch("limitedAccess") &&
                                     <div className="my-4">
                                         <FormRadio
                                             field={{
-                                                wrapperClassName: "grid grid-cols-2 gap-4",
+                                                className: "grid grid-cols-2 gap-4",
                                                 name: "limitedAccess.location",
                                                 label: "Location",
                                                 options: [
@@ -199,7 +220,7 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                                         icon: <Info size={16} />
                                     }}
                                 />
-                                {watch("services.inbound") &&
+                                {watch("inbound") &&
                                     <div className="my-4">
                                         <InBond />
                                     </div>
