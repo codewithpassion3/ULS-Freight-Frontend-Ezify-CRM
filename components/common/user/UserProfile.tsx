@@ -37,11 +37,13 @@ import { useState } from "react"
 import { useLogoutMutation } from "@/hooks/useLogout"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
+import { AccountBalanceModal } from "./AccountBalanceModal"
 
 export default function UserProfile() {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
     const router = useRouter()
     const [open, setOpen] = useState(false)
+    const [modalOpen, setModalOpen] = useState(false)
     const { data: user, isLoading, error } = useUser()
     const logoutMutation = useLogoutMutation({
         onSuccess: () => toast.success("User logged out successfully"),
@@ -64,7 +66,7 @@ export default function UserProfile() {
                             Welcome, {user?.user?.firstName} {user?.user?.lastName}
                         </p>
                         <p className="text-xs dark:text-white text-blue-600">
-                            Available Credit: $136.37
+                            Available Credit: $1,080.62
                         </p>
                     </div>
 
@@ -80,10 +82,10 @@ export default function UserProfile() {
                         <DropdownMenuContent className="w-full" align="end">
                             {/* account balance */}
                             <DropdownMenuItem className="cursor-pointer">
-                                <DollarSign />
-                                <Link href="/billing">
+                                <div className="flex items-center gap-2" onClick={() => setModalOpen(true)}>
+                                    <DollarSign />
                                     Account Balance
-                                </Link>
+                                </div>
                             </DropdownMenuItem>
                             <DropdownMenuItem className="cursor-pointer" onClick={() => handleNavigate("/settings")}>
                                 <UserRound />
@@ -113,6 +115,8 @@ export default function UserProfile() {
 
                         </DropdownMenuContent>
                     </DropdownMenu>
+
+                    <AccountBalanceModal open={modalOpen} onOpenChange={setModalOpen} />
 
                     {/* MOBILE MENU */}
                     <Sheet>

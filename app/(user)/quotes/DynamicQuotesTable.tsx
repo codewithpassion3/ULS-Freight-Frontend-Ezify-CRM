@@ -11,7 +11,6 @@ import { getAllQuotes, getFavoriteQuotes, getSavedQuotes, getSpotQuotes } from "
 import { Loader } from "@/components/common/Loader"
 import EmptyUI from "@/components/common/empty/Empty"
 import Link from "next/link"
-import { ShipmentTypes } from "@/components/shared/DynamicQuote/DynamicQuote"
 import { QuoteCategory } from "./page"
 interface Props {
     search: string
