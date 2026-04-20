@@ -60,7 +60,7 @@ const FormField = memo(({ field: config }: { field: FormFieldTypes }) => {
                         placeholder={config.placeholder}
                         {...field}
                         value={field.value ?? ""}
-                        className={`${config.className} ${error ? "border-red-500" : ""}`}
+                        className={`${config.className} ${error ? "border-red-500 bg-red-50 placeholder:text-red-500" : ""}`}
                     />}
 
                 {error && <p className="text-xs text-red-500">{error.message}</p>}

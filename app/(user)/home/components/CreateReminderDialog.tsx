@@ -1,33 +1,25 @@
 import React, { useState } from "react"
-import { useForm, Controller, FormProvider } from "react-hook-form"
+import { useForm, FormProvider } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { BellRing, CalendarDays } from "lucide-react"
+import { BellRing } from "lucide-react"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
 import { Label } from "@/components/ui/label"
 import { useAuth } from "@/context/auth.context"
-
-const RECIPIENTS = [
-    "Myself",
-    "Accounting ULS",
-    "Alex John",
-    "Allen Whales",
-    "Anmol Verma",
-    "Moazzam Muhammad",
-    "William Nash"
-]
+import { createReminder, CreateReminderType } from "@/api/services/notification.api"
+import { toast } from "sonner"
+import { useMutation } from "@tanstack/react-query"
+import { Input } from "@/components/ui/input"
 
 const reminderSchema = z.object({
-    recipients: z.array(z.string()).min(1, { message: "Select at least one recipient" }),
-    date: z.string().min(1, { message: "Reminder Date is required" }),
-    hour: z.string().regex(/^(0?[1-9]|1[0-2])$/, "Invalid hour"),
-    minute: z.string().regex(/^([0-5]?[0-9])$/, "Invalid minute"),
-    period: z.enum(["AM", "PM"]),
+    recipients: z.array(z.number()).min(1, { message: "Select at least one recipient" }),
+    date: z.date().nonoptional("Date is required"),
+    hourName: z.string().regex(/^(0?[1-9]|1[0-2])$/, "Invalid hour"),
+    minuteName: z.string().regex(/^([0-5]?[0-9])$/, "Invalid minute"),
+    ampmName: z.enum(["AM", "PM"]),
     title: z.string().min(1, { message: "Reminder Title is required" }),
     message: z.string().min(1, { message: "Reminder Message is required" })
 })
@@ -43,12 +35,12 @@ export function CreateReminderDialog({ children }: Props) {
 
     const methods = useForm<ReminderFormValues>({
         resolver: zodResolver(reminderSchema),
+        mode: "onChange",
         defaultValues: {
             recipients: [],
-            date: "",
-            hour: "12",
-            minute: "00",
-            period: "PM",
+            hourName: "11",
+            minuteName: "00",
+            ampmName: "PM",
             title: "",
             message: ""
         }
@@ -56,11 +48,36 @@ export function CreateReminderDialog({ children }: Props) {
 
     // get reciepients list from user
     const { user } = useAuth()
-    console.log(user.team)
+    const createReminderMutation = useMutation({
+        mutationFn: (data: CreateReminderType) => createReminder(data),
+        onSuccess: () => {
+            toast.success("Reminder created successfully"),
+                setIsOpen(false),
+                methods.reset()
+        },
+        onError: () => {
+            toast.error("Failed to create reminder")
+        }
+    })
     const onSubmit = (data: ReminderFormValues) => {
-        console.log("Reminder Created:", data)
-        setIsOpen(false)
-        methods.reset()
+        const baseDate = new Date(data.date)
+
+        let hours = parseInt(data.hourName, 10)
+        const minutes = parseInt(data.minuteName, 10)
+
+        // convert to 24-hour format
+        if (data.ampmName === "PM" && hours !== 12) hours += 12
+        if (data.ampmName === "AM" && hours === 12) hours = 0
+
+        baseDate.setHours(hours, minutes, 0, 0)
+        const payload: CreateReminderType = {
+            title: data.title,
+            message: data.message,
+            scheduledAt: baseDate,
+            sendTo: recipients,
+        }
+        console.log(payload)
+        // createReminderMutation.mutate(payload)
     }
 
     const handleOpenChange = (open: boolean) => {
@@ -70,6 +87,28 @@ export function CreateReminderDialog({ children }: Props) {
         }
     }
     const recipients = methods.watch("recipients")
+    // console.log(recipients)
+    const isValid = methods.formState.isValid
+    console.log(isValid)
+
+    // errors
+    const errors = methods.formState.errors
+    console.log(errors)
+
+    // watch all fields
+    const watchAllFields = methods.watch()
+    console.log(watchAllFields)
+
+    // print team members and user himself
+    console.log(user?.user?.teamMembers)
+    console.log(user?.user)
+    const mySelf = {
+        id: user?.user?.id,
+        firstName: user?.user?.firstName,
+        lastName: user?.user?.lastName,
+    }
+    const teamMembers = [mySelf, ...user?.user?.teamMembers]
+
     return (
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
@@ -83,14 +122,14 @@ export function CreateReminderDialog({ children }: Props) {
                     </DialogTitle>
                 </DialogHeader>
                 <FormProvider {...methods}>
-                    <form onSubmit={methods.handleSubmit(onSubmit)} className="p-6">
+                    <form onSubmit={methods.handleSubmit(onSubmit)} className="p-6 pt-0">
                         {/* map recipient as checkbox */}
                         <div className="flex flex-wrap gap-8">
-                            {user?.user?.teamMembers?.map((member: any) => (
+                            {teamMembers?.map((member: any) => (
                                 <div key={member.id} className="flex items-center gap-2">
                                     <Checkbox
                                         id={member.id}
-                                        name="recipients"
+                                        name="recipient"
                                         checked={recipients.includes(member.id)}
                                         onCheckedChange={(checked) => {
                                             const current = recipients
@@ -103,13 +142,13 @@ export function CreateReminderDialog({ children }: Props) {
                                         className="border-border cursor-pointer"
                                     />
                                     <Label htmlFor={member.id} className="cursor-pointer">
-                                        {user?.user?.id === member.id ? "Me" : member.firstName}{" "}{member.lastName}
+                                        {user?.user?.id === member.id ? "Myself" : member.firstName + " " + member.lastName}
                                     </Label>
                                 </div>
                             ))}
                         </div>
                         <GlobalForm
-                            formWrapperClassName="grid grid-cols-2 gap-4 mt-4"
+                            formWrapperClassName="grid grid-cols-2 gap-8 mt-4"
                             fields={
                                 [
                                     {
@@ -117,15 +156,16 @@ export function CreateReminderDialog({ children }: Props) {
                                         type: "date",
                                         label: "Reminder Date",
                                         placeholder: "Enter reminder date",
+                                        futureDatesOnly: true,
                                     },
                                     {
                                         name: "time",
                                         type: "time",
                                         label: "Reminder Time",
                                         placeholder: "Enter reminder time",
-                                        hourName: "hour",
-                                        minuteName: "minute",
-                                        ampmName: "amPm",
+                                        hourName: "hourName",
+                                        minuteName: "minuteName",
+                                        ampmName: "ampmName",
                                     },
                                     {
                                         name: "title",
@@ -146,7 +186,9 @@ export function CreateReminderDialog({ children }: Props) {
 
                                 ]}
                         />
-
+                        {/* <Input
+                            type="datetime-local"
+                        /> */}
                         {/* Footer Actions */}
                         < div className="flex items-center justify-end gap-4 mt-8 pt-6 border-t border-slate-100 dark:border-slate-800" >
                             <Button
@@ -159,6 +201,7 @@ export function CreateReminderDialog({ children }: Props) {
                             </Button>
                             <Button
                                 type="submit"
+                                disabled={!isValid || createReminderMutation.isPending}
                                 className="bg-[#0072BC] hover:bg-[#005f9e] text-white font-semibold flex-1 max-w-[180px]"
                             >
                                 Create Reminder
@@ -167,6 +210,6 @@ export function CreateReminderDialog({ children }: Props) {
                     </form>
                 </FormProvider>
             </DialogContent>
-        </Dialog >
+        </Dialog>
     )
 }

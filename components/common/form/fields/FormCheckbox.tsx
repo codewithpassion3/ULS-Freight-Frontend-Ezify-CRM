@@ -9,7 +9,7 @@ import { useFieldController } from "../useFieldController"
 
 const FormCheckbox = memo(({ field: config }: { field: FormCheckboxTypes }) => {
 
-    const { field } = useFieldController(config.name)
+    const { field, error } = useFieldController(config.name)
 
     return (
         <div className={`flex items-center gap-2 ${config.wrapperClassName || ""}`}>
@@ -17,10 +17,10 @@ const FormCheckbox = memo(({ field: config }: { field: FormCheckboxTypes }) => {
                 id={field.name}
                 checked={field.value || false}
                 onCheckedChange={(checked) => field.onChange(checked)}
-                className={`${field.value ? config.selectedClassName : ""} border-border cursor-pointer`}
+                className={`${field.value ? config.selectedClassName : ""} ${error ? "border-red-500 bg-red-50 placeholder:text-red-500" : ""} border-border cursor-pointer`}
             />
             {config.label && (
-                <Label htmlFor={field.name} className="cursor-pointer">
+                <Label htmlFor={field.name} className={`cursor-pointer ${error ? "text-red-500" : ""}`}>
                     {config.label}
                 </Label>
             )}

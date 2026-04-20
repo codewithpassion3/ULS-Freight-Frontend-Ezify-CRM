@@ -23,7 +23,7 @@ const FormSelect = memo(({ field: config }: { field: FormSelectTypes }) => {
                 disabled={config.disabled}
 
             >
-                <SelectTrigger className={`mt-2 w-full cursor-pointer ${error ? "border border-red-500" : ""} ${config.className}`}>
+                <SelectTrigger className={`mt-2 w-full cursor-pointer ${error ? "border border-red-500 bg-red-50 placeholder:text-red-500" : ""} ${config.className}`}>
                     <SelectValue placeholder={config.placeholder} />
                 </SelectTrigger>
 

@@ -41,7 +41,7 @@ const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
                     <button
                         type="button"
                         onClick={() => ampmField.onChange("AM")}
-                        className={`px-3 py-2 text-xs font-semibold ${ampmField.value === "AM"
+                        className={`px-3 py-2 text-xs font-semibold cursor-pointer ${ampmField.value === "AM"
                             ? "bg-muted text-[#4aa0e3]"
                             : "hover:bg-muted/50"
                             }`}
@@ -51,7 +51,7 @@ const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
                     <button
                         type="button"
                         onClick={() => ampmField.onChange("PM")}
-                        className={`px-3 py-2 text-xs font-semibold ${ampmField.value === "PM"
+                        className={`px-3 py-2 text-xs font-semibold cursor-pointer ${ampmField.value === "PM"
                             ? "bg-muted text-[#4aa0e3]"
                             : "hover:bg-muted/50"
                             } ${ampmError ? "border-red-500" : ""}`}

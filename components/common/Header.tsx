@@ -56,7 +56,7 @@ export default function Header() {
                                     {!item.items ? (
                                         <Link
                                             href={item.href!}
-                                            className={`px-3 py-2 text-sm rounded-md ${pathname === item.href
+                                            className={`px-3 py-2 text-sm rounded-md w-max ${pathname === item.href
                                                 ? " font-medium text-black dark:text-white"
                                                 : "hover:bg-gray-50 dark:hover:text-black!"
                                                 }`}
@@ -120,7 +120,7 @@ export default function Header() {
                 <div className="flex items-center gap-8">
                     <div className="flex gap-2">
                         <LanguageToggle />
-                        <NotificationsWidget/>
+                        <NotificationsWidget />
                         <ModeToggle />
                     </div>
                     <UserProfile />

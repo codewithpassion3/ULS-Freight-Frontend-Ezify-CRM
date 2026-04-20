@@ -13,8 +13,14 @@ import { CalendarIcon } from "lucide-react"
 
 const FormDate = memo(({ field: config }: { field: any }) => {
     const [open, setOpen] = useState(false)
-    console.log(config)
+
     const { field, error } = useFieldController(config?.name)
+    const isSameDay = (a: Date, b: Date) =>
+        a.getFullYear() === b.getFullYear() &&
+        a.getMonth() === b.getMonth() &&
+        a.getDate() === b.getDate()
+
+    const today = new Date()
     return (
         <div className={`${config.wrapperClassName} space-y-2`}>
             <Label>{config.label ? config.label : "Date"}</Label>
@@ -27,7 +33,13 @@ const FormDate = memo(({ field: config }: { field: any }) => {
                         mode={config.mode ? config.mode : "single"}
                         selected={field.value}
                         onSelect={(date: Date | undefined) => { field.onChange(date), setOpen(false), config.setShipDate?.(date) }}
+                        // include today
+                        disabled={(date) => {
+                            if (!config.futureDatesOnly) return false
 
+                            // allow today + future
+                            return date < new Date(today.setHours(0, 0, 0, 0))
+                        }}
                     // defaultMonth={value || undefined}
                     />
                 </PopoverContent>
