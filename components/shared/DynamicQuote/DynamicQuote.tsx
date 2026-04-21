@@ -25,6 +25,7 @@ import { createShipment, updateShipment } from "@/api/services/shipment.api"
 import { useRouter } from "next/navigation"
 import { Loader, LoaderCircle } from "lucide-react"
 import { formatTime12h } from "@/app/(user)/settings/(address-book)/mappers/contact.mapper"
+import ShippingRates from "../ShippingRates/ShippingRates"
 // import { quoteSchema } from "@/lib/validations/quote/standard-quote-schema"
 export type ShipmentTypes = "PALLET" | "PACKAGE" | "COURIER_PAK" | "STANDARD_FTL" | "SPOT_LTL" | "SPOT_FTL" | "TIME_CRITICAL"
 export type QuoteTypes = "SPOT" | "STANDARD"
@@ -311,10 +312,13 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                         <div className="mt-6">
                             <AdditionalServices ref={servicesRef} shipmentType={shipmentType} />
                         </div>
+
                     </div>
                     {isStandardQuote && <div className="mt-6"><AdditionalInsurance ref={insuranceRef} /></div>}
                     {(shipmentType === "PALLET" || shipmentType === "COURIER_PAK" || isShipment) && <div className="mt-6"><SignaturePreference ref={signatureRef} /></div>}
-
+                    <div className="mt-6">
+                        <ShippingRates />
+                    </div>
                     <div className="w-full flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
                         <div className="flex gap-4">
                             <Button variant="outline" onClick={() => {

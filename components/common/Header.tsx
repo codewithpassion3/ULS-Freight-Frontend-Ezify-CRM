@@ -42,6 +42,7 @@ export default function Header() {
                             alt="logo"
                             width={100}
                             height={100}
+                            unoptimized
                         />
                     </Link>
 
@@ -98,10 +99,10 @@ export default function Header() {
 
                                             }
 
-                                            <DropdownMenuContent align="start" className="w-48">
+                                            <DropdownMenuContent align="start" className="w-max">
                                                 {item.items.map((sub) => (
                                                     <DropdownMenuItem key={sub.title} asChild>
-                                                        <Link href={sub.href} className="cursor-pointer">{sub.title}</Link>
+                                                        <Link href={sub.href} className="cursor-pointer ">{sub.title}</Link>
                                                     </DropdownMenuItem>
                                                 ))}
                                             </DropdownMenuContent>

@@ -26,7 +26,7 @@ import {
     AvatarImage,
 } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { CreditCard, DollarSign, FileQuestionMark, Info, LogOut, Menu, User, UserRound } from "lucide-react"
+import { CreditCard, DollarSign, FileQuestionMark, Info, LogOut, Menu, Settings, User, UserRound } from "lucide-react"
 import { navItems } from "@/lib/navigation"
 import Link from "next/link"
 import { useUser } from "@/hooks/useUser"
@@ -37,11 +37,14 @@ import { useState } from "react"
 import { useLogoutMutation } from "@/hooks/useLogout"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
+import { AccountBalanceModal } from "./AccountBalanceModal"
+import Image from "next/image"
 
 export default function UserProfile() {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
     const router = useRouter()
     const [open, setOpen] = useState(false)
+    const [modalOpen, setModalOpen] = useState(false)
     const { data: user, isLoading, error } = useUser()
     const logoutMutation = useLogoutMutation({
         onSuccess: () => toast.success("User logged out successfully"),
@@ -64,29 +67,41 @@ export default function UserProfile() {
                             Welcome, {user?.user?.firstName} {user?.user?.lastName}
                         </p>
                         <p className="text-xs dark:text-white text-blue-600">
-                            Available Credit: $136.37
+                            Available Credit: $1,080.62
                         </p>
                     </div>
 
                     {/* USER MENU */}
                     <DropdownMenu open={open} onOpenChange={setOpen}>
                         <DropdownMenuTrigger>
-                            <Avatar className="cursor-pointer">
-                                <AvatarImage src={`${BASE_URL}${user?.user?.profilePic}`} />
-                                <AvatarFallback>{user?.user?.firstName?.charAt(0)}{user?.user?.lastName?.charAt(0)}</AvatarFallback>
-                            </Avatar>
+
+                            <div className="cursor-pointer">
+                                {user?.user?.profilePic ?
+                                    <Image
+                                        src={`${BASE_URL}${user?.user?.profilePic}`}
+                                        alt="Profile"
+                                        width={40}
+                                        height={40}
+                                        className="object-cover h-10 w-10 rounded-full border"
+                                        unoptimized
+                                    /> :
+                                    <Avatar className="h-10 w-10">
+                                        <AvatarFallback>{user?.user?.firstName?.charAt(0)}{user?.user?.lastName?.charAt(0)}</AvatarFallback>
+                                    </Avatar>}
+                            </div>
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent className="w-full" align="end">
                             {/* account balance */}
                             <DropdownMenuItem className="cursor-pointer">
-                                <DollarSign />
-                                <Link href="/billing">
+                                <div className="flex items-center gap-2" onClick={() => setModalOpen(true)}>
+                                    <DollarSign />
                                     Account Balance
-                                </Link>
+                                </div>
                             </DropdownMenuItem>
                             <DropdownMenuItem className="cursor-pointer" onClick={() => handleNavigate("/settings")}>
-                                <UserRound />
+
+                                <Settings />
                                 Settings
                             </DropdownMenuItem>
 
@@ -113,6 +128,8 @@ export default function UserProfile() {
 
                         </DropdownMenuContent>
                     </DropdownMenu>
+
+                    <AccountBalanceModal open={modalOpen} onOpenChange={setModalOpen} />
 
                     {/* MOBILE MENU */}
                     <Sheet>

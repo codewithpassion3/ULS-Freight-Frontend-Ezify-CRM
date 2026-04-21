@@ -118,15 +118,16 @@ export default function UserPreferences() {
                 </div> */}
 
                 {/* Default Landing Page */}
-                <div>
+                <div className="flex flex-col gap-4 items-start">
                     <div>
                         <h3 className="font-medium mb-2">Default Landing Page</h3>
                         <Select
+
                             name="default_landing_page"
                             onValueChange={(value) => setUserSettingsFormValues({ ...userSettingsFormValues, default_landing_page: value })}
                             defaultValue={user?.user?.settings?.default_landing_page}
                         >
-                            <SelectTrigger className="w-[260px]">
+                            <SelectTrigger className="w-[260px] mb-2">
                                 <SelectValue placeholder="Select Landing Page" />
                             </SelectTrigger>
 
@@ -137,20 +138,21 @@ export default function UserPreferences() {
                             </SelectContent>
                         </Select>
 
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <p className="text-sm text-muted-foreground">
                             You may select which page you wish to arrive to after signing in.
                         </p>
                     </div>
 
                     {/* Quick Button */}
                     <div>
+
                         <h3 className="font-medium mb-2">Home "Quick" Button</h3>
                         <Select
                             name="home_quick_button"
                             onValueChange={(value) => setUserSettingsFormValues({ ...userSettingsFormValues, home_quick_button: value })}
                             defaultValue={user?.user?.settings?.home_quick_button}
                         >
-                            <SelectTrigger className="w-[260px]">
+                            <SelectTrigger className="w-[260px] mb-2">
                                 <SelectValue placeholder="Select Landing Page" />
                             </SelectTrigger>
                             <SelectContent>
@@ -170,7 +172,7 @@ export default function UserPreferences() {
                         </p>
                     </div>
 
-                    <Button type="button" onClick={handleUpdateUserSettings} className="mt-5">Save Changes</Button>
+                    <Button type="button" onClick={handleUpdateUserSettings}>Save Changes</Button>
                 </div>
 
                 {/* Profile Image */}
@@ -178,20 +180,20 @@ export default function UserPreferences() {
                     <h3 className="font-medium mb-4">Profile Image</h3>
 
                     <div className="flex items-center gap-4">
-                        {/* {isLoading || isPending ?
-                            <Loader className="animate-spin" /> :
-                            <Image
-                                src={`${BASE_URL}${user?.user?.profilePic}`}
-                                alt="Profile"
-                                width={100}
-                                height={100}
-                                className="rounded-full object-cover"
-                            />
-                        } */}
-                        <Avatar className="h-16 w-16 cursor-pointer object-cover">
-                            <AvatarImage className="object-cover" src={`${BASE_URL}${user?.user?.profilePic}?t=${imageKey}`} />
-                            <AvatarFallback className="text-2xl">{isFetching || isPending || isLoading ? <LoaderCircle className="animate-spin" /> : `${user?.user?.firstName?.charAt(0)}${user?.user?.lastName?.charAt(0)}`}</AvatarFallback>
-                        </Avatar>
+                        <div className="cursor-pointer">
+                            {user?.user?.profilePic ?
+                                <Image
+                                    src={`${BASE_URL}${user?.user?.profilePic}`}
+                                    alt="Profile"
+                                    width={64}
+                                    height={64}
+                                    className="object-cover h-16 w-16 rounded-full border"
+                                    unoptimized
+                                /> :
+                                <Avatar className="h-16 w-16">
+                                    <AvatarFallback className="text-2xl">{user?.user?.firstName?.charAt(0)}{user?.user?.lastName?.charAt(0)}</AvatarFallback>
+                                </Avatar>}
+                        </div>
 
                         <div className="flex flex-col sm:flex-row gap-2 text-sm">
                             <Button

@@ -49,7 +49,7 @@ const FormField = memo(({ field: config }: { field: FormFieldTypes }) => {
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                            className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                         >
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>

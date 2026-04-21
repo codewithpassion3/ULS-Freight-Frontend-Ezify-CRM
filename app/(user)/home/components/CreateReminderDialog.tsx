@@ -76,8 +76,8 @@ export function CreateReminderDialog({ children }: Props) {
             scheduledAt: baseDate,
             sendTo: recipients,
         }
-        console.log(payload)
-        // createReminderMutation.mutate(payload)
+
+        createReminderMutation.mutate(payload)
     }
 
     const handleOpenChange = (open: boolean) => {
@@ -124,7 +124,7 @@ export function CreateReminderDialog({ children }: Props) {
                 <FormProvider {...methods}>
                     <form onSubmit={methods.handleSubmit(onSubmit)} className="p-6 pt-0">
                         {/* map recipient as checkbox */}
-                        <div className="flex flex-wrap gap-8">
+                        <div className="flex flex-wrap gap-12 py-4">
                             {teamMembers?.map((member: any) => (
                                 <div key={member.id} className="flex items-center gap-2">
                                     <Checkbox
