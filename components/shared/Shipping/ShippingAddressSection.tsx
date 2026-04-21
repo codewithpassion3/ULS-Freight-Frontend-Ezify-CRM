@@ -39,6 +39,7 @@ import { forwardRef, useImperativeHandle } from "react"
 import { FormFieldTypes, FormFieldUnion } from "@/components/common/form/fields/fields.types"
 import FormDate from "@/components/common/form/fields/FormDate"
 import { contactSchema } from "@/app/(user)/settings/(address-book)/schemas/addContact.schema"
+import { getAddressByPostalCode } from "@/api/services/shipment.api"
 export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, type, title, onNextStep, onSwap, setShipDate }: { quoteType: keyof ShipmentOptions, shipmentType: ShipmentOptions[keyof ShipmentOptions], type: "TO" | "FROM", title: string, onNextStep?: (data: any) => void, onSwap?: () => void, setShipDate?: (date: Date | undefined) => void }, ref) => {
   // check if route includes shipment to check if it quote or shipment
   const pathname = usePathname()
@@ -54,24 +55,6 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
     enabled: !!quoteId,
     staleTime: 1000 * 60 * 5, // 5 minutes
   })
-
-  const localSchema = useMemo(() => {
-    if (isShipment) {
-      let schema = contactSchema;
-
-      return schema;
-    }
-    else {
-      let schema = contactSchema.pick({
-        address: true,
-      });
-
-      if (showLocationType) {
-        schema = schema.extend({ locationTypeId: z.number("Location type is required") }) as any;
-      }
-      return schema;
-    }
-  }, [shipmentType]);
   const addressDefaultValues = {
     // @ts-ignore
     type: type,
@@ -102,13 +85,52 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   }
 
   const defaultValues = isShipment ? shipmentDefaultValues : addressDefaultValues;
+  const localSchema = useMemo(() => {
+    if (isShipment) {
+      let schema = contactSchema;
 
+      return schema;
+    }
+    else {
+      let schema = contactSchema.pick({
+        address: true,
+      });
+
+      if (showLocationType) {
+        schema = schema.extend({ locationTypeId: z.number("Location type is required") }) as any;
+      }
+      return schema;
+    }
+  }, [shipmentType]);
   const methods = useForm({
     // @ts-ignore
     resolver: zodResolver(localSchema),
     mode: "onChange",
     defaultValues: defaultValues
   });
+
+  const postalCodeWatch = methods.watch("address.postalCode")
+
+  const countryCode = postalCodeWatch.match(/^\d{5}(-\d{4})?$/) ? "us" : "ca";
+  const { data: postalCodeData, isLoading: postalCodeLoading, isPending: postalCodeIsPending } = useQuery({
+    queryKey: ["postalCode", postalCodeWatch],
+    queryFn: () => getAddressByPostalCode(postalCodeWatch, countryCode),
+    // enabled: postalCodeWatch.length === 5,
+  })
+
+  useEffect(() => {
+    if (postalCodeData) {
+      methods.setValue("address.city", postalCodeData.places[0]["place name"])
+      methods.setValue("address.state", postalCodeData.places[0].state)
+      methods.setValue("address.country", postalCodeData.places[0].state)
+    }
+  }, [postalCodeData, postalCodeWatch])
+
+
+
+
+
+
 
   useImperativeHandle(ref, () => ({
     getValues: methods.getValues,
@@ -183,8 +205,6 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
     });
     // print location type
   }
-
-
 
   const { data: locationTypeData, isLoading: locationTypeLoading, isPending: locationTypeIsPending } = useQuery({
     queryKey: ["palletShippingLocationTypes"],
@@ -428,6 +448,9 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
     },
 
   ];
+
+
+
 
   return (
     <>

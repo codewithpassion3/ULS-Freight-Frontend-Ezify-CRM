@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Info, PackageIcon, PackagePlus } from "lucide-react";
+import { Info, Loader2, PackageIcon, PackagePlus } from "lucide-react";
 import FormField from "@/components/common/form/fields/FormField";
 import { useState, useEffect, useMemo } from "react";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
@@ -83,10 +83,9 @@ export default function AddPackage({ id, shipmentType, initialData, onSave, chil
     useEffect(() => {
         if (open && initialData) {
             console.log("initialData", initialData)
-            methods.reset({ ...initialData });
+            methods.reset({ ...initialData, shipmentType: shipmentType as any });
         } else if (open && !initialData) {
             methods.reset({
-                
                 measurementUnit: "METRIC",
                 name: "",
                 shipmentType: shipmentType as any,
@@ -122,6 +121,10 @@ export default function AddPackage({ id, shipmentType, initialData, onSave, chil
             toast.error(error.response?.data?.message || "Failed to update package");
         }
     })
+    // errors
+    console.log("errors", methods.formState.errors)
+    // values
+    console.log("values", methods.getValues())
     const onSubmit = () => {
         if (isEdit) {
             const data = { ...methods.getValues(), id }
@@ -328,7 +331,9 @@ export default function AddPackage({ id, shipmentType, initialData, onSave, chil
                             <Button variant="outline" onClick={() => setOpen(false)}>
                                 Cancel
                             </Button>
-                            <Button type="submit">
+                            <Button type="submit" disabled={isEdit ? updateMutation.isPending : createMutation.isPending}>
+                                {/* Loader */}
+                                {isEdit ? updateMutation.isPending : createMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                 {isEdit ? "Update" : "Save"}
                                 {<span className="capitalize">
                                     {normalText(!isNew ? shipmentType : ShipmentValueType || "")}

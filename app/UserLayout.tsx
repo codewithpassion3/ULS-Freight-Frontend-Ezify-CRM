@@ -3,6 +3,7 @@ import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
 import Infobar from "@/components/common/Infobar";
 import { Loader } from "@/components/common/Loader";
+import { useAuth } from "@/context/auth.context";
 import { useUser } from "@/hooks/useUser";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -16,6 +17,10 @@ export default function UserLayout({
   const exceptionalRoutes = ["/otp-verification", "/reset-password"];
   const pathname = usePathname();
   const isExceptionalRoute = exceptionalRoutes.includes(pathname);
+  const { isLoading, isPending } = useAuth();
+  if (isLoading || isPending) {
+    return <Loader />
+  }
   return (
     !isExceptionalRoute ?
       <>

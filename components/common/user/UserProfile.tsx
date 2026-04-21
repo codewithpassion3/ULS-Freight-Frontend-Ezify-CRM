@@ -26,7 +26,7 @@ import {
     AvatarImage,
 } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { CreditCard, DollarSign, FileQuestionMark, Info, LogOut, Menu, User, UserRound } from "lucide-react"
+import { CreditCard, DollarSign, FileQuestionMark, Info, LogOut, Menu, Settings, User, UserRound } from "lucide-react"
 import { navItems } from "@/lib/navigation"
 import Link from "next/link"
 import { useUser } from "@/hooks/useUser"
@@ -38,6 +38,7 @@ import { useLogoutMutation } from "@/hooks/useLogout"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
 import { AccountBalanceModal } from "./AccountBalanceModal"
+import Image from "next/image"
 
 export default function UserProfile() {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
@@ -73,10 +74,21 @@ export default function UserProfile() {
                     {/* USER MENU */}
                     <DropdownMenu open={open} onOpenChange={setOpen}>
                         <DropdownMenuTrigger>
-                            <Avatar className="cursor-pointer">
-                                <AvatarImage src={`${BASE_URL}${user?.user?.profilePic}`} />
-                                <AvatarFallback>{user?.user?.firstName?.charAt(0)}{user?.user?.lastName?.charAt(0)}</AvatarFallback>
-                            </Avatar>
+
+                            <div className="cursor-pointer">
+                                {user?.user?.profilePic ?
+                                    <Image
+                                        src={`${BASE_URL}${user?.user?.profilePic}`}
+                                        alt="Profile"
+                                        width={40}
+                                        height={40}
+                                        className="object-cover h-10 w-10 rounded-full border"
+                                        unoptimized
+                                    /> :
+                                    <Avatar className="h-10 w-10">
+                                        <AvatarFallback>{user?.user?.firstName?.charAt(0)}{user?.user?.lastName?.charAt(0)}</AvatarFallback>
+                                    </Avatar>}
+                            </div>
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent className="w-full" align="end">
@@ -88,7 +100,8 @@ export default function UserProfile() {
                                 </div>
                             </DropdownMenuItem>
                             <DropdownMenuItem className="cursor-pointer" onClick={() => handleNavigate("/settings")}>
-                                <UserRound />
+
+                                <Settings />
                                 Settings
                             </DropdownMenuItem>
 
