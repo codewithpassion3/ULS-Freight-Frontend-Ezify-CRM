@@ -28,24 +28,25 @@ export default function DynamicQuotesTable({ search, selectedPackaging, setCount
         queryFn: () => {
             switch (quoteCategory) {
                 case "all":
-                    return getAllQuotes({ search: debouncedSearch, shipmentType: [] })
+                    return getAllQuotes()
                 case "saved":
-                    return getSavedQuotes({ search: debouncedSearch, shipmentType: [] })
+                    return getSavedQuotes()
                 case "spot":
-                    return getSpotQuotes({ search: debouncedSearch, shipmentType: [] })
+                    return getSpotQuotes()
                 case "favorite":
-                    return getFavoriteQuotes({ search: debouncedSearch, shipmentType: [] })
+                    return getFavoriteQuotes()
             }
         },
         retry: 1,
         // dependency
-        enabled: selectedPackaging.length > 0
+        enabled: true
     })
+    console.log({ quoteCategory, search, selectedPackaging })
     console.log("quotes", quotes)
     useEffect(() => {
         if (quotes) {
             setCount({
-                all: quotes.data.length,
+                all: quotes?.data?.length,
                 saved: 0,
                 spot: 0
             })
@@ -64,7 +65,7 @@ export default function DynamicQuotesTable({ search, selectedPackaging, setCount
     />
 
     return (
-        quotes.data.length > 0 ?
+        quotes?.data?.length > 0 ?
             <>
                 <p className="text-xs text-muted-foreground mb-4">
                     These quotes are based on the information provided and are valid <span className="font-semibold">5 business days</span> from the issue date.<br />

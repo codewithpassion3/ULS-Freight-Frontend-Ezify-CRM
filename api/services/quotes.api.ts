@@ -19,10 +19,6 @@ export const deleteQuote = async (id: string) => {
 };
 // get all quotes
 
-export const getAllQuotes = async ({ search, shipmentType }: { search: string, shipmentType: ShipmentTypes[] }) => {
-    const response = await apiClient.get(`/quotes?search=${search}&shipmentType=${shipmentType.join(", ")}`);
-    return response.data;
-};
 
 // get single quote
 export const getSingleQuote = async (id: string) => {
@@ -30,15 +26,19 @@ export const getSingleQuote = async (id: string) => {
     return response.data;
 };
 
-export const getFavoriteQuotes = async ({ search, shipmentType }: { search: string, shipmentType: ShipmentTypes[] }) => {
-    const response = await apiClient.get(`/quotes/favorites?search=${search}&shipmentType=${shipmentType}`);
+export const getAllQuotes = async () => {
+    const response = await apiClient.get(`/quotes`);
     return response.data;
 };
-export const getSavedQuotes = async ({ search, shipmentType }: { search: string, shipmentType: ShipmentTypes[] }) => {
-    const response = await apiClient.get(`/quotes/saved?search=${search}&shipmentType=${shipmentType}`);
+export const getFavoriteQuotes = async () => {
+    const response = await apiClient.get(`/quotes/favorites`);
     return response.data;
 };
-export const getSpotQuotes = async ({ search, shipmentType }: { search: string, shipmentType: ShipmentTypes[] }) => {
-    const response = await apiClient.get(`/quotes/spot?search=${search}&shipmentType=${shipmentType}`);
+export const getSavedQuotes = async () => {
+    const response = await apiClient.get(`/quotes/saved`);
+    return response.data;
+};
+export const getSpotQuotes = async () => {
+    const response = await apiClient.get(`/quotes/spot`);
     return response.data;
 };

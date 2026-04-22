@@ -32,7 +32,7 @@ const PACKAGING_TYPES = [
 ]
 export type QuoteCategory = "all" | "saved" | "spot" | "favorite"
 export default function QuotesDashboardPage() {
-  const [selectedTab, setSelectedTab] = useState<QuoteCategory>("all")
+  // const [selectedTab, setSelectedTab] = useState<QuoteCategory>("all")
   const [search, setSearch] = useState("")
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>()
   const [selectedPackaging, setSelectedPackaging] = useState<string[]>([])
@@ -70,7 +70,7 @@ export default function QuotesDashboardPage() {
         </p> */}
       </div>
 
-      {showFilters ? (
+      {/* {showFilters ? (
         <div className="bg-muted/30 border border-border p-4 rounded-md mb-6 relative">
           <div className="flex justify-between items-start mb-2">
             <h2 className="text-lg font-semibold text-primary">Search Quotes</h2>
@@ -78,11 +78,6 @@ export default function QuotesDashboardPage() {
               <button
                 type="button"
                 className="flex items-center gap-1 hover:underline"
-              // onClick={() => {
-              //   setSearch("")
-              //   setDateRange({ from: new Date() })
-              //   setSelectedPackaging([])
-              // }}
               >
                 <span className="text-xl leading-none -mt-1">&times;</span> Clear Filters
               </button>
@@ -95,9 +90,6 @@ export default function QuotesDashboardPage() {
           <div className="flex flex-wrap gap-6 items-end mt-4">
             <div className="space-y-1">
               <label className="text-sm text-muted-foreground block">Search by Date Range:</label>
-              {/* <CustomDateRangePicker value={dateRange} onChange={setDateRange} /> */}
-              {/* <DateRangePicker value={dateRange} onChange={setDateRange} /> */}
-
             </div>
 
             <div className="space-y-1">
@@ -131,7 +123,7 @@ export default function QuotesDashboardPage() {
             Show Filters
           </Button>
         </div>
-      )}
+      )} */}
 
       {/* Tabs */}
       <Tabs defaultValue="all">
@@ -143,9 +135,9 @@ export default function QuotesDashboardPage() {
             { icon: Truck, label: "Favorite Quotes", value: "favorite", count: count.spot }
           ].map((tab) => (
             <TabsTrigger
-              key={tab.label}
+              key={tab.value}
               value={tab.value}
-              onClick={() => setSelectedTab(tab.label as QuoteCategory)}
+              // onClick={() => setSelectedTab(tab.value as QuoteCategory)}
               className="data-[state=active]:bg-primary data-[state=active]:text-white py-2 cursor-pointer"
             >
               <tab.icon /> {tab.label} ({tab.count})
