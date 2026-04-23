@@ -28,7 +28,7 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
     //         inbound: z.boolean(),
     //         protectFromFreeze: z.boolean(),
     //         tradeShowDelivery: z.boolean(),
-    //         amazonOrFBADelivery: z.boolean(),
+    //         amazonOrFbaDelivery: z.boolean(),
     //         refrigeratedServices: z.boolean(),
     //         looseFreight: z.boolean(),
     //         pallets: z.boolean(),
@@ -52,7 +52,7 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
         //     inbound: false,
         //     protectFromFreeze: false,
         //     tradeShowDelivery: false,
-        //     amazonOrFBADelivery: false,
+        //     amazonOrFbaDelivery: false,
         //     refrigeratedServices: false,
         //     looseFreight: false,
         //     pallets: false,
@@ -91,7 +91,7 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                 setValue("inbound", services.inbound)
                 setValue("protectFromFreeze", services.protectFromFreeze)
                 setValue("tradeShowDelivery", services.tradeShowDelivery)
-                setValue("amazonOrFBADelivery", services.amazonOrFBADelivery)
+                setValue("amazonOrFbaDelivery", services.amazonOrFbaDelivery)
                 setValue("refrigeratedServices", services.refrigeratedServices)
                 setValue("looseFreight", services.looseFreight)
                 setValue("pallets", services.pallets)
@@ -214,7 +214,7 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                             <div className="sm:col-span-3">
                                 <FormCheckbox
                                     field={{
-                                        name: "services.inBond",
+                                        name: "services.inbound",
                                         label: "In Bond",
                                         defaultValue: false,
                                         icon: <Info size={16} />
@@ -244,7 +244,7 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                             />
                             <FormCheckbox
                                 field={{
-                                    name: "services.amazonOrFBADelivery",
+                                    name: "services.amazonOrFbaDelivery",
                                     label: "Amazon/FBA Delivery",
                                     defaultValue: false,
                                     icon: <Info size={16} />

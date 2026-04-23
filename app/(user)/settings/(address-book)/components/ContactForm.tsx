@@ -32,6 +32,16 @@ export function ContactForm({
                 defaultValues,
             )
         }
+        else {
+            methods.reset({
+                readyTimeHour: "00",
+                readyTimeMinute: "00",
+                readyTimeAmPm: "AM",
+                closeTimeHour: "00",
+                closeTimeMinute: "00",
+                closeTimeAmPm: "AM",
+            })
+        }
     }, [defaultValues, methods.reset, isLoading])
     console.log("current values", methods.getValues())
     const handleOpenChange = (newOpen: boolean) => {

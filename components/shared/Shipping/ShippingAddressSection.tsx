@@ -7,7 +7,7 @@ import { SelectAddressBookModal } from "./SelectAddressBookModal"
 import { useQuery } from "@tanstack/react-query"
 import { useMarkContactAsRecent } from "../../../app/(user)/quote/hooks"
 import { Button } from "@/components/ui/button"
-import { ArrowLeftRight, BookUser, InfoIcon, X } from "lucide-react"
+import { ArrowLeftRight, BookUser, InfoIcon, Plus, X } from "lucide-react"
 import { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import z, { ZodType } from "zod"
 import { useEffect, useMemo, useState } from "react"
@@ -40,6 +40,7 @@ import { FormFieldTypes, FormFieldUnion } from "@/components/common/form/fields/
 import FormDate from "@/components/common/form/fields/FormDate"
 import { contactSchema } from "@/app/(user)/settings/(address-book)/schemas/addContact.schema"
 import { getAddressByPostalCode } from "@/api/services/shipment.api"
+import { Input } from "@/components/ui/input"
 export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, type, title, onNextStep, onSwap, setShipDate }: { quoteType: keyof ShipmentOptions, shipmentType: ShipmentOptions[keyof ShipmentOptions], type: "TO" | "FROM", title: string, onNextStep?: (data: any) => void, onSwap?: () => void, setShipDate?: (date: Date | undefined) => void }, ref) => {
   // check if route includes shipment to check if it quote or shipment
   const pathname = usePathname()
@@ -70,7 +71,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   const shipmentDefaultValues = {
     companyName: "",
     contactId: "",
-    phone: "",
+    phoneNumber: "",
     email: "",
     contactName: "",
     // @ts-ignore
@@ -81,15 +82,36 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       state: "",
       postalCode: "",
       country: "",
+      // set mins to 00 and hours to 12
     },
+    readyTimeHour: "09",
+    readyTimeMinute: "00",
+    readyTimeAmPm: "AM",
+    closeTimeHour: "05",
+    closeTimeMinute: "00",
+    closeTimeAmPm: "PM",
+    shipDate: undefined,
   }
 
   const defaultValues = isShipment ? shipmentDefaultValues : addressDefaultValues;
   const localSchema = useMemo(() => {
     if (isShipment) {
-      let schema = contactSchema;
+      // make a field optional from contact schema
+      const { signatureId, ...rest } = contactSchema.shape;
+      let baseShape: any = {
+        ...rest,
+        signatureId: signatureId.optional(),
+      };
 
-      return schema;
+      if (type === "FROM") {
+        baseShape.shipDate = z.date({
+          message: "Ship date is required",
+        }).min(new Date(new Date().setHours(0, 0, 0, 0)), {
+          message: "Ship date cannot be in the past",
+        });
+      }
+
+      return z.object(baseShape);
     }
     else {
       let schema = contactSchema.pick({
@@ -106,10 +128,14 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
     // @ts-ignore
     resolver: zodResolver(localSchema),
     mode: "onChange",
-    defaultValues: defaultValues
+    defaultValues: defaultValues,
+    shouldUnregister: false,
   });
 
-  const postalCodeWatch = methods.watch("address.postalCode")
+  // set ship date to today
+  // make ship date undefined
+
+  const postalCodeWatch = methods.watch("address.postalCode") || "";
 
   const countryCode = postalCodeWatch.match(/^\d{5}(-\d{4})?$/) ? "us" : "ca";
   const { data: postalCodeData, isLoading: postalCodeLoading, isPending: postalCodeIsPending } = useQuery({
@@ -127,9 +153,17 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   }, [postalCodeData, postalCodeWatch])
 
 
+  // on change of ship date setshipdate state coming from parent
 
+  // useEffect(() => {
+  //   if (isShipment) {
+  //     // @ts-ignore
+  //     methods.register("shipDate");
+  //   }
+  // }, [isShipment]);
 
-
+  // errors
+  console.log("errors", methods.formState.errors);
 
 
   useImperativeHandle(ref, () => ({
@@ -179,30 +213,55 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
     markContactAsRecent.mutate(contact.id || "")
     setAddressLocked(true)
     const currentValues = methods.getValues();
-    methods.reset({
-      ...currentValues,
-      // @ts-ignore
-      addressBookId: Number(contact.id),
-      type: type,
-      address: {
-        address1: contact.address?.address1 || "",
-        postalCode: contact.address?.postalCode || "",
-        city: contact.address?.city || "",
-        state: contact.address?.state || "",
-        country: contact.address?.country || "",
-      },
+    // methods.reset({
+    //   ...currentValues,
+    //   // @ts-ignore
+    //   shipDate: currentValues.shipDate,
+    //   addressBookId: Number(contact.id),
+    //   type: type,
+    //   address: {
+    //     address1: contact.address?.address1 || "",
+    //     postalCode: contact.address?.postalCode || "",
+    //     city: contact.address?.city || "",
+    //     state: contact.address?.state || "",
+    //     country: contact.address?.country || "",
+    //     ...(isShipment && { unit: contact.address?.unit || "" }),
 
-      ...(showLocationType && { locationTypeId: contact?.locationTypeId || "" }),
-      ...(isShipment && { companyName: contact.companyName }),
-      // ...(isShipment && { contactId: contact.id }),
-      ...(isShipment && { address2: contact.address?.address2 || "" }),
+    //   },
+
+    //   ...(showLocationType && { locationTypeId: contact?.locationTypeId || "" }),
+    //   ...(isShipment && { companyName: contact.companyName }),
+    //   // ...(isShipment && { contactId: contact.id }),
+    //   ...(isShipment && { address2: contact.address?.address2 || "" }),
+    //   // contact information
+    //   ...(isShipment && { contactName: contact.contactName || "" }),
+    //   ...(isShipment && { email: contact.email || "" }),
+    //   ...(isShipment && { phoneNumber: contact.phoneNumber || "" }),
+
+    // });
+    methods.setValue("addressBookId", Number(contact.id));
+    methods.setValue("type", type);
+
+    methods.setValue("address", {
+      address1: contact.address?.address1 || "",
+      postalCode: contact.address?.postalCode || "",
+      city: contact.address?.city || "",
+      state: contact.address?.state || "",
+      country: contact.address?.country || "",
       ...(isShipment && { unit: contact.address?.unit || "" }),
-      // contact information
-      ...(isShipment && { contactName: contact.contactName || "" }),
-      ...(isShipment && { email: contact.email || "" }),
-      ...(isShipment && { phoneNumber: contact.phoneNumber || "" }),
-
     });
+
+    if (showLocationType) {
+      methods.setValue("locationTypeId", contact?.locationTypeId || "");
+    }
+
+    if (isShipment) {
+      methods.setValue("companyName", contact.companyName || "");
+      methods.setValue("address2", contact.address?.address2 || "");
+      methods.setValue("contactName", contact.contactName || "");
+      methods.setValue("email", contact.email || "");
+      methods.setValue("phoneNumber", contact.phoneNumber || "");
+    }
     // print location type
   }
 
@@ -234,8 +293,12 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
 
     });
   };
+  // show shipdate
+  console.log("shipDate", methods.watch("shipDate"));
+  // show values
+  // show errors
 
-  // show all values and errors
+
 
 
   const handleSwap = () => {
@@ -270,7 +333,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       label: "Contact ID",
       type: "text",
       placeholder: "Contact ID",
-      disabled: addressLocked,
+      // disabled: addressLocked,
       show: isShipment,
     },
     {
@@ -427,16 +490,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       icon: <InfoIcon size={16} />,
       wrapperClassName: "col-span-2",
     },
-    // billing reference code optional
-    {
-      name: "billingReferenceCode",
-      label: "Billing Reference Code (Optional)",
-      type: "text",
-      placeholder: "Billing Reference Code",
-      show: isShipment && type === "TO",
-      // disabled: addressLocked,
-      wrapperClassName: "col-span-2",
-    },
+
     // ship date
     {
       name: "shipDate",
@@ -444,12 +498,30 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       type: "date",
       placeholder: "Ship Date",
       show: isShipment && type === "FROM",
+      futureDatesOnly: true,
       // disabled: addressLocked,
     },
 
   ];
+  const [billingRefs, setBillingRefs] = useState<string[]>([""])
+  const addBillingRef = () => {
+    if (billingRefs.length < 3) {
+      setBillingRefs([...billingRefs, ""])
+    }
+  }
 
+  const updateBillingRef = (index: number, value: string) => {
+    const updated = [...billingRefs]
+    updated[index] = value
+    setBillingRefs(updated)
+  }
 
+  const removeBillingRef = (index: number) => {
+    const updated = billingRefs.filter((_, i) => i !== index)
+    setBillingRefs(updated)
+  }
+
+  console.log("values", methods.getValues());
 
 
   return (
@@ -477,6 +549,45 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
             formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 gap-6"
             fields={formFields}
           />
+          {
+            isShipment && type === "TO" && (
+              <div className="col-span-2 space-y-2">
+
+                {billingRefs.map((ref, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Input
+                      type="text"
+                      placeholder={`Billing Reference Code ${index + 1}`}
+                      value={ref}
+                      onChange={(e) => updateBillingRef(index, e.target.value)}
+                      className="w-full"
+                    />
+
+                    {billingRefs.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={() => removeBillingRef(index)}
+                      >
+                        Remove
+                      </Button>
+                    )}
+                  </div>
+                ))}
+                <div className="w-full flex justify-end">
+                  {billingRefs.length < 3 && (
+                    <Button
+                      type="button"
+                      onClick={addBillingRef}
+                    >
+                      Add
+                    </Button>
+                  )}
+                </div>
+
+              </div>
+            )
+          }
         </form>
       </FormProvider>
     </>

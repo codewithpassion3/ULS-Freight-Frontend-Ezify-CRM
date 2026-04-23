@@ -55,7 +55,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     const servicesRef = useRef<any>(null)
     const insuranceRef = useRef<any>(null)
     const signatureRef = useRef<any>(null)
-    const [shipDate, setShipDate] = useState<Date | undefined>(undefined)
+
     const handleSwapAddress = () => {
         if (fromAddressRef.current && toAddressRef.current) {
             const fromVals = fromAddressRef.current.getValues()
@@ -74,6 +74,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             setCurrentStep(2)
         }
     }
+
 
 
     const { data: singleQuote, isLoading: isSingleQuoteLoading, isError: isSingleQuoteError, isSuccess: isSingleQuoteSuccess } = useQuery({
@@ -114,7 +115,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         mutationFn: (data: unknown) => createShipment(data),
         onSuccess: () => {
             toast.success("Shipment created successfully")
-            router.push("/shipments")
+            router.push("/quotes")
         },
         onError: (error: AxiosError<ApiError>) => {
             toast.error(error.response?.data.message)
@@ -168,8 +169,8 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         const fromValid = await fromAddressRef.current?.trigger()
         const toValid = await toAddressRef.current?.trigger()
         const dimValid = await dimensionsRef.current?.trigger()
-        // console.log("fromValid", fromValid)
-        // console.log("toValid", toValid)
+        console.log("fromValid", fromValid)
+        console.log("toValid", toValid)
 
         // We validate core sections First. Then conditionally attached ones depending on if they are rendered
 
@@ -181,10 +182,10 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         if (insuranceRef.current) valid = valid && await insuranceRef.current.trigger()
         if (signatureRef.current) valid = valid && await signatureRef.current.trigger()
 
-        // if (!valid) {
-        //     toast.error("Please fill in all required fields correctly.")
-        //     return
-        // }
+        if (!valid) {
+            toast.error("Please fill in all required fields correctly.")
+            return
+        }
 
         const mergedData = getMergedPayload()
         console.log("mergedData", mergedData)
@@ -194,12 +195,13 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     }
 
     const payloadTransformer = (data: any) => {
+        const shipDate = data.addresses[0].shipDate
         const formattedAddresses = data.addresses?.map((address: any) => {
 
             if (address.addressBookId) {
                 return {
                     addressBookId: address.addressBookId,
-                    type: address.type
+                    type: address.type,
                 }
             }
             const palletShippingReadyTime = formatTime12h(
@@ -218,7 +220,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                 ...address,
                 palletShippingReadyTime,
                 palletShippingCloseTime,
-                type: address.type
+                type: address.type,
             }
         })
 
@@ -249,7 +251,6 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             ...payload,
             addresses: transformedAddresses,
         };
-        console.log("Submitting Payload:", payloadTransformed)
         const shipmentPayload = {
             shipDate: shipDate,
             mode: "SHIPMENT",
@@ -259,6 +260,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             }
 
         }
+
 
         if (isEditing) {
             if (isShipment) {
@@ -298,7 +300,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                         <ShippingTypeSelector quoteType={quoteType} shipmentType={shipmentType} setShipmentType={setShipmentType} />
                         <div className="flex flex-col md:flex-row gap-6">
                             <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
-                                <ShippingAddressSection setShipDate={setShipDate} ref={fromAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="FROM" title="Shipping From" />
+                                <ShippingAddressSection ref={fromAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="FROM" title="Shipping From" />
                             </div>
                             <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
                                 <ShippingAddressSection ref={toAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="TO" title="Shipping To" />
@@ -317,7 +319,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                     {isStandardQuote && <div className="mt-6"><AdditionalInsurance ref={insuranceRef} /></div>}
                     {(shipmentType === "PALLET" || shipmentType === "COURIER_PAK" || isShipment) && <div className="mt-6"><SignaturePreference ref={signatureRef} /></div>}
                     <div className="mt-6">
-                        <ShippingRates />
+                        <ShippingRates dimensions={dimensionsRef.current} fromAddress={fromAddressRef.current} toAddress={toAddressRef.current} />
                     </div>
                     <div className="w-full flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
                         <div className="flex gap-4">
@@ -336,7 +338,8 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
 
                                         onSubmit()
                                     }} type="button">
-                                    {createShipmentMutation.isPending || updateShipmentMutation.isPending ? <LoaderCircle className="animate-spin" size={16} /> : isEditing ? "Update Shipment" : "Create Shipment"}
+                                    {createShipmentMutation.isPending || updateShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
+                                    {isEditing ? "Update Shipment" : "Create Shipment"}
                                 </Button>
                                 :
 
@@ -345,7 +348,8 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                                     onClick={() => {
                                         onSubmit()
                                     }} type="button">
-                                    {createQuoteMutation.isPending || updateQuoteMutation.isPending ? <LoaderCircle className="animate-spin" size={16} /> : isEditing ? "Update Quote" : "Create Quote"}
+                                    {createQuoteMutation.isPending || updateQuoteMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
+                                    {isEditing ? "Update Quote" : "Create Quote"}
                                 </Button>
 
                             }

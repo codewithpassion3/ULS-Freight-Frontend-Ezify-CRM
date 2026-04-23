@@ -22,7 +22,8 @@ const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
                     type="number"
                     min={0}
                     // max={11}
-                    className={`w-14 px-2 text-center ${hourError ? "border-red-500" : ""}`}
+                    // hide control buttons
+                    className={`w-14 px-2 text-center ${hourError ? "border-red-500" : ""} [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
                     value={hourField.value ?? ""}
                 />
                 <span>:</span>
@@ -32,7 +33,7 @@ const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
                     type="number"
                     min={0}
                     max={59}
-                    className={`w-14 px-2 text-center ${minuteError ? "border-red-500" : ""}`}
+                    className={`w-14 px-2 text-center ${minuteError ? "border-red-500" : ""} [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
                     value={minuteField.value ?? ""}
                 />
 

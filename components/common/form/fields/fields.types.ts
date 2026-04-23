@@ -70,6 +70,7 @@ export type FormDateTypes = {
     // defaultValue?: string
     onSelect?: (value: Date | undefined) => void
     wrapperClassName?: string;
+    futureDatesOnly?: boolean;
 }
 
 export type FormTimeProps = {

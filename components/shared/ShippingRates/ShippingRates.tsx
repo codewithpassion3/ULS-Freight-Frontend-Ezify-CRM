@@ -110,10 +110,10 @@ export default function ShippingRates({
             }
         }
     }
-    useEffect(() => {
-        mutation.mutate(payload)
-        streamRates(payload)
-    }, [])
+    // useEffect(() => {
+    //     mutation.mutate(payload)
+    //     streamRates(payload)
+    // }, [])
     // const renderFedExQuote = (quotes: any[]) => {
     //     // render fedex quotes here
     //     {
