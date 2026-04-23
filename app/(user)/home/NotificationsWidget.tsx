@@ -39,7 +39,6 @@ interface Notification {
 }
 
 export default function NotificationsWidget() {
-    const [notifications, setNotifications] = useState<Notification[]>([]);
     const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
     const [clientId, setClientId] = useState<string>('');
     const [unreadCount, setUnreadCount] = useState(0);
@@ -48,8 +47,9 @@ export default function NotificationsWidget() {
     // get all notifications from api using tanstack query
     const { data: notificationsListing, isLoading, isPending, error } = useQuery({
         queryKey: ["notifications"],
-        queryFn: () => getNotifications(),
+        queryFn: getNotifications,
     });
+    const notifications = notificationsListing?.notifications ?? [];
 
 
 
@@ -93,8 +93,16 @@ export default function NotificationsWidget() {
             const data: Notification = JSON.parse(e.data);
             console.log(':bell: New Notification:', data);
 
-            setNotifications(prev => [data, ...prev]);
-            setUnreadCount(prev => prev + 1);
+            queryClient.setQueryData(["notifications"], (old: any) => {
+                if (!old) return old;
+
+                return {
+                    ...old,
+                    notifications: [data, ...old.notifications],
+                };
+            });
+            const unreadCount =
+                notifications.filter((n: any) => !n.read).length;
 
             // Show browser notification if permitted
             if (Notification.permission === 'granted') {
@@ -124,33 +132,33 @@ export default function NotificationsWidget() {
         };
     };
 
-    const markAsRead = async (userNotificationId: number) => {
-        try {
-            await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/notifications/${userNotificationId}/read`, {
-                method: 'POST',
-                credentials: 'include'
-            });
-            setUnreadCount(prev => Math.max(0, prev - 1));
+    // const markAsRead = async (userNotificationId: number) => {
+    //     try {
+    //         await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/notifications/${userNotificationId}/read`, {
+    //             method: 'POST',
+    //             credentials: 'include'
+    //         });
+    //         const unreadCount =
+    //             notifications.filter((n: any) => !n.read).length;
 
-            // Update local state to show as read
-            setNotifications(prev =>
-                prev.map(n =>
-                    n.userNotificationId === userNotificationId
-                        ? { ...n, read: true }
-                        : n
-                )
-            );
-        } catch (err) {
-            console.error('Failed to mark as read:', err);
-        }
-    };
+    //         // Update local state to show as read
+    //         setNotifications(prev =>
+    //             prev.map(n =>
+    //                 n.userNotificationId === userNotificationId
+    //                     ? { ...n, read: true }
+    //                     : n
+    //             )
+    //         );
+    //     } catch (err) {
+    //         console.error('Failed to mark as read:', err);
+    //     }
+    // };
 
     const requestBrowserPermission = () => {
         Notification.requestPermission();
     };
 
     const clearNotifications = () => {
-        setNotifications([]);
         setUnreadCount(0);
     };
     // dismiss notification mutation
@@ -165,7 +173,6 @@ export default function NotificationsWidget() {
             toast.error(error.response?.data.message)
         }
     })
-
     const allNotifications = [
         ...notifications,
         ...(notificationsListing?.notifications || [])

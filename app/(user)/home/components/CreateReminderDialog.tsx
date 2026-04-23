@@ -17,7 +17,8 @@ import { Input } from "@/components/ui/input"
 const reminderSchema = z.object({
     recipients: z.array(z.number()).min(1, { message: "Select at least one recipient" }),
     date: z.date().nonoptional("Date is required"),
-    hourName: z.string().regex(/^(0?[1-9]|1[0-2])$/, "Invalid hour"),
+    // hourName: z.string().regex(/^(0?[1-9]|1[0-2])$/, "Invalid hour"),
+    hourName: z.string(),
     minuteName: z.string().regex(/^([0-5]?[0-9])$/, "Invalid minute"),
     ampmName: z.enum(["AM", "PM"]),
     title: z.string().min(1, { message: "Reminder Title is required" }),
@@ -60,25 +61,28 @@ export function CreateReminderDialog({ children }: Props) {
         }
     })
     const onSubmit = (data: ReminderFormValues) => {
-        const baseDate = new Date(data.date)
+        const baseDate = new Date(data.date);
 
-        let hours = parseInt(data.hourName, 10)
-        const minutes = parseInt(data.minuteName, 10)
+        let hours = parseInt(data.hourName, 10);
+        const minutes = parseInt(data.minuteName, 10);
 
-        // convert to 24-hour format
-        if (data.ampmName === "PM" && hours !== 12) hours += 12
-        if (data.ampmName === "AM" && hours === 12) hours = 0
+        if (data.ampmName === "PM" && hours !== 12) hours += 12;
+        if (data.ampmName === "AM" && hours === 12) hours = 0;
 
-        baseDate.setHours(hours, minutes, 0, 0)
+        baseDate.setHours(hours, minutes, 0, 0);
+
+        // Convert local time to UTC ISO string before sending
+        const utcString = baseDate.toISOString();
+
         const payload: CreateReminderType = {
             title: data.title,
             message: data.message,
-            scheduledAt: baseDate,
+            scheduledAt: utcString as any, // "2026-04-22T15:01:00.000Z" for Pakistan 20:01
             sendTo: recipients,
-        }
+        };
 
-        createReminderMutation.mutate(payload)
-    }
+        createReminderMutation.mutate(payload);
+    };
 
     const handleOpenChange = (open: boolean) => {
         setIsOpen(open)

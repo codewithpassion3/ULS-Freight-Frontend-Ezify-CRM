@@ -41,7 +41,6 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
                 dangerousGoods: false,
                 stackable: false,
                 units: [{
-                    weight: 0,
                     description: "",
                 }],
             }

@@ -8,73 +8,79 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Calculator } from "lucide-react"
 
 import { NmfcCodeRequestModal } from "./NmfcCodeRequestModal"
+export const calculateClass = (length: number, width: number, height: number, weight: number, unit: "IMPERIAL" | "METRIC") => {
 
+    const l = length || 0
+    const w = width || 0
+    const h = height || 0
+    const wt = weight || 0
+
+    if (!l || !w || !h || !wt) return
+
+    let lbs = wt;
+    let cuFt = (l * w * h) / 1728;
+
+    if (unit === "METRIC") {
+        // Convert to Imperial for standard US freight class calculation
+        const lIn = l * 0.393701
+        const wIn = w * 0.393701
+        const hIn = h * 0.393701
+        lbs = wt * 2.20462
+        cuFt = (lIn * wIn * hIn) / 1728
+    }
+
+    const density = lbs / cuFt
+
+    let estimatedClass = "500"
+    if (density >= 50) estimatedClass = "50"
+    else if (density >= 35) estimatedClass = "55"
+    else if (density >= 30) estimatedClass = "60"
+    else if (density >= 22.5) estimatedClass = "65"
+    else if (density >= 15) estimatedClass = "70"
+    else if (density >= 13.5) estimatedClass = "77.5"
+    else if (density >= 12) estimatedClass = "85"
+    else if (density >= 10.5) estimatedClass = "92.5"
+    else if (density >= 9) estimatedClass = "100"
+    else if (density >= 8) estimatedClass = "110"
+    else if (density >= 7) estimatedClass = "125"
+    else if (density >= 6) estimatedClass = "150"
+    else if (density >= 5) estimatedClass = "175"
+    else if (density >= 4) estimatedClass = "200"
+    else if (density >= 3) estimatedClass = "250"
+    else if (density >= 2) estimatedClass = "300"
+    else if (density >= 1) estimatedClass = "400"
+
+    return { density: Number(density.toFixed(2)), classEstim: estimatedClass }
+}
 export const DensityCalculatorModal = () => {
     const [unit, setUnit] = useState<"IMPERIAL" | "METRIC">("IMPERIAL")
-    const [length, setLength] = useState("")
-    const [width, setWidth] = useState("")
-    const [height, setHeight] = useState("")
-    const [weight, setWeight] = useState("")
+    const [length, setLength] = useState<number>(0)
+    const [width, setWidth] = useState<number>(0)
+    const [height, setHeight] = useState<number>(0)
+    const [weight, setWeight] = useState<number>(0)
     const [result, setResult] = useState<{ density: number, classEstim: string } | null>(null)
 
     const handleReset = () => {
-        setLength("")
-        setWidth("")
-        setHeight("")
-        setWeight("")
+        setLength(0)
+        setWidth(0)
+        setHeight(0)
+        setWeight(0)
         setResult(null)
     }
-
-    const calculateClass = () => {
-        const l = parseFloat(length) || 0
-        const w = parseFloat(width) || 0
-        const h = parseFloat(height) || 0
-        const wt = parseFloat(weight) || 0
-
-        if (!l || !w || !h || !wt) return
-
-        let lbs = wt;
-        let cuFt = (l * w * h) / 1728;
-
-        if (unit === "METRIC") {
-            // Convert to Imperial for standard US freight class calculation
-            const lIn = l * 0.393701
-            const wIn = w * 0.393701
-            const hIn = h * 0.393701
-            lbs = wt * 2.20462
-            cuFt = (lIn * wIn * hIn) / 1728
-        }
-
-        const density = lbs / cuFt
-
-        let estimatedClass = "500"
-        if (density >= 50) estimatedClass = "50"
-        else if (density >= 35) estimatedClass = "55"
-        else if (density >= 30) estimatedClass = "60"
-        else if (density >= 22.5) estimatedClass = "65"
-        else if (density >= 15) estimatedClass = "70"
-        else if (density >= 13.5) estimatedClass = "77.5"
-        else if (density >= 12) estimatedClass = "85"
-        else if (density >= 10.5) estimatedClass = "92.5"
-        else if (density >= 9) estimatedClass = "100"
-        else if (density >= 8) estimatedClass = "110"
-        else if (density >= 7) estimatedClass = "125"
-        else if (density >= 6) estimatedClass = "150"
-        else if (density >= 5) estimatedClass = "175"
-        else if (density >= 4) estimatedClass = "200"
-        else if (density >= 3) estimatedClass = "250"
-        else if (density >= 2) estimatedClass = "300"
-        else if (density >= 1) estimatedClass = "400"
-        
-        setResult({ density: Number(density.toFixed(2)), classEstim: estimatedClass })
+    // handle Calculate class
+    const handleCalculateClass = () => {
+        const res = calculateClass(length, width, height, weight, unit)
+        setResult(res ?? null)
     }
+    // make this a utility so that it can be used in the dimensions component
+
 
     return (
         <Dialog onOpenChange={(open) => !open && handleReset()}>
             <DialogTrigger asChild>
-                <button type="button" className="text-sm font-semibold flex items-center gap-1 hover:underline text-[#0070c0]">
+                <Button variant="link">
                     <Calculator size={16} /> Class & Density Calculator
-                </button>
+                </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl! p-0 gap-0 border-0 rounded-lg overflow-hidden">
                 <DialogHeader className="p-4 border-b bg-gray-50/50">
@@ -82,7 +88,7 @@ export const DensityCalculatorModal = () => {
                         <Calculator size={20} className="text-gray-800" /> Class & Density Calculator
                     </DialogTitle>
                 </DialogHeader>
-                
+
                 <div className="p-6 overflow-y-auto max-h-[80vh]">
                     <div className="border border-gray-200 rounded-md p-4 mb-6 bg-white shrink-0">
                         <h4 className="font-semibold mb-3 text-slate-800">Please Note:</h4>
@@ -115,37 +121,37 @@ export const DensityCalculatorModal = () => {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                             <div>
                                 <Label className="text-slate-500 font-normal mb-1 block">Length ({unit === "IMPERIAL" ? "in" : "cm"})*</Label>
-                                <Input 
-                                    type="number" 
-                                    placeholder={`00 (${unit === "IMPERIAL" ? "in" : "cm"})`} 
-                                    value={length} onChange={(e) => setLength(e.target.value)} 
+                                <Input
+                                    type="number"
+                                    placeholder={`00 (${unit === "IMPERIAL" ? "in" : "cm"})`}
+                                    value={length} onChange={(e) => setLength(Number(e.target.value))}
                                     className="focus-visible:ring-amber-500 border-gray-300"
                                 />
                             </div>
                             <div>
                                 <Label className="text-slate-500 font-normal mb-1 block">Width ({unit === "IMPERIAL" ? "in" : "cm"})*</Label>
-                                <Input 
-                                    type="number" 
-                                    placeholder={`00 (${unit === "IMPERIAL" ? "in" : "cm"})`} 
-                                    value={width} onChange={(e) => setWidth(e.target.value)} 
+                                <Input
+                                    type="number"
+                                    placeholder={`00 (${unit === "IMPERIAL" ? "in" : "cm"})`}
+                                    value={width} onChange={(e) => setWidth(Number(e.target.value))}
                                     className="focus-visible:ring-amber-500 border-gray-300"
                                 />
                             </div>
                             <div>
                                 <Label className="text-slate-500 font-normal mb-1 block">Height ({unit === "IMPERIAL" ? "in" : "cm"})*</Label>
-                                <Input 
-                                    type="number" 
-                                    placeholder={`00 (${unit === "IMPERIAL" ? "in" : "cm"})`} 
-                                    value={height} onChange={(e) => setHeight(e.target.value)} 
+                                <Input
+                                    type="number"
+                                    placeholder={`00 (${unit === "IMPERIAL" ? "in" : "cm"})`}
+                                    value={height} onChange={(e) => setHeight(Number(e.target.value))}
                                     className="focus-visible:ring-amber-500 border-gray-300"
                                 />
                             </div>
                             <div>
                                 <Label className="text-slate-500 font-normal mb-1 block">Weight ({unit === "IMPERIAL" ? "lbs" : "kg"})*</Label>
-                                <Input 
-                                    type="number" 
-                                    placeholder={`00 (${unit === "IMPERIAL" ? "lbs" : "kg"})`} 
-                                    value={weight} onChange={(e) => setWeight(e.target.value)} 
+                                <Input
+                                    type="number"
+                                    placeholder={`00 (${unit === "IMPERIAL" ? "lbs" : "kg"})`}
+                                    value={weight} onChange={(e) => setWeight(Number(e.target.value))}
                                     className="focus-visible:ring-amber-500 border-gray-300"
                                 />
                             </div>
@@ -166,7 +172,7 @@ export const DensityCalculatorModal = () => {
                             <button type="button" onClick={handleReset} className="text-[#0070c0] text-sm font-medium hover:underline">
                                 Reset
                             </button>
-                            <Button type="button" onClick={calculateClass} className="bg-[#4fa2d2] hover:bg-[#3d91c1] text-white font-medium px-6">
+                            <Button disabled={!length || !width || !height || !weight} type="button" onClick={handleCalculateClass}>
                                 Calculate Class
                             </Button>
                         </div>

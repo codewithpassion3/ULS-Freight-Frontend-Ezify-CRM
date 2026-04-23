@@ -8,6 +8,8 @@ import { FREIGHT_CLASS_OPTIONS } from "./constants"
 import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import { usePathname } from "next/navigation"
 import PackageSelectionModal from "@/app/(user)/packages/PackageSelectionModal"
+import { useEffect } from "react"
+import { calculateClass } from "./DensityCalculatorModal"
 
 type Props = {
     index: number
@@ -21,7 +23,7 @@ type Props = {
 }
 
 export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, onClear, open, setOpen }: Props) {
-    const { register, watch, formState: { errors } } = useFormContext<any>()
+    const { register, watch, setValue, formState: { errors } } = useFormContext<any>()
 
     const measurementUnit = watch("lineItem.measurementUnit")
     const isImperial = measurementUnit === "IMPERIAL"
@@ -45,36 +47,14 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
         palletUnitType: watch(`lineItem.units.${index}.palletUnitType`),
         description: watch(`lineItem.units.${index}.description`),
     }
-
-    //   const handlePackageSelect = (contact: ContactType) => {
-    //     setAddressLocked(true)
-    //     const currentValues = methods.getValues();
-    //     methods.reset({
-    //       ...currentValues,
-    //       // @ts-ignore
-    //       addressBookId: Number(contact.id),
-    //       type: type,
-    //       address: {
-    //         address1: contact.address?.address1 || "",
-    //         postalCode: contact.address?.postalCode || "",
-    //         city: contact.address?.city || "",
-    //         state: contact.address?.state || "",
-    //         country: contact.address?.country || "",
-    //       },
-
-    //       ...(showLocationType && { locationTypeId: contact?.locationTypeId || "" }),
-    //       ...(isShipment && { companyName: contact.companyName }),
-    //       // ...(isShipment && { contactId: contact.id }),
-    //       ...(isShipment && { address2: contact.address?.address2 || "" }),
-    //       ...(isShipment && { unit: contact.address?.unit || "" }),
-    //       // contact information
-    //       ...(isShipment && { contactName: contact.contactName || "" }),
-    //       ...(isShipment && { email: contact.email || "" }),
-    //       ...(isShipment && { phoneNumber: contact.phoneNumber || "" }),
-
-    //     });
-    //     // print location type
-    //   }
+    // if l,w,h,wg have values call calculate class function and set freight class
+    useEffect(() => {
+        const { length, width, height, weight } = rowSnapshot
+        if (length && width && height && weight) {
+            const res = calculateClass(length, width, height, weight, measurementUnit)
+            setValue(`lineItem.units.${index}.freightClass`, res?.classEstim)
+        }
+    }, [rowSnapshot.length, rowSnapshot.width, rowSnapshot.height, rowSnapshot.weight])
 
     return (
         <div key={fieldId} className="space-y-4 pb-6 border-b last:border-0 relative group">

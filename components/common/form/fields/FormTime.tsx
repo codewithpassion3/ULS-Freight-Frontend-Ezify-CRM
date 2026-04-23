@@ -21,7 +21,7 @@ const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
                     {...hourField}
                     type="number"
                     min={0}
-                    max={11}
+                    // max={11}
                     className={`w-14 px-2 text-center ${hourError ? "border-red-500" : ""}`}
                     value={hourField.value ?? ""}
                 />

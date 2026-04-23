@@ -26,3 +26,9 @@ export const getAddressByPostalCode = async (postalCode: string, countryCode: st
         return null; // or throw new Error(...)
     }
 };
+
+// shipment rates
+export const getShipmentRates = async (payload: any) => {
+    const response = await apiClient.post("/shipment-carriers/rates", payload);
+    return response.data;
+};
