@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import { Button } from "@/components/ui/button"
-import { MoreVertical, Trash2, UserRoundPen } from "lucide-react"
+import { ChevronDown, MoreVertical, Trash2, UserRoundPen } from "lucide-react"
 import { useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { deleteContact } from "@/api/services/address-book.api"
@@ -17,6 +17,12 @@ import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
 import Image from "next/image"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 export const columns: ColumnDef<any>[] = [
 
@@ -46,11 +52,11 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "carrier",
     header: "Carrier",
     cell: ({ row }) => {
+      // const rate = row.original.fedexQuote
       return (
-        <div>
-          carrier logo
-          {/* carrier logo */}
-          {/* <Image src={} width={50} height={50} /> */}
+        <div className="h-24 w-24 p-2 flex justify-center items-center">
+
+          <Image src={"/FedExFreight.svg"} width={100} height={100} alt="Carrier Logo" />
         </div>
       )
     }
@@ -71,86 +77,69 @@ export const columns: ColumnDef<any>[] = [
     header: "Est. Transit",
     cell: ({ row }) => {
 
-      return "2 days"
+      return "N/A"
     }
   },
   {
     accessorKey: "shippingRate",
     header: "Shipping Rate",
     cell: ({ row }) => {
+
+      const baseCharge = row.original?.quote?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.totalBaseCharge
+      const totalNetCharge = row.original?.quote?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.totalNetCharge
+      const baseChargeCurrency = row.original?.quote?.output?.rateReplyDetails[0]?.current
+      const fuelCharges = row.original?.quote?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.shipmentRateDetail.surCharges[0]?.amount
+      const additionalCharges = row.original?.quote?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.shipmentRateDetail.surCharges[1]?.amount
       return (
-        <div>
-          shipping rate
-        </div>
+        // tootip
+        <TooltipProvider>
+          <Tooltip >
+            <TooltipTrigger asChild>
+              <Button variant="link">
+                {baseCharge} {baseChargeCurrency}
+                <ChevronDown className="h-6 w-6 bg-primary text-white rounded-full p-0.5" />
+              </Button>
+            </TooltipTrigger>
+
+            <TooltipContent color="primary" side="bottom" className="shadow-lg bg-primary">
+              <span className="text-white absolute top-0 left-0">{baseChargeCurrency} {baseCharge}</span>
+              <div className="min-w-[220px] text-sm ">
+
+                {/* Header */}
+                <div className="grid grid-cols-2 font-semibold border-b pb-1 mb-2">
+                  <span>Charge</span>
+                  <span className="text-right">Amount</span>
+                </div>
+
+                {/* Rows */}
+                <div className="grid grid-cols-2 gap-y-1">
+                  <span>Base Charge</span>
+                  <span className="text-right">
+                    {baseChargeCurrency} {baseCharge}
+                  </span>
+
+                  <span>Fuel Charges</span>
+                  <span className="text-right">
+                    {baseChargeCurrency} {fuelCharges}
+                  </span>
+
+                  <span>Additional Charges</span>
+                  <span className="text-right">
+                    {baseChargeCurrency} {additionalCharges}
+                  </span>
+
+                  <span className="font-medium border-t pt-1 mt-1">
+                    Total Net Charge
+                  </span>
+                  <span className="text-right font-medium border-t pt-1 mt-1">
+                    {baseChargeCurrency} {totalNetCharge}
+                  </span>
+                </div>
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       )
     }
-  },
-
-
-
-  {
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => {
-
-      const contact = row.original
-      const [open, setOpen] = useState(false)
-      const queryClient = useQueryClient()
-      // const { refetch } = useQuery({
-      //   queryKey: ["contact", contact.id],
-      //   queryFn: () => deleteContact(contact.id),
-      // })
-      const mutation = useMutation({
-        mutationFn: (id: string) => deleteContact(id),
-        onSuccess: () => {
-          toast.success("Contact deleted successfully")
-          queryClient.invalidateQueries({ queryKey: ["contacts"] })
-        },
-        onError: (error: AxiosError<ApiError>) => {
-          toast.error(error.response?.data.message)
-        }
-      })
-
-      const handleDeleteContact = (id: string) => {
-        console.log(`Delete this ${id}`)
-        mutation.mutate(id)
-      }
-      return (
-        <>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="end">
-
-              <DropdownMenuItem
-                onClick={() => {
-                  setOpen(true)
-                }}
-                className="cursor-pointer"
-              >
-                <UserRoundPen />
-                Select
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                className="text-red-500 cursor-pointer"
-                onClick={() => handleDeleteContact(contact.id)}
-              >
-                <Trash2 />
-                Delete
-              </DropdownMenuItem>
-
-            </DropdownMenuContent>
-
-          </DropdownMenu>
-          {/* {open && <EditContactModal open={open} setOpen={setOpen} id={contact.id} />} */}
-
-        </>
-      )
-    },
   },
 ]
