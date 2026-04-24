@@ -21,7 +21,7 @@ export const mapFormToPayload = (data: ContactFormValues): ContactType => {
         companyName: data.companyName,
         contactId: data.contactId || null,
         contactName: data.contactName,
-        phoneNumber: data.phone,
+        phoneNumber: data.phoneNumber,
         email: data.email || null,
         defaultInstructions: data.defaultInstructions || null,
 
@@ -61,7 +61,7 @@ export const mapPayloadToForm = (contact: ContactType): ContactFormValues => {
         companyName: contact.companyName,
         contactId: contact.contactId ?? "",
         contactName: contact.contactName,
-        phone: contact.phoneNumber,
+        phoneNumber: contact.phoneNumber,
         email: contact.email ?? "",
         defaultInstructions: contact.defaultInstructions ?? "",
 

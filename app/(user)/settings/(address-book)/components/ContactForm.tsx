@@ -168,9 +168,9 @@ export function ContactForm({
                                     ampmName: "closeTimeAmPm",
                                 },
                                 {
-                                    name: "phone",
+                                    name: "phoneNumber",
                                     label: "Phone*",
-                                    type: "phoneNumber",
+                                    type: "phone",
                                     placeholder: "Phone",
                                 },
                                 {
