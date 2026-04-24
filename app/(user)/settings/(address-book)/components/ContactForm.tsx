@@ -170,7 +170,7 @@ export function ContactForm({
                                 {
                                     name: "phone",
                                     label: "Phone*",
-                                    type: "phone",
+                                    type: "phoneNumber",
                                     placeholder: "Phone",
                                 },
                                 {

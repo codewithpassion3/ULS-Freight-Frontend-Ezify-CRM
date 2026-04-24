@@ -132,7 +132,7 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                                         icon: <Info size={16} />,
                                     }}
                                 />
-                                {watch("limitedAccess") &&
+                                {watch("services.limitedAccess") &&
                                     <div className="my-4">
                                         <FormRadio
                                             field={{
@@ -220,7 +220,7 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                                         icon: <Info size={16} />
                                     }}
                                 />
-                                {watch("inbound") &&
+                                {watch("services.inbound") &&
                                     <div className="my-4">
                                         <InBond />
                                     </div>

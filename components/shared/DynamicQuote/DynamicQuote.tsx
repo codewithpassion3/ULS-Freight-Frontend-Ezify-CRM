@@ -26,7 +26,6 @@ import { useRouter } from "next/navigation"
 import { Loader, LoaderCircle } from "lucide-react"
 import { formatTime12h } from "@/app/(user)/settings/(address-book)/mappers/contact.mapper"
 import ShippingRates from "../ShippingRates/ShippingRates"
-// import { quoteSchema } from "@/lib/validations/quote/standard-quote-schema"
 export type ShipmentTypes = "PALLET" | "PACKAGE" | "COURIER_PAK" | "STANDARD_FTL" | "SPOT_LTL" | "SPOT_FTL" | "TIME_CRITICAL"
 export type QuoteTypes = "SPOT" | "STANDARD"
 export type ShipmentOptions = {
@@ -75,6 +74,13 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         }
     }
 
+    // scroll to section in which there is errors, check by ref
+    const scrollToErrorSection = () => {
+        const errorSections = document.querySelectorAll(".error-section")
+        if (errorSections.length > 0) {
+            errorSections[0].scrollIntoView({ behavior: "smooth" })
+        }
+    }
 
 
     const { data: singleQuote, isLoading: isSingleQuoteLoading, isError: isSingleQuoteError, isSuccess: isSingleQuoteSuccess } = useQuery({
@@ -318,9 +324,9 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                     </div>
                     {isStandardQuote && <div className="mt-6"><AdditionalInsurance ref={insuranceRef} /></div>}
                     {(shipmentType === "PALLET" || shipmentType === "COURIER_PAK" || isShipment) && <div className="mt-6"><SignaturePreference ref={signatureRef} /></div>}
-                    <div className="mt-6">
+                    {/* <div className="mt-6">
                         <ShippingRates dimensions={dimensionsRef.current} fromAddress={fromAddressRef.current} toAddress={toAddressRef.current} />
-                    </div>
+                    </div> */}
                     <div className="w-full flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
                         <div className="flex gap-4">
                             <Button variant="outline" onClick={() => {
