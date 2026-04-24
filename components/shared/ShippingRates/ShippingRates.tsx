@@ -153,9 +153,9 @@ export default function ShippingRates({
                         </div>
                     </div>
                     {/* render quotes here */}
-
+                    {/* <ShippingRatesTable /> */}
                     {/* get rates button */}
-                    <Button onClick={() => mutation.mutate(payload)}>
+                    <Button onClick={() => mutation.mutate(payload)} className="mt-3">
                         Get Rates
                     </Button>
                 </AccordionContent>
