@@ -48,7 +48,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   const quoteId = useSearchParams().get("id")
   const markContactAsRecent = useMarkContactAsRecent()
   const [addressLocked, setAddressLocked] = useState(false)
-  const showLocationType = quoteType === "SPOT" || shipmentType === "STANDARD_FTL" || isShipment;
+  const showLocationType = quoteType === "SPOT" || shipmentType === "PALLET" || shipmentType === "STANDARD_FTL" || isShipment;
   const showAdditionalNotes = quoteType === "SPOT";
   const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
     queryKey: ["singleQuote", quoteId],
@@ -580,6 +580,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
                       type="button"
                       onClick={addBillingRef}
                     >
+                      <Plus />
                       Add
                     </Button>
                   )}

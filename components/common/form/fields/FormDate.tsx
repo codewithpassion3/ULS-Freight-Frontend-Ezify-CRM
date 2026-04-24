@@ -43,13 +43,13 @@ const FormDate = memo(({ field: config }: { field: any }) => {
                         type="button"
                         variant="outline"
                         data-empty={!field.value}
-                        className={`w-full justify-between text-left font-normal ${error ? "border-red-500 text-red-500" : ""
+                        className={`w-full justify-between text-left font-normal ${error ? "border-red-500 text-red-500 bg-red-50" : ""
                             }`}
                     >
                         {field.value ? (
                             format(new Date(field.value), "PPP")
                         ) : (
-                            <span className="text-muted-foreground">Pick a date</span>
+                            <span className={error ? "text-red-500" : "text-muted-foreground"}>Pick a date</span>
                         )}
 
                         <CalendarIcon />

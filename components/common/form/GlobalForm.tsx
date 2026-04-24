@@ -20,47 +20,26 @@ export const FieldRenderer = memo(({ field, type }: any) => {
       return <FormSelect field={field} />
     case "checkbox":
       return <FormCheckbox field={field} />
-    // case "checkbox-group":
-    //   return <FormCheckbox field={field} />
     case "radio":
       return <FormRadio field={field} />
     case "phone":
       return <FormPhone field={field} />
     case "date":
       return <FormDate field={field} />
-    // case "textarea":
-    //   return <FormField name={field.name} label={field.label} placeholder={field.placeholder} type="textarea" />
-    // case "datetime":
-    //   return <FormField name={field.name} label={field.label} placeholder={field.placeholder} type="datetime" />
     case "time":
       return <FormTime field={field} />
-    // case "file":
-    //   return <FormField name={field.name} label={field.label} placeholder={field.placeholder} type="file" />
-    // case "image":
-    //   return <FormField name={field.name} label={field.label} placeholder={field.placeholder} type="image" />
-    // case "video":
-    //   return <FormField name={field.name} label={field.label} placeholder={field.placeholder} type="video" />
-    // case "audio":
-    //   return <FormField name={field.name} label={field.label} placeholder={field.placeholder} type="audio" />
-    // case "file":
-    //   return <FormField name={field.name} label={field.label} placeholder={field.placeholder} type="file" />
-    // case "image":
-    //   return <FormField name={field.name} label={field.label} placeholder={field.placeholder} type="image" />
-    // case "video":
-    //   return <FormField name={field.name} label={field.label} placeholder={field.placeholder} type="video" />
-    // case "audio":
-    //   return <FormField name={field.name} label={field.label} placeholder={field.placeholder} type="audio" />
     default:
       return null
   }
 })
 
-export function GlobalForm({ fields, formWrapperClassName }: { fields: any[], formWrapperClassName?: string }) {
+export function GlobalForm({ fields, formWrapperClassName, extra }: { fields: any[], formWrapperClassName?: string, extra?: React.ReactNode }) {
   return (
     <div className={formWrapperClassName || ""}>
       {fields.map((field) => (
         <FieldRenderer key={field.name} field={field} />
       ))}
+      {extra}
     </div>
   )
 }

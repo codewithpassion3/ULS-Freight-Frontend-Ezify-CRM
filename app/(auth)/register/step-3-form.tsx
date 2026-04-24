@@ -1,10 +1,5 @@
 "use client"
 
-import * as React from "react"
-import { Eye } from "lucide-react"
-
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { Controller, useFormContext } from "react-hook-form"
@@ -12,6 +7,7 @@ import { RegisterSchemaTypes } from "@/lib/validations/auth/register-schema"
 import FormField from "@/components/common/form/fields/FormField"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
+import LegalPolicyModal from "@/components/static/LegalPolicyModal"
 interface Step3FormProps {
   onBack: () => void
 }
@@ -74,12 +70,15 @@ export function Step3Form({ onBack }: Step3FormProps) {
                     value={field.value ? "checked" : "unchecked"}
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                    className="cursor-pointer"
+                    className="cursor-pointer mt-2.5"
                   />
 
                   <FieldContent>
                     <FieldLabel>
-                      Accept terms and conditions
+                      Accept
+                      <LegalPolicyModal >
+                        <Button variant="link" className="px-0!">Terms and Conditions</Button>
+                      </LegalPolicyModal>
                     </FieldLabel>
 
                     <FieldDescription>
@@ -103,12 +102,15 @@ export function Step3Form({ onBack }: Step3FormProps) {
                     value={field.value ? "checked" : "unchecked"}
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                    className="cursor-pointer"
+                    className="cursor-pointer mt-2.5"
                   />
 
                   <FieldContent>
                     <FieldLabel>
-                      Accept the company policies
+                      Accept
+                      <LegalPolicyModal defaultTab="privacy">
+                        <Button variant="link" className="px-0!">Company Policies</Button>
+                      </LegalPolicyModal>
                     </FieldLabel>
 
                     <FieldDescription>

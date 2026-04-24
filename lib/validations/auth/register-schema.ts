@@ -34,13 +34,13 @@ export const registerSchema = z.object({
   }),
 
   address: z.object({
-    address1: z.string().min(1),
+    address1: z.string().nonempty("Address is required"),
     address2: z.string().optional(),
-    city: z.string().min(1),
-    unit: z.string(),
-    state: z.string().min(1),
-    country: z.string().min(1),
-    postalCode: z.string().min(1)
+    city: z.string().nonempty("City is required"),
+    unit: z.string().nonempty("Unit is required"),
+    state: z.string().nonempty("State is required"),
+    country: z.string().nonempty("Country is required"),
+    postalCode: z.string().min(5, "Postal code must be at least 5 characters").max(10, "Postal code must be at most 10 characters").nonempty("Postal code is required")
   }),
 
   shippingPreference: z

@@ -48,7 +48,25 @@ export default function RegisterPage() {
     defaultValues: {
       shippingPreference: [],
       user: {
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        phoneNumber: "",
         freightBroker: false
+      },
+      company: {
+        name: "",
+        industryType: ""
+      },
+      address: {
+        address1: "",
+        address2: "",
+        city: "",
+        unit: "",
+        state: "",
+        country: "",
+        postalCode: ""
       }
     }
   })

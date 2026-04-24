@@ -41,7 +41,6 @@ import { AccountBalanceModal } from "./AccountBalanceModal"
 import Image from "next/image"
 
 export default function UserProfile() {
-    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
     const router = useRouter()
     const [open, setOpen] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
@@ -78,7 +77,7 @@ export default function UserProfile() {
                             <div className="cursor-pointer">
                                 {user?.user?.profilePic ?
                                     <Image
-                                        src={`${BASE_URL}${user?.user?.profilePic}`}
+                                        src={`${user?.user?.profilePic}`}
                                         alt="Profile"
                                         width={40}
                                         height={40}

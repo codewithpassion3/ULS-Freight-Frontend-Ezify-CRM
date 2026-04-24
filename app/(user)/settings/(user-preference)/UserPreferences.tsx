@@ -46,7 +46,6 @@ export default function UserPreferences() {
     const onSubmit = (data: UserSettingsFormValues) => {
         console.log(data)
     }
-    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
     const [isUploadPhotoModalOpen, setIsUploadPhotoModalOpen] = useState(false)
     useEffect(() => {
         if (user) {
@@ -183,7 +182,7 @@ export default function UserPreferences() {
                         <div className="cursor-pointer">
                             {user?.user?.profilePic ?
                                 <Image
-                                    src={`${BASE_URL}${user?.user?.profilePic}`}
+                                    src={`${user?.user?.profilePic}`}
                                     alt="Profile"
                                     width={64}
                                     height={64}

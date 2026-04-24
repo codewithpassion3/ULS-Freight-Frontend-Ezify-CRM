@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Package, Truck, ShoppingCart, Info, Check, CloudCog } from "lucide-react"
-import { useForm, Controller, useFormContext } from "react-hook-form"
+import { useForm, Controller, useFormContext, FormProvider } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { registerSchema, type RegisterSchemaTypes } from "@/lib/validations/auth/register-schema"
 import FormField from "@/components/common/form/fields/FormField"
 import { PhoneInput } from "@/components/common/PhoneInput"
+import { GlobalForm } from "@/components/common/form/GlobalForm"
 
 interface Step1FormProps {
   onNext: () => void
@@ -108,131 +109,67 @@ export function Step1Form({ onNext }: Step1FormProps) {
     onNext()
   }
 
-
-
-
   return (
     <div className="space-y-6">
-      {/* Row 1 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <FormField
-            field={{
+      <FormProvider {...form}>
+        <GlobalForm
+          formWrapperClassName="grid grid-cols-2 gap-4"
+          fields={[
+            {
               name: "user.firstName",
               label: "First Name*",
               placeholder: "Enter your first name",
               type: "text",
-            }}
-          />
-        </div>
-        <div className="space-y-2">
-          <FormField
-            field={{
+            },
+            {
               name: "user.lastName",
               label: "Last Name*",
               placeholder: "Enter your last name",
               type: "text",
-            }}
-            
-          />
-        </div>
-      </div>
-
-      {/* Row 2 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <div className="flex items-center gap-1">
-            <Label htmlFor="businessName" className={errors.company?.name ? "text-red-500" : ""}>Business or Corporation Name*</Label>
-            <Info className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <Input
-            {...form.register("company.name")}
-            className={errors.company?.name ? "border-red-500" : ""}
-          />
-          {errors.company?.name && <p className="text-xs text-red-500">{errors.company?.name.message}</p>}
-        </div>
-        <div className="space-y-2">
-          <FormField
-            field={{
+            },
+            {
+              name: "company.name",
+              label: "Business or Corporation Name*",
+              placeholder: "Enter your business or corporation name",
+              type: "text",
+            },
+            {
               name: "company.industryType",
               label: "Industry Type",
-              placeholder: "ex: Furniture",
+              placeholder: "Enter your industry type",
               type: "text",
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Row 3 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <FormField
-            field={{
+            },
+            {
               name: "user.email",
               label: "Email*",
-              placeholder: "example@email.com",
+              placeholder: "Enter your email",
               type: "email",
-            }}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="user.phoneNumber" className={errors.user?.phoneNumber ? "text-red-500" : ""}>Phone Number*</Label>
-          <Controller
-            name="user.phoneNumber"
-            control={control}
-            render={({ field }) => (
-              <PhoneInput
-                {...field}
-                placeholder="Phone number"
-                defaultCountry="CA"
-              // className="w-full"
-              />
+            },
+            {
+              name: "user.phoneNumber",
+              label: "Phone Number*",
+              placeholder: "Enter your phone number",
+              type: "phone",
+            },
+            {
+              name: "user.signUpCode",
+              label: "Sign up Code",
+              placeholder: "Enter your sign up code",
+              type: "text",
+            },
+            {
+              name: "user.freightBroker",
+              label: "Are you a Freight Broker?",
+              type: "radio",
+              options: [
+                { label: "No", value: "no" },
+                { label: "Yes", value: "yes" },
+              ],
+            },
 
-            )}
-          />
-        </div>
-
-      </div>
-
-      {/* Row 4 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-        <div className="space-y-2">
-          <div className="flex items-center gap-1">
-            <Label htmlFor="signupCode" className={errors.user?.signUpCode ? "text-red-500" : ""}>Sign up Code</Label>
-            <Info className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <Input
-            {...form.register("user.signUpCode")}
-            className={errors.user?.signUpCode ? "border-red-5select00" : ""}
-          />
-          {errors.user?.signUpCode && <p className="text-xs text-red-500">{errors.user?.signUpCode.message}</p>}
-        </div>
-        <div className="space-y-2">
-          <Label className={errors.user?.freightBroker ? "text-red-500" : ""}>Are you a Freight Broker?</Label>
-          <Controller
-            control={form.control}
-            name="user.freightBroker"
-            render={({ field }) => (
-              <RadioGroup
-                value={field.value === true ? "yes" : "no"}
-                onValueChange={(value) => field.onChange(value === "yes")}
-                className="flex space-x-4 mt-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="no" id="broker-no" />
-                  <Label htmlFor="broker-no" className="font-normal cursor-pointer">No</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="yes" id="broker-yes" />
-                  <Label htmlFor="broker-yes" className="font-normal cursor-pointer">Yes</Label>
-                </div>
-              </RadioGroup>
-            )}
-          />
-          {errors.user?.freightBroker && <p className="text-xs text-red-500">{errors.user?.freightBroker.message}</p>}
-        </div>
-      </div>
-
+          ]}
+        />
+      </FormProvider>
       {/* Shipping Types Custom Cards */}
       <div className="space-y-3 pt-4">
         <Label>Select all the <span className="text-primary underline cursor-pointer">shipping types</span> that apply*</Label>
@@ -361,7 +298,6 @@ export function Step1Form({ onNext }: Step1FormProps) {
           </div>
         )}
       </div>
-
       <div className="flex justify-end pt-18 mb-4">
         <Button
           disabled={form.formState.isSubmitting}

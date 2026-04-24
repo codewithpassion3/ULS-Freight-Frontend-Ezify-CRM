@@ -15,6 +15,7 @@ import FormField from "@/components/common/form/fields/FormField"
 import { Controller, useForm, useFormContext } from "react-hook-form"
 import { registerSchema, RegisterSchemaTypes } from "@/lib/validations/auth/register-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { GlobalForm } from "@/components/common/form/GlobalForm"
 
 interface Step2FormProps {
   onNext: () => void
@@ -52,130 +53,63 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
   }
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-
-          <FormField
-            field={{
-              name: "address.address1",
-              label: "Registered Business Address*",
-              placeholder: "Enter your business address",
-              type: "text",
-            }}
-
-          />
-        </div>
-        <div className="space-y-2">
-
-          <FormField
-            field={{
-              name: "address.unit",
-              label: "Unit/Floor # *",
-              placeholder: "Enter your unit/floor #",
-              type: "text",
-            }}
-
-          />
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <FormField
-          field={{
+      <GlobalForm
+        formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 gap-4"
+        fields={[
+          {
+            name: "address.address1",
+            label: "Registered Business Address*",
+            placeholder: "Enter your business address",
+            type: "text",
+          },
+          {
+            name: "address.unit",
+            label: "Unit/Floor # *",
+            placeholder: "Enter your unit/floor #",
+            type: "text",
+          },
+          {
             name: "address.address2",
             label: "Address 2 (optional)",
             placeholder: "Enter your address 2",
             type: "text",
-          }}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-
-          <FormField
-            field={{
-              name: "address.postalCode",
-              label: "Postal/ZIP Code*",
-              placeholder: "Enter your postal/ZIP code",
-              type: "text",
-            }}
-
-          />
-        </div>
-        <div className="space-y-2">
-
-          <FormField
-            field={{
-              name: "address.city",
-              label: "City*",
-              placeholder: "Enter your city",
-              type: "text",
-            }}
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Controller
-            control={control}
-            name="address.state"
-            render={({ field }) => (
-              <div className="space-y-2">
-                <Label>Province/State*</Label>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <SelectTrigger className="w-full cursor-pointer">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ontario" className="cursor-pointer">Ontario</SelectItem>
-                    <SelectItem value="british-columbia" className="cursor-pointer">British Columbia</SelectItem>
-                    <SelectItem value="new-york" className="cursor-pointer">New York</SelectItem>
-                    <SelectItem value="california" className="cursor-pointer">California</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.address?.state && (
-                  <p className="text-xs text-red-500">
-                    {errors.address.state.message}
-                  </p>
-                )}
-              </div>
-            )}
-          />
-        </div>
-        <div className="space-y-2">
-          <Controller
-            control={control}
-            name="address.country"
-            render={({ field }) => (
-              <div className="space-y-2">
-                <Label>Country*</Label>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <SelectTrigger className="w-full cursor-pointer">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent position="popper">
-                    <SelectItem value="canada" className="cursor-pointer">Canada</SelectItem>
-                    <SelectItem value="united-states" className="cursor-pointer">United States</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.address?.country && (
-                  <p className="text-xs text-red-500">
-                    {errors.address.country.message}
-                  </p>
-                )}
-              </div>
-            )}
-          />
-        </div>
-      </div>
+          },
+          {
+            name: "address.postalCode",
+            label: "Postal/ZIP Code*",
+            placeholder: "Enter your postal/ZIP code",
+            type: "text",
+          },
+          {
+            name: "address.city",
+            label: "City*",
+            placeholder: "Enter your city",
+            type: "text",
+          },
+          {
+            name: "address.state",
+            label: "Province/State*",
+            placeholder: "Enter your province/state",
+            type: "select",
+            options: [
+              { value: "ontario", label: "Ontario" },
+              { value: "british-columbia", label: "British Columbia" },
+              { value: "new-york", label: "New York" },
+              { value: "california", label: "California" },
+            ],
+          },
+          {
+            name: "address.country",
+            label: "Country*",
+            placeholder: "Enter your country",
+            type: "select",
+            options: [
+              { value: "canada", label: "Canada" },
+              { value: "united-states", label: "United States" },
+            ],
+          },
+        ]}
+      />
 
       <div className="flex justify-between items-center pt-18">
         <Button

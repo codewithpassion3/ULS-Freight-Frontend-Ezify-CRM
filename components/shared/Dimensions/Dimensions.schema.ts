@@ -1,22 +1,5 @@
 import * as z from "zod"
 
-// ─── Unit schemas ──────────────────────────────────────────────────────────────
-
-// export const palletUnitSchema = z.object({
-//   quantity: z.number("Required").min(1),
-//   length: z.number("Required").min(1, "Must be > 0"),
-//   width: z.number("Required").min(1, "Must be > 0"),
-//   height: z.number("Required").min(1, "Must be > 0"),
-//   weight: z.number("Required").min(1, "Must be > 0"),
-//   freightClass: z.string().optional(),
-//   nmfc: z.string().optional(),
-//   palletUnitType: z.string().min(1, "Pallet type is required"),
-//   unitsOnPallet: z.number().optional(),
-//   stackable: z.boolean().optional(),
-//   description: z.string(),
-//   specialHandlingRequired: z.boolean().optional(),
-// })
-
 export const packageUnitSchema = z.object({
   length: z.number("Required").min(1, "Must be > 0"),
   width: z.number("Required").min(1, "Must be > 0"),
@@ -54,10 +37,10 @@ export const palletLineItemSchema = z.object({
         width: z.coerce.number(" ").min(1),
         height: z.coerce.number(" ").min(1),
         weight: z.coerce.number(" ").min(1),
-        freightClass: z.string(" "),
+        freightClass: z.string(" ").optional(),
         nmfc: z.string().optional(),
-        palletUnitType: z.string(" "),
-        unitsOnPallet: z.coerce.number(" "),
+        palletUnitType: z.string(" ").optional(),
+        unitsOnPallet: z.coerce.number(" ").optional(),
         stackable: z.boolean().optional(),
         description: z.string().optional(),
       })

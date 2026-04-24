@@ -17,8 +17,8 @@ export default function UserLayout({
   const exceptionalRoutes = ["/otp-verification", "/reset-password"];
   const pathname = usePathname();
   const isExceptionalRoute = exceptionalRoutes.includes(pathname);
-  const { isLoading, isPending } = useAuth();
-  if (isLoading || isPending) {
+  const { user, isLoading, isPending } = useAuth();
+  if (isLoading || isPending || user === undefined) {
     return <Loader />
   }
   return (

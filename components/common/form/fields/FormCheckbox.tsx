@@ -13,6 +13,8 @@ const FormCheckbox = memo(({ field: config }: { field: FormCheckboxTypes }) => {
 
     return (
         <div className={`flex items-center gap-2 ${config.wrapperClassName || ""}`}>
+            {/* icon position left */}
+            {config.iconPosition === "left" && config.icon}
             <Checkbox
                 id={field.name}
                 checked={field.value || false}
@@ -24,7 +26,7 @@ const FormCheckbox = memo(({ field: config }: { field: FormCheckboxTypes }) => {
                     {config.label}
                 </Label>
             )}
-            {config.icon}
+            {config.iconPosition === "right" && config.icon}
         </div>
     )
 })

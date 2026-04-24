@@ -60,10 +60,10 @@ PhoneInput.displayName = "PhoneInput";
 
 const InputComponent = React.forwardRef<
     HTMLInputElement,
-    React.ComponentProps<"input">
->(({ className, ...props }, ref) => (
+    React.ComponentProps<"input"> & { inputClassName?: string }
+>(({ className, inputClassName, ...props }, ref) => (
     <Input
-        className={cn("rounded-e-lg rounded-s-none", className)}
+        className={cn("rounded-e-lg rounded-s-none", className, inputClassName)}
         {...props}
         ref={ref}
     />
@@ -77,6 +77,7 @@ type CountrySelectProps = {
     value: RPNInput.Country;
     options: CountryEntry[];
     onChange: (country: RPNInput.Country) => void;
+    flagClassName?: string;
 };
 
 const CountrySelect = ({
@@ -84,11 +85,11 @@ const CountrySelect = ({
     value: selectedCountry,
     options: countryList,
     onChange,
+    flagClassName,
 }: CountrySelectProps) => {
     const scrollAreaRef = React.useRef<HTMLDivElement>(null);
     const [searchValue, setSearchValue] = React.useState("");
     const [isOpen, setIsOpen] = React.useState(false);
-
     return (
         <Popover
             open={isOpen}
@@ -102,7 +103,7 @@ const CountrySelect = ({
                 <Button
                     type="button"
                     variant="outline"
-                    className="flex gap-1 rounded-e-none rounded-s-lg border-r-0 px-3 focus:z-10"
+                    className={cn("flex gap-1 rounded-e-none rounded-s-lg border-r-0 px-3 focus:z-10", flagClassName)}
                     disabled={disabled}
                 >
                     <FlagComponent

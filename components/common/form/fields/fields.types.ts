@@ -39,6 +39,7 @@ export type FormCheckboxTypes = {
     icon?: React.ReactNode
     defaultValue?: boolean
     wrapperClassName?: string
+    iconPosition?: "left" | "right"
 }
 // Radio
 type RadioOption = {

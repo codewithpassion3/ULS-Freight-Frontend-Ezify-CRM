@@ -64,7 +64,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
             <div className="flex items-start gap-2">
                 <span className="mt-8 mr-2">{index + 1}</span>
                 <GlobalForm
-                    formWrapperClassName="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 xl:grid-cols-8 gap-4 items-start"
+                    formWrapperClassName="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4"
                     fields={[
                         {
                             name: `lineItem.units.${index}.length`,
@@ -72,7 +72,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                             type: "number",
                             placeholder: "L",
                             min: 0,
-                            labelClassName: "text-xs text-muted-foreground",
+                            labelClassName: rowErrors?.length ? "text-xs text-muted-foreground text-red-400" : "text-xs text-muted-foreground",
                             show: !(isShipment && shipmentType === "COURIER_PAK")
                         },
                         {
@@ -81,7 +81,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                             type: "number",
                             placeholder: "W",
                             min: 0,
-                            labelClassName: "text-xs text-muted-foreground",
+                            labelClassName: rowErrors?.length ? "text-xs text-muted-foreground text-red-400" : "text-xs text-muted-foreground",
                             className: rowErrors?.width ? "border-red-500" : "",
                             show: !(isShipment && shipmentType === "COURIER_PAK")
                         },
@@ -91,7 +91,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                             type: "number",
                             placeholder: "H",
                             min: 0,
-                            labelClassName: "text-xs text-muted-foreground",
+                            labelClassName: rowErrors?.length ? "text-xs text-muted-foreground text-red-400" : "text-xs text-muted-foreground",
                             className: rowErrors?.height ? "border-red-500" : "",
                             show: !(isShipment && shipmentType === "COURIER_PAK")
                         },
@@ -101,11 +101,11 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                             type: "number",
                             placeholder: "W",
                             min: 0,
-                            labelClassName: "text-xs text-muted-foreground",
+                            labelClassName: rowErrors?.length ? "text-xs text-muted-foreground text-red-400" : "text-xs text-muted-foreground",
                             className: rowErrors?.weight ? "border-red-500" : "",
                         },
                         {
-                            label: "Freight Class*",
+                            label: "Freight Class",
                             type: "select",
                             name: `lineItem.units.${index}.freightClass`,
                             options: FREIGHT_CLASS_OPTIONS,
@@ -123,7 +123,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                         },
                         {
                             name: `lineItem.units.${index}.palletUnitType`,
-                            label: "Type*",
+                            label: "Type",
                             type: "select",
                             options: [
                                 { value: "PALLET", label: "Pallet" },
@@ -146,7 +146,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                         },
                         {
                             name: `lineItem.units.${index}.unitsOnPallet`,
-                            label: "Units on Pallet*",
+                            label: "Units on Pallet",
                             type: "number",
                             placeholder: "Units on Pallet",
                             min: 0,
@@ -156,11 +156,11 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                         },
                         {
                             name: `lineItem.units.${index}.description`,
-                            label: "Description*",
+                            label: "Description",
                             type: "text",
                             placeholder: "Description",
                             labelClassName: "text-xs text-muted-foreground",
-                            wrapperClassName: "col-span-4"
+                            wrapperClassName: "col-span-1 sm:col-span-2 md:col-span-4"
                         },
                         // specialHandlingRequired
                         {
@@ -174,32 +174,33 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                         }
 
                     ]}
+                    extra={
+                        <div className="flex items-center gap-4 text-sm mt-6">
+                            <PackageSelectionModal selectedPackage={shipmentType} />
+                            <AddPackage shipmentType={shipmentType} open={open} setOpen={setOpen} initialData={rowSnapshot}>
+                                <Button variant="link" type="button"><Save /> Save Package</Button>
+                            </AddPackage>
+                            {canRemove ? (
+                                <Button variant="destructive" type="button" onClick={() => onRemove(index)}
+                                >
+                                    <Trash2 size={18} />
+                                    Delete
+                                </Button>
+                            ) : (
+                                <Button type="button" variant="destructive" onClick={() => onClear(index)}>
+                                    <X /> Clear
+                                </Button>
+                            )}
+                        </div>
+                    }
                 />
 
             </div>
-
-            {/* Row actions */}
-            <div className="flex items-center gap-4 text-sm mt-2 sm:mt-0">
-                <PackageSelectionModal selectedPackage={shipmentType} />
-                <AddPackage shipmentType={shipmentType} open={open} setOpen={setOpen} initialData={rowSnapshot}>
-                    <Button variant="link" type="button"><Save /> Save Package</Button>
-                </AddPackage>
-                {canRemove ? (
-                    <Button variant="destructive" type="button" onClick={() => onRemove(index)}
-                    >
-                        <Trash2 size={18} />
-                        Delete
-                    </Button>
-                ) : (
-                    <Button type="button" variant="destructive" onClick={() => onClear(index)}>
-                        <X /> Clear
-                    </Button>
-                )}
-            </div>
-
             {rowErrors && Object.keys(rowErrors).length > 0 && (
-                <p className="text-xs text-red-500">Please fill required dimensions</p>
+                <p className="text-xs text-red-500 ml-5">Please fill required dimensions</p>
             )}
+
+
         </div>
     )
 }
