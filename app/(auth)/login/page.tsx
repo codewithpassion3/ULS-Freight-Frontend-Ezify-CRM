@@ -29,6 +29,7 @@ export default function LoginPage() {
         await queryClient.fetchQuery({ queryKey: ["user"], queryFn: getUser })
       } catch { }
       setTimeout(() => router.replace("/"), 300)
+
     },
     onError: (error: AxiosError<ApiError>) => {
       toast.error(error?.response?.data?.message || "Unexpected error occurred")
