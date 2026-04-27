@@ -16,7 +16,7 @@ const FormPhone = memo(({ field: config }: { field: FormRadioTypes }) => {
                 defaultCountry="CA"
                 disabled={config.disabled}
                 // @ts-ignore
-                flagClassName={error ? "border-red-500 placeholder:text-red-500 bg-red-50" : ""}
+                // flagClassName={error ? "border-red-500 placeholder:text-red-500 bg-red-50" : ""}
                 inputClassName={error ? "border-red-500 placeholder:text-red-500 bg-red-50" : ""}
 
 

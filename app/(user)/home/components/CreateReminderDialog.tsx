@@ -40,6 +40,7 @@ export function CreateReminderDialog({ children }: Props) {
         defaultValues: {
             recipients: [],
             hourName: "11",
+            date: new Date(),
             minuteName: "00",
             ampmName: "PM",
             title: "",
@@ -161,6 +162,8 @@ export function CreateReminderDialog({ children }: Props) {
                                         label: "Reminder Date",
                                         placeholder: "Enter reminder date",
                                         futureDatesOnly: true,
+
+
                                     },
                                     {
                                         name: "time",

@@ -28,6 +28,7 @@ const FormDate = memo(({ field: config }: { field: any }) => {
 
     const handleSelect = (date: Date | undefined) => {
         field.onChange(date); // ✅ RHF-safe value
+        field.onBlur(); // ✅ Trigger validation
         setOpen(false);
     };
 
@@ -60,14 +61,12 @@ const FormDate = memo(({ field: config }: { field: any }) => {
                     <Calendar
                         // mode={config.mode || "single"}
                         mode="single"
+                        required
                         selected={field.value ? new Date(field.value) : new Date()}
                         onSelect={(date: any) => {
                             console.log("date", date);
                             handleSelect(date)
-                            field.value = date
                         }}
-                        // default value should be today
-
 
                         disabled={(date) => {
                             if (!config.futureDatesOnly) return false;

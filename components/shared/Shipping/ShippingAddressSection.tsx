@@ -408,7 +408,29 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       placeholder: "Location Type",
       icon: <InfoIcon size={16} />,
       disabled: addressLocked,
-      show: false,
+      show: shipmentType === "PACKAGE" || shipmentType === "COURIER_PAK",
+      wrapperClassName: "col-span-2",
+    },
+    // include straps for FTL
+    {
+      name: "includeStraps",
+      label: "Include Straps",
+      type: "checkbox",
+      placeholder: "Include Straps",
+      icon: <InfoIcon size={16} />,
+      disabled: addressLocked,
+      show: shipmentType === "STANDARD_FTL" && type === "FROM",
+      wrapperClassName: "col-span-2",
+    },
+    // apointment delivery for ftl for type TO
+    {
+      name: "appointmentDelivery",
+      label: "Appointment Delivery",
+      type: "checkbox",
+      placeholder: "Appointment Delivery",
+      icon: <InfoIcon size={16} />,
+      disabled: addressLocked,
+      show: shipmentType === "STANDARD_FTL" && type === "TO",
       wrapperClassName: "col-span-2",
     },
     // contact information
@@ -502,6 +524,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       // disabled: addressLocked,
     },
 
+
   ];
   const [billingRefs, setBillingRefs] = useState<string[]>([""])
   const addBillingRef = () => {
@@ -548,6 +571,11 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
           <GlobalForm
             formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 gap-6"
             fields={formFields}
+            extra={
+              shipmentType === "STANDARD_FTL" && (
+                <p className="col-span-2 text-muted-foreground text-sm">FTL Location Type: Business - Tailgate Not Required</p>
+              )
+            }
           />
           {
             isShipment && type === "TO" && (
