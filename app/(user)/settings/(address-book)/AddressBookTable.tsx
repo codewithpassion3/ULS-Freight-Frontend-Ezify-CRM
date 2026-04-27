@@ -90,13 +90,17 @@ export function AddressBookTable({ handleSelect, type }: { handleSelect?: (conta
                             </div>
 
 
-                            {recentContacts?.data.length > 0 ? <DataTable
+                            <DataTable
                                 columns={updatedColumns}
-                                data={type === "recent" ? recentContacts?.data.length > 0 ? recentContacts.data : [] : addressBook.data ?? []}
+                                data={
+                                    type === "recent"
+                                        ? recentContacts?.data ?? []
+                                        : addressBook?.data ?? []
+                                }
                                 sorting={sorting}
                                 // @ts-ignore
                                 setSorting={setSorting}
-                            /> : ""}
+                            />
 
 
                             <DataTablePagination

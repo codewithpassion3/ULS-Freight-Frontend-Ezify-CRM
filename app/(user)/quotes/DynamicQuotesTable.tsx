@@ -13,15 +13,18 @@ import EmptyUI from "@/components/common/empty/Empty"
 import Link from "next/link"
 import { QuoteCategory } from "./page"
 interface Props {
-    search: string
-    selectedPackaging: string[]
+    filters: {
+        dateRange: any
+        search: string
+        selectedPackaging: string[]
+    }
     setCount: (count: { all: number; saved: number; spot: number }) => void
     quoteCategory: QuoteCategory
 }
-export default function DynamicQuotesTable({ search, selectedPackaging, setCount, quoteCategory }: Props) {
+export default function DynamicQuotesTable({ filters, setCount, quoteCategory }: Props) {
     const [sorting, setSorting] = useState<SortingState>([])
     const [page, setPage] = useState(1)
-    const debouncedSearch = useDebounce(search, 500)
+    const debouncedSearch = useDebounce(filters.search, 500)
 
     const { data: quotes, isLoading, isPending, isError, isSuccess } = useQuery({
         queryKey: ["quotes", quoteCategory, debouncedSearch],
@@ -41,7 +44,7 @@ export default function DynamicQuotesTable({ search, selectedPackaging, setCount
         // dependency
         enabled: true
     })
-    console.log({ quoteCategory, search, selectedPackaging })
+    console.log({ quoteCategory, dateRange: filters.dateRange, search: filters.search, selectedPackaging: filters.selectedPackaging })
     console.log("quotes", quotes)
     useEffect(() => {
         if (quotes) {
@@ -67,6 +70,7 @@ export default function DynamicQuotesTable({ search, selectedPackaging, setCount
     return (
         quotes?.data?.length > 0 ?
             <>
+
                 <p className="text-xs text-muted-foreground mb-4">
                     These quotes are based on the information provided and are valid <span className="font-semibold">5 business days</span> from the issue date.<br />
                     Rates are subject to change without prior notice based on carrier availability, weekly fuel surcharges, and currency exchange where applicable.

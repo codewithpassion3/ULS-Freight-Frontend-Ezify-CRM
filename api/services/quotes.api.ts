@@ -17,6 +17,16 @@ export const deleteQuote = async (id: string) => {
     const response = await apiClient.delete(`/quotes/${id}`);
     return response.data;
 };
+// add to favorite
+export const addToFavorite = async (id: string) => {
+    const response = await apiClient.post(`/quotes/${id}/favorite`);
+    return response.data;
+};
+// remove from favorite
+export const removeFromFavorite = async (id: string) => {
+    const response = await apiClient.delete(`/quotes/${id}/favorite`);
+    return response.data;
+};
 // get all quotes
 
 

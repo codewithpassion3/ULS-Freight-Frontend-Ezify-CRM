@@ -9,10 +9,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { CheckCircle, CircleCheck, Edit, MoreVertical, Trash2 } from "lucide-react"
+import { CheckCircle, CircleCheck, Edit, Heart, MoreVertical, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query"
-import { deleteQuote } from "@/api/services/quotes.api"
+import { addToFavorite, deleteQuote, removeFromFavorite } from "@/api/services/quotes.api"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
@@ -148,19 +148,60 @@ export const columns: ColumnDef<any>[] = [
           toast.error(error.response?.data.message)
         }
       })
-
+      const mutationAddToFavorite = useMutation({
+        mutationFn: (id: string) => addToFavorite(id),
+        onSuccess: () => {
+          toast.success("Contact added to favorite successfully")
+          queryClient.invalidateQueries({ queryKey: ["quotes"] })
+        },
+        onError: (error: AxiosError<ApiError>) => {
+          toast.error(error.response?.data.message)
+        }
+      })
+      const mutationRemoveFromFavorite = useMutation({
+        mutationFn: (id: string) => removeFromFavorite(id),
+        onSuccess: () => {
+          toast.success("Contact removed from favorite successfully")
+          queryClient.invalidateQueries({ queryKey: ["quotes"] })
+        },
+        onError: (error: AxiosError<ApiError>) => {
+          toast.error(error.response?.data.message)
+        }
+      })
       const handleDeleteQuote = (id: string) => {
         mutation.mutate(id)
       }
+      const handleAddToFavorite = (id: string) => {
+        mutationAddToFavorite.mutate(id)
+      }
+      const handleRemoveFromFavorite = (id: string) => {
+        mutationRemoveFromFavorite.mutate(id)
+      }
+      const isFavorite = true
       return (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 w-max">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <MoreVertical size={16} className="cursor-pointer" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="w-max">
               <DropdownMenuItem className="cursor-pointer">
                 <CircleCheck size={14} /> Book Now
+              </DropdownMenuItem>
+              {/* {isFavorite ? <DropdownMenuItem className="cursor-pointer w-max" onClick={() => {
+                handleRemoveFromFavorite(row.original.id)
+              }}>
+                <Heart fill="black" size={14} /> Remove from Favorites
+              </DropdownMenuItem> : 
+              <DropdownMenuItem className="cursor-pointer w-max" onClick={() => {
+                handleAddToFavorite(row.original.id)
+              }}>
+                <Heart size={14} /> Add to Favorites
+              </DropdownMenuItem>} */}
+              <DropdownMenuItem className="cursor-pointer w-max" onClick={() => {
+                handleAddToFavorite(row.original.id)
+              }}>
+                <Heart size={14} /> Add to Favorites
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer">
                 <Link className="flex gap-2 items-center w-full" href={row.original.shipment ? `/shipment?id=${row.original.id}` : `/quote?id=${row.original.id}`}>

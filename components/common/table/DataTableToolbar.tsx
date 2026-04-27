@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { DataTableToolbarProps } from "./data-table.types"
 import { Search } from "lucide-react"
 import SearchInput from "../SearchInput"
+import { DatePicker } from "../date-picker/DatePicker"
 
 export function DataTableToolbar<TData, TValue>({
     search,
@@ -14,6 +15,7 @@ export function DataTableToolbar<TData, TValue>({
     return (
         <div className="w-full flex items-center justify-between">
             <SearchInput search={search} setSearch={setSearch} placeholder={placeholder} />
+
             {selectedRows.length > 0 && (
                 <Button
                     variant="destructive"

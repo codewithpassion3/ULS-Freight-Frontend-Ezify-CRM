@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { NotebookText, BookUser, RotateCw } from "lucide-react"
-import { getAllAddressBookContacts } from "@/api/services/address-book.api"
+import { getAllAddressBookContacts, getRecentContacts } from "@/api/services/address-book.api"
 import { useDebounce } from "../../../hooks/useDebounce.hook"
 import { AddressBookTable } from "../../../app/(user)/settings/(address-book)/AddressBookTable"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -26,6 +26,11 @@ export function SelectAddressBookModal({ onSelect, triggerButton }: SelectAddres
     queryFn: () => getAllAddressBookContacts({ search: debouncedSearch }),
   })
 
+  const { data: recentContacts, isLoading: isLoadingRecent, isPending: isPendingRecent } = useQuery({
+    queryKey: ["recent-contacts", debouncedSearch],
+    queryFn: () => getRecentContacts({ search: debouncedSearch }),
+  })
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSelect = (contact: any) => {
     onSelect(contact)
@@ -33,7 +38,8 @@ export function SelectAddressBookModal({ onSelect, triggerButton }: SelectAddres
   }
 
   const contacts = addressBook?.data ?? []
-  const loading = isLoading || isPending
+  const recentContactsData = recentContacts?.data ?? []
+
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -59,7 +65,7 @@ export function SelectAddressBookModal({ onSelect, triggerButton }: SelectAddres
             </TabsTrigger>
             <TabsTrigger className="cursor-pointer" value="recent">
               <RotateCw />
-              Recent
+              Recent ( {recentContactsData.length} )
             </TabsTrigger>
           </TabsList>
           <TabsContent value="address-book">

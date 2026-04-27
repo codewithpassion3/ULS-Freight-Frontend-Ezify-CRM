@@ -14,8 +14,8 @@ import {
 import { cn } from "@/lib/utils"
 
 type DateRangePickerProps = {
-    value: { from: Date; to?: Date }
-    onChange: (range: { from?: Date; to?: Date }) => void
+    value: any
+    onChange: (range: any) => void
 }
 
 export function DateRangePicker({ value, onChange }: DateRangePickerProps) {

@@ -50,6 +50,7 @@ export default function NotificationsWidget() {
         queryFn: getNotifications,
     });
     const notifications = notificationsListing?.notifications ?? [];
+    const [allNotifications, setAllNotifications] = useState(notifications);
 
 
 
@@ -173,13 +174,23 @@ export default function NotificationsWidget() {
             toast.error(error.response?.data.message)
         }
     })
-    const allNotifications = [
-        ...notifications,
-        ...(notificationsListing?.notifications || [])
-    ].filter(
-        (n, i, arr) =>
-            arr.findIndex(x => x.userNotificationId === n.userNotificationId) === i
-    );
+
+
+    // const allNotifications = [
+    //     ...notifications,
+    //     ...(notificationsListing?.notifications || [])
+    // ].filter(
+    //     (n, i, arr) =>
+    //         arr.findIndex(x => x.userNotificationId === n.userNotificationId) === i
+    // );
+
+    useEffect(() => {
+        const top10Notifications = notificationsListing?.notifications.slice(0, 10);
+        setAllNotifications([...notifications, ...(top10Notifications || [])].filter(
+            (n, i, arr) =>
+                arr.findIndex(x => x.userNotificationId === n.userNotificationId) === i
+        ))
+    }, [notifications])
 
 
     const renderNotification = (notif: Notification) => {
@@ -339,7 +350,7 @@ export default function NotificationsWidget() {
                             </div>
 
                             {/* Footer inside the floating area */}
-                            {notifications.length > 0 && (
+                            {/* {notifications.length > 0 && (
                                 <div className="p-4 bg-slate-50 dark:bg-card border-t border-slate-100 dark:border-slate-800 flex justify-end">
                                     <Button
                                         onClick={clearNotifications}
@@ -348,7 +359,7 @@ export default function NotificationsWidget() {
                                         Clear All
                                     </Button>
                                 </div>
-                            )}
+                            )} */}
                         </div>}
                 </Tabs>
             </DropdownMenuContent>

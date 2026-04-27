@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { CustomDateRangePicker } from "@/components/ui/custom-date-picker"
 import { MultiSelect } from "@/components/ui/multi-select"
-import { Search, CheckCircle, Edit, MoreVertical, Trash2, Heart, SaveIcon, Truck } from "lucide-react"
+import { Search, CheckCircle, Edit, MoreVertical, Trash2, Heart, SaveIcon, Truck, X, EyeOff, Eye } from "lucide-react"
 
 import { DataTable } from "@/components/common/table/DataTable"
 import { DataTablePagination } from "@/components/common/table/DataTablePagination"
@@ -43,20 +43,6 @@ export default function QuotesDashboardPage() {
     spot: 0
   })
 
-  // const [quoteCategory, setQuoteCategory] = useState<"all quotes" | "saved" | "spot" | "favorite quotes">("all quotes")
-
-
-
-
-  const parseCreatedDate = (dateCreated: string) => {
-    const dateText = dateCreated.split("\n").slice(-1)[0]?.trim()
-    if (!dateText) return null
-    const parsed = new Date(dateText)
-    if (Number.isNaN(parsed.getTime())) return null
-    return parsed
-  }
-
-
   return (
     <div className="container mx-auto pb-8 pt-20 px-4 max-w-7xl">
       <div className="mb-6">
@@ -70,34 +56,34 @@ export default function QuotesDashboardPage() {
         </p> */}
       </div>
 
-      {/* {showFilters ? (
+      {showFilters ? (
         <div className="bg-muted/30 border border-border p-4 rounded-md mb-6 relative">
           <div className="flex justify-between items-start mb-2">
             <h2 className="text-lg font-semibold text-primary">Search Quotes</h2>
-            <div className="flex gap-4 text-sm text-primary">
-              <button
-                type="button"
-                className="flex items-center gap-1 hover:underline"
-              >
-                <span className="text-xl leading-none -mt-1">&times;</span> Clear Filters
-              </button>
-              <button type="button" className="hover:underline" onClick={() => setShowFilters(false)}>
-                Hide
-              </button>
+            <div className="flex gap-2">
+              <Button variant="destructive" onClick={() => {
+                setDateRange(undefined)
+                setSearch("")
+                setSelectedPackaging([])
+              }}><X /> Clear Filters</Button>
+              <Button variant="outline" onClick={() => setShowFilters(false)}><EyeOff /> Hide</Button>
             </div>
           </div>
 
           <div className="flex flex-wrap gap-6 items-end mt-4">
             <div className="space-y-1">
               <label className="text-sm text-muted-foreground block">Search by Date Range:</label>
+              <DateRangePicker
+                value={dateRange}
+                onChange={setDateRange}
+              />
             </div>
-
             <div className="space-y-1">
               <label className="text-sm text-muted-foreground block">Search:</label>
               <div className="flex w-[240px]">
                 <Input
                   placeholder="Search"
-                  className="rounded-r-none"
+                  className="rounded-r-none bg-white"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -120,10 +106,11 @@ export default function QuotesDashboardPage() {
       ) : (
         <div className="mb-6 flex justify-end">
           <Button type="button" variant="outline" onClick={() => setShowFilters(true)}>
+            <Eye />
             Show Filters
           </Button>
         </div>
-      )} */}
+      )}
 
       {/* Tabs */}
       <Tabs defaultValue="all">
@@ -145,16 +132,16 @@ export default function QuotesDashboardPage() {
           ))}
         </TabsList>
         <TabsContent value="all">
-          <DynamicQuotesTable search={search} selectedPackaging={selectedPackaging} setCount={setCount} quoteCategory="all" />
+          <DynamicQuotesTable filters={{ dateRange, search, selectedPackaging }} setCount={setCount} quoteCategory="all" />
         </TabsContent>
         <TabsContent value="saved">
-          <DynamicQuotesTable search={search} selectedPackaging={selectedPackaging} setCount={setCount} quoteCategory="saved" />
+          <DynamicQuotesTable filters={{ dateRange, search, selectedPackaging }} setCount={setCount} quoteCategory="saved" />
         </TabsContent>
         <TabsContent value="spot">
-          <DynamicQuotesTable search={search} selectedPackaging={selectedPackaging} setCount={setCount} quoteCategory="spot" />
+          <DynamicQuotesTable filters={{ dateRange, search, selectedPackaging }} setCount={setCount} quoteCategory="spot" />
         </TabsContent>
         <TabsContent value="favorite">
-          <DynamicQuotesTable search={search} selectedPackaging={selectedPackaging} setCount={setCount} quoteCategory="favorite" />
+          <DynamicQuotesTable filters={{ dateRange, search, selectedPackaging }} setCount={setCount} quoteCategory="favorite" />
         </TabsContent>
       </Tabs>
     </div >
