@@ -17,6 +17,7 @@ import { ApiError } from "next/dist/server/api-utils";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ShipmentOptions } from "../../../components/shared/DynamicQuote/DynamicQuote";
+import { calculateClass } from "@/components/shared/Dimensions/DensityCalculatorModal";
 
 const baseSchema = z.object({
     measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
@@ -138,6 +139,7 @@ export default function AddPackage({ id, shipmentType, initialData, onSave, chil
     };
     console.log("shipmentType", shipmentType)
     const ShipmentValueType = methods.watch("shipmentType") || shipmentType;
+
     const fields: any = useMemo(() => [
         {
             name: "shipmentType",
@@ -302,6 +304,16 @@ export default function AddPackage({ id, shipmentType, initialData, onSave, chil
 
 
     ], [ShipmentValueType, weightUnit, lengthUnit, isNew])
+    const watchLength = methods.watch("length")
+    const watchWidth = methods.watch("width")
+    const watchHeight = methods.watch("height")
+    const watchWeight = methods.watch("weight")
+    useEffect(() => {
+        if (watchLength && watchWidth && watchHeight && watchWeight) {
+            const res = calculateClass(watchLength, watchWidth, watchHeight, watchWeight, measurementUnit)
+            methods.setValue(`freightClass`, res?.classEstim as string)
+        }
+    }, [watchLength, watchWidth, watchHeight, watchWeight])
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             {!isEdit && <DialogTrigger asChild>

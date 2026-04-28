@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation"
 import PackageSelectionModal from "@/app/(user)/packages/PackageSelectionModal"
 import { useEffect } from "react"
 import { calculateClass } from "./DensityCalculatorModal"
+import { PAGE_TYPES } from "next/dist/lib/page-types"
 
 type Props = {
     index: number
@@ -46,6 +47,26 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
         unitsOnPallet: watch(`lineItem.units.${index}.unitsOnPallet`) as number | undefined,
         palletUnitType: watch(`lineItem.units.${index}.palletUnitType`),
         description: watch(`lineItem.units.${index}.description`),
+    }
+    const handlePackageSelect = (index: number, lineItem: any) => {
+
+        // setAddressLocked(true)
+        // methods.setValue("addressBookId", Number(contact.id));
+        // methods.setValue("type", type);
+
+        setValue(`lineItem.units.${index}`, {
+            length: lineItem.length,
+            width: lineItem.width,
+            height: lineItem.height,
+            weight: lineItem.weight,
+            freightClass: lineItem.freightClass,
+            nmfc: lineItem.nmfc,
+            shipmentType: lineItem.shipmentType,
+            unitsOnPallet: lineItem.unitsOnPallet,
+            palletUnitType: lineItem.palletUnitType,
+            description: lineItem.description,
+        });
+        // print location type
     }
     // if l,w,h,wg have values call calculate class function and set freight class
     useEffect(() => {
@@ -176,7 +197,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                     ]}
                     extra={
                         <div className="flex items-center gap-4 text-sm mt-6">
-                            <PackageSelectionModal selectedPackage={shipmentType} />
+                            <PackageSelectionModal selectedPackage={shipmentType} onSelect={(lineItem: any) => handlePackageSelect(index, lineItem)} />
                             <AddPackage shipmentType={shipmentType} open={open} setOpen={setOpen} initialData={rowSnapshot}>
                                 <Button variant="link" type="button"><Save /> Save Package</Button>
                             </AddPackage>

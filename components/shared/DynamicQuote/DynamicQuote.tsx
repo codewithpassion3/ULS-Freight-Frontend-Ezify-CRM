@@ -183,17 +183,18 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         // We validate core sections First. Then conditionally attached ones depending on if they are rendered
 
         let valid = fromValid && toValid && dimValid;
+        console.log("valid", valid)
         // print every validation
-
+        if (!valid) {
+            toast.error("Please fill in all required fields correctly.")
+            return
+        }
 
         if (servicesRef.current) valid = valid && await servicesRef.current.trigger()
         if (insuranceRef.current) valid = valid && await insuranceRef.current.trigger()
         if (signatureRef.current) valid = valid && await signatureRef.current.trigger()
 
-        if (!valid) {
-            toast.error("Please fill in all required fields correctly.")
-            return
-        }
+
 
         const mergedData = getMergedPayload()
         console.log("mergedData", mergedData)

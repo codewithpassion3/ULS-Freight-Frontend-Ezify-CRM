@@ -10,7 +10,7 @@ import { useDebounce } from "@/hooks/useDebounce.hook"
 import { getAllAddressBookContacts, getRecentContacts } from "@/api/services/address-book.api"
 import { Loader } from "@/components/common/Loader"
 import EmptyUI from "@/components/common/empty/Empty"
-import { BookUser, Plus, UserSquare2 } from "lucide-react"
+import { BookUser, Loader2, Plus, UserSquare2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { columns } from "./ColumnsTableShippingRate"
 import { useMutation } from "@tanstack/react-query"
@@ -19,14 +19,13 @@ import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { getShipmentRates } from "@/api/services/shipment.api"
 import { ApiError } from "next/dist/server/api-utils"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 // import { ApiError } from "@/types/api.types"
 
 export function ShippingRatesTable({ handleSelect, type }: { handleSelect?: (contact: any) => void, type?: "all" | "recent" }) {
     const [search, setSearch] = useState("")
     const [page, setPage] = useState(1)
     const [sorting, setSorting] = useState([])
-    // print type
-    console.log(type)
     const debouncedSearch = useDebounce(search, 500)
     const payload =
     {
@@ -74,7 +73,7 @@ export function ShippingRatesTable({ handleSelect, type }: { handleSelect?: (con
     const mutation = useMutation({
         mutationFn: (payload: any) => getShipmentRates(payload),
         onSuccess: (data) => {
-            toast.success("Shipment rates fetched successfully")
+            // toast.success("Shipment rates fetched successfully")
             console.log(data)
         },
         onError: (error: AxiosError<ApiError>) => {
@@ -123,7 +122,20 @@ export function ShippingRatesTable({ handleSelect, type }: { handleSelect?: (con
         streamRates(payload)
     }, [])
 
-
+    if (mutation.isPending) {
+        return (
+            <Dialog open={true}>
+                <DialogTitle>Fetching Best Rates!</DialogTitle>
+                <DialogContent className="sm:max-w-md flex flex-col items-center justify-center p-8 [&>button]:hidden">
+                    <Loader2 className="h-12 w-12 animate-spin text-primary mb-6" />
+                    <h2 className="text-xl font-semibold text-center mb-2">Fetching Best Rates!</h2>
+                    <p className="text-muted-foreground text-center">
+                        Please hold on while we collect quotes from our partner carriers...
+                    </p>
+                </DialogContent>
+            </Dialog>
+        )
+    }
 
     return (
         <div className="flex justify-center items-center">
@@ -149,12 +161,7 @@ export function ShippingRatesTable({ handleSelect, type }: { handleSelect?: (con
                                     onBulkDelete={(rows) => console.log(rows)}
                                     placeholder="Search Company Name"
                                 />
-
-
-
                             </div>
-
-
                             {mutation.data.length > 0 ? <DataTable
                                 columns={columns}
                                 data={mutation.data}

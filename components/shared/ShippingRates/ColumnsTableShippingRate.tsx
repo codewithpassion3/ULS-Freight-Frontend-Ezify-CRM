@@ -85,11 +85,11 @@ export const columns: ColumnDef<any>[] = [
     header: "Shipping Rate",
     cell: ({ row }) => {
 
-      const baseCharge = row.original?.quote?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.totalBaseCharge
-      const totalNetCharge = row.original?.quote?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.totalNetCharge
-      const baseChargeCurrency = row.original?.quote?.output?.rateReplyDetails[0]?.current
-      const fuelCharges = row.original?.quote?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.shipmentRateDetail.surCharges[0]?.amount
-      const additionalCharges = row.original?.quote?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.shipmentRateDetail.surCharges[1]?.amount
+      const baseCharge = row.original?.fedexQuotes?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.totalBaseCharge
+      const totalNetCharge = row.original?.fedexQuotes?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.totalNetCharge
+      const baseChargeCurrency = row.original?.fedexQuotes?.output?.rateReplyDetails[0]?.current
+      const fuelCharges = row.original?.fedexQuotes?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.shipmentRateDetail.surCharges[0]?.amount
+      const additionalCharges = row.original?.fedexQuotes?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.shipmentRateDetail.surCharges[1]?.amount
       return (
         // tootip
         <TooltipProvider>
@@ -115,17 +115,17 @@ export const columns: ColumnDef<any>[] = [
                 <div className="grid grid-cols-2 gap-y-1">
                   <span>Base Charge</span>
                   <span className="text-right">
-                    {baseChargeCurrency} {baseCharge}
+                    {baseChargeCurrency ?? "-"} {baseCharge ?? "N/A"}
                   </span>
 
                   <span>Fuel Charges</span>
                   <span className="text-right">
-                    {baseChargeCurrency} {fuelCharges}
+                    {baseChargeCurrency ?? "-"} {fuelCharges ?? "N/A"}
                   </span>
 
                   <span>Additional Charges</span>
                   <span className="text-right">
-                    {baseChargeCurrency} {additionalCharges}
+                    {baseChargeCurrency ?? "-"} {additionalCharges ?? "N/A"}
                   </span>
 
                   <span className="font-medium border-t pt-1 mt-1">

@@ -16,7 +16,7 @@ import { getAllPackages } from "@/api/services/packages.api"
 import AddPackage from "./AddPackage"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export function MyPackages({ selectedPackage, handleSelect }: { selectedPackage?: string, handleSelect?: (contact: any) => void }) {
+export function MyPackages({ selectedPackage, onSelect }: { selectedPackage?: string, onSelect?: (contact: any) => void }) {
     const [search, setSearch] = useState("")
     const [page, setPage] = useState(1)
     const [sorting, setSorting] = useState([])
@@ -33,7 +33,7 @@ export function MyPackages({ selectedPackage, handleSelect }: { selectedPackage?
     })
 
     let updatedColumns = columns
-    if (handleSelect) {
+    if (onSelect) {
         updatedColumns = columns.map((column) => {
             if (column.id === "actions") {
                 const originalCell = column.cell
@@ -41,18 +41,21 @@ export function MyPackages({ selectedPackage, handleSelect }: { selectedPackage?
                 return {
                     ...column,
                     cell: (props: any) => (
-                        <>
+                        <div className="flex flex-row-reverse items-center gap-2">
                             {/* @ts-ignore */}
                             {originalCell?.(props)}
 
                             <Button
                                 size="sm"
-                                onClick={() => handleSelect(props.row.original)}
+                                onClick={() => {
+                                    onSelect(props.row.original);
+                                    setOpen(false)
+                                }}
                                 className="bg-[#0070c0] hover:bg-[#005999]"
                             >
                                 Select
                             </Button>
-                        </>
+                        </div>
                     ),
                 }
             }

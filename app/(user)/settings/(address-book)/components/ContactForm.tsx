@@ -28,17 +28,25 @@ export function ContactForm({
     })
     useEffect(() => {
         if (defaultValues) {
+            console.log("defaultValues", defaultValues)
             methods.reset(
                 defaultValues,
             )
         }
         else {
             methods.reset({
-                readyTimeHour: "00",
-                readyTimeMinute: "00",
+                // readyTimeHour: 0,
+                // readyTimeMinute: 0,
+                // readyTimeAmPm: "AM",
+                // closeTimeHour: 0,
+                // closeTimeMinute: 0,
+                // closeTimeAmPm: "AM",
+
+                readyTimeHour: "0",
+                readyTimeMinute: "0",
                 readyTimeAmPm: "AM",
-                closeTimeHour: "00",
-                closeTimeMinute: "00",
+                closeTimeHour: "0",
+                closeTimeMinute: "0",
                 closeTimeAmPm: "AM",
             })
         }
@@ -122,17 +130,23 @@ export function ContactForm({
                                     type: "text",
                                     placeholder: "State/Province",
                                 },
+                                // {
+                                //     name: "address.country",
+                                //     label: "Country*",
+                                //     type: "select",
+                                //     options: [
+                                //         { value: "canada", label: "Canada" },
+                                //         { value: "united-states", label: "United States" },
+                                //     ],
+                                //     placeholder: "Country",
+                                // },
+                                // text based country
                                 {
                                     name: "address.country",
                                     label: "Country*",
-                                    type: "select",
-                                    options: [
-                                        { value: "canada", label: "Canada" },
-                                        { value: "united-states", label: "United States" },
-                                    ],
+                                    type: "text",
                                     placeholder: "Country",
                                 },
-
                                 {
                                     name: "contactName",
                                     label: "Contact Name*",

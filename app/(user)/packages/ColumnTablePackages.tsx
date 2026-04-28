@@ -92,13 +92,14 @@ export const columns: ColumnDef<any>[] = [
                 mutation.mutate(id)
             }
             return (
-                <div className="flex items-center gap-4">
+                <>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <MoreVertical size={16} className="cursor-pointer" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                           
+                            {/* select button */}
+
                             <DropdownMenuItem onClick={() => setOpen(true)} className="cursor-pointer">
                                 <Edit /> Edit
                             </DropdownMenuItem>
@@ -120,7 +121,7 @@ export const columns: ColumnDef<any>[] = [
                                 height: lineItem.height,
                                 weight: lineItem.weight,
                                 freightClass: lineItem.freightClass,
-                                nmfc: lineItem.nmfc,
+                                nmfc: lineItem?.nmfc,
                                 shipmentType: lineItem.type,
                                 unitsOnPallet: lineItem.unitsOnPallet,
                                 palletUnitType: lineItem.palletUnitType,
@@ -130,7 +131,7 @@ export const columns: ColumnDef<any>[] = [
                         open={open}
                         setOpen={setOpen}
                     />
-                </div>
+                </>
             )
         },
     },

@@ -18,6 +18,13 @@ export const contactSchema = z.object({
     contactName: z.string().min(1, "Contact Name is required"),
 
     // Pallet Shipping preferences
+    // readyTimeHour: z.number().min(0, "Ready Time is required").max(12),
+    // readyTimeMinute: z.number().min(0, "Ready Time is required").max(59),
+    // readyTimeAmPm: z.enum(["AM", "PM"]),
+    // closeTimeHour: z.number().min(0, "Close Time is required").max(12),
+    // closeTimeMinute: z.number().min(0, "Close Time is required").max(59),
+    // closeTimeAmPm: z.enum(["AM", "PM"]),
+
     readyTimeHour: z.string().min(0, "Ready Time is required").max(12),
     readyTimeMinute: z.string().min(0, "Ready Time is required").max(59),
     readyTimeAmPm: z.enum(["AM", "PM"]),

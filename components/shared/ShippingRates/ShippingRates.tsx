@@ -72,9 +72,9 @@ export default function ShippingRates({
     }
     const mutation = useMutation({
         mutationFn: (payload: any) => getShipmentRates(payload),
-        onSuccess: () => {
-            toast.success("Shipment rates fetched successfully")
-        },
+        // onSuccess: () => {
+
+        // },
         onError: (error: AxiosError<ApiError>) => {
             toast.error(error.response?.data.message)
         }
@@ -116,9 +116,11 @@ export default function ShippingRates({
         }
     }
     useEffect(() => {
-        mutation.mutate(payload)
-        streamRates(payload)
-    }, [])
+        if (openGetRates === "shippingRates") {
+            mutation.mutate(payload)
+            streamRates(payload)
+        }
+    }, [openGetRates])
     // const renderFedExQuote = (quotes: any[]) => {
     //     // render fedex quotes here
     //     {

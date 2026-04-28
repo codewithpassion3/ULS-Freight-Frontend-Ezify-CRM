@@ -214,33 +214,6 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   const handleAddressSelect = (contact: ContactType) => {
     markContactAsRecent.mutate(contact.id || "")
     setAddressLocked(true)
-    const currentValues = methods.getValues();
-    // methods.reset({
-    //   ...currentValues,
-    //   // @ts-ignore
-    //   shipDate: currentValues.shipDate,
-    //   addressBookId: Number(contact.id),
-    //   type: type,
-    //   address: {
-    //     address1: contact.address?.address1 || "",
-    //     postalCode: contact.address?.postalCode || "",
-    //     city: contact.address?.city || "",
-    //     state: contact.address?.state || "",
-    //     country: contact.address?.country || "",
-    //     ...(isShipment && { unit: contact.address?.unit || "" }),
-
-    //   },
-
-    //   ...(showLocationType && { locationTypeId: contact?.locationTypeId || "" }),
-    //   ...(isShipment && { companyName: contact.companyName }),
-    //   // ...(isShipment && { contactId: contact.id }),
-    //   ...(isShipment && { address2: contact.address?.address2 || "" }),
-    //   // contact information
-    //   ...(isShipment && { contactName: contact.contactName || "" }),
-    //   ...(isShipment && { email: contact.email || "" }),
-    //   ...(isShipment && { phoneNumber: contact.phoneNumber || "" }),
-
-    // });
     methods.setValue("addressBookId", Number(contact.id));
     methods.setValue("type", type);
 
@@ -250,6 +223,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       city: contact.address?.city || "",
       state: contact.address?.state || "",
       country: contact.address?.country || "",
+      // isResidential: contact.address?.isResidential || false,
       ...(isShipment && { unit: contact.address?.unit || "" }),
     });
 

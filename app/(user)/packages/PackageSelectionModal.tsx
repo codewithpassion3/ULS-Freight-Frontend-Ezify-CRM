@@ -2,10 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { MyPackages } from "./MyPackages";
 import { PackageOpen } from "lucide-react";
+import { useState } from "react";
 
-export default function PackageSelectionModal({ selectedPackage }: { selectedPackage: string }) {
+export default function PackageSelectionModal({ selectedPackage, onSelect }: { selectedPackage: string, onSelect: (lineItem: any) => void }) {
+    const [open, setOpen] = useState(false);
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button variant="link"><PackageOpen /> My Packages</Button>
             </DialogTrigger>
@@ -16,7 +18,7 @@ export default function PackageSelectionModal({ selectedPackage }: { selectedPac
                         Select a package to use for this shipment.
                     </DialogDescription>
                 </DialogHeader>
-                <MyPackages selectedPackage={selectedPackage} />
+                <MyPackages selectedPackage={selectedPackage} onSelect={onSelect} />
             </DialogContent>
         </Dialog>
     )

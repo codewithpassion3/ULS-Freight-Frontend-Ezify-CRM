@@ -11,7 +11,7 @@ export const packageUnitSchema = z.object({
 
 export const courierUnitSchema = z.object({
   weight: z.number("Required").min(1, "Must be > 0"),
-  description: z.string().min(1, "Description is required"),
+  description: z.string().min(1, "Description is required").optional(),
 })
 
 export const ftlUnitSchema = z.object({
@@ -27,7 +27,6 @@ export const palletLineItemSchema = z.object({
   shipmentType: z.literal("PALLET"),
   lineItem: z.object({
     type: z.literal("PALLET"),
-    description: z.string().optional(),
     measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
     dangerousGoods: z.boolean().optional(),
     stackable: z.boolean().optional(),
@@ -53,7 +52,6 @@ export const packageLineItemSchema = z.object({
   shipmentType: z.literal("PACKAGE"),
   lineItem: z.object({
     type: z.literal("PACKAGE"),
-    description: z.string().optional(),
     measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
     dangerousGoods: z.boolean().optional(),
     units: z.array(packageUnitSchema).min(1, "Add at least one package"),

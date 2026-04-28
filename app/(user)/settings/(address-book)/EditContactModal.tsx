@@ -42,6 +42,7 @@ export function EditContactModal(
             setOpen(false)
             queryClient.invalidateQueries({ queryKey: ["contact"] })
 
+
         },
         onError: (error: AxiosError<ApiError>) => {
             toast.error(error.response?.data.message)
@@ -85,7 +86,7 @@ export function EditContactModal(
                             Cancel
                         </Button>
                     </DialogClose>
-                    <Button disabled={!isValid || mutation.isPending} type="submit" form="contact-form" className="bg-[#0070c0] hover:bg-[#005999] text-white w-[140px]">
+                    <Button disabled={!isValid || mutation.isPending} onClick={() => handleSubmit} form="contact-form" className="bg-[#0070c0] hover:bg-[#005999] text-white w-[140px]">
                         Update Contact
                     </Button>
                 </DialogFooter>
