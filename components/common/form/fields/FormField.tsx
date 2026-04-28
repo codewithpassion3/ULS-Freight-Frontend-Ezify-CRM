@@ -14,6 +14,25 @@ const FormField = memo(({ field: config }: { field: FormFieldTypes }) => {
     const { field, error } = useFieldController(config.name)
     const isPassword = config.type === "password"
     const [showPassword, setShowPassword] = useState(false)
+    // if input type is number and min is 0, don't allow negative values
+    // function to convert negatives to positives
+    const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rawValue = e.target.value
+
+        // allow empty input (important for UX)
+        if (rawValue === "") {
+            field.onChange("")
+            return
+        }
+
+        const value = Number(rawValue)
+
+        if (value < 0) {
+            field.onChange()
+        } else {
+            field.onChange(value)
+        }
+    }
     return (
         <div className={config.wrapperClassName}>
             <div className={`flex flex-col gap-2 ${config.className}`}>
@@ -34,11 +53,12 @@ const FormField = memo(({ field: config }: { field: FormFieldTypes }) => {
 
                             if (config.type === "number") {
                                 value = e.target.value === "" ? undefined : Number(e.target.value)
+                                handleNumberChange(e)
                             } else {
                                 value = e.target.value
+                                field.onChange(value)
                             }
 
-                            field.onChange(value)
                         }}
                         value={field.value ?? ""}
                         min={config.min}

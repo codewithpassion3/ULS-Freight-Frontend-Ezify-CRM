@@ -15,9 +15,10 @@ export const courierUnitSchema = z.object({
 })
 
 export const ftlUnitSchema = z.object({
-  count: z.number().optional(),
+  name: z.enum(["looseFreight", "pallets"], "Required"),
+  count: z.number("Required"),
   weight: z.number("Required").min(1, "Must be > 0"),
-  description: z.string().min(1, "Description is required"),
+  description: z.string().optional(),
 })
 
 // ─── LineItem schemas (one per tab) ───────────────────────────────────────────

@@ -12,10 +12,15 @@ export const registerSchema = z.object({
       .regex(/[0-9]/, "Password must include at least one number")
       .regex(/[^A-Za-z0-9]/, "Password must include at least one special character")
       .min(8, "Password must be atleast 8 characters"),  // password should have 
-    confirmPassword: z.string().min(8, "Confirm password must match password"),
+    confirmPassword: z.string()
+      .regex(/[a-z]/, "Password must include at least one lowercase letter")
+      .regex(/[A-Z]/, "Password must include at least one uppercase letter")
+      .regex(/[0-9]/, "Password must include at least one number")
+      .regex(/[^A-Za-z0-9]/, "Password must include at least one special character")
+      .min(8, "Password must be atleast 8 characters"),
     firstName: z.string().min(1, "First name required"),
     lastName: z.string().min(1, "Last name required"),
-    username: z.string().min(1, "Username required"),
+    username: z.string().nonempty("Username required"),
     signUpCode: z.string().optional(),
     termsAndConditionAccepted: z
       .boolean("You must accept the Terms and Conditions"),

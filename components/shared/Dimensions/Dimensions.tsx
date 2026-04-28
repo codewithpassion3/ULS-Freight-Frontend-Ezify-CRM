@@ -11,17 +11,18 @@ import { PackageRow } from "./PackageRow"
 import { DimensionsFooter } from "./DimensionsFooter"
 import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import { usePathname } from "next/navigation"
+import { FTLPackageDimensions } from "./FTLPackageDimensions"
 
 const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }, ref) => {
-  
+
   const { methods, fieldArray, handleAddPackage, handleClearDimensions, isOpen, setIsOpen } = useDimensions(shipmentType)
   const { watch, setValue } = methods
   const { fields, append, remove } = fieldArray
 
   const [packageDialogOpen, setPackageDialogOpen] = useState(false)
- // isShipment
- const pathname = usePathname()
- const isShipment = pathname.includes("shipment")
+  // isShipment
+  const pathname = usePathname()
+  const isShipment = pathname.includes("shipment")
   useImperativeHandle(ref, () => ({
     getValues: methods.getValues,
     setValues: (vals: any) => methods.reset({ ...vals }),
@@ -31,13 +32,13 @@ const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions
 
   // show error
   const errors = methods.formState.errors
-  
+  console.log("errors", errors)
 
   // is valid
   const isValid = methods.formState.isValid
-  
 
-  
+
+
 
   const handleQuantityChange = (targetCount: number) => {
     const currentCount = fields.length
@@ -60,15 +61,14 @@ const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions
             <AccordionTrigger className="group px-6 py-4 hover:no-underline items-center cursor-pointer [&>svg]:hidden!">
               <h2 className="flex gap-2 items-center text-lg font-semibold text-slate-800 dark:text-slate-100">
                 <PackageCheck />
-                {isShipment ? " Packaging Details" :"Dimensions & Weight"}
+                {isShipment ? " Packaging Details" : "Dimensions & Weight"}
                 <ChevronUp className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
               </h2>
             </AccordionTrigger>
 
             <AccordionContent className="px-6 pb-6 h-full space-y-6">
-              <DimensionsMeasurementControls fieldCount={fields.length} onQuantityChange={handleQuantityChange} />
-
-              <div className="space-y-6 flex flex-col">
+              <DimensionsMeasurementControls shipmentType={shipmentType} fieldCount={fields.length} onQuantityChange={handleQuantityChange} />
+              {shipmentType !== "STANDARD_FTL" ? <div className="space-y-6 flex flex-col">
                 {fields.map((field, index) => (
                   <PackageRow
                     key={field.id}
@@ -83,15 +83,23 @@ const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions
                   />
                 ))}
                 <DimensionsFooter shipmentType={shipmentType} onAddPackage={handleAddPackage} />
-              </div>
+              </div> :
+                <FTLPackageDimensions />
+              }
 
               <div className="pt-2">
                 <GlobalForm
                   formWrapperClassName="flex items-center gap-4"
                   fields={[
                     // { name: "lineItem.units.0.length", label: "Length", type: "number", defaultValue: 1, icon: <Info size={14} className="text-slate-800 dark:text-white" /> },
-                    { name: "lineItem.dangerousGoods", label: "Dangerous Goods", type: "checkbox", defaultValue: false, icon: <Info size={14} className="text-slate-800 dark:text-white" /> },
-                    { name: "lineItem.stackable",      label: "Stackable",       type: "checkbox", defaultValue: false, icon: <Info size={14} className="text-slate-800 dark:text-white" /> },
+                    {
+                      name: "lineItem.dangerousGoods", label: "Dangerous Goods", type: "checkbox", defaultValue: false, icon: <Info size={14} className="text-slate-800 dark:text-white" />,
+                      show: shipmentType === "PALLET" || shipmentType === "PACKAGE"
+                    },
+                    {
+                      name: "lineItem.stackable", label: "Stackable", type: "checkbox", defaultValue: false, icon: <Info size={14} className="text-slate-800 dark:text-white" />,
+                      show: shipmentType === "PALLET"
+                    },
                   ]}
                 />
               </div>

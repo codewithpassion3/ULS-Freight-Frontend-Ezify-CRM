@@ -125,7 +125,11 @@ export function ContactForm({
                                 {
                                     name: "address.country",
                                     label: "Country*",
-                                    type: "text",
+                                    type: "select",
+                                    options: [
+                                        { value: "canada", label: "Canada" },
+                                        { value: "united-states", label: "United States" },
+                                    ],
                                     placeholder: "Country",
                                 },
 

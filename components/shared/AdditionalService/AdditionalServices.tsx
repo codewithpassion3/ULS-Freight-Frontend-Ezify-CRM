@@ -19,30 +19,30 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }, ref) => {
-    // const additionalServicesSchema = z.object({
-    //     services: z.object({
-    //         limitedAccess: z.boolean(),
-    //         appointmentDelivery: z.boolean(),
-    //         thresholdDelivery: z.boolean(),
-    //         thresholdPickup: z.boolean(),
-    //         inbound: z.boolean(),
-    //         protectFromFreeze: z.boolean(),
-    //         tradeShowDelivery: z.boolean(),
-    //         amazonOrFbaDelivery: z.boolean(),
-    //         refrigeratedServices: z.boolean(),
-    //         looseFreight: z.boolean(),
-    //         pallets: z.boolean(),
-    //         liftGateRequired: z.boolean(),
-    //         residentialPickup: z.boolean(),
-    //         residentialDelivery: z.boolean(),
-    //         insideDelivery: z.boolean(),
-    //         insidePickup: z.boolean(),
-    //         insideDeliveryStairs: z.boolean(),
-    //         insidePickupStairs: z.boolean()
-    //     })
-    // })
+    const additionalServicesSchema = z.object({
+        services: z.object({
+            limitedAccess: z.boolean().optional(),
+            appointmentDelivery: z.boolean().optional(),
+            thresholdDelivery: z.boolean().optional(),
+            thresholdPickup: z.boolean().optional(),
+            inbound: z.boolean().optional(),
+            protectFromFreeze: z.boolean().optional(),
+            tradeShowDelivery: z.boolean().optional(),
+            amazonOrFbaDelivery: z.boolean().optional(),
+            refrigeratedServices: z.boolean().optional(),
+            looseFreight: z.boolean().optional(),
+            pallets: z.boolean().optional(),
+            liftGateRequired: z.boolean().optional(),
+            residentialPickup: z.boolean().optional(),
+            residentialDelivery: z.boolean().optional(),
+            insideDelivery: z.boolean().optional(),
+            insidePickup: z.boolean().optional(),
+            insideDeliveryStairs: z.boolean().optional(),
+            insidePickupStairs: z.boolean().optional()
+        })
+    })
     const methods = useForm({
-        // resolver: zodResolver(additionalServicesSchema),
+        resolver: zodResolver(additionalServicesSchema),
         mode: "onChange",
         // defaultValues: {
         //     limitedAccess: false,
@@ -84,24 +84,24 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
         if (cachedSingleQuote) {
             const services = cachedSingleQuote.quote.palletServices;
             if (services) {
-                setValue("limitedAccess", services.limitedAccess)
-                setValue("appointmentDelivery", services.appointmentDelivery)
-                setValue("thresholdDelivery", services.thresholdDelivery)
-                setValue("thresholdPickup", services.thresholdPickup)
-                setValue("inbound", services.inbound)
-                setValue("protectFromFreeze", services.protectFromFreeze)
-                setValue("tradeShowDelivery", services.tradeShowDelivery)
-                setValue("amazonOrFbaDelivery", services.amazonOrFbaDelivery)
-                setValue("refrigeratedServices", services.refrigeratedServices)
-                setValue("looseFreight", services.looseFreight)
-                setValue("pallets", services.pallets)
-                setValue("liftGateRequired", services.liftGateRequired)
-                setValue("residentialPickup", services.residentialPickup)
-                setValue("residentialDelivery", services.residentialDelivery)
-                setValue("insideDelivery", services.insideDelivery)
-                setValue("insidePickup", services.insidePickup)
-                setValue("insideDeliveryStairs", services.insideDeliveryStairs)
-                setValue("insidePickupStairs", services.insidePickupStairs)
+                setValue("services.limitedAccess", services.limitedAccess)
+                setValue("services.appointmentDelivery", services.appointmentDelivery)
+                setValue("services.thresholdDelivery", services.thresholdDelivery)
+                setValue("services.thresholdPickup", services.thresholdPickup)
+                setValue("services.inbound", services.inbound)
+                setValue("services.protectFromFreeze", services.protectFromFreeze)
+                setValue("services.tradeShowDelivery", services.tradeShowDelivery)
+                setValue("services.amazonOrFbaDelivery", services.amazonOrFbaDelivery)
+                setValue("services.refrigeratedServices", services.refrigeratedServices)
+                setValue("services.looseFreight", services.looseFreight)
+                setValue("services.pallets", services.pallets)
+                setValue("services.liftGateRequired", services.liftGateRequired)
+                setValue("services.residentialPickup", services.residentialPickup)
+                setValue("services.residentialDelivery", services.residentialDelivery)
+                setValue("services.insideDelivery", services.insideDelivery)
+                setValue("services.insidePickup", services.insidePickup)
+                setValue("services.insideDeliveryStairs", services.insideDeliveryStairs)
+                setValue("services.insidePickupStairs", services.insidePickupStairs)
             }
         }
     }, [cachedSingleQuote, setValue]);
@@ -122,7 +122,7 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                         </h2>
                     </AccordionTrigger>
                     <AccordionContent className="px-6 pb-6 space-y-6 h-full">
-                        {shipmentType !== "STANDARD_FTL" ? <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div className="sm:col-span-3 ">
                                 <FormCheckbox
                                     field={{
@@ -258,28 +258,7 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                                     icon: <Info size={16} />
                                 }}
                             />
-                        </div> : ""}
-                        {shipmentType === "STANDARD_FTL" ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <FormRadio
-                                    field={
-                                        {
-                                            name: "services",
-                                            options: [
-                                                {
-                                                    value: "services.looseFreight",
-                                                    label: "Loose Freight (Floor Loaded)",
-                                                },
-                                                {
-                                                    value: "services.pallets",
-                                                    label: "Pallets",
-                                                },
-                                            ]
-                                        }}
-                                />
-
-                            </div>
-                        ) : ""}
+                        </div>
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>

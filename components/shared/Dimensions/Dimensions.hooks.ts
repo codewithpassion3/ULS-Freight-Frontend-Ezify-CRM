@@ -38,7 +38,6 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
                 type: shipmentType,
                 description: "",
                 measurementUnit: "IMPERIAL",
-                dangerousGoods: false,
                 stackable: false,
                 units: [{
                     description: "",

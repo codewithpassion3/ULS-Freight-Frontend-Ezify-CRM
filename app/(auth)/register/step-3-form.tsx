@@ -8,6 +8,8 @@ import FormField from "@/components/common/form/fields/FormField"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 import LegalPolicyModal from "@/components/static/LegalPolicyModal"
+import { GlobalForm } from "@/components/common/form/GlobalForm"
+
 interface Step3FormProps {
   onBack: () => void
 }
@@ -26,105 +28,81 @@ export function Step3Form({ onBack }: Step3FormProps) {
     <div className="space-y-6">
       <div className="space-y-4">
         <div className="space-y-2">
-          <FormField
-            field={{
-              name: "user.username",
-              label: "Create a Username*",
-              placeholder: "Enter your username",
-              type: "text",
-            }}
-          />
-        </div>
-        <div className="space-y-2 relative">
-          <FormField
-            field={{
-              name: "user.password",
-              label: "Create Password*",
-              type: "password",
-              placeholder: "Enter your password",
-            }}
-          />
-        </div>
-
-        <div className="space-y-2 relative">
-          <div className="relative">
-            <FormField
-              field={{
+          <GlobalForm
+            formWrapperClassName="flex flex-col gap-2 space-y-2"
+            fields={[
+              {
+                name: "user.username",
+                label: "Create a Username*",
+                placeholder: "Enter your username",
+                type: "text",
+              },
+              // password
+              {
+                name: "user.password",
+                label: "Create Password*",
+                placeholder: "Enter your password",
+                type: "password",
+              },
+              {
                 name: "user.confirmPassword",
                 label: "Confirm Password*",
-                type: "password",
                 placeholder: "Confirm your password",
-              }}
-            />
-          </div>
+                type: "password",
+              },
+            ]}
+          />
+
         </div>
 
-        <div className="pt-2 flex flex-col space-y-4">
+
+        <div className="pt-2 flex flex-col gap-2">
           <div>
             <Controller
               name="user.termsAndConditionAccepted"
               control={control}
               render={({ field }) => (
-                <Field orientation="horizontal">
+                <div className="flex items-center gap-2 text-sm">
                   <Checkbox
                     value={field.value ? "checked" : "unchecked"}
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                    className="cursor-pointer mt-2.5"
+                    className="cursor-pointer"
                   />
-
-                  <FieldContent>
-                    <FieldLabel>
-                      Accept
-                      <LegalPolicyModal >
-                        <Button variant="link" className="px-0!">Terms and Conditions</Button>
-                      </LegalPolicyModal>
-                    </FieldLabel>
-
-                    <FieldDescription>
-                      By clicking this checkbox, you agree to the terms.
-                    </FieldDescription>
-                  </FieldContent>
-                </Field>
+                  <p>Accept</p>
+                  <LegalPolicyModal>
+                    <p className="text-primary font-bold cursor-pointer">Terms and Conditions</p>
+                  </LegalPolicyModal>
+                </div>
               )}
             />
-            <FieldError>
-              {errors.user?.termsAndConditionAccepted?.message}
-            </FieldError>
           </div>
+          <FieldError>
+            {errors.user?.termsAndConditionAccepted?.message}
+          </FieldError>
           <div>
             <Controller
               name="user.companyPolicyAccepted"
               control={control}
               render={({ field }) => (
-                <Field orientation="horizontal">
+                <div className="flex items-center gap-2 text-sm">
                   <Checkbox
                     value={field.value ? "checked" : "unchecked"}
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                    className="cursor-pointer mt-2.5"
+                    className="cursor-pointer"
                   />
-
-                  <FieldContent>
-                    <FieldLabel>
-                      Accept
-                      <LegalPolicyModal defaultTab="privacy">
-                        <Button variant="link" className="px-0!">Company Policies</Button>
-                      </LegalPolicyModal>
-                    </FieldLabel>
-
-                    <FieldDescription>
-                      By clicking this checkbox, you agree to the company policies.
-                    </FieldDescription>
-                  </FieldContent>
-                </Field>
+                  <p>Accept</p>
+                  <LegalPolicyModal defaultTab="privacy">
+                    <p className="text-primary font-bold cursor-pointer">Company Policies</p>
+                  </LegalPolicyModal>
+                </div>
               )}
             />
-
-            <FieldError>
-              {errors.user?.termsAndConditionAccepted?.message}
-            </FieldError>
           </div>
+          <FieldError>
+            {errors.user?.companyPolicyAccepted?.message}
+          </FieldError>
         </div>
       </div>
 

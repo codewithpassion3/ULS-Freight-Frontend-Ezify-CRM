@@ -7,7 +7,7 @@ import { FormRadioTypes } from "./fields.types"
 import { useFieldController } from "../useFieldController"
 
 const FormRadio = memo(({ field: config }: { field: FormRadioTypes }) => {
-    const { field } = useFieldController(config.name)
+    const { field, error } = useFieldController(config.name)
     return (
         <div className={config.wrapperClassName}>
             <RadioGroup
@@ -17,7 +17,7 @@ const FormRadio = memo(({ field: config }: { field: FormRadioTypes }) => {
                 }}
                 defaultValue={config.defaultValue?.toString()}
                 onChange={() => field.onChange}
-                className={`flex gap-6 ${config.className} cursor-pointer`}
+                className={`flex gap-6 ${config.className} cursor-pointer mb-2`}
             >
                 {config.options.map((opt) => {
                     const isSelected = field.value?.toString() === opt.value.toString()
@@ -27,15 +27,16 @@ const FormRadio = memo(({ field: config }: { field: FormRadioTypes }) => {
                                 disabled={config.disabled}
                                 value={opt.value.toString()}
                                 id={`${config.name}-${opt.value}`}
-                                className={`${isSelected ? config.selectedClassName : ""} cursor-pointer`}
+                                className={`${error ? "border-red-500" : ""} ${isSelected ? config.selectedClassName : ""} cursor-pointer`}
                             />
-                            <Label htmlFor={`${config.name}-${opt.value}`} className="cursor-pointer">
+                            <Label htmlFor={`${config.name}-${opt.value}`} className={`cursor-pointer ${error ? "text-red-500" : ""}`}>
                                 {opt.label}
                             </Label>
                         </div>
                     )
                 })}
             </RadioGroup>
+            {error && <p className="text-red-500 text-sm">{error.message}</p>}
         </div>
     )
 })

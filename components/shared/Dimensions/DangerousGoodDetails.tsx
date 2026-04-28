@@ -3,7 +3,7 @@ import { GlobalForm } from "@/components/common/form/GlobalForm";
 
 const DangerousGoodsForm = () => {
     return (
-        <div className="border border-blue-100 bg-[#f8fbfe] p-6 rounded-sm">
+        <div className="border border-blue-100 p-6 rounded-sm">
             <p className="text-sm text-slate-700 mb-6">
                 Please provide the <span className="font-bold">Dangerous Goods details</span>, as these details will show up on the BOL. Failure to enter this data may result in <span className="font-bold">delayed pickups</span>.
             </p>
@@ -19,7 +19,7 @@ const DangerousGoodsForm = () => {
                             { value: "exemption", label: "500 kg Exemption", icon: <Info size={16} className="fill-blue-900 text-white" /> },
                             { value: "regulated", label: "Fully Regulated", icon: <Info size={16} className="fill-blue-900 text-white" /> },
                         ],
-                        wrapperClassName: "col-span-3"
+                        wrapperClassName: "col-span-3 bg-"
                     },
                     {
                         name: "lineItem.dangerousGood.unNumber",
@@ -35,9 +35,10 @@ const DangerousGoodsForm = () => {
                         type: "select",
                         placeholder: "Select Packaging Group",
                         options: [
-                            { value: "1", label: "Group I" },
-                            { value: "2", label: "Group II" },
-                            { value: "3", label: "Group III" },
+                            { value: "pg1", label: "PG I" },
+                            { value: "pg2", label: "PG II" },
+                            { value: "pg3", label: "PG III" },
+                            { value: "none", label: "N/A" },
                         ],
                         className: "bg-white",
                     },

@@ -48,7 +48,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   const quoteId = useSearchParams().get("id")
   const markContactAsRecent = useMarkContactAsRecent()
   const [addressLocked, setAddressLocked] = useState(false)
-  const showLocationType = quoteType === "SPOT" || shipmentType === "PALLET" || shipmentType === "STANDARD_FTL" || isShipment;
+  const showLocationType = quoteType === "SPOT" || shipmentType === "PALLET";
   const showAdditionalNotes = quoteType === "SPOT";
   const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
     queryKey: ["singleQuote", quoteId],
@@ -342,6 +342,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       type: "text",
       placeholder: "Address",
       disabled: addressLocked,
+      show: isShipment,
     },
     {
       name: "address.address2",
@@ -399,7 +400,8 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       })),
       disabled: addressLocked,
       show: showLocationType,
-      valueType: "number"
+      valueType: "number",
+      wrapperClassName: !isShipment ? "col-span-2" : "",
     },
     {
       name: "isResidential",

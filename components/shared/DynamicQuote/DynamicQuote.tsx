@@ -147,7 +147,8 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         const services = servicesRef.current?.getValues() || {}
         const insurance = insuranceRef.current?.getValues() || {}
         const signature = signatureRef.current?.getValues() || {}
-
+        // console dim
+        console.log("dimensions", dimensions)
         let completePayload = {
             addresses: [fromAddress, toAddress],
             ...dimensions,
@@ -177,6 +178,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         const dimValid = await dimensionsRef.current?.trigger()
         console.log("fromValid", fromValid)
         console.log("toValid", toValid)
+        console.log("dimValid", dimValid)
 
         // We validate core sections First. Then conditionally attached ones depending on if they are rendered
 
@@ -253,6 +255,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             return { ...addr };
         });
 
+
         const payloadTransformed = {
             ...payload,
             addresses: transformedAddresses,
@@ -266,6 +269,16 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             }
 
         }
+
+        let ftlLineItemToServiceMapping = {
+            services: {
+                ...shipmentPayload.quote.lineItem.units
+            },
+            ...shipmentPayload,
+        }
+        // @ts-ignore
+        const { lineItem, ...ftlPayload } = ftlLineItemToServiceMapping
+        console.log("ftlPayload", ftlPayload)
 
 
         if (isEditing) {
@@ -281,7 +294,6 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                 createQuoteMutation.mutate(payloadTransformed)
             }
         }
-        // alert(`Quote submitted successfully as ${status}! Check console for details.`)
     }
 
     const handleStatus = (status: "DRAFT" | "SAVED") => {
@@ -317,16 +329,16 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                         <div className="space-y-6 mt-6">
                             <Dimensions ref={dimensionsRef} shipmentType={shipmentType} />
                         </div>
-                        <div className="mt-6">
+                        {shipmentType !== "STANDARD_FTL" ? <div className="mt-6">
                             <AdditionalServices ref={servicesRef} shipmentType={shipmentType} />
-                        </div>
+                        </div> : ""}
 
                     </div>
                     {isStandardQuote && <div className="mt-6"><AdditionalInsurance ref={insuranceRef} /></div>}
-                    {(shipmentType === "PALLET" || shipmentType === "COURIER_PAK" || isShipment) && <div className="mt-6"><SignaturePreference ref={signatureRef} /></div>}
-                    {/* <div className="mt-6">
+                    {(shipmentType === "PACKAGE" || shipmentType === "COURIER_PAK" || isShipment) && <div className="mt-6"><SignaturePreference ref={signatureRef} /></div>}
+                    <div className="mt-6">
                         <ShippingRates dimensions={dimensionsRef.current} fromAddress={fromAddressRef.current} toAddress={toAddressRef.current} />
-                    </div> */}
+                    </div>
                     <div className="w-full flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
                         <div className="flex gap-4">
                             <Button variant="outline" onClick={() => {

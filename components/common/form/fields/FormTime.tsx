@@ -21,7 +21,27 @@ const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
                     {...hourField}
                     type="number"
                     min={0}
-                    // max={11}
+                    max={11}
+                    onChange={(e) => {
+                        const raw = e.target.value
+
+                        // allow empty input
+                        if (raw === "") {
+                            hourField.onChange("")
+                            return
+                        }
+
+                        const value = Number(raw)
+
+                        // clamp safely
+                        if (value < 0) {
+                            hourField.onChange(0)
+                        } else if (value > 11) {
+                            hourField.onChange(11)
+                        } else {
+                            hourField.onChange(value)
+                        }
+                    }}
                     // hide control buttons
                     className={`w-14 px-2 text-center ${hourError ? "border-red-500" : ""} [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
                     value={hourField.value ?? ""}
@@ -33,6 +53,26 @@ const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
                     type="number"
                     min={0}
                     max={59}
+                    onChange={(e) => {
+                        const raw = e.target.value
+
+                        // allow empty input
+                        if (raw === "") {
+                            minuteField.onChange("")
+                            return
+                        }
+
+                        const value = Number(raw)
+
+                        // clamp safely
+                        if (value < 0) {
+                            minuteField.onChange(0)
+                        } else if (value > 59) {
+                            minuteField.onChange(59)
+                        } else {
+                            minuteField.onChange(value)
+                        }
+                    }}
                     className={`w-14 px-2 text-center ${minuteError ? "border-red-500" : ""} [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
                     value={minuteField.value ?? ""}
                 />

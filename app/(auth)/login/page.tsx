@@ -28,7 +28,7 @@ export default function LoginPage() {
       try {
         await queryClient.fetchQuery({ queryKey: ["user"], queryFn: getUser })
       } catch { }
-      setTimeout(() => router.replace("/"), 300)
+      setTimeout(() => router.push("/"), 300)
 
     },
     onError: (error: AxiosError<ApiError>) => {
