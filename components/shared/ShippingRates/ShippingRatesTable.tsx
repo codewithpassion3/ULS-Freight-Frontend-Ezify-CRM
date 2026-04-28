@@ -1,6 +1,6 @@
 "use client"
 
-import { use, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { DataTable } from "@/components/common/table/DataTable"
 import { DataTableToolbar } from "@/components/common/table/DataTableToolbar"
@@ -10,9 +10,8 @@ import { useDebounce } from "@/hooks/useDebounce.hook"
 import { getAllAddressBookContacts, getRecentContacts } from "@/api/services/address-book.api"
 import { Loader } from "@/components/common/Loader"
 import EmptyUI from "@/components/common/empty/Empty"
-import { BookUser, Plus, UserSquare2, Loader2 } from "lucide-react"
+import { BookUser, Plus, UserSquare2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { columns } from "./ColumnsTableShippingRate"
 import { useMutation } from "@tanstack/react-query"
 // import { getShipmentRates } from "@/api/services/shipping-rates.api"
@@ -21,34 +20,14 @@ import { AxiosError } from "axios"
 import { getShipmentRates } from "@/api/services/shipment.api"
 import { ApiError } from "next/dist/server/api-utils"
 // import { ApiError } from "@/types/api.types"
-interface Dimension {
-    // "weightUnit": "LB",
-    //         "weight": 10,
-    //         "dimensionsUnit": "IN",
-    //         "length": 20,
-    //         "width": 20,
-    //         "height": 40,
-    //         "handlingUnits": 1,
-    //         "packaging": "BOX"
-    weightUnit: "LB" | "KG"
-    weight: number
-    dimensionsUnit: "IN" | "CM"
-    length: number
-    width: number
-    height: number
-    handlingUnits: number
-    packaging: string
-}
-export function ShippingRatesTable({ handleSelect, type, dimensions }: { handleSelect?: (contact: any) => void, type?: "all" | "recent", dimensions?: Dimension }) {
+
+export function ShippingRatesTable({ handleSelect, type }: { handleSelect?: (contact: any) => void, type?: "all" | "recent" }) {
     const [search, setSearch] = useState("")
     const [page, setPage] = useState(1)
     const [sorting, setSorting] = useState([])
-    const [rates, setRates] = useState()
-    const [quotes, setQuotes] = useState([])
     // print type
     console.log(type)
     const debouncedSearch = useDebounce(search, 500)
-    console.log("dimensions", dimensions)
     const payload =
     {
         "quoteType": "STANDARD",
@@ -94,99 +73,75 @@ export function ShippingRatesTable({ handleSelect, type, dimensions }: { handleS
     }
     const mutation = useMutation({
         mutationFn: (payload: any) => getShipmentRates(payload),
-        onSuccess: (res) => {
+        onSuccess: (data) => {
             toast.success("Shipment rates fetched successfully")
-            setRates(res.fedexQuotes)
+            console.log(data)
         },
         onError: (error: AxiosError<ApiError>) => {
             toast.error(error.response?.data.message)
         }
     })
 
-    useEffect(() => {
-        if (rates) {
-            const ratesArray = [
-                {
-                    carrier: "Fedx",
-                    quote: rates ? rates : []
+    async function streamRates(dto: any) {
+        const response = await fetch('/shipment-carrier/rates/stream', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dto),
+        });
+
+        const reader = response?.body?.getReader() as any;
+        const decoder = new TextDecoder();
+
+        while (true) {
+            const { done, value } = await reader?.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value);
+            const lines = chunk.split('\n').filter(l => l.startsWith('data:'));
+
+            for (const line of lines) {
+                const result = JSON.parse(line.replace('data: ', ''));
+
+                if (result.error) {
+                    console.error(`${result.carrier} failed:`, result.error);
+                    continue;
                 }
-            ]
-            // @ts-ignore
-            setQuotes(ratesArray)
+
+                // Render as each arrives
+                //             if (result.carrier === 'fedex') {
+                //                 renderFedExQuote(result.quotes);
+                //             } else if (result.carrier === 'tst') {
+                //                 renderTSTQuote(result.quotes);
+                //             }
+                // print result
+                console.log("result", result.quotes)
+            }
         }
-    }, [rates])
-
-
-
-    // async function streamRates(dto: any) {
-    //     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/shipment-carrier/rates/stream`, {
-    //         method: 'POST',
-    //         headers: { 'Content-Type': 'application/json' },
-    //         body: JSON.stringify(dto),
-    //     });
-
-    //     const reader = response?.body?.getReader() as any;
-    //     const decoder = new TextDecoder();
-
-    //     while (true) {
-    //         const { done, value } = await reader?.read();
-    //         if (done) break;
-
-    //         const chunk = decoder.decode(value);
-    //         const lines = chunk.split('\n').filter(l => l.startsWith('data:'));
-
-    //         for (const line of lines) {
-    //             const result = JSON.parse(line.replace('data: ', ''));
-    //             console.log("result", result.quotes)
-
-    //             if (result.error) {
-    //                 console.error(`${result.carrier} failed:`, result.error);
-    //                 continue;
-    //             }
-
-    //             // Render as each arrives
-    //             //             if (result.carrier === 'fedex') {
-    //             //                 renderFedExQuote(result.quotes);
-    //             //             } else if (result.carrier === 'tst') {
-    //             //                 renderTSTQuote(result.quotes);
-    //             //             }
-    //             // print result
-    //         }
-    //     }
-    // }
+    }
     useEffect(() => {
         mutation.mutate(payload)
-
-        // streamRates(payload)
+        streamRates(payload)
     }, [])
 
-    console.log("rates", rates)
-    // loader while fetching 
-    if (mutation.isPending) {
-        return (
-            <Dialog open={true}>
-                <DialogContent className="sm:max-w-md flex flex-col items-center justify-center p-8 [&>button]:hidden">
-                    <Loader2 className="h-12 w-12 animate-spin text-primary mb-6" />
-                    <h2 className="text-xl font-semibold text-center mb-2">Fetching Best Rates!</h2>
-                    <p className="text-muted-foreground text-center">
-                        Please hold on while we collect quotes from our partner carriers...
-                    </p>
-                </DialogContent>
-            </Dialog>
-        )
-    }
-    // make rates array
+
 
     return (
         <div className="flex justify-center items-center">
             {mutation.isPending ? (
-                <Loader className="h-full" />
+                // show loader in modal with text we are fetching rates from our carrier partners
+                <div className="flex flex-col items-center justify-center">
+                    <Loader className="h-full" />
+                    <p className="text-muted-foreground">We are fetching rates from our carrier partners</p>
+                </div>
             ) : (
-                rates ?
+                mutation.data?.length > 0 ?
                     <div className="w-full">
-
+                        <div className="flex items-center gap-2 my-2">
+                            <UserSquare2 className="h-6 w-6 text-primary" />
+                            <h2 className="text-xl font-semiBold text-foreground">Address Book</h2>
+                        </div>
                         <div className="space-y-4 w-full">
-                            {/* <div className="flex justify-between gap-2">
+                            <div className="flex justify-between gap-2">
                                 < DataTableToolbar
                                     search={search}
                                     setSearch={setSearch}
@@ -196,12 +151,13 @@ export function ShippingRatesTable({ handleSelect, type, dimensions }: { handleS
                                 />
 
 
-                            </div> */}
+
+                            </div>
 
 
-                            {rates ? <DataTable
+                            {mutation.data.length > 0 ? <DataTable
                                 columns={columns}
-                                data={quotes}
+                                data={mutation.data}
                                 sorting={sorting}
                                 // @ts-ignore
                                 setSorting={setSorting}
@@ -210,8 +166,7 @@ export function ShippingRatesTable({ handleSelect, type, dimensions }: { handleS
 
                             <DataTablePagination
                                 page={page}
-                                // totalPages={type === "recent" ? mutation.data?.meta.totalPages ?? 1 : mutation.data?.meta.totalPages ?? 1}
-                                totalPages={1}
+                                totalPages={type === "recent" ? mutation.data?.meta.totalPages ?? 1 : mutation.data?.meta.totalPages ?? 1}
                                 setPage={setPage}
                             />
                         </div>
@@ -227,6 +182,5 @@ export function ShippingRatesTable({ handleSelect, type, dimensions }: { handleS
                     />
 
             )}
-        </div>
-    )
+        </div>)
 }

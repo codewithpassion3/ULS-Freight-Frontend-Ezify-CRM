@@ -309,6 +309,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     const handleGetRates = () => {
 
     }
+    const [openGetRates, setOpenGetRates] = useState("")
     return (
         <div className="container mx-auto py-8 px-4 max-w-7xl">
             {!isShipment ? <div className="flex justify-between items-center mb-6">
@@ -340,7 +341,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                     {isStandardQuote && <div className="mt-6"><AdditionalInsurance ref={insuranceRef} /></div>}
                     {(shipmentType === "PACKAGE" || shipmentType === "COURIER_PAK" || isShipment) && <div className="mt-6"><SignaturePreference ref={signatureRef} /></div>}
                     <div className="mt-6">
-                        <ShippingRates dimensions={dimensionsRef.current} fromAddress={fromAddressRef.current} toAddress={toAddressRef.current} />
+                        <ShippingRates openGetRates={openGetRates} setOpenGetRates={setOpenGetRates} dimensions={dimensionsRef.current} fromAddress={fromAddressRef.current} toAddress={toAddressRef.current} />
                     </div>
                     <div className="w-full flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
                         <div className="flex gap-4">
@@ -373,9 +374,9 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                                     {isEditing ? "Update Quote" : "Save Quote"}
                                 </Button>
                             }
-                            {/* <Button onClick={() => mutation.mutate(payload)} className="mt-3">
+                            <Button onClick={() => setOpenGetRates("shippingRates")}>
                                 Get Rates
-                            </Button> */}
+                            </Button>
                         </div>
                     </div>
                 </div>
