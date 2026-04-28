@@ -32,7 +32,11 @@ export function DataTable<TData, TValue>({
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
     })
-
+    // print table.getRowModel().rows
+    console.log("table", table)
+    // columns
+    console.log("columns", columns)
+    console.log("table.getRowModel().rows", table.getRowModel().rows)
     return (
         <div className="rounded-md border">
             <Table>

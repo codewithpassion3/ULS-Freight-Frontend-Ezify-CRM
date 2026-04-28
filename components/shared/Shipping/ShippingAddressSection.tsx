@@ -50,6 +50,8 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   const [addressLocked, setAddressLocked] = useState(false)
   const showLocationType = quoteType === "SPOT" || shipmentType === "PALLET";
   const showAdditionalNotes = quoteType === "SPOT";
+  const [billingRefs, setBillingRefs] = useState<string[]>([""])
+
   const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
     queryKey: ["singleQuote", quoteId],
     queryFn: () => quoteId ? getSingleQuote(quoteId) : null,
@@ -528,7 +530,6 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
 
 
   ];
-  const [billingRefs, setBillingRefs] = useState<string[]>([""])
   const addBillingRef = () => {
     if (billingRefs.length < 3) {
       setBillingRefs([...billingRefs, ""])

@@ -306,6 +306,9 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             setQuoteStatus(status)
         }
     }
+    const handleGetRates = () => {
+
+    }
     return (
         <div className="container mx-auto py-8 px-4 max-w-7xl">
             {!isShipment ? <div className="flex justify-between items-center mb-6">
@@ -341,36 +344,38 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                     </div>
                     <div className="w-full flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
                         <div className="flex gap-4">
-                            <Button variant="outline" onClick={() => {
+                            {/* <Button variant="outline" onClick={() => {
                                 handleStatus("DRAFT")
                                 onSubmit()
-                            }} type="button">{isEditing ? "Update as Draft" : "Save as Draft"}</Button>
+                            }} type="button">{isEditing ? "Update as Draft" : "Save as Draft"}</Button> */}
 
 
 
                             {isShipment ?
-
                                 <Button
                                     disabled={createShipmentMutation.isPending || updateShipmentMutation.isPending}
+                                    variant="outline"
                                     onClick={() => {
 
                                         onSubmit()
                                     }} type="button">
                                     {createShipmentMutation.isPending || updateShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
-                                    {isEditing ? "Update Shipment" : "Create Shipment"}
+                                    {isEditing ? "Update Shipment" : "Save Shipment"}
                                 </Button>
                                 :
-
                                 <Button
                                     disabled={createQuoteMutation.isPending || updateQuoteMutation.isPending}
+                                    variant="outline"
                                     onClick={() => {
                                         onSubmit()
                                     }} type="button">
                                     {createQuoteMutation.isPending || updateQuoteMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
-                                    {isEditing ? "Update Quote" : "Create Quote"}
+                                    {isEditing ? "Update Quote" : "Save Quote"}
                                 </Button>
-
                             }
+                            {/* <Button onClick={() => mutation.mutate(payload)} className="mt-3">
+                                Get Rates
+                            </Button> */}
                         </div>
                     </div>
                 </div>
