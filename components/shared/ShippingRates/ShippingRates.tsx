@@ -27,6 +27,10 @@ export default function ShippingRates({
     console.log("dimensions", dimensions)
     console.log("fromAddress", fromAddress)
     console.log("toAddress", toAddress)
+
+    const myPayload = { ...dimensions, ...fromAddress, ...toAddress }
+    console.log("myPayload", myPayload)
+
     const payload =
     {
         "quoteType": "STANDARD",

@@ -84,7 +84,7 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "shippingRate",
     header: "Shipping Rate",
     cell: ({ row }) => {
-
+      console.log("row", row.original?.fedexQuotes?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.totalBaseCharge)
       const baseCharge = row.original?.fedexQuotes?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.totalBaseCharge
       const totalNetCharge = row.original?.fedexQuotes?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.totalNetCharge
       const baseChargeCurrency = row.original?.fedexQuotes?.output?.rateReplyDetails[0]?.current

@@ -122,6 +122,7 @@ export function ShippingRatesTable({ handleSelect, type }: { handleSelect?: (con
         streamRates(payload)
     }, [])
 
+
     if (mutation.isPending) {
         return (
             <Dialog open={true}>
@@ -136,7 +137,7 @@ export function ShippingRatesTable({ handleSelect, type }: { handleSelect?: (con
             </Dialog>
         )
     }
-
+    console.log("mutation.data", mutation.data)
     return (
         <div className="flex justify-center items-center">
             {mutation.isPending ? (
@@ -146,7 +147,7 @@ export function ShippingRatesTable({ handleSelect, type }: { handleSelect?: (con
                     <p className="text-muted-foreground">We are fetching rates from our carrier partners</p>
                 </div>
             ) : (
-                mutation.data?.length > 0 ?
+                mutation.data ?
                     <div className="w-full">
                         <div className="flex items-center gap-2 my-2">
                             <UserSquare2 className="h-6 w-6 text-primary" />
@@ -154,7 +155,7 @@ export function ShippingRatesTable({ handleSelect, type }: { handleSelect?: (con
                         </div>
                         <div className="space-y-4 w-full">
                             <div className="flex justify-between gap-2">
-                                < DataTableToolbar
+                                <DataTableToolbar
                                     search={search}
                                     setSearch={setSearch}
                                     selectedRows={[]}
@@ -162,18 +163,19 @@ export function ShippingRatesTable({ handleSelect, type }: { handleSelect?: (con
                                     placeholder="Search Company Name"
                                 />
                             </div>
-                            {mutation.data.length > 0 ? <DataTable
-                                columns={columns}
-                                data={mutation.data}
-                                sorting={sorting}
-                                // @ts-ignore
-                                setSorting={setSorting}
-                            /> : ""}
+                            {mutation.data.length > 0 ?
+                                <DataTable
+                                    columns={columns ? columns : []}
+                                    data={mutation.data}
+                                    sorting={sorting}
+                                    // @ts-ignore
+                                    setSorting={setSorting}
+                                /> : ""}
 
 
                             <DataTablePagination
                                 page={page}
-                                totalPages={type === "recent" ? mutation.data?.meta.totalPages ?? 1 : mutation.data?.meta.totalPages ?? 1}
+                                totalPages={1}
                                 setPage={setPage}
                             />
                         </div>
