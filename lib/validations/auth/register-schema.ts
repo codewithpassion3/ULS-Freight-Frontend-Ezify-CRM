@@ -26,7 +26,7 @@ export const registerSchema = z.object({
       .boolean("You must accept the Terms and Conditions"),
     companyPolicyAccepted: z
       .boolean("You must accept the Company Policy"),
-    freightBroker: z.boolean(),
+    freightBroker: z.enum(["true", "false"]).transform(val => val === "true"),
     phoneNumber: z.string().min(1, "Phone number required").max(15, "Phone number must be at most 15 characters")
   }).refine((user) => user.password === user.confirmPassword, {
     message: "Passwords do not match",

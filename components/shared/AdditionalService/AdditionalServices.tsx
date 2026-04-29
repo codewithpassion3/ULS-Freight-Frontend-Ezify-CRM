@@ -17,15 +17,24 @@ import FormCheckbox from "@/components/common/form/fields/FormCheckbox"
 import FormRadio from "@/components/common/form/fields/FormRadio"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { FormInput } from "@/components/common/forms/FormInput"
 
 const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }, ref) => {
     const additionalServicesSchema = z.object({
+        limitedAccess: z.boolean().optional(),
+        inBondCheckbox: z.boolean().optional(),
+        inBound: z.object({
+            bondType: z.string().optional(),
+            bondCancler: z.string().optional(),
+            contactKey: z.string().optional(),
+            contactValue: z.string().optional(),
+            address: z.string().optional()
+        }).optional(),
         services: z.object({
-            limitedAccess: z.boolean().optional(),
+            limitedAccess: z.string().optional(),
             appointmentDelivery: z.boolean().optional(),
             thresholdDelivery: z.boolean().optional(),
             thresholdPickup: z.boolean().optional(),
-            inbound: z.boolean().optional(),
             protectFromFreeze: z.boolean().optional(),
             tradeShowDelivery: z.boolean().optional(),
             amazonOrFbaDelivery: z.boolean().optional(),
@@ -38,34 +47,25 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
             insideDelivery: z.boolean().optional(),
             insidePickup: z.boolean().optional(),
             insideDeliveryStairs: z.boolean().optional(),
-            insidePickupStairs: z.boolean().optional()
+            insidePickupStairs: z.boolean().optional(),
+            // limitedAccess.location:z.string().optional(),
+            limitedAccessDescription: z.string().optional()
         })
     })
     const methods = useForm({
         resolver: zodResolver(additionalServicesSchema),
         mode: "onChange",
-        // defaultValues: {
-        //     limitedAccess: false,
-        //     appointmentDelivery: false,
-        //     thresholdDelivery: false,
-        //     thresholdPickup: false,
-        //     inbound: false,
-        //     protectFromFreeze: false,
-        //     tradeShowDelivery: false,
-        //     amazonOrFbaDelivery: false,
-        //     refrigeratedServices: false,
-        //     looseFreight: false,
-        //     pallets: false,
-        //     liftGateRequired: false,
-        //     residentialPickup: false,
-        //     residentialDelivery: false,
-        //     insideDelivery: false,
-        //     insidePickup: false,
-        //     insideDeliveryStairs: false,
-        //     insidePickupStairs: false
-        // }
+        defaultValues: {
+            inBound: {
+                bondType: "",
+                bondCancler: "",
+                contactKey: "EMAIL",
+                contactValue: "",
+                address: ""
+            }
+        }
     })
-    const { watch, setValue } = methods
+    const { watch, setValue, getValues } = methods
     const [isOpen, setIsOpen] = useState(false)
     useImperativeHandle(ref, () => ({
         getValues: methods.getValues,
@@ -88,7 +88,7 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                 setValue("services.appointmentDelivery", services.appointmentDelivery)
                 setValue("services.thresholdDelivery", services.thresholdDelivery)
                 setValue("services.thresholdPickup", services.thresholdPickup)
-                setValue("services.inbound", services.inbound)
+                // setValue("inbound", services.inbound)
                 setValue("services.protectFromFreeze", services.protectFromFreeze)
                 setValue("services.tradeShowDelivery", services.tradeShowDelivery)
                 setValue("services.amazonOrFbaDelivery", services.amazonOrFbaDelivery)
@@ -126,15 +126,46 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                             <div className="sm:col-span-3 ">
                                 <FormCheckbox
                                     field={{
-                                        name: "services.limitedAccess",
+                                        name: "limitedAccess",
                                         label: "Limited Access",
                                         defaultValue: false,
                                         icon: <Info size={16} />,
                                     }}
                                 />
-                                {watch("services.limitedAccess") &&
+                                {watch("limitedAccess") &&
                                     <div className="my-4">
-                                        <FormRadio
+                                        <GlobalForm
+                                            // formWrapperClassName="grid grid-cols-1"
+                                            fields={[
+                                                {
+                                                    name: "services.limitedAccess",
+                                                    label: "Location",
+                                                    type: "radio",
+                                                    options: [
+                                                        { value: "constructionSite", label: "Construction Site" },
+                                                        { value: "individualStorageUnit", label: "Individual (Mini) Storage Unit" },
+                                                        { value: "fairAmusementPark", label: "Fair/Amusement Park" },
+                                                        { value: "placeOfWorship", label: "Place of Worship" },
+                                                        { value: "farmCountryClubEstate", label: "Farm/Country Club/Estate" },
+                                                        { value: "securedLocationsDelivery", label: "Secured Locations Delivery - prisons, military bases, airport" },
+                                                        { value: "schoolUniversity", label: "School/University" },
+                                                        { value: "plazaMallDeliveries", label: "Plaza/Mall deliveries or stores with only parking lot/Street access" },
+                                                        { value: "groceryRetailLocations", label: "Grocery/Retail Locations (ex: Costco or Walmart)" },
+                                                        { value: "other", label: "Other" },
+                                                    ],
+                                                    className: "grid grid-cols-2 gap-4"
+                                                },
+                                                {
+                                                    name: "limitedAccessDescription",
+                                                    // label: "Other Location",
+                                                    placeholder: "Please specify",
+                                                    type: "text",
+                                                    className: "w-1/3 ml-[50%]",
+                                                    show: watch("services.limitedAccess") === "other"
+                                                }
+                                            ]}
+                                        />
+                                        {/* <FormRadio
                                             field={{
                                                 className: "grid grid-cols-2 gap-4",
                                                 name: "limitedAccess.location",
@@ -180,9 +211,14 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                                                         value: "other",
                                                         label: "Other",
                                                     },
-                                                ]
+
+                                                ],
+
+                                                // text field for other selection
+
                                             }}
-                                        />
+                                        /> */}
+
                                     </div>
                                 }
                             </div>
@@ -214,13 +250,13 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                             <div className="sm:col-span-3">
                                 <FormCheckbox
                                     field={{
-                                        name: "services.inbound",
+                                        name: "inbound",
                                         label: "In Bond",
                                         defaultValue: false,
                                         icon: <Info size={16} />
                                     }}
                                 />
-                                {watch("services.inbound") &&
+                                {watch("inBondCheckbox") &&
                                     <div className="my-4">
                                         <InBond />
                                     </div>

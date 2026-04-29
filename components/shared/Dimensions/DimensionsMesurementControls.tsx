@@ -13,7 +13,7 @@ export function DimensionsMeasurementControls({ shipmentType, fieldCount, onQuan
 
     return (
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50 dark:bg-card border p-4 rounded-md">
-            {shipmentType !== "STANDARD_FTL" ?
+            {shipmentType !== "STANDARD_FTL" && shipmentType !== "COURIER_PAK" ?
                 <div className="flex items-center gap-4">
                     <Label className="font-semibold text-slate-800 dark:text-slate-100 mb-0">Quantity</Label>
                     <Select
@@ -31,7 +31,7 @@ export function DimensionsMeasurementControls({ shipmentType, fieldCount, onQuan
                     </Select>
                 </div> : ""}
 
-            <div className="flex flex-col sm:items-end space-y-3">
+            <div className={`${shipmentType === "STANDARD_FTL" || shipmentType === "COURIER_PAK" ? "w-full" : "flex-col sm:items-end space-y-3"} flex `}>
                 <Controller
                     control={control}
                     name="lineItem.measurementUnit"

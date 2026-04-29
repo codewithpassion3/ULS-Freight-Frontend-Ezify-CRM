@@ -24,6 +24,25 @@ export function ContactForm({
     const methods = useForm<ContactFormValues>({
         resolver: zodResolver(contactSchema),
         mode: "onChange",
+        defaultValues: defaultValues || {
+            companyName: "",
+            phoneNumber: "",
+            email: "",
+            contactName: "",
+            address: {
+                address1: "",
+                postalCode: "",
+                city: "",
+                state: "",
+                country: "",
+            },
+            readyTimeHour: "00",
+            readyTimeMinute: "00",
+            readyTimeAmPm: "AM",
+            closeTimeHour: "00",
+            closeTimeMinute: "00",
+            closeTimeAmPm: "AM",
+        }
 
     })
     useEffect(() => {
@@ -42,11 +61,11 @@ export function ContactForm({
                 // closeTimeMinute: 0,
                 // closeTimeAmPm: "AM",
 
-                readyTimeHour: "0",
-                readyTimeMinute: "0",
+                readyTimeHour: "00",
+                readyTimeMinute: "00",
                 readyTimeAmPm: "AM",
-                closeTimeHour: "0",
-                closeTimeMinute: "0",
+                closeTimeHour: "00",
+                closeTimeMinute: "00",
                 closeTimeAmPm: "AM",
             })
         }

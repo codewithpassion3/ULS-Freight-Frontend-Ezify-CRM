@@ -147,8 +147,8 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         const services = servicesRef.current?.getValues() || {}
         const insurance = insuranceRef.current?.getValues() || {}
         const signature = signatureRef.current?.getValues() || {}
-        // console dim
-        console.log("dimensions", dimensions)
+
+
         let completePayload = {
             addresses: [fromAddress, toAddress],
             ...dimensions,
@@ -176,9 +176,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         const fromValid = await fromAddressRef.current?.trigger()
         const toValid = await toAddressRef.current?.trigger()
         const dimValid = await dimensionsRef.current?.trigger()
-        console.log("fromValid", fromValid)
-        console.log("toValid", toValid)
-        console.log("dimValid", dimValid)
+
 
         // We validate core sections First. Then conditionally attached ones depending on if they are rendered
 
@@ -197,14 +195,12 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
 
 
         const mergedData = getMergedPayload()
-        console.log("mergedData", mergedData)
         payloadTransformer(mergedData)
 
 
     }
-
+    // DON'T REMOVE TILL QUOTE AND SHIPMENTS ARE STABLE
     const payloadTransformer = (data: any) => {
-        const shipDate = data.addresses[0].shipDate
         const formattedAddresses = data.addresses?.map((address: any) => {
 
             if (address.addressBookId) {
@@ -239,13 +235,12 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             "quoteType": quoteType,
             "shipmentType": shipmentType,
             ...(!isEditing && quoteStatus !== singleQuote?.quote.status && { "status": quoteStatus }),
-            // ...(shipmentType !== "STANDARD_FTL") && {
-            //     "lineItem": {
-            //         ...data.lineItem,
-            //         "type": shipmentType,
-            //         "units": data.units
-            //     },
-            // },
+            ...(shipmentType === "STANDARD_FTL") && {
+                // include straps if true
+                ...(data.includeStraps && { "includeStraps": data.includeStraps }),
+                // appointment delivery if true
+                ...(data.appointmentDelivery && { "appointmentDelivery": data.appointmentDelivery }),
+            },
         }
         const transformedAddresses = payload.addresses.map((addr: any) => {
             if (addr.addressBookId) {
@@ -261,55 +256,50 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             ...payload,
             addresses: transformedAddresses,
         };
+
+        const ftlSelectedService = payloadTransformed.lineItem.units[0].name
+        let ftlLineItemToServiceMapping = {
+            services: {
+                [ftlSelectedService]: {
+                    "totalWeight": payloadTransformed.lineItem.units[0].weight,
+                    "measurementUnit": payloadTransformed.lineItem.measurementUnit,
+                    "totalCount": payloadTransformed.lineItem.units[0].count
+                }
+
+            },
+            ...payloadTransformed,
+        }
+        const { lineItem, ...ftlPayload } = ftlLineItemToServiceMapping
+        const finalQuotePayload = shipmentType === "STANDARD_FTL" ? ftlPayload : payloadTransformed
+
         const shipmentPayload = {
-            shipDate: shipDate,
+            shipDate: data.addresses[0].shipDate,
             mode: "SHIPMENT",
             shipmentType: shipmentType,
             quote: {
-                ...payloadTransformed
+                ...finalQuotePayload
             }
 
         }
 
-        let ftlLineItemToServiceMapping = {
-            services: {
-                ...shipmentPayload.quote.lineItem.units
-            },
-            ...shipmentPayload,
-        }
-        // @ts-ignore
-        const { lineItem, ...ftlPayload } = ftlLineItemToServiceMapping
-        console.log("ftlPayload", ftlPayload)
 
+        const finalShipmentPayload = shipmentType === "STANDARD_FTL" ? ftlPayload : shipmentPayload
 
         if (isEditing) {
             if (isShipment) {
-                updateShipmentMutation.mutate(shipmentPayload)
+                updateShipmentMutation.mutate(finalShipmentPayload)
             } else {
-                updateQuoteMutation.mutate(payloadTransformed)
+                updateQuoteMutation.mutate(finalQuotePayload)
             }
         } else {
             if (isShipment) {
-                createShipmentMutation.mutate(shipmentPayload)
+                createShipmentMutation.mutate(finalShipmentPayload)
             } else {
-                createQuoteMutation.mutate(payloadTransformed)
+                createQuoteMutation.mutate(finalQuotePayload)
             }
         }
     }
 
-    const handleStatus = (status: "DRAFT" | "SAVED") => {
-        if (isEditing) {
-            if (status !== quoteStatus) {
-                setQuoteStatus(status)
-            }
-        }
-        else {
-            setQuoteStatus(status)
-        }
-    }
-    const handleGetRates = () => {
-
-    }
     const [openGetRates, setOpenGetRates] = useState("")
     return (
         <div className="container mx-auto py-8 px-4 max-w-7xl">

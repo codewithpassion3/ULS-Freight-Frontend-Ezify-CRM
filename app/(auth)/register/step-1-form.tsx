@@ -108,7 +108,8 @@ export function Step1Form({ onNext }: Step1FormProps) {
     console.log("Step 1 Form submitted:", data)
     onNext()
   }
-
+  // console values
+  console.log("form.getValues()", form.getValues())
   return (
     <div className="space-y-6">
       <FormProvider {...form}>
@@ -162,8 +163,8 @@ export function Step1Form({ onNext }: Step1FormProps) {
               label: "Are you a Freight Broker?",
               type: "radio",
               options: [
-                { label: "No", value: "no" },
-                { label: "Yes", value: "yes" },
+                { label: "No", value: false },
+                { label: "Yes", value: true },
               ],
             },
 

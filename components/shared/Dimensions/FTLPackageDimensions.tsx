@@ -1,6 +1,8 @@
 import { GlobalForm } from "@/components/common/form/GlobalForm";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { X } from "lucide-react";
 import { Controller, useFormContext } from "react-hook-form";
 
 export function FTLPackageDimensions() {
@@ -21,7 +23,6 @@ export function FTLPackageDimensions() {
             formWrapperClassName="grid grid-cols-1 md:grid-cols-4 gap-4"
             fields={
                 [
-                    // one form radio selection loose freight and pallet
                     {
                         name: "lineItem.units.0.name",
                         type: "radio",
@@ -38,6 +39,8 @@ export function FTLPackageDimensions() {
                         label: `${ftlPackageTypeName} Count`,
                         type: "number",
                         placeholder: `${ftlPackageTypeName} Count`,
+                        labelClassName: "text-xs text-muted-foreground",
+
                     },
                     // total weight
                     {
@@ -54,11 +57,14 @@ export function FTLPackageDimensions() {
                         name: "lineItem.units.0.description",
                         label: "Description",
                         type: "text",
+                        labelClassName: "text-xs text-muted-foreground",
+
                         placeholder: "Description",
                     },
 
                 ]
             }
         />
+
     )
 }

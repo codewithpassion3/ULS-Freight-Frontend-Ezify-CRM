@@ -83,7 +83,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
 
             {/* Dimension fields */}
             <div className="flex items-start gap-2">
-                <span className="mt-8 mr-2">{index + 1}</span>
+                {shipmentType !== "STANDARD_FTL" && shipmentType !== "COURIER_PAK" && <span className="mt-8 mr-2">{index + 1}</span>}
                 <GlobalForm
                     formWrapperClassName="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4"
                     fields={[
@@ -94,7 +94,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                             placeholder: "L",
                             min: 0,
                             labelClassName: rowErrors?.length ? "text-xs text-muted-foreground text-red-400" : "text-xs text-muted-foreground",
-                            show: !(isShipment && shipmentType === "COURIER_PAK")
+                            show: !(shipmentType === "COURIER_PAK")
                         },
                         {
                             name: `lineItem.units.${index}.width`,
@@ -104,7 +104,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                             min: 0,
                             labelClassName: rowErrors?.length ? "text-xs text-muted-foreground text-red-400" : "text-xs text-muted-foreground",
                             className: rowErrors?.width ? "border-red-500" : "",
-                            show: !(isShipment && shipmentType === "COURIER_PAK")
+                            show: !(shipmentType === "COURIER_PAK")
                         },
                         {
                             name: `lineItem.units.${index}.height`,
@@ -114,7 +114,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                             min: 0,
                             labelClassName: rowErrors?.length ? "text-xs text-muted-foreground text-red-400" : "text-xs text-muted-foreground",
                             className: rowErrors?.height ? "border-red-500" : "",
-                            show: !(isShipment && shipmentType === "COURIER_PAK")
+                            show: !(shipmentType === "COURIER_PAK")
                         },
                         {
                             name: `lineItem.units.${index}.weight`,
@@ -181,7 +181,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                             type: "text",
                             placeholder: "Description",
                             labelClassName: "text-xs text-muted-foreground",
-                            wrapperClassName: "col-span-1 sm:col-span-2 md:col-span-4"
+                            wrapperClassName: `col-span-1 sm:col-span-2 ${shipmentType === "STANDARD_FTL" || shipmentType === "COURIER_PAK" ? "md:col-span-3" : "md:col-span-4"}`
                         },
                         // specialHandlingRequired
                         {

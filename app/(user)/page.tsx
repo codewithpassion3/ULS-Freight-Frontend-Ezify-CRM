@@ -9,9 +9,10 @@ import PromoBannerWidget from "./home/components/PromoBannerWidget";
 import { useAuth } from "@/context/auth.context";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
+import { Loader } from "@/components/common/Loader";
 
 export default function Home() {
-    // const { user: data } = useAuth();
+    const { user, isLoading, isPending } = useAuth();
     // const router = useRouter();
     // const hasRedirected = useRef(false)
     // const pathname = usePathname()
@@ -31,25 +32,30 @@ export default function Home() {
     //         router.replace(defaultPage)
     //     }
     // }, [data, pathname, router])
-    return (
-        <div className="min-h-screen bg-[#f8fafc] dark:bg-background py-8">
-            <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="flex flex-col lg:flex-row gap-6">
-                    {/* Main Column (Left) */}
-                    <div className="flex-1 min-w-0">
-                        <DashboardHeader />
-                        <NotificationsSummary />
-                        <TrackingUpdatesWidget />
-                        <InvoicingUpdatesWidget />
-                    </div>
-                    {/* Sidebar (Right) */}
-                    <div className="w-full lg:w-80 shrink-0 flex flex-col gap-6">
-                        <TrackShipmentsWidget />
-                        <PickupSummaryWidget />
-                        <PromoBannerWidget />
+    if (isLoading || isPending) {
+        return <Loader />
+    }
+    if (user) {
+        return (
+            <div className="min-h-screen bg-[#f8fafc] dark:bg-background py-8">
+                <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="flex flex-col lg:flex-row gap-6">
+                        {/* Main Column (Left) */}
+                        <div className="flex-1 min-w-0">
+                            <DashboardHeader />
+                            <NotificationsSummary />
+                            <TrackingUpdatesWidget />
+                            <InvoicingUpdatesWidget />
+                        </div>
+                        {/* Sidebar (Right) */}
+                        <div className="w-full lg:w-80 shrink-0 flex flex-col gap-6">
+                            <TrackShipmentsWidget />
+                            <PickupSummaryWidget />
+                            <PromoBannerWidget />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    );
+        );
+    }
 }

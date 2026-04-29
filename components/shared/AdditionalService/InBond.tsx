@@ -1,16 +1,17 @@
 "use client"
 import FormField from "@/components/common/form/fields/FormField"
 import FormRadio from "@/components/common/form/fields/FormRadio"
+import { GlobalForm } from "@/components/common/form/GlobalForm"
 import { FormPhone } from "@/components/common/forms/FormPhone"
 // import { FormRadio } from "@/components/common/form/fields/FormRadio"
 import { useFormContext } from "react-hook-form"
 
 
-export default function InBond() {
-    const { watch, setValue } = useFormContext()
 
-    const bondType = watch("bondType")
-    const contactType = watch("services.inBond.contactType")
+export default function InBond() {
+    const { watch } = useFormContext()
+    const contactType = watch("inBound.contactKey").toLowerCase()
+
 
     return (
         <div className="border border-blue-100 bg-[#f8fbfe] rounded-md p-6 space-y-6">
@@ -19,87 +20,57 @@ export default function InBond() {
             <h3 className="font-semibold text-lg">In-Bond Details</h3>
 
             {/* Bond Type */}
-            <div className="flex items-center gap-6">
-                <FormRadio
-                    field={{
-                        name: "services.inBond.transport.type",
+            <GlobalForm
+                formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                fields={[
+                    {
+                        name: "inBound.bondType",
                         label: "(T&E) Transportation & Export Bond",
+                        type: "radio",
                         options: [
-                            { label: "(T&E) Transportation & Export Bond", value: "te" },
-                            { label: "(IT) Immediate Transportation Bond", value: "it" },
+                            { label: "(T&E) Transportation & Export Bond", value: "T_E_BOND" },
+                            { label: "(IT) Immediate Transportation Bond", value: "IT_BOND" },
                         ],
-                    }}
-                />
-            </div>
-
-            {/* Warehouse + Address */}
-            <div className="grid grid-cols-2 gap-4">
-                <FormField
-                    field={{
-                        name: "services.inBond.warehouseCarrier",
+                        wrapperClassName: "col-span-2"
+                    },
+                    {
+                        name: "inBound.bondCancler",
                         label: "Warehouse or Carrier who will cancel US Bond",
+                        type: "text",
                         placeholder: "",
                         inputClassName: "bg-white",
-                    }}
-                />
-
-                <FormField
-                    field={{
-                        name: "services.inBond.address",
+                    },
+                    {
+                        name: "inBound.address",
                         label: "Address",
+                        type: "text",
                         placeholder: "123 Address",
                         inputClassName: "bg-white",
-                    }}
-                />
-            </div>
-
-            {/* Contact Selection */}
-            <div className="space-y-2 w-1/2">
-                <p className="text-sm font-medium">
-                    Please provide one of the contact options below:
-                </p>
-
-                <FormRadio
-                    field={{
-                        name: "services.inBond.contactType",
+                    },
+                    {
+                        name: "inBound.contactKey",
                         options: [
-                            { label: "Email", value: "email" },
-                            { label: "Fax Number", value: "fax" },
-                            { label: "Phone", value: "phone" },
+                            { label: "Email", value: "EMAIL" },
+                            { label: "Fax Number", value: "FAX" },
+                            { label: "Phone", value: "PHONE" },
                         ],
-                        className:"mb-4"
-                    }}
-                />
+                        type: "radio",
+                        className: "mb-4"
+                    },
+                    {
+                        name: "inBound.contactValue",
+                        label: contactType,
+                        placeholder: `Please enter your ${contactType}`,
+                        inputClassName: "w-1/2 bg-white",
+                        wrapperClassName: "col-span-2",
+                        type: "text",
+                        labelClassName: "capitalize"
 
-                {/* Email Field */}
-                {contactType === "email" && (
-                    <FormField
-                        field={{
-                            name: "services.inBond.contact.email",
-                            label: "Email",
-                            placeholder: "Please Enter your email",
-                            inputClassName: "bg-white",
-                        }}
-                    />
-                )}
-                {contactType === "fax" && (
-                    <FormField
-                        field={{
-                            name: "services.inBond.contact.fax",
-                            label: "Fax Number",
-                            placeholder: "Please Enter your fax number",
-                            inputClassName: "bg-white",
-                        }}
-                    />
-                )}
-                {contactType === "phone" && (
-                    <FormPhone
-                        name="services.inBond.contact.phone"
-                        label="Phone Number"
-                        placeholder="Please Enter your phone number"
-                    />
-                )}
-            </div>
+                    },
+
+                ]}
+            />
+
 
 
         </div>

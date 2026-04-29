@@ -11,7 +11,7 @@ export const packageUnitSchema = z.object({
 
 export const courierUnitSchema = z.object({
   weight: z.number("Required").min(1, "Must be > 0"),
-  description: z.string().min(1, "Description is required").optional(),
+  description: z.string().optional(),
 })
 
 export const ftlUnitSchema = z.object({

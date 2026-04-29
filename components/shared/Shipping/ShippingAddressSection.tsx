@@ -212,6 +212,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   }, [cachedSingleQuote, index, type, shipmentType, methods]);
 
   const handleAddressSelect = (contact: ContactType) => {
+    console.log("contact", contact);
     markContactAsRecent.mutate(contact.id || "")
     setAddressLocked(true)
     methods.setValue("addressBookId", Number(contact.id));
@@ -223,20 +224,57 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       city: contact.address?.city || "",
       state: contact.address?.state || "",
       country: contact.address?.country || "",
-      // isResidential: contact.address?.isResidential || false,
       ...(isShipment && { unit: contact.address?.unit || "" }),
-    });
+    },
+      {
+        shouldValidate: true,
+        shouldDirty: true,
+      }
+    );
+    // if shipment type is STANDARD_FTL
+    if (shipmentType === "PACKAGE" || shipmentType === "COURIER_PAK") {
+      methods.setValue("isResidential", contact.isResidential || false,
+        {
+          shouldValidate: true,
+          shouldDirty: true,
+        }
+      );
+    }
 
     if (showLocationType) {
-      methods.setValue("locationTypeId", contact?.locationTypeId || "");
+      methods.setValue("locationTypeId", contact?.locationTypeId || "",
+        {
+          shouldValidate: true,
+        }
+      );
     }
 
     if (isShipment) {
-      methods.setValue("companyName", contact.companyName || "");
-      methods.setValue("address2", contact.address?.address2 || "");
-      methods.setValue("contactName", contact.contactName || "");
-      methods.setValue("email", contact.email || "");
-      methods.setValue("phoneNumber", contact.phoneNumber || "");
+      methods.setValue("companyName", contact.companyName || "",
+        {
+          shouldValidate: true,
+        }
+      );
+      methods.setValue("address2", contact.address?.address2 || "",
+        {
+          shouldValidate: true,
+        }
+      );
+      methods.setValue("contactName", contact.contactName || "",
+        {
+          shouldValidate: true,
+        }
+      );
+      methods.setValue("email", contact.email || "",
+        {
+          shouldValidate: true,
+        }
+      );
+      methods.setValue("phoneNumber", contact.phoneNumber || "",
+        {
+          shouldValidate: true,
+        }
+      );
     }
     // print location type
   }
@@ -274,7 +312,10 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   // show values
   // show errors
 
-
+  // console values on change
+  useEffect(() => {
+    console.log("values", methods.getValues());
+  }, [methods.getValues()]);
 
 
   const handleSwap = () => {
