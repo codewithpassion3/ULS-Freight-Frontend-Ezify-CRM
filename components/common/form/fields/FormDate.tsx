@@ -50,7 +50,7 @@ const FormDate = memo(({ field: config }: { field: any }) => {
                         {field.value ? (
                             format(new Date(field.value), "PPP")
                         ) : (
-                            <span className={error ? "text-red-500" : "text-muted-foreground"}>{format(new Date(), "PPP")}</span>
+                            <span className={error ? "text-red-500" : "text-muted-foreground"}>Select Date</span>
                         )}
 
                         <CalendarIcon />
@@ -62,7 +62,7 @@ const FormDate = memo(({ field: config }: { field: any }) => {
                         // mode={config.mode || "single"}
                         mode="single"
                         required
-                        selected={field.value ? new Date(field.value) : new Date()}
+                        selected={field.value ? new Date(field.value) : undefined}
                         onSelect={(date: any) => {
                             console.log("date", date);
                             handleSelect(date)

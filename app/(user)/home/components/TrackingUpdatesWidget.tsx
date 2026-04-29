@@ -13,7 +13,7 @@ export default function TrackingUpdatesWidget() {
                     {/* Ready For Shipping */}
                     <div className="border border-slate-200 dark:border-slate-800 rounded flex flex-col items-center justify-center pt-6 overflow-hidden bg-white dark:bg-slate-900 shadow-sm hover:shadow transition-shadow cursor-pointer">
                         <div className="flex items-center gap-2 mb-4">
-                            <CheckCircle2 className="size-6 text-[#0072BC] dark:text-[#3da9fc]" />
+                            <CheckCircle2 className="size-6 text-primary dark:text-[#3da9fc]" />
                             <span className="text-2xl font-bold text-slate-800 dark:text-slate-100">0</span>
                         </div>
                         <div className="w-full bg-[#dbeaf4] dark:bg-[#1a365d] text-center py-2 text-xs font-semibold text-slate-800 dark:text-slate-200">

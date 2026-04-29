@@ -84,12 +84,12 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "shippingRate",
     header: "Shipping Rate",
     cell: ({ row }) => {
-      console.log("row", row.original?.fedexQuotes?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.totalBaseCharge)
-      const baseCharge = row.original?.fedexQuotes?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.totalBaseCharge
-      const totalNetCharge = row.original?.fedexQuotes?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.totalNetCharge
-      const baseChargeCurrency = row.original?.fedexQuotes?.output?.rateReplyDetails[0]?.current
-      const fuelCharges = row.original?.fedexQuotes?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.shipmentRateDetail.surCharges[0]?.amount
-      const additionalCharges = row.original?.fedexQuotes?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.shipmentRateDetail.surCharges[1]?.amount
+      console.log("row", row.original)
+      const baseCharge = row.original?.quote?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.totalBaseCharge
+      const totalNetCharge = row.original?.quote?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.totalNetCharge
+      const baseChargeCurrency = row.original?.quote?.output?.rateReplyDetails[0]?.current
+      const fuelCharges = row.original?.quote?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.shipmentRateDetail.surCharges[0]?.amount
+      const additionalCharges = row.original?.quote?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.shipmentRateDetail.surCharges[1]?.amount
       return (
         // tootip
         <TooltipProvider>

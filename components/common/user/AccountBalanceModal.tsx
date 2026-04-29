@@ -96,7 +96,7 @@ export function AccountBalanceModal({ open, onOpenChange }: AccountBalanceModalP
                                 <span className="text-sm font-semibold w-[100px] text-right">$1,678.07</span>
                             </div>
                             <div className="flex-1 ml-4 text-left">
-                                <a href="#" className="text-sm text-blue-600 hover:underline">View Unpaid Invoices</a>
+                                <a href="#" className="text-sm text-primary hover:underline">View Unpaid Invoices</a>
                             </div>
                         </div>
 
@@ -107,7 +107,7 @@ export function AccountBalanceModal({ open, onOpenChange }: AccountBalanceModalP
                                 <span className="text-sm font-semibold w-[100px] text-right">$241.31</span>
                             </div>
                             <div className="flex-1 ml-4 text-left">
-                                <button className="text-sm text-blue-600 hover:underline flex items-center gap-1">
+                                <button className="text-sm text-primary hover:underline flex items-center gap-1">
                                     View Shipments
                                     <span className="text-xs">^</span> {/* Caret for expansion style */}
                                 </button>

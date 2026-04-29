@@ -65,7 +65,7 @@ export default function UserProfile() {
                         <p className="text-sm font-medium">
                             Welcome, {user?.user?.firstName} {user?.user?.lastName}
                         </p>
-                        <p className="text-xs dark:text-white text-blue-600">
+                        <p className="text-xs dark:text-white text-primary">
                             Available Credit: $1,080.62
                         </p>
                     </div>

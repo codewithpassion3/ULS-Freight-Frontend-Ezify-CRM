@@ -250,7 +250,7 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                             <div className="sm:col-span-3">
                                 <FormCheckbox
                                     field={{
-                                        name: "inbound",
+                                        name: "inBondCheckbox",
                                         label: "In Bond",
                                         defaultValue: false,
                                         icon: <Info size={16} />

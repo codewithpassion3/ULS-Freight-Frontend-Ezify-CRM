@@ -2,7 +2,7 @@ import { ContactFormValues } from "../schemas/addContact.schema"
 import { ContactType } from "../types/addContact.types"
 
 function pad2(value: string) {
-    return value.trim().padStart(2, "0")
+    return value?.trim().padStart(2, "0")
 }
 
 export function formatTime12h(hour: string, minute: string, ampm: "AM" | "PM") {
@@ -10,7 +10,7 @@ export function formatTime12h(hour: string, minute: string, ampm: "AM" | "PM") {
     return `${pad2(hour)}:${pad2(minute)} ${ampm}`
 }
 
-function parseTime12h(time: string): [string, string, "AM" | "PM"] {
+export function parseTime12h(time: string): [string, string, "AM" | "PM"] {
     const [timePart, ampm] = time.split(" ") as [string, "AM" | "PM"]
     const [hour, minute] = timePart.split(":")
     return [hour, minute, ampm]

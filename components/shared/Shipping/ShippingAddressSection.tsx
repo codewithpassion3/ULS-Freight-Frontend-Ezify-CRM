@@ -41,6 +41,7 @@ import FormDate from "@/components/common/form/fields/FormDate"
 import { contactSchema } from "@/app/(user)/settings/(address-book)/schemas/addContact.schema"
 import { getAddressByPostalCode } from "@/api/services/shipment.api"
 import { Input } from "@/components/ui/input"
+import { parseTime12h } from "@/app/(user)/settings/(address-book)/mappers/contact.mapper"
 export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, type, title, onNextStep, onSwap, setShipDate }: { quoteType: keyof ShipmentOptions, shipmentType: ShipmentOptions[keyof ShipmentOptions], type: "TO" | "FROM", title: string, onNextStep?: (data: any) => void, onSwap?: () => void, setShipDate?: (date: Date | undefined) => void }, ref) => {
   // check if route includes shipment to check if it quote or shipment
   const pathname = usePathname()
@@ -231,6 +232,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
         shouldDirty: true,
       }
     );
+
     // if shipment type is STANDARD_FTL
     if (shipmentType === "PACKAGE" || shipmentType === "COURIER_PAK") {
       methods.setValue("isResidential", contact.isResidential || false,
@@ -271,6 +273,39 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
         }
       );
       methods.setValue("phoneNumber", contact.phoneNumber || "",
+        {
+          shouldValidate: true,
+        }
+      );
+      // readytime
+      const [readyTimeHour, readyTimeMinute, readyTimeAmPm] = parseTime12h(contact.palletShippingReadyTime);
+      const [closeTimeHour, closeTimeMinute, closeTimeAmPm] = parseTime12h(contact.palletShippingCloseTime);
+      methods.setValue("readyTimeHour", readyTimeHour || "",
+        {
+          shouldValidate: true,
+        }
+      );
+      methods.setValue("readyTimeAmPm", readyTimeAmPm || "",
+        {
+          shouldValidate: true,
+        }
+      );
+      methods.setValue("readyTimeMinute", readyTimeMinute || "",
+        {
+          shouldValidate: true,
+        }
+      );
+      methods.setValue("closeTime", closeTimeHour || "",
+        {
+          shouldValidate: true,
+        }
+      );
+      methods.setValue("closeTimeAmPm", closeTimeAmPm || "",
+        {
+          shouldValidate: true,
+        }
+      );
+      methods.setValue("closeTimeMinute", closeTimeMinute || "",
         {
           shouldValidate: true,
         }

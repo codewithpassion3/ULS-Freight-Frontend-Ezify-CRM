@@ -9,6 +9,10 @@ export const updateShipment = async (id: string, payload: any) => {
     const response = await apiClient.patch(`/shipments/${id}`, payload);
     return response.data;
 };
+export const bookShipment = async (payload: any) => {
+    const response = await apiClient.post("/shipment-carriers/shipments", payload);
+    return response.data;
+};
 
 export const getAddressByPostalCode = async (postalCode: string, countryCode: string) => {
     if (!postalCode || postalCode.length < 3) {

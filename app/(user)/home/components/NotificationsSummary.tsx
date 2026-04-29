@@ -25,34 +25,34 @@ export default function NotificationsSummary() {
                     <TabsList className="bg-transparent h-auto flex flex-wrap gap-6 text-sm w-max justify-start border-none">
                         <TabsTrigger
                             value="all"
-                            className="bg-transparent font-semibold text-slate-500 dark:text-slate-400 data-[state=active]:text-slate-800 dark:data-[state=active]:text-slate-200  rounded-none pb-2 -mb-[2px] shadow-none data-[state=active]:shadow-none! cursor-pointer! border-x-none! border-t-none! px-4 data-[state=active]:border-b-orange-400 data-[state=active]:border-b-2"
+                            className="bg-transparent font-semibold text-slate-500 dark:text-slate-400 data-[state=active]:text-slate-800 dark:data-[state=active]:text-slate-200  rounded-sm pb-2 -mb-[2px] shadow-none data-[state=active]:shadow-none! cursor-pointer! border-x-none! border-t-none! px-4 data-[state=active]:border-b-orange-400 "
                         >
                             All (28)
                         </TabsTrigger>
                         <TabsTrigger
                             value="urgent"
-                            className="bg-transparent flex items-center gap-1.5 text-slate-500 dark:text-slate-400 data-[state=active]:text-slate-800 dark:data-[state=active]:text-slate-200 data-[state=active]:border-b-2 data-[state=active]:border-b-orange-400 rounded-none pb-2 -mb-[2px] px-0 data-[state=active]:shadow-none! cursor-pointer!"
+                            className="bg-transparent flex items-center gap-1.5 text-slate-500 dark:text-slate-400 data-[state=active]:text-slate-800 dark:data-[state=active]:text-slate-200 data-[state=active]:border-b-2 data-[state=active]:border-b-orange-400 rounded-sm pb-2 -mb-[2px] px-0 data-[state=active]:shadow-none! cursor-pointer!"
                         >
                             <AlertOctagon className="size-4 text-red-600" />
                             Urgent (4)
                         </TabsTrigger>
                         <TabsTrigger
                             value="new"
-                            className="bg-transparent flex items-center gap-1.5 text-slate-500 dark:text-slate-400 data-[state=active]:text-slate-800 dark:data-[state=active]:text-slate-200 data-[state=active]:border-b-2 data-[state=active]:border-b-orange-400 rounded-none pb-2 -mb-[2px] shadow-none data-[state=active]:shadow-none! cursor-pointer! px-0"
+                            className="bg-transparent flex items-center gap-1.5 text-slate-500 dark:text-slate-400 data-[state=active]:text-slate-800 dark:data-[state=active]:text-slate-200 data-[state=active]:border-b-2 data-[state=active]:border-b-orange-400 rounded-sm pb-2 -mb-[2px] shadow-none data-[state=active]:shadow-none! cursor-pointer! px-0"
                         >
                             <AlertCircle className="size-4 text-orange-500" />
                             New (22)
                         </TabsTrigger>
                         <TabsTrigger
                             value="today"
-                            className="bg-transparent flex items-center gap-1.5 text-slate-500 dark:text-slate-400 data-[state=active]:text-slate-800 dark:data-[state=active]:text-slate-200 data-[state=active]:border-b-2 data-[state=active]:border-b-orange-400 rounded-none pb-2 -mb-[2px] shadow-none data-[state=active]:shadow-none! cursor-pointer! px-0"
+                            className="bg-transparent flex items-center gap-1.5 text-slate-500 dark:text-slate-400 data-[state=active]:text-slate-800 dark:data-[state=active]:text-slate-200 data-[state=active]:border-b-2 data-[state=active]:border-b-orange-400 rounded-sm pb-2 -mb-[2px] shadow-none data-[state=active]:shadow-none! cursor-pointer! px-0"
                         >
                             <CheckCircle2 className="size-4 text-slate-700" />
                             Today (0)
                         </TabsTrigger>
                         <TabsTrigger
                             value="reminders"
-                            className="bg-transparent flex items-center gap-1.5 text-slate-500 dark:text-slate-400 data-[state=active]:text-slate-800 dark:data-[state=active]:text-slate-200 data-[state=active]:border-b-2 data-[state=active]:border-b-orange-400 rounded-none pb-2 -mb-[2px] shadow-none data-[state=active]:shadow-none! cursor-pointer! px-0"
+                            className="bg-transparent flex items-center gap-1.5 text-slate-500 dark:text-slate-400 data-[state=active]:text-slate-800 dark:data-[state=active]:text-slate-200 data-[state=active]:border-b-2 data-[state=active]:border-b-orange-400 rounded-sm pb-2 -mb-[2px] shadow-none data-[state=active]:shadow-none! cursor-pointer! px-0"
                         >
                             <Clock className="size-4 text-[#0072BC]" />
                             Reminders (0)

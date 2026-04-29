@@ -21,7 +21,7 @@ import AdditionalInsurance from "../AdditionalInsurance/AdditionalInsurance"
 import SignaturePreference from "../SignaturePreference/SignaturePreference"
 import { Button } from "@/components/ui/button"
 import { quoteUnionSchema, spotShipmentSchema, standardShipmentSchema } from "@/lib/validations/quote/standard-quote-schema"
-import { createShipment, updateShipment } from "@/api/services/shipment.api"
+import { bookShipment, createShipment, updateShipment } from "@/api/services/shipment.api"
 import { useRouter } from "next/navigation"
 import { Loader, LoaderCircle } from "lucide-react"
 import { formatTime12h } from "@/app/(user)/settings/(address-book)/mappers/contact.mapper"
@@ -137,6 +137,16 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             toast.error(error.response?.data.message)
         }
     })
+    const bookShipmentMutation = useMutation({
+        mutationFn: (data: unknown) => bookShipment(data),
+        onSuccess: () => {
+            toast.success("Shipment booked successfully")
+            router.push("/shipments")
+        },
+        onError: (error: AxiosError<ApiError>) => {
+            toast.error(error.response?.data.message)
+        }
+    })
 
 
     const fromAddress = fromAddressRef.current?.getValues() || {}
@@ -157,8 +167,8 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         const addresses = [];
         if (Object.keys(fromAddress).length > 0) addresses.push(fromAddress)
         if (Object.keys(toAddress).length > 0) addresses.push(toAddress)
-
-        if (insurance.insurance.amount) {
+        console.log("insurance", insurance)
+        if (insurance?.insurance?.amount) {
             completePayload = { ...completePayload, ...insurance }
         }
         if (Object.keys(services).length > 0) {
@@ -257,13 +267,13 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             addresses: transformedAddresses,
         };
 
-        const ftlSelectedService = payloadTransformed.lineItem.units[0].name
+        const ftlSelectedService = payloadTransformed?.lineItem?.units[0]?.name
         let ftlLineItemToServiceMapping = {
             services: {
                 [ftlSelectedService]: {
-                    "totalWeight": payloadTransformed.lineItem.units[0].weight,
-                    "measurementUnit": payloadTransformed.lineItem.measurementUnit,
-                    "totalCount": payloadTransformed.lineItem.units[0].count
+                    "totalWeight": payloadTransformed?.lineItem?.units[0]?.weight,
+                    "measurementUnit": payloadTransformed?.lineItem?.measurementUnit,
+                    "totalCount": payloadTransformed?.lineItem?.units[0]?.count
                 }
 
             },
@@ -271,9 +281,10 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         }
         const { lineItem, ...ftlPayload } = ftlLineItemToServiceMapping
         const finalQuotePayload = shipmentType === "STANDARD_FTL" ? ftlPayload : payloadTransformed
-
+        console.log("data.addresses[0].shipDate", data.addresses[0].shipDate)
         const shipmentPayload = {
-            shipDate: data.addresses[0].shipDate,
+
+            shipDate: data?.addresses[0]?.shipDate,
             mode: "SHIPMENT",
             shipmentType: shipmentType,
             quote: {
@@ -365,8 +376,8 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                                     {isEditing ? "Update Quote" : "Save Quote"}
                                 </Button>
                             }
-                            <Button onClick={() => setOpenGetRates("shippingRates")}>
-                                Get Rates
+                            <Button>
+                                Book Shipment
                             </Button>
                         </div>
                     </div>
