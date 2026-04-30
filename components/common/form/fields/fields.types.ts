@@ -54,7 +54,7 @@ export type FormRadioTypes = {
     className?: string
     selectedClassName?: string
     onChange?: (value: string) => void
-    valueType?: "string" | "number"
+    valueType?: "string" | "number" | "boolean"
     defaultValue?: string
     wrapperClassName?: string;
     disabled?: boolean;

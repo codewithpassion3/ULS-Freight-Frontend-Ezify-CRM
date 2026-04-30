@@ -11,6 +11,7 @@ import { registerSchema, type RegisterSchemaTypes } from "@/lib/validations/auth
 import FormField from "@/components/common/form/fields/FormField"
 import { PhoneInput } from "@/components/common/PhoneInput"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
+import { useEffect } from "react"
 
 interface Step1FormProps {
   onNext: () => void
@@ -109,7 +110,8 @@ export function Step1Form({ onNext }: Step1FormProps) {
     onNext()
   }
   // console values
-  console.log("form.getValues()", form.getValues())
+  // on change show values inside use effect
+
   return (
     <div className="space-y-6">
       <FormProvider {...form}>
@@ -166,6 +168,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
                 { label: "No", value: false },
                 { label: "Yes", value: true },
               ],
+              valueType: "boolean",
             },
 
           ]}

@@ -11,12 +11,24 @@ const FormRadio = memo(({ field: config }: { field: FormRadioTypes }) => {
     return (
         <div className={config.wrapperClassName}>
             <RadioGroup
-                onValueChange={(value) => {
-                    field.onChange(config.valueType === "number" ? Number(value) : value)
+                // onValueChange={(value) => {
+                //     field.onChange(config.valueType === "number" ? Number(value) : value)
 
+                // }}
+                onValueChange={(value) => {
+                    let parsed: any = value
+
+                    if (config.valueType === "boolean") {
+                        parsed = value === "true"
+                    } else if (config.valueType === "number") {
+                        parsed = Number(value)
+                    }
+
+                    field.onChange(parsed)
                 }}
                 defaultValue={config.defaultValue?.toString()}
-                onChange={() => field.onChange}
+                // convert string to boolean
+                // onChange={() => field.onChange}
                 className={`flex gap-6 ${config.className} cursor-pointer mb-2`}
             >
                 {config.options.map((opt) => {

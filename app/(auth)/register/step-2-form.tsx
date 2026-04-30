@@ -104,8 +104,8 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
             placeholder: "Enter your country",
             type: "select",
             options: [
-              { value: "canada", label: "Canada" },
-              { value: "united-states", label: "United States" },
+              { value: "CA", label: "Canada" },
+              { value: "USA", label: "United States" },
             ],
           },
         ]}
