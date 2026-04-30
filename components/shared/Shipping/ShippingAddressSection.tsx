@@ -151,7 +151,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
     if (postalCodeData) {
       methods.setValue("address.city", postalCodeData.places[0]["place name"])
       methods.setValue("address.state", postalCodeData.places[0].state)
-      methods.setValue("address.country", postalCodeData.places[0].state)
+      methods.setValue("address.country", postalCodeData["country abbreviation"])
     }
   }, [postalCodeData, postalCodeWatch])
 
@@ -472,7 +472,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       type: "checkbox",
       placeholder: "Include Straps",
       icon: <InfoIcon size={16} />,
-      disabled: addressLocked,
+      // disabled: addressLocked,
       show: shipmentType === "STANDARD_FTL" && type === "FROM",
       wrapperClassName: "col-span-2",
     },
@@ -483,7 +483,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       type: "checkbox",
       placeholder: "Appointment Delivery",
       icon: <InfoIcon size={16} />,
-      disabled: addressLocked,
+      // disabled: addressLocked,
       show: shipmentType === "STANDARD_FTL" && type === "TO",
       wrapperClassName: "col-span-2",
     },

@@ -277,27 +277,27 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             addresses: transformedAddresses,
         };
 
-        // const ftlSelectedService = payloadTransformed?.lineItem?.units[0]?.name
-        // let ftlLineItemToServiceMapping = {
-        //     services: {
-        //         [ftlSelectedService]: {
-        //             "totalWeight": payloadTransformed?.lineItem?.units[0]?.weight,
-        //             "measurementUnit": payloadTransformed?.lineItem?.measurementUnit,
-        //             "totalCount": payloadTransformed?.lineItem?.units[0]?.count
-        //         }
+        const ftlSelectedService = payloadTransformed?.lineItem?.units[0]?.name
+        let ftlLineItemToServiceMapping = {
+            services: {
+                [ftlSelectedService]: {
+                    "totalWeight": payloadTransformed?.lineItem?.units[0]?.weight,
+                    "measurementUnit": payloadTransformed?.lineItem?.measurementUnit,
+                    "totalCount": payloadTransformed?.lineItem?.units[0]?.count
+                }
 
-        //     },
-        //     ...payloadTransformed,
-        // }
-        // const { lineItem, ...ftlPayload } = ftlLineItemToServiceMapping
-        // const finalQuotePayload = shipmentType === "STANDARD_FTL" ? ftlPayload : payloadTransformed
+            },
+            ...payloadTransformed,
+        }
+        const { lineItem, ...ftlPayload } = ftlLineItemToServiceMapping
+        const finalQuotePayload = shipmentType === "STANDARD_FTL" ? ftlPayload : payloadTransformed
 
         const shipmentPayload = {
             shipDate: data.addresses[0].shipDate,
             mode: "SHIPMENT",
             shipmentType: shipmentType,
             quote: {
-                ...payloadTransformed
+                ...finalQuotePayload
             }
 
         }
@@ -307,18 +307,28 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             if (isShipment) {
                 updateShipmentMutation.mutate(shipmentPayload)
             } else {
-                updateQuoteMutation.mutate(payloadTransformed)
+                updateQuoteMutation.mutate(finalQuotePayload)
             }
         } else {
             if (isShipment) {
                 createShipmentMutation.mutate(shipmentPayload)
             } else {
-                createQuoteMutation.mutate(payloadTransformed)
+                createQuoteMutation.mutate(finalQuotePayload)
             }
         }
     }
 
     const [openGetRates, setOpenGetRates] = useState("")
+    const [selectedCarrier, setSelectedCarrier] = useState<string | null>(null)
+
+    const handleBookShipment = () => {
+        const bookShipmentPayload = {
+            quoteId: singleQuote?.quote?.id,
+            carrier: selectedCarrier,
+            shipDate: singleQuote?.quote?.shipDate,
+        }
+        bookShipmentMutation.mutate(bookShipmentPayload)
+    }
     return (
         <div className="container mx-auto py-8 px-4 max-w-7xl">
             {!isShipment ? <div className="flex justify-between items-center mb-6">
@@ -350,7 +360,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                     {isStandardQuote && <div className="mt-6"><AdditionalInsurance ref={insuranceRef} /></div>}
                     {(shipmentType === "PACKAGE" || shipmentType === "COURIER_PAK" || isShipment) && <div className="mt-6"><SignaturePreference ref={signatureRef} /></div>}
                     <div className="mt-6">
-                        <ShippingRates openGetRates={openGetRates} setOpenGetRates={setOpenGetRates} dimensions={dimensions} fromAddress={fromAddress} toAddress={toAddress} />
+                        <ShippingRates selectedCarrier={selectedCarrier} setSelectedCarrier={setSelectedCarrier} openGetRates={openGetRates} setOpenGetRates={setOpenGetRates} dimensions={dimensions} fromAddress={fromAddress} toAddress={toAddress} />
                     </div>
                     <div className="w-full flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
                         <div className="flex gap-4">
@@ -383,7 +393,8 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                                     {isEditing ? "Update Quote" : "Save Quote"}
                                 </Button>
                             }
-                            <Button>
+                            <Button onClick={handleBookShipment} disabled={bookShipmentMutation.isPending || !singleQuote}>
+                                {bookShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
                                 Book Shipment
                             </Button>
                         </div>

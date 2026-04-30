@@ -186,18 +186,12 @@ export const columns: ColumnDef<any>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-max">
               <DropdownMenuItem className="cursor-pointer">
-                <CircleCheck size={14} /> Book Now
+                <Link className="flex gap-2 items-center w-full" href={row.original.shipment ? `/shipment?id=${row.original.id}` : `/quote?id=${row.original.id}`}>
+                  <CircleCheck size={14} /> Book Now
+                </Link>
+
               </DropdownMenuItem>
-              {/* {isFavorite ? <DropdownMenuItem className="cursor-pointer w-max" onClick={() => {
-                handleRemoveFromFavorite(row.original.id)
-              }}>
-                <Heart fill="black" size={14} /> Remove from Favorites
-              </DropdownMenuItem> : 
-              <DropdownMenuItem className="cursor-pointer w-max" onClick={() => {
-                handleAddToFavorite(row.original.id)
-              }}>
-                <Heart size={14} /> Add to Favorites
-              </DropdownMenuItem>} */}
+
               <DropdownMenuItem className="cursor-pointer w-max" onClick={() => {
                 handleAddToFavorite(row.original.id)
               }}>

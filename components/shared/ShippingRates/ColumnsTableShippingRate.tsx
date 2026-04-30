@@ -24,39 +24,20 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-export const columns: ColumnDef<any>[] = [
-
-
-  //   {
-  //     id: "select",
-  //     header: ({ table }) => (
-  //       <Checkbox
-  //         checked={table.getIsAllRowsSelected()}
-  //         onCheckedChange={(value) =>
-  //           table.toggleAllRowsSelected(!!value)
-  //         }
-  //       />
-  //     ),
-
-  //     cell: ({ row }) => (
-  //       <Checkbox
-  //         checked={row.getIsSelected()}
-  //         onCheckedChange={(value) =>
-  //           row.toggleSelected(!!value)
-  //         }
-  //       />
-  //     ),
-  //   },
+export const getColumns = (setSelectedCarrier: (carrier: string) => void, selectedCarrier: string | null): ColumnDef<any>[] => [
 
   {
     accessorKey: "carrier",
     header: "Carrier",
     cell: ({ row }) => {
-      // const rate = row.original.fedexQuote
+      const carrier = row.original.carrier
       return (
         <div className="h-24 w-24 p-2 flex justify-center items-center">
-
-          <Image src={"/FedExFreight.svg"} width={100} height={100} alt="Carrier Logo" />
+          {carrier === "FEDEX" ? (
+            <Image src={"/FedExFreight.svg"} width={100} height={100} alt="Carrier Logo" />
+          ) : (
+            <Image src={"/tst.png"} width={100} height={100} alt="Carrier Logo" />
+          )}
         </div>
       )
     }
@@ -65,9 +46,10 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "service",
     header: "Service",
     cell: ({ row }) => {
+      const serviceName = row.original?.serviceName
       return (
         <div>
-          service
+          {serviceName}
         </div>
       )
     }
@@ -76,33 +58,30 @@ export const columns: ColumnDef<any>[] = [
     id: "estTransit",
     header: "Est. Transit",
     cell: ({ row }) => {
-
-      return "N/A"
+      const estTransit = row.original?.deliveryDays
+      return <span>{estTransit}</span>
     }
   },
   {
     accessorKey: "shippingRate",
     header: "Shipping Rate",
     cell: ({ row }) => {
-      console.log("row", row.original)
-      const baseCharge = row.original?.quote?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.totalBaseCharge
-      const totalNetCharge = row.original?.quote?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.totalNetCharge
-      const baseChargeCurrency = row.original?.quote?.output?.rateReplyDetails[0]?.current
-      const fuelCharges = row.original?.quote?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.shipmentRateDetail.surCharges[0]?.amount
-      const additionalCharges = row.original?.quote?.output?.rateReplyDetails[0]?.ratedShipmentDetails[0]?.shipmentRateDetail.surCharges[1]?.amount
+      const totalNetCharge = row.original?.price
+      const baseChargeCurrency = row.original?.currency
+      const fuelCharges = row.original?.fuelSurcharge || null
+      const additionalCharges = row.original?.totalSurcharges - fuelCharges || null
       return (
         // tootip
         <TooltipProvider>
           <Tooltip >
             <TooltipTrigger asChild>
               <Button variant="link">
-                {baseCharge} {baseChargeCurrency}
+                {totalNetCharge} {baseChargeCurrency}
                 <ChevronDown className="h-6 w-6 bg-primary text-white rounded-full p-0.5" />
               </Button>
             </TooltipTrigger>
 
-            <TooltipContent color="primary" side="bottom" className="shadow-lg bg-primary">
-              <span className="text-white absolute top-0 left-0">{baseChargeCurrency} {baseCharge}</span>
+            <TooltipContent side="bottom" className="shadow-lg">
               <div className="min-w-[220px] text-sm ">
 
                 {/* Header */}
@@ -115,7 +94,7 @@ export const columns: ColumnDef<any>[] = [
                 <div className="grid grid-cols-2 gap-y-1">
                   <span>Base Charge</span>
                   <span className="text-right">
-                    {baseChargeCurrency ?? "-"} {baseCharge ?? "N/A"}
+                    {baseChargeCurrency ?? "-"} {totalNetCharge ?? "N/A"}
                   </span>
 
                   <span>Fuel Charges</span>
@@ -142,4 +121,28 @@ export const columns: ColumnDef<any>[] = [
       )
     }
   },
+  // select button
+  {
+    id: "select",
+    header: "Select",
+    cell: ({ row }) => {
+      const carrier = row.original.carrier
+      return (
+        <Button
+          variant={selectedCarrier === carrier ? "default" : "outline"}
+          onClick={() => {
+            // if name is tst-cf-express then do TST-CF-EXPRESS
+            if (carrier === "tst-cf-express") {
+              setSelectedCarrier("TST")
+            } else {
+              setSelectedCarrier(carrier)
+            }
+            console.log("Selected carrier:", carrier)
+          }}
+        >
+          {selectedCarrier === carrier ? "Selected" : "Select"}
+        </Button>
+      )
+    }
+  }
 ]

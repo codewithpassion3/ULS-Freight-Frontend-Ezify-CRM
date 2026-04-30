@@ -63,24 +63,24 @@ export const contactSchema = z.object({
 
     contactName: z.string().min(1, "Contact Name is required"),
 
-    readyTimeHour: z.string().refine(v => {
+    readyTimeHour: z.string().optional().refine(v => {
         const n = Number(v)
         return n >= 1 && n <= 12
     }, "Invalid hour"),
 
-    readyTimeMinute: z.string().refine(v => {
+    readyTimeMinute: z.string().optional().refine(v => {
         const n = Number(v)
         return n >= 0 && n <= 59
     }, "Invalid minutes"),
 
     readyTimeAmPm: z.enum(["AM", "PM"]),
 
-    closeTimeHour: z.string().refine(v => {
+    closeTimeHour: z.string().optional().refine(v => {
         const n = Number(v)
         return n >= 1 && n <= 12
     }, "Invalid hour"),
 
-    closeTimeMinute: z.string().refine(v => {
+    closeTimeMinute: z.string().optional().refine(v => {
         const n = Number(v)
         return n >= 0 && n <= 59
     }, "Invalid minutes"),

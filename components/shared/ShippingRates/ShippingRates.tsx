@@ -16,13 +16,17 @@ export default function ShippingRates({
     fromAddress,
     toAddress,
     openGetRates,
-    setOpenGetRates
+    setOpenGetRates,
+    selectedCarrier,
+    setSelectedCarrier
 }: {
     dimensions: any
     fromAddress: any
     toAddress: any
     openGetRates: string
     setOpenGetRates: (value: string) => void
+    selectedCarrier: string | null
+    setSelectedCarrier: (value: string) => void
 }) {
     console.log("dimensions", dimensions)
     console.log("fromAddress", fromAddress)
@@ -164,7 +168,7 @@ export default function ShippingRates({
                             <span className="text-yellow-500 font-bold">Fastest Carrier Name</span>
                         </div>
                     </div>
-                    <ShippingRatesTable />
+                    <ShippingRatesTable selectedCarrier={selectedCarrier} setSelectedCarrier={setSelectedCarrier} dimensions={dimensions} fromAddress={fromAddress} toAddress={toAddress} />
                 </AccordionContent>
             </AccordionItem>
         </Accordion>

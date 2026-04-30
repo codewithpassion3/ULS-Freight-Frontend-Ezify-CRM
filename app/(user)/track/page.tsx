@@ -109,9 +109,9 @@ export default function TrackingDashboardPage() {
 
             {/* Tabs */}
             <Tabs defaultValue="all" >
-                <TabsList className="gap-2 bg-white dark:bg-slate-800 border border-blue-200 p-1 group-data-[orientation=horizontal]/tabs:h-fit" >
+                <TabsList className="gap-2 bg-white dark:bg-slate-800 border border-blue-200 p-1 group-data-[orientation=horizontal]/tabs:h-fit max-w-full overflow-x-scroll no-scrollbar" >
                     {[
-                        { icon: Heart, label: "All Active", value: "all-active", count: count.all },
+                        { icon: Heart, label: "All Active", value: "all", count: count.all },
                         { icon: SaveIcon, label: "Today's Shipment", value: "todays-shipment", count: count.saved },
                         { icon: Truck, label: "Ready for Shipping", value: "ready-for-shipping", count: count.spot },
                         { icon: Truck, label: "In Transit", value: "in-transit", count: count.spot },
@@ -130,7 +130,7 @@ export default function TrackingDashboardPage() {
                         </TabsTrigger>
                     ))}
                 </TabsList>
-                <TabsContent value="all-active">
+                <TabsContent value="all">
                     <DynamicTrackingTable filters={{ dateRange, search, selectedPackaging }} setCount={setCount} quoteCategory="all" />
                 </TabsContent>
                 <TabsContent value="saved">

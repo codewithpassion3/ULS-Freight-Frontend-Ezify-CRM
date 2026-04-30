@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { CheckCircle, CircleCheck, Edit, Heart, MoreVertical, Trash2 } from "lucide-react"
+import { CheckCircle, CircleCheck, Edit, Eye, Heart, MoreVertical, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query"
 import { addToFavorite, deleteQuote, removeFromFavorite } from "@/api/services/quotes.api"
@@ -135,18 +135,6 @@ export const columns: ColumnDef<any>[] = [
     },
   },
   {
-    accessorKey: "shipTo",
-    header: "Ship To",
-    cell: ({ row }) => {
-      return (
-        <span className="text-[#0070c0] font-medium whitespace-nowrap">
-          {/* {row.original.addresses[1].address.city} */}
-          Karachi
-        </span>
-      )
-    },
-  },
-  {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
@@ -211,32 +199,12 @@ export const columns: ColumnDef<any>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-max">
               <DropdownMenuItem className="cursor-pointer">
-                <CircleCheck size={14} /> Book Now
-              </DropdownMenuItem>
-              {/* {isFavorite ? <DropdownMenuItem className="cursor-pointer w-max" onClick={() => {
-                handleRemoveFromFavorite(row.original.id)
-              }}>
-                <Heart fill="black" size={14} /> Remove from Favorites
-              </DropdownMenuItem> : 
-              <DropdownMenuItem className="cursor-pointer w-max" onClick={() => {
-                handleAddToFavorite(row.original.id)
-              }}>
-                <Heart size={14} /> Add to Favorites
-              </DropdownMenuItem>} */}
-              <DropdownMenuItem className="cursor-pointer w-max" onClick={() => {
-                handleAddToFavorite(row.original.id)
-              }}>
-                <Heart size={14} /> Add to Favorites
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
-                <Link className="flex gap-2 items-center w-full" href={row.original.shipment ? `/shipment?id=${row.original.id}` : `/quote?id=${row.original.id}`}>
-                  <Edit size={14} /> Edit
+                <Link className="flex gap-2 items-center w-full" href={`/track/single?id=${row.original.id}`}>
+                  {/* view */}
+                  <Eye size={14} /> View
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-red-500 cursor-pointer" onClick={() => handleDeleteQuote(row.original.id)}>
-                <Trash2 className="h-4 w-4" />
-                Delete
-              </DropdownMenuItem>
+
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

@@ -3,7 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 
-export function ShipmentDocumentsWidget() {
+export function ShipmentDocumentsWidget({ quote }: { quote?: any }) {
+  if (!quote) return null;
+
   return (
     <Card className="rounded-sm shadow-sm border-slate-200">
       <CardHeader className="bg-slate-50 py-3 px-4 border-b">

@@ -5,12 +5,14 @@ function pad2(value: string) {
     return value?.trim().padStart(2, "0")
 }
 
-export function formatTime12h(hour: string, minute: string, ampm: "AM" | "PM") {
+export function formatTime12h(hour: string | undefined, minute: string | undefined, ampm: "AM" | "PM") {
     // API expects strings like "08:00 AM"
+    if (!hour || !minute || !ampm) return undefined
     return `${pad2(hour)}:${pad2(minute)} ${ampm}`
 }
 
-export function parseTime12h(time: string): [string, string, "AM" | "PM"] {
+export function parseTime12h(time: string | undefined): [string, string, "AM" | "PM"] {
+    if (!time) return ["", "", "AM"]
     const [timePart, ampm] = time.split(" ") as [string, "AM" | "PM"]
     const [hour, minute] = timePart.split(":")
     return [hour, minute, ampm]

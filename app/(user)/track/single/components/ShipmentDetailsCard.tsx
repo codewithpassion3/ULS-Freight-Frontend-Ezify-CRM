@@ -1,7 +1,13 @@
 import { Info, Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { format } from "date-fns";
 
-export function ShipmentDetailsCard() {
+export function ShipmentDetailsCard({ quote }: { quote?: any }) {
+  if (!quote) return null;
+
+  const fromAddress = quote.addresses?.find((a: any) => a.type === "FROM")?.addressBookEntry;
+  const toAddress = quote.addresses?.find((a: any) => a.type === "TO")?.addressBookEntry;
+
   return (
     <Card className="mb-6 rounded-sm shadow-sm">
       <CardHeader className="bg-slate-50 border-b py-3 px-4">
@@ -14,11 +20,11 @@ export function ShipmentDetailsCard() {
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div>
             <span className="text-muted-foreground block mb-0.5">Shipment Date:</span>
-            <span className="font-medium">Apr 29, 2026</span>
+            <span className="font-medium">{quote.shipment?.shipDate ? format(new Date(quote.shipment.shipDate), 'MMM dd, yyyy') : 'N/A'}</span>
           </div>
           <div>
             <span className="text-muted-foreground block mb-0.5">Booked by:</span>
-            <span className="font-medium">William Nash</span>
+            <span className="font-medium">{quote.createdBy}</span>
           </div>
         </div>
 
@@ -28,18 +34,18 @@ export function ShipmentDetailsCard() {
               <span className="text-primary text-lg">➥</span> Shipping From
             </h3>
             <div className="border-t pt-3">
-              <p>Armatherm Canada Thermal Bridging Solutions</p>
-              <p>7270 Torbram Rd units 22,</p>
-              <p>Mississauga, ON, L4T 3Y8, CA</p>
+              <p>{fromAddress?.companyName}</p>
+              <p>{fromAddress?.address?.address1}</p>
+              <p>{fromAddress?.address?.city}, {fromAddress?.address?.state}, {fromAddress?.address?.postalCode}, {fromAddress?.address?.country}</p>
             </div>
             <div className="flex items-center gap-1 text-primary font-medium">
               <Check className="w-4 h-4" />
-              Business - Tailgate Not Required
+              {fromAddress?.isResidential ? "Residential" : "Business"} - Tailgate {quote.shipment?.tailgateRequiredInFromAddress ? "Required" : "Not Required"}
             </div>
             <div>
-              <p>Tyson Scott</p>
-              <p>905-612-0051</p>
-              <p>william@ulsfreight.ca</p>
+              <p>{fromAddress?.contactName}</p>
+              <p>{fromAddress?.phoneNumber}</p>
+              <p>{fromAddress?.email}</p>
             </div>
           </div>
 
@@ -48,25 +54,25 @@ export function ShipmentDetailsCard() {
               <span className="text-primary text-lg">➥</span> Shipping To
             </h3>
             <div className="border-t pt-3">
-              <p>Tardif Metal</p>
-              <p>15971, boulevard de la Colline</p>
-              <p>Quebec, QC, G3G 3A7, CA</p>
+              <p>{toAddress?.companyName}</p>
+              <p>{toAddress?.address?.address1}</p>
+              <p>{toAddress?.address?.city}, {toAddress?.address?.state}, {toAddress?.address?.postalCode}, {toAddress?.address?.country}</p>
             </div>
             <div className="flex items-center gap-1 text-primary font-medium">
               <Check className="w-4 h-4" />
-              Business - Tailgate Not Required
+              {toAddress?.isResidential ? "Residential" : "Business"} - Tailgate {quote.shipment?.tailgateRequiredInToAddress ? "Required" : "Not Required"}
             </div>
             <div>
-              <p>Mario Marini</p>
-              <p>418-849-6919</p>
-              <p>william@ulsfreight.ca</p>
+              <p>{toAddress?.contactName}</p>
+              <p>{toAddress?.phoneNumber}</p>
+              <p>{toAddress?.email}</p>
             </div>
           </div>
         </div>
 
         <div>
           <span className="text-muted-foreground block mb-1">Instructions:</span>
-          <p>ref #800463 with this shipment and list in the description 4 boxes of structural insulation.</p>
+          <p>{fromAddress?.defaultInstructions || toAddress?.defaultInstructions || "None"}</p>
         </div>
       </CardContent>
     </Card>

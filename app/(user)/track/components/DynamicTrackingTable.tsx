@@ -11,6 +11,7 @@ import { getAllQuotes, getFavoriteQuotes, getSavedQuotes, getSpotQuotes } from "
 import { Loader } from "@/components/common/Loader"
 import EmptyUI from "@/components/common/empty/Empty"
 import Link from "next/link"
+import { getAllTrackings } from "@/api/services/tracking.api"
 // import { QuoteCategory } from "./page"
 interface Props {
     filters: {
@@ -26,18 +27,18 @@ export default function DynamicTrackingTable({ filters, setCount, quoteCategory 
     const [page, setPage] = useState(1)
     const debouncedSearch = useDebounce(filters.search, 500)
 
-    const { data: quotes, isLoading, isPending, isError, isSuccess } = useQuery({
-        queryKey: ["quotes", quoteCategory, debouncedSearch],
+    const { data: trackings, isLoading, isPending, isError, isSuccess } = useQuery({
+        queryKey: ["trackings", quoteCategory, debouncedSearch],
         queryFn: () => {
             switch (quoteCategory) {
                 case "all":
-                    return getAllQuotes()
+                    return getAllTrackings()
                 case "saved":
-                    return getSavedQuotes()
+                    return getAllTrackings()
                 case "spot":
-                    return getSpotQuotes()
+                    return getAllTrackings()
                 case "favorite":
-                    return getFavoriteQuotes()
+                    return getAllTrackings()
             }
         },
         retry: 1,
@@ -45,16 +46,16 @@ export default function DynamicTrackingTable({ filters, setCount, quoteCategory 
         enabled: true
     })
     console.log({ quoteCategory, dateRange: filters.dateRange, search: filters.search, selectedPackaging: filters.selectedPackaging })
-    console.log("quotes", quotes)
+    console.log("quotes", trackings)
     useEffect(() => {
-        if (quotes) {
+        if (trackings) {
             setCount({
-                all: quotes?.data?.length,
+                all: trackings?.data?.length,
                 saved: 0,
                 spot: 0
             })
         }
-    }, [quotes])
+    }, [trackings])
     if (isLoading || isPending) return <Loader className="py-20" />
     if (isError) return <EmptyUI
         icon={<CircleSlash size={80} />}
@@ -68,12 +69,12 @@ export default function DynamicTrackingTable({ filters, setCount, quoteCategory 
     />
 
     return (
-        quotes?.data?.length > 0 ?
+        trackings?.data?.length > 0 ?
             <>
                 <div className="shadow-lg mb-4">
                     <DataTable
                         columns={columns}
-                        data={quotes.data ?? []}
+                        data={trackings.data ?? []}
                         sorting={sorting}
                         setSorting={setSorting}
                     />
@@ -91,12 +92,12 @@ export default function DynamicTrackingTable({ filters, setCount, quoteCategory 
             </> :
             <EmptyUI
                 icon={<Truck size={80} />}
-                title="No Quotes Found"
-                description="You have no quotes yet. Create one to get started."
+                title="No Shipments Found"
+                description="You have no shipments yet. Create one to get started."
                 action={
-                    <Link href="/quote">
+                    <Link href="/shipment">
                         <Button variant="outline" className="text-muted-foreground border-border">
-                            <Plus size={16} /> Create Quote
+                            <Plus size={16} /> Create Shipment
                         </Button>
                     </Link>
                 }

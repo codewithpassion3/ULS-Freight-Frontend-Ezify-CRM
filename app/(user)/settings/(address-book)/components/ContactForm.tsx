@@ -25,6 +25,18 @@ export function ContactForm({
         locationTypeId: z.number("Location Type is required"),
         signatureId: z.number("Signature ID is required"),
     })
+    addAddressSchema.refine(data => {
+        return (
+            data.readyTimeHour &&
+            data.readyTimeMinute &&
+            data.readyTimeAmPm &&
+            data.closeTimeHour &&
+            data.closeTimeMinute &&
+            data.closeTimeAmPm
+        )
+    }, {
+        message: "All time fields are required",
+    })
     type AddAddressSchemaTypes = z.infer<typeof addAddressSchema>
     const methods = useForm<AddAddressSchemaTypes>({
         resolver: zodResolver(addAddressSchema),

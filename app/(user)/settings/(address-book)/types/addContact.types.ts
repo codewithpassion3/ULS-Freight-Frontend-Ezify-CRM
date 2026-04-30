@@ -6,8 +6,8 @@ export type ContactType = {
     phoneNumber: string
     email?: string | null
     defaultInstructions?: string | null
-    palletShippingReadyTime: string
-    palletShippingCloseTime: string
+    palletShippingReadyTime: string | undefined
+    palletShippingCloseTime: string | undefined
     address: {
         address1: string | null
         address2?: string | null

@@ -1,7 +1,10 @@
 import { Info, Barcode, Truck, MapPin, Copy } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { format } from "date-fns";
 
-export function StatusUpdatesWidget() {
+export function StatusUpdatesWidget({ quote }: { quote?: any }) {
+  if (!quote) return null;
+
   return (
     <Card className="rounded-sm shadow-sm mb-4 border-slate-200">
       <CardHeader className="bg-slate-50 py-3 px-4 flex flex-row items-center justify-between border-b">
@@ -19,21 +22,21 @@ export function StatusUpdatesWidget() {
 
           {/* Label Created */}
           <div className="relative flex items-center mb-8">
-            <div className="absolute -left-[92px] text-xs font-semibold whitespace-nowrap">Apr 29, 2026</div>
+            <div className="absolute -left-[92px] text-xs font-semibold whitespace-nowrap">{quote.createdAt ? format(new Date(quote.createdAt), 'MMM dd, yyyy') : 'N/A'}</div>
             <div className="absolute -left-[11px] bg-white p-0.5 rounded-full z-10">
               <MapPin className="w-4 h-4 fill-green-500 text-white" />
             </div>
             <div className="ml-6 flex flex-col">
               <div className="flex items-center gap-2 font-semibold text-sm">
                 <Barcode className="w-4 h-4" />
-                Label Created
+                {quote.status === "DRAFT" ? "Draft Created" : "Label Created"}
               </div>
             </div>
           </div>
 
           {/* Estimated Delivery */}
           <div className="relative flex items-center">
-            <div className="absolute -left-[92px] text-xs font-semibold whitespace-nowrap text-muted-foreground">Apr 30, 2026</div>
+            <div className="absolute -left-[92px] text-xs font-semibold whitespace-nowrap text-muted-foreground">N/A</div>
             <div className="absolute -left-[11px] bg-white p-0.5 rounded-full z-10">
               <MapPin className="w-4 h-4 fill-blue-600 text-white" />
             </div>
