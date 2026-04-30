@@ -156,35 +156,32 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     const insurance = insuranceRef.current?.getValues() || {}
     const signature = signatureRef.current?.getValues() || {}
 
-    const getFormSnapshot = () => {
-        return {
-            fromAddress: fromAddressRef.current?.getValues?.() || {},
-            toAddress: toAddressRef.current?.getValues?.() || {},
-            dimensions: dimensionsRef.current?.getValues?.() || {},
-            services: servicesRef.current?.getValues?.() || {},
-            insurance: insuranceRef.current?.getValues?.() || {},
-            signature: signatureRef.current?.getValues?.() || {},
-        }
-    }
+    const getMergedPayload = () => {
+        const fromAddress = fromAddressRef.current?.getValues() || {}
+        const toAddress = toAddressRef.current?.getValues() || {}
+        const dimensions = dimensionsRef.current?.getValues() || {}
+        // these are optional only include if they have some values
+        const services = servicesRef.current?.getValues() || {}
+        const insurance = insuranceRef.current?.getValues() || {}
+        const signature = signatureRef.current?.getValues() || {}
 
-    const getMergedPayload = (snapshot: any) => {
-        const { fromAddressSnapshot, toAddressSnapshot, dimensionsSnapshot, servicesSnapshot, insuranceSnapshot, signatureSnapshot } = snapshot
         let completePayload = {
-            addresses: [fromAddressSnapshot, toAddressSnapshot],
-            ...dimensionsSnapshot,
+            addresses: [fromAddress, toAddress],
+            ...dimensions,
         }
 
         const addresses = [];
-        if (fromAddressSnapshot && Object.keys(fromAddressSnapshot).length) addresses.push(fromAddressSnapshot)
-        if (toAddressSnapshot && Object.keys(toAddressSnapshot).length) addresses.push(toAddressSnapshot)
-        if (insuranceSnapshot && insuranceSnapshot?.insurance?.amount) {
-            completePayload = { ...completePayload, ...insuranceSnapshot }
+        if (Object.keys(fromAddress).length > 0) addresses.push(fromAddress)
+        if (Object.keys(toAddress).length > 0) addresses.push(toAddress)
+
+        if (insurance.insurance.amount) {
+            completePayload = { ...completePayload, ...insurance }
         }
-        if (servicesSnapshot && Object.keys(servicesSnapshot).length) {
-            completePayload = { ...completePayload, ...servicesSnapshot }
+        if (Object.keys(services).length > 0) {
+            completePayload = { ...completePayload, ...services }
         }
-        if (signatureSnapshot && Object.keys(signatureSnapshot).length) {
-            completePayload = { ...completePayload, ...signatureSnapshot }
+        if (Object.keys(signature).length > 0) {
+            completePayload = { ...completePayload, ...signature }
         }
 
         return completePayload
@@ -214,8 +211,8 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         if (insuranceRef.current) valid = valid && await insuranceRef.current.trigger()
         if (signatureRef.current) valid = valid && await signatureRef.current.trigger()
 
-        const snapshot = getFormSnapshot()
-        const mergedData = getMergedPayload(snapshot)
+        // const snapshot = getFormSnapshot()
+        const mergedData = getMergedPayload()
         payloadTransformer(mergedData)
 
 
@@ -280,48 +277,43 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             addresses: transformedAddresses,
         };
 
-        const ftlSelectedService = payloadTransformed?.lineItem?.units[0]?.name
-        let ftlLineItemToServiceMapping = {
-            services: {
-                [ftlSelectedService]: {
-                    "totalWeight": payloadTransformed?.lineItem?.units[0]?.weight,
-                    "measurementUnit": payloadTransformed?.lineItem?.measurementUnit,
-                    "totalCount": payloadTransformed?.lineItem?.units[0]?.count
-                }
+        // const ftlSelectedService = payloadTransformed?.lineItem?.units[0]?.name
+        // let ftlLineItemToServiceMapping = {
+        //     services: {
+        //         [ftlSelectedService]: {
+        //             "totalWeight": payloadTransformed?.lineItem?.units[0]?.weight,
+        //             "measurementUnit": payloadTransformed?.lineItem?.measurementUnit,
+        //             "totalCount": payloadTransformed?.lineItem?.units[0]?.count
+        //         }
 
-            },
-            ...payloadTransformed,
-        }
-        const { lineItem, ...ftlPayload } = ftlLineItemToServiceMapping
-        const finalQuotePayload = shipmentType === "STANDARD_FTL" ? ftlPayload : payloadTransformed
+        //     },
+        //     ...payloadTransformed,
+        // }
+        // const { lineItem, ...ftlPayload } = ftlLineItemToServiceMapping
+        // const finalQuotePayload = shipmentType === "STANDARD_FTL" ? ftlPayload : payloadTransformed
 
         const shipmentPayload = {
             shipDate: data.addresses[0].shipDate,
             mode: "SHIPMENT",
             shipmentType: shipmentType,
             quote: {
-                ...finalQuotePayload
+                ...payloadTransformed
             }
 
         }
 
-
-        const finalShipmentPayload = shipmentPayload
-        // print errors
-
-
-        console.log("finalShipmentPayload", finalShipmentPayload)
+        console.log("finalShipmentPayload", shipmentPayload)
         if (isEditing) {
             if (isShipment) {
-                updateShipmentMutation.mutate(finalShipmentPayload)
+                updateShipmentMutation.mutate(shipmentPayload)
             } else {
-                updateQuoteMutation.mutate(finalQuotePayload)
+                updateQuoteMutation.mutate(payloadTransformed)
             }
         } else {
             if (isShipment) {
-                createShipmentMutation.mutate(finalShipmentPayload)
+                createShipmentMutation.mutate(shipmentPayload)
             } else {
-                createQuoteMutation.mutate(finalQuotePayload)
+                createQuoteMutation.mutate(payloadTransformed)
             }
         }
     }

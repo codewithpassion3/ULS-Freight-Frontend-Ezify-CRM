@@ -527,7 +527,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       label: "Ready Time",
       type: "time",
       placeholder: "Ready Time",
-      show: isShipment && shipmentType === "PALLET",
+      show: isShipment && shipmentType === "PALLET" || isShipment && shipmentType === "STANDARD_FTL",
       disabled: addressLocked,
       hourName: "readyTimeHour",
       minuteName: "readyTimeMinute",
@@ -541,7 +541,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       hourName: "closeTimeHour",
       minuteName: "closeTimeMinute",
       ampmName: "closeTimeAmPm",
-      show: isShipment && shipmentType === "PALLET",
+      show: isShipment && shipmentType === "PALLET" || isShipment && shipmentType === "STANDARD_FTL",
       disabled: addressLocked,
     },
     // save contact to address book

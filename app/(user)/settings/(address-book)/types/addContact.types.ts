@@ -19,8 +19,8 @@ export type ContactType = {
         locationType?: number,
         additionalNotes?: string
     }
-    locationTypeId: number
-    signatureId: number
+    locationTypeId: number | null | undefined
+    signatureId: number | null | undefined
     isResidential: boolean | undefined
 }
 export type LocationType = {

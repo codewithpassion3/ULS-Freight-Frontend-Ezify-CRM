@@ -47,8 +47,8 @@ export const mapFormToPayload = (data: ContactFormValues): ContactType => {
             state: data.address.state,
         },
 
-        locationTypeId: data.locationTypeId,
-        signatureId: data.signatureId,
+        locationTypeId: data.locationTypeId || null,
+        signatureId: data.signatureId || null,
         isResidential: data.isResidential,
     }
 }
@@ -82,8 +82,8 @@ export const mapPayloadToForm = (contact: ContactType): ContactFormValues => {
             country: addr.country ?? "",
         },
 
-        locationTypeId: contact.locationTypeId ?? null,
-        signatureId: contact.signatureId ?? null,
+        locationTypeId: contact.locationTypeId ?? undefined,
+        signatureId: contact.signatureId ?? undefined,
         isResidential: contact.isResidential ?? false,
     };
 };

@@ -9,6 +9,7 @@ import { Loader } from "@/components/common/Loader"
 import { contactSchema } from "../schemas/addContact.schema"
 import { useEffect } from "react"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
+import z from "zod"
 
 
 export function ContactForm({
@@ -20,9 +21,13 @@ export function ContactForm({
     setIsValid
 }: ContactFormProps) {
     // methods
-
-    const methods = useForm<ContactFormValues>({
-        resolver: zodResolver(contactSchema),
+    const addAddressSchema = contactSchema.extend({
+        locationTypeId: z.number("Location Type is required"),
+        signatureId: z.number("Signature ID is required"),
+    })
+    type AddAddressSchemaTypes = z.infer<typeof addAddressSchema>
+    const methods = useForm<AddAddressSchemaTypes>({
+        resolver: zodResolver(addAddressSchema),
         mode: "onChange",
         defaultValues: defaultValues || {
             companyName: "",
