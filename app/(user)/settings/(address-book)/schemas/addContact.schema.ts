@@ -52,6 +52,7 @@ export const contactSchema = z.object({
 
     address: z.object({
         address1: z.string().min(1, "Address 1 is required"),
+        // address1: z.string().optional(),
         address2: z.string().optional(),
         unit: z.string().optional(),
         postalCode: z.string().min(1, "Postal/ZIP Code is required"),

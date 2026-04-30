@@ -9,7 +9,7 @@ export type ContactType = {
     palletShippingReadyTime: string
     palletShippingCloseTime: string
     address: {
-        address1: string
+        address1: string | null
         address2?: string | null
         unit?: string | null
         postalCode: string

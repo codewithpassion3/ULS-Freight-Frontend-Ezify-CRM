@@ -38,7 +38,7 @@ export const mapFormToPayload = (data: ContactFormValues): ContactType => {
         ),
 
         address: {
-            address1: data.address.address1,
+            address1: data.address.address1 || null,
             address2: data.address.address2 || null,
             unit: data.address.unit || null,
             postalCode: data.address.postalCode,
@@ -73,7 +73,7 @@ export const mapPayloadToForm = (contact: ContactType): ContactFormValues => {
         closeTimeAmPm,
 
         address: {
-            address1: addr.address1,
+            address1: addr.address1 ?? "",
             address2: addr.address2 ?? "",
             unit: addr.unit ?? "",
             postalCode: addr.postalCode ?? "",

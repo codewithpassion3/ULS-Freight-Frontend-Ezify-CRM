@@ -40,6 +40,8 @@ export type FormCheckboxTypes = {
     defaultValue?: boolean
     wrapperClassName?: string
     iconPosition?: "left" | "right"
+    addressType?: "TO" | "FROM"
+    disabled?: boolean
 }
 // Radio
 type RadioOption = {

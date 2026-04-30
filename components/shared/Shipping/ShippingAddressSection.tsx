@@ -394,7 +394,6 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       type: "text",
       placeholder: "Address",
       disabled: addressLocked,
-      show: isShipment,
     },
     {
       name: "address.address2",
@@ -464,6 +463,7 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       disabled: addressLocked,
       show: shipmentType === "PACKAGE" || shipmentType === "COURIER_PAK",
       wrapperClassName: "col-span-2",
+      addressType: type,
     },
     // include straps for FTL
     {
