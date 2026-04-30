@@ -131,13 +131,7 @@ export const getColumns = (setSelectedCarrier: (carrier: string) => void, select
         <Button
           variant={selectedCarrier === carrier ? "default" : "outline"}
           onClick={() => {
-            // if name is tst-cf-express then do TST-CF-EXPRESS
-            if (carrier === "tst-cf-express") {
-              setSelectedCarrier("TST")
-            } else {
-              setSelectedCarrier(carrier)
-            }
-            console.log("Selected carrier:", carrier)
+            setSelectedCarrier(carrier)
           }}
         >
           {selectedCarrier === carrier ? "Selected" : "Select"}
