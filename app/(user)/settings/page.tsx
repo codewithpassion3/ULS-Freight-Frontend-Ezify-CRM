@@ -16,6 +16,8 @@ import GeneralSettings from "./GeneralSettings";
 import UserPreferences from "./(user-preference)/UserPreferences";
 import EmailNotification from "./(email-notifications)/EmailNotification";
 import { AddressBookTab } from "./(address-book)/AddressBookTab";
+import ShippingPreferences from "./(shipping-preferences)/ShippingPreferences";
+
 import {
     BellDot, CircleUserRound, Code, CreditCard, Settings2, User, UserCog, UserRoundCog,
     Truck,
@@ -143,7 +145,7 @@ export default function Settings() {
                         </Card>
                         <Card className="px-6 lg:col-span-3">
                             <TabsContent value="shipping-preferences">
-
+                                <ShippingPreferences />
                             </TabsContent>
                             <TabsContent value="carrier-preferences">
 

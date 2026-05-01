@@ -21,15 +21,18 @@ export default function UserLayout({
   if (isLoading || isPending || user === undefined) {
     return <Loader />
   }
+  const noHeaderRoutes = ["/invoices/single/pdf"];
+  const isNoHeaderRoute = noHeaderRoutes.includes(pathname);
+
   return (
     !isExceptionalRoute ?
       <>
-        <Header />
+        {!isNoHeaderRoute && <Header />}
         {/* <Infobar/> */}
-        <main className="mx-auto container pt-20 flex flex-col min-h-screen bg-[#FAFAFA] dark:bg-[#242424]">
+        <main className={`mx-auto container ${!isNoHeaderRoute ? 'pt-20' : ''} flex flex-col min-h-screen ${isNoHeaderRoute ? 'bg-white' : 'bg-[#FAFAFA] dark:bg-[#242424]'}`}>
           {children}
         </main>
-        <Footer />
+        {!isNoHeaderRoute && <Footer />}
       </> :
       <>
         {children}

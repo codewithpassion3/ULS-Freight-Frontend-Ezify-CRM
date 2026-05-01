@@ -18,6 +18,13 @@ interface Props {
         dateRange: any
         search: string
         selectedPackaging: string[]
+        selectedCarrier?: string
+        selectedService?: string
+        selectedStatus?: string
+        selectedUsername?: string
+        selectedOrderSource?: string
+        originPostal?: string
+        destinationPostal?: string
     }
     setCount: (count: { all: number; saved: number; spot: number }) => void
     quoteCategory: any
@@ -28,18 +35,23 @@ export default function DynamicTrackingTable({ filters, setCount, quoteCategory 
     const debouncedSearch = useDebounce(filters.search, 500)
 
     const { data: trackings, isLoading, isPending, isError, isSuccess } = useQuery({
-        queryKey: ["trackings", quoteCategory, debouncedSearch],
+        queryKey: ["trackings", quoteCategory, debouncedSearch, filters],
         queryFn: () => {
-            switch (quoteCategory) {
-                case "all":
-                    return getAllTrackings()
-                case "saved":
-                    return getAllTrackings()
-                case "spot":
-                    return getAllTrackings()
-                case "favorite":
-                    return getAllTrackings()
-            }
+            const dateFrom = filters.dateRange?.from ? new Date(filters.dateRange.from).toISOString().split('T')[0] : "";
+            const dateTo = filters.dateRange?.to ? new Date(filters.dateRange.to).toISOString().split('T')[0] : "";
+            
+            return getAllTrackings(
+                debouncedSearch,
+                [dateFrom, dateTo],
+                filters.selectedPackaging?.join(",") || "",
+                filters.selectedCarrier || "",
+                filters.selectedService || "",
+                filters.selectedStatus || "",
+                filters.selectedUsername || "",
+                filters.selectedOrderSource || "",
+                filters.originPostal || "",
+                filters.destinationPostal || ""
+            )
         },
         retry: 1,
         // dependency

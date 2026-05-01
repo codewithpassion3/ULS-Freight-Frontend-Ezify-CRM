@@ -1,24 +1,10 @@
 "use client"
-
 import { useMemo, useState } from "react"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { CustomDateRangePicker } from "@/components/ui/custom-date-picker"
-import { MultiSelect } from "@/components/ui/multi-select"
-import { Search, CheckCircle, Edit, MoreVertical, Trash2, Heart, SaveIcon, Truck, X, EyeOff, Eye, AlertTriangle, XCircle, CheckCircle2, Clock } from "lucide-react"
-
-import { DataTable } from "@/components/common/table/DataTable"
-import { DataTablePagination } from "@/components/common/table/DataTablePagination"
-import { columns } from "./components/ColumnsTableTracking"
-import { SortingState } from "@tanstack/react-table"
+import { Search, CheckCircle, Edit, MoreVertical, Trash2, Heart, SaveIcon, Truck, X, EyeOff, Eye, AlertTriangle, XCircle, CheckCircle2, Clock, Info } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-// import FavouriteQuotesTable from "./DynamicQuotesTable"
-// import AllQuotesTable from "./DynamicQuotesTable"
-// import DynamicQuotesTable from "./DynamicQuotesTable"
-import FormDate from "@/components/common/form/fields/FormDate"
-import { DatePicker } from "@/components/common/date-picker/DatePicker"
-import { ShipmentTypes } from "@/components/shared/DynamicQuote/DynamicQuote"
 import { DateRangePicker } from "@/components/common/date-picker/DateRangePicker"
 import DynamicTrackingTable from "./components/DynamicTrackingTable"
 
@@ -33,10 +19,17 @@ const PACKAGING_TYPES = [
 ]
 export type QuoteCategory = "all" | "saved" | "spot" | "favorite"
 export default function TrackingDashboardPage() {
-    // const [selectedTab, setSelectedTab] = useState<QuoteCategory>("all")
     const [search, setSearch] = useState("")
     const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>()
-    const [selectedPackaging, setSelectedPackaging] = useState<string[]>([])
+    const [selectedPackaging, setSelectedPackaging] = useState<string>("")
+    const [selectedCarrier, setSelectedCarrier] = useState<string>("")
+    const [selectedService, setSelectedService] = useState<string>("")
+    const [selectedStatus, setSelectedStatus] = useState<string>("")
+    const [selectedUsername, setSelectedUsername] = useState<string>("")
+    const [selectedOrderSource, setSelectedOrderSource] = useState<string>("")
+    const [originPostal, setOriginPostal] = useState<string>("")
+    const [destinationPostal, setDestinationPostal] = useState<string>("")
+
     const [showFilters, setShowFilters] = useState(true)
     const [count, setCount] = useState({
         all: 0,
@@ -48,34 +41,41 @@ export default function TrackingDashboardPage() {
         <div className="container mx-auto pb-8 pt-20 px-4 max-w-7xl">
             <div className="mb-6">
                 <h1 className="text-2xl font-bold mb-1">Tracking Dashboard</h1>
-
             </div>
 
             {showFilters ? (
-                <div className="bg-muted/30 border border-border p-4 rounded-md mb-6 relative">
-                    <div className="flex justify-between items-start mb-2">
-                        <h2 className="text-lg font-semibold text-primary">Search Shipments</h2>
-                        <div className="flex gap-2">
-                            <Button variant="destructive" onClick={() => {
-                                setDateRange(undefined)
-                                setSearch("")
-                                setSelectedPackaging([])
-                            }}><X /> Clear Filters</Button>
-                            <Button variant="outline" onClick={() => setShowFilters(false)}><EyeOff /> Hide</Button>
-                        </div>
+                <div className="bg-slate-50 border border-border p-4 rounded-md mb-6 relative">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-lg font-semibold text-[#0070c0]">Search Shipments</h2>
+                        <Button variant="destructive" onClick={() => {
+                            setDateRange(undefined)
+                            setSearch("")
+                            setSelectedPackaging("")
+                            setSelectedCarrier("")
+                            setSelectedService("")
+                            setSelectedStatus("")
+                            setSelectedUsername("")
+                            setSelectedOrderSource("")
+                            setOriginPostal("")
+                            setDestinationPostal("")
+                        }}
+                        // className="text-[#0070c0] hover:text-[#005999] h-auto p-0 flex items-center"
+                        >
+                            <X className="w-4 h-4 mr-1" /> Clear Filters
+                        </Button>
                     </div>
 
-                    <div className="flex flex-wrap gap-6 items-end mt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end mb-4">
                         <div className="space-y-1">
-                            <label className="text-sm text-muted-foreground block">Search by Date Range:</label>
+                            <label className="text-sm text-muted-foreground flex items-center">Ship Date Range: <Info className="w-3 h-3 ml-1" /></label>
                             <DateRangePicker
                                 value={dateRange}
                                 onChange={setDateRange}
                             />
                         </div>
                         <div className="space-y-1">
-                            <label className="text-sm text-muted-foreground block">Search:</label>
-                            <div className="flex w-[240px]">
+                            <label className="text-sm text-muted-foreground flex items-center">Search Shipments: <Info className="w-3 h-3 ml-1" /></label>
+                            <div className="flex w-full">
                                 <Input
                                     placeholder="Search"
                                     className="rounded-r-none bg-white"
@@ -85,7 +85,6 @@ export default function TrackingDashboardPage() {
                                 <Button
                                     type="button"
                                     className="rounded-l-none bg-[#0070c0] hover:bg-[#005999] px-3"
-                                    onClick={() => { }}
                                 >
                                     <Search size={16} />
                                 </Button>
@@ -93,10 +92,102 @@ export default function TrackingDashboardPage() {
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-sm text-muted-foreground block">Packaging Type:</label>
-                            <MultiSelect options={PACKAGING_TYPES} value={selectedPackaging} onChange={setSelectedPackaging} />
+                            <label className="text-sm text-muted-foreground block">Filter by Carrier:</label>
+                            <Select value={selectedCarrier} onValueChange={setSelectedCarrier}>
+                                <SelectTrigger className="bg-white w-full">
+                                    <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="carrier1">Carrier 1</SelectItem>
+                                    <SelectItem value="carrier2">Carrier 2</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-sm text-muted-foreground block">Filter by Packaging Type:</label>
+                            <Select value={selectedPackaging} onValueChange={setSelectedPackaging}>
+                                <SelectTrigger className="bg-white w-full">
+                                    <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {PACKAGING_TYPES.map(p => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
+                        <div className="space-y-1">
+                            <label className="text-sm text-muted-foreground block">Filter by Service:</label>
+                            <Select value={selectedService} onValueChange={setSelectedService}>
+                                <SelectTrigger className="bg-white w-full">
+                                    <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="service1">Service 1</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-sm text-muted-foreground block">Filter by Shipment Status:</label>
+                            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                                <SelectTrigger className="bg-white w-full">
+                                    <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="status1">Status 1</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-sm text-muted-foreground block">Filter by Username:</label>
+                            <Select value={selectedUsername} onValueChange={setSelectedUsername}>
+                                <SelectTrigger className="bg-white w-full">
+                                    <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="user1">User 1</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-sm text-muted-foreground block">Filter by Order Source:</label>
+                            <Select value={selectedOrderSource} onValueChange={setSelectedOrderSource}>
+                                <SelectTrigger className="bg-white w-full">
+                                    <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="source1">Source 1</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-sm text-muted-foreground block">Origin Postal/ZIP:</label>
+                            <Input
+                                placeholder="A1A 1A1"
+                                className="bg-white"
+                                value={originPostal}
+                                onChange={(e) => setOriginPostal(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-sm text-muted-foreground block">Destination Postal/ZIP:</label>
+                            <Input
+                                placeholder="A1A 1A1"
+                                className="bg-white"
+                                value={destinationPostal}
+                                onChange={(e) => setDestinationPostal(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+
                 </div>
             ) : (
                 <div className="mb-6 flex justify-end">
@@ -131,17 +222,17 @@ export default function TrackingDashboardPage() {
                     ))}
                 </TabsList>
                 <TabsContent value="all">
-                    <DynamicTrackingTable filters={{ dateRange, search, selectedPackaging }} setCount={setCount} quoteCategory="all" />
+                    <DynamicTrackingTable filters={{ dateRange, search, selectedPackaging: selectedPackaging ? [selectedPackaging] : [], selectedCarrier, selectedService, selectedStatus, selectedUsername, selectedOrderSource, originPostal, destinationPostal }} setCount={setCount} quoteCategory="all" />
                 </TabsContent>
                 <TabsContent value="saved">
-                    <DynamicTrackingTable filters={{ dateRange, search, selectedPackaging }} setCount={setCount} quoteCategory="all" />
+                    <DynamicTrackingTable filters={{ dateRange, search, selectedPackaging: selectedPackaging ? [selectedPackaging] : [], selectedCarrier, selectedService, selectedStatus, selectedUsername, selectedOrderSource, originPostal, destinationPostal }} setCount={setCount} quoteCategory="all" />
 
                 </TabsContent>
                 <TabsContent value="spot">
-                    <DynamicTrackingTable filters={{ dateRange, search, selectedPackaging }} setCount={setCount} quoteCategory="all" />
+                    <DynamicTrackingTable filters={{ dateRange, search, selectedPackaging: selectedPackaging ? [selectedPackaging] : [], selectedCarrier, selectedService, selectedStatus, selectedUsername, selectedOrderSource, originPostal, destinationPostal }} setCount={setCount} quoteCategory="all" />
                 </TabsContent>
                 <TabsContent value="favorite">
-                    <DynamicTrackingTable filters={{ dateRange, search, selectedPackaging }} setCount={setCount} quoteCategory="all" />
+                    <DynamicTrackingTable filters={{ dateRange, search, selectedPackaging: selectedPackaging ? [selectedPackaging] : [], selectedCarrier, selectedService, selectedStatus, selectedUsername, selectedOrderSource, originPostal, destinationPostal }} setCount={setCount} quoteCategory="all" />
                 </TabsContent>
             </Tabs>
         </div >

@@ -55,15 +55,17 @@ export default function Header() {
                                 <NavigationMenuItem key={item.title}>
 
                                     {!item.items ? (
-                                        <Link
-                                            href={item.href!}
-                                            className={`px-3 py-2 text-sm rounded-md w-max ${pathname === item.href
-                                                ? " font-medium text-black dark:text-white"
-                                                : "hover:bg-gray-50 dark:hover:text-black!"
-                                                }`}
-                                        >
-                                            {item.title}
-                                        </Link>
+                                        <Button variant="link" asChild>
+                                            <Link
+                                                href={item.href!}
+                                                className={`px-3 py-2 text-black! dark:text-white text-sm rounded-md w-max ${pathname === item.href
+                                                    ? " font-medium"
+                                                    : "hover:bg-gray-50 dark:hover:text-black!"
+                                                    }`}
+                                            >
+                                                {item.title}
+                                            </Link>
+                                        </Button>
                                     ) : (
                                         <DropdownMenu>
 

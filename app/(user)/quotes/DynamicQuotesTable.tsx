@@ -6,7 +6,7 @@ import { SortingState } from "@tanstack/react-table"
 import { CircleSlash, Plus, RefreshCcw, Trash2, Truck } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 import { useDebounce } from "../../../hooks/useDebounce.hook"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { getAllQuotes, getFavoriteQuotes, getSavedQuotes, getSpotQuotes } from "@/api/services/quotes.api"
 import { Loader } from "@/components/common/Loader"
 import EmptyUI from "@/components/common/empty/Empty"
@@ -25,13 +25,15 @@ export default function DynamicQuotesTable({ filters, setCount, quoteCategory }:
     const [sorting, setSorting] = useState<SortingState>([])
     const [page, setPage] = useState(1)
     const debouncedSearch = useDebounce(filters.search, 500)
-
+    const queryClient = useQueryClient()
     const { data: quotes, isLoading, isPending, isError, isSuccess } = useQuery({
-        queryKey: ["quotes", quoteCategory, debouncedSearch],
+        queryKey: ["quotes", quoteCategory, debouncedSearch, filters.dateRange, filters.selectedPackaging],
         queryFn: () => {
             switch (quoteCategory) {
                 case "all":
-                    return getAllQuotes()
+                    const dateFrom = filters.dateRange?.from ? new Date(filters.dateRange.from).toISOString().split('T')[0] : "";
+                    const dateTo = filters.dateRange?.to ? new Date(filters.dateRange.to).toISOString().split('T')[0] : "";
+                    return getAllQuotes(debouncedSearch, [dateFrom, dateTo], filters.selectedPackaging.join(","))
                 case "saved":
                     return getSavedQuotes()
                 case "spot":
@@ -55,13 +57,16 @@ export default function DynamicQuotesTable({ filters, setCount, quoteCategory }:
             })
         }
     }, [quotes])
+    const refetch = () => {
+        queryClient.invalidateQueries({ queryKey: ["quotes", quoteCategory, debouncedSearch], refetchType: "active" })
+    }
     if (isLoading || isPending) return <Loader className="py-20" />
     if (isError) return <EmptyUI
         icon={<CircleSlash size={80} />}
         title="Error"
         description="Failed to fetch quotes"
         action={
-            <Button variant="outline" className="text-muted-foreground border-border">
+            <Button onClick={() => refetch()} variant="outline" className="text-muted-foreground border-border">
                 <RefreshCcw size={16} /> Retry
             </Button>
         }
