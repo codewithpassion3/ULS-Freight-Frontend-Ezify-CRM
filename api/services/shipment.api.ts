@@ -14,21 +14,24 @@ export const bookShipment = async (payload: any) => {
     return response.data;
 };
 
-export const getAddressByPostalCode = async (postalCode: string, countryCode: string) => {
+export const getAddressByPostalCode = async (postalCode: string) => {
     if (!postalCode || postalCode.length < 3) {
         throw new Error("Invalid postal code");
     }
-    try {
-        const response = await axios.get(
-            `https://api.zippopotam.us/${countryCode}/${postalCode}`
-        );
+    const response = await apiClient.get(`/postal-codes/${postalCode}`);
+    console.log(response.data)
+    return response.data;
+    // try {
+    //     const response = await axios.get(
+    //         `https://api.zippopotam.us/${countryCode}/${postalCode}`
+    //     );
 
-        console.log("response", response.data);
-        return response.data;
-    } catch (error) {
-        console.error("Failed to fetch postal code:", error);
-        return null; // or throw new Error(...)
-    }
+    //     console.log("response", response.data);
+    //     return response.data;
+    // } catch (error) {
+    //     console.error("Failed to fetch postal code:", error);
+    //     return null; // or throw new Error(...)
+    // }
 };
 
 // shipment rates

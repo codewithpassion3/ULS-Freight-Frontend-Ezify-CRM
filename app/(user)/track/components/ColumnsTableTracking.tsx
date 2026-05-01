@@ -104,7 +104,7 @@ export const columns: ColumnDef<any>[] = [
       return (
         <span className="text-[#0070c0] font-medium whitespace-nowrap">
           {/* {row.original.addresses[0].address.city} */}
-          Lahore
+          FROM
         </span>
       )
     },
@@ -116,7 +116,7 @@ export const columns: ColumnDef<any>[] = [
       return (
         <span className="text-[#0070c0] font-medium whitespace-nowrap">
           {/* {row.original.addresses[1].address.city} */}
-          Karachi
+          TO
         </span>
       )
     },

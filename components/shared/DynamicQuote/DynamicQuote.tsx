@@ -141,7 +141,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         mutationFn: (data: unknown) => bookShipment(data),
         onSuccess: () => {
             toast.success("Shipment booked successfully")
-            router.push("/shipments")
+            router.push("/track")
         },
         onError: (error: AxiosError<ApiError>) => {
             toast.error(error.response?.data.message)

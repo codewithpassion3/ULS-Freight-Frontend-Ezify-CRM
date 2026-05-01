@@ -143,15 +143,16 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   const countryCode = postalCodeWatch.match(/^\d{5}(-\d{4})?$/) ? "us" : "ca";
   const { data: postalCodeData, isLoading: postalCodeLoading, isPending: postalCodeIsPending } = useQuery({
     queryKey: ["postalCode", postalCodeWatch],
-    queryFn: () => getAddressByPostalCode(postalCodeWatch, countryCode),
+    // queryFn: () => getAddressByPostalCode(postalCodeWatch, countryCode),
+    queryFn: () => getAddressByPostalCode(postalCodeWatch),
     // enabled: postalCodeWatch.length === 5,
   })
 
   useEffect(() => {
     if (postalCodeData) {
-      methods.setValue("address.city", postalCodeData.places[0]["place name"])
-      methods.setValue("address.state", postalCodeData.places[0].state)
-      methods.setValue("address.country", postalCodeData["country abbreviation"])
+      methods.setValue("address.city", postalCodeData["place_name"])
+      methods.setValue("address.state", postalCodeData["fsa_province"])
+      methods.setValue("address.country", postalCodeData["country"])
     }
   }, [postalCodeData, postalCodeWatch])
 
