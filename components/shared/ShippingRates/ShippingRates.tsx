@@ -10,6 +10,7 @@ import { ApiError } from "next/dist/server/api-utils";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ShippingRatesTable } from "./ShippingRatesTable";
+import ShippingRatesStream from "./ShippingRatesStream";
 // shipping rates table component
 export default function ShippingRates({
     dimensions,
@@ -35,49 +36,49 @@ export default function ShippingRates({
     // const myPayload = { ...dimensions, ...fromAddress, ...toAddress }
     // console.log("myPayload", myPayload)
 
-    // const payload =
-    // {
-    //     "quoteType": "STANDARD",
-    //     "fedex": {
-    //         "from": {
-    //             "postalCode": "38117",
-    //             "countryCode": "US"
-    //         },
-    //         "to": {
-    //             "postalCode": "90210",
-    //             "countryCode": "US"
-    //         }
-    //     },
-    //     "tst": {
-    //         "from": {
-    //             "name": "ULS Freight",
-    //             "address": "123 Main St",
-    //             "postalCode": "M5V3A8",
-    //             "city": "Toronto",
-    //             "state": "ON"
-    //         },
-    //         "to": {
-    //             "name": "ULS Freight",
-    //             "address": "456 Hollywood Blvd",
-    //             "postalCode": "48226",
-    //             "city": "Detroit",
-    //             "state": "MI"
-    //         }
-    //     },
-    //     "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
-    //     "rateRequestType": ["LIST"],
-    //     "serviceType": "FEDEX_EXPRESS_SAVER",
-    //     "packages": [{
-    //         "weightUnit": "LB",
-    //         "weight": 10,
-    //         "dimensionsUnit": "IN",
-    //         "length": 20,
-    //         "width": 20,
-    //         "height": 40,
-    //         "handlingUnits": 1,
-    //         "packaging": "BOX"
-    //     }]
-    // }
+    const payload =
+    {
+        "quoteType": "STANDARD",
+        "fedex": {
+            "from": {
+                "postalCode": "38117",
+                "countryCode": "US"
+            },
+            "to": {
+                "postalCode": "90210",
+                "countryCode": "US"
+            }
+        },
+        "tst": {
+            "from": {
+                "name": "ULS Freight",
+                "address": "123 Main St",
+                "postalCode": "M5V3A8",
+                "city": "Toronto",
+                "state": "ON"
+            },
+            "to": {
+                "name": "ULS Freight",
+                "address": "456 Hollywood Blvd",
+                "postalCode": "48226",
+                "city": "Detroit",
+                "state": "MI"
+            }
+        },
+        "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
+        "rateRequestType": ["LIST"],
+        "serviceType": "FEDEX_EXPRESS_SAVER",
+        "packages": [{
+            "weightUnit": "LB",
+            "weight": 10,
+            "dimensionsUnit": "IN",
+            "length": 20,
+            "width": 20,
+            "height": 40,
+            "handlingUnits": 1,
+            "packaging": "BOX"
+        }]
+    }
     // const mutation = useMutation({
     //     mutationFn: (payload: any) => getShipmentRates(payload),
     //     // onSuccess: () => {
@@ -168,7 +169,9 @@ export default function ShippingRates({
                             <span className="text-yellow-500 font-bold">Fastest Carrier Name</span>
                         </div>
                     </div>
-                    <ShippingRatesTable selectedCarrier={selectedCarrier} setSelectedCarrier={setSelectedCarrier} dimensions={dimensions} fromAddress={fromAddress} toAddress={toAddress} />
+                    <ShippingRatesStream payload={payload} selectedCarrier={selectedCarrier} setSelectedCarrier={setSelectedCarrier} />
+                    {/* <ShippingRatesTable selectedCarrier={selectedCarrier} setSelectedCarrier={setSelectedCarrier} dimensions={dimensions} fromAddress={fromAddress} toAddress={toAddress} /> */}
+                    {/* get rates button */}
                 </AccordionContent>
             </AccordionItem>
         </Accordion>

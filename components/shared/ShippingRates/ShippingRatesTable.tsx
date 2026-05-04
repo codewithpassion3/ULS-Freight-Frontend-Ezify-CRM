@@ -20,9 +20,25 @@ import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { getShipmentRates } from "@/api/services/shipment.api"
 import { ApiError } from "next/dist/server/api-utils"
+import ShippingRatesStream from "./ShippingRatesStream"
+import { CarrierResult } from "./shippinRates.types"
+import { useCarrierStream } from "./Components/useCarrierStream.hook"
 // import { ApiError } from "@/types/api.types"
 
-export function ShippingRatesTable({ handleSelect, type, dimensions, fromAddress, toAddress, selectedCarrier, setSelectedCarrier }: { handleSelect?: (contact: any) => void, type?: "all" | "recent", dimensions?: any, fromAddress?: any, toAddress?: any, selectedCarrier: string | null, setSelectedCarrier: (value: string) => void }) {
+export function ShippingRatesTable(
+    {
+        handleSelect, type, dimensions, fromAddress, toAddress,
+        selectedCarrier, setSelectedCarrier }:
+        {
+            handleSelect?: (contact: any) => void,
+            type?: "all" | "recent",
+            dimensions?: any,
+            fromAddress?: any,
+            toAddress?: any,
+            selectedCarrier: string | null,
+            setSelectedCarrier: (value: string) => void,
+
+        }) {
     const [search, setSearch] = useState("")
     const [page, setPage] = useState(1)
     const [sorting, setSorting] = useState([])
@@ -122,45 +138,48 @@ export function ShippingRatesTable({ handleSelect, type, dimensions, fromAddress
             "packaging": "BOX"
         }]
     }
+    const API_URL = 'https://api.ulsfreight.ca';
+    const { results, status, error, start, stop, reset } = useCarrierStream(API_URL);
 
-    const mutation = useMutation({
-        mutationFn: (payload: any) => getShipmentRates(payload),
-        onSuccess: (res) => {
-            toast.success("Shipment rates fetched successfully")
-            const ratesArray = [
-                ...(res.fedexQuotes || []).map((q: any) => ({
-                    carrier: q.carrier,
-                    serviceType: q.serviceType,
-                    serviceName: q.serviceName,
-                    price: q.totalPrice,
-                    currency: q.currency,
-                    deliveryDays: q.estimatedDeliveryDays,
-                    shipDate: q.shipDate,
-                    billingWeight: q.billingWeight?.value,
-                    transactionId: q.transactionId,
-                    source: "FEDEX"
-                })),
 
-                ...(res.tstQuotes || []).map((q: any) => ({
-                    carrier: q.carrier,
-                    serviceType: q.serviceType,
-                    serviceName: q.serviceType, // fallback since no serviceName
-                    price: q.totalPriceCAD ?? q.totalPrice,
-                    currency: q.originalCurrency ?? q.currency,
-                    deliveryDays: q.estimatedDeliveryDays,
-                    shipDate: q.shipDate,
-                    billingWeight: Number(q.billingWeight),
-                    transactionId: q.transactionId,
-                    source: "TST"
-                }))
-            ]
-            setRates(ratesArray)
-            console.log(ratesArray)
-        },
-        onError: (error: AxiosError<ApiError>) => {
-            toast.error(error.response?.data.message)
-        }
-    })
+    // const mutation = useMutation({
+    //     mutationFn: (payload: any) => getShipmentRates(payload),
+    //     onSuccess: (res) => {
+    //         toast.success("Shipment rates fetched successfully")
+    //         const ratesArray = [
+    //             ...(res.fedexQuotes || []).map((q: any) => ({
+    //                 carrier: q.carrier,
+    //                 serviceType: q.serviceType,
+    //                 serviceName: q.serviceName,
+    //                 price: q.totalPrice,
+    //                 currency: q.currency,
+    //                 deliveryDays: q.estimatedDeliveryDays,
+    //                 shipDate: q.shipDate,
+    //                 billingWeight: q.billingWeight?.value,
+    //                 transactionId: q.transactionId,
+    //                 source: "FEDEX"
+    //             })),
+
+    //             ...(res.tstQuotes || []).map((q: any) => ({
+    //                 carrier: q.carrier,
+    //                 serviceType: q.serviceType,
+    //                 serviceName: q.serviceType, // fallback since no serviceName
+    //                 price: q.totalPriceCAD ?? q.totalPrice,
+    //                 currency: q.originalCurrency ?? q.currency,
+    //                 deliveryDays: q.estimatedDeliveryDays,
+    //                 shipDate: q.shipDate,
+    //                 billingWeight: Number(q.billingWeight),
+    //                 transactionId: q.transactionId,
+    //                 source: "TST"
+    //             }))
+    //         ]
+    //         setRates(ratesArray)
+    //         console.log(ratesArray)
+    //     },
+    //     onError: (error: AxiosError<ApiError>) => {
+    //         toast.error(error.response?.data.message)
+    //     }
+    // })
 
     // useEffect(() => {
     //     if (rates) {
@@ -197,36 +216,36 @@ export function ShippingRatesTable({ handleSelect, type, dimensions, fromAddress
     // }, [rates])
 
     // loader while fetching 
-    if (mutation.isPending) {
-        return (
-            <Dialog open={true}>
-                <DialogTitle>Fetching Best Rates!</DialogTitle>
-                <DialogContent className="sm:max-w-md flex flex-col items-center justify-center p-8 [&>button]:hidden">
-                    <Loader2 className="h-12 w-12 animate-spin text-primary mb-6" />
-                    <h2 className="text-xl font-semibold text-center mb-2">Fetching Rates!</h2>
-                    <p className="text-muted-foreground text-center">
-                        Please hold on while we collect quotes from our partner carriers...
-                    </p>
-                </DialogContent>
-            </Dialog>
-        )
-    }
+    // if (mutation.isPending) {
+    //     return (
+    //         <Dialog open={true}>
+    //             <DialogTitle>Fetching Best Rates!</DialogTitle>
+    //             <DialogContent className="sm:max-w-md flex flex-col items-center justify-center p-8 [&>button]:hidden">
+    //                 <Loader2 className="h-12 w-12 animate-spin text-primary mb-6" />
+    //                 <h2 className="text-xl font-semibold text-center mb-2">Fetching Rates!</h2>
+    //                 <p className="text-muted-foreground text-center">
+    //                     Please hold on while we collect quotes from our partner carriers...
+    //                 </p>
+    //             </DialogContent>
+    //         </Dialog>
+    //     )
+    // }
     // make rates array
 
     return (
         <>
             <div className="flex justify-center items-center">
-                {mutation.isPending ? (
+                {status === "streaming" || status === "connecting" ? (
                     <Loader className="h-full" />
                 ) : (
-                    rates ?
+                    results ?
                         <div className="w-full">
 
                             <div className="space-y-4 w-full">
 
-                                {rates ? <DataTable
+                                {results ? <DataTable
                                     columns={columns}
-                                    data={rates}
+                                    data={results}
                                     sorting={sorting}
                                     // @ts-ignore
                                     setSorting={setSorting}
@@ -253,11 +272,12 @@ export function ShippingRatesTable({ handleSelect, type, dimensions, fromAddress
 
                 )}
             </div>
+            {/* <ShippingRatesStream /> */}
             {/* get rates button */}
-            <Button onClick={() => mutation.mutate(payload)} disabled={mutation.isPending}>
+            {/* <Button onClick={() => mutation.mutate(payload)} disabled={mutation.isPending}>
                 {mutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
                 Get Rates
-            </Button>
+            </Button> */}
         </>
     )
 }

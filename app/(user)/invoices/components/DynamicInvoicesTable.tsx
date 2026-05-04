@@ -55,7 +55,7 @@ export default function DynamicInvoicesTable({ filters, invoiceCategory, currenc
     return (
         displayData.length > 0 ?
             <>
-                <div className="shadow-sm border rounded-md mb-4 bg-white">
+                <div className="shadow-sm border rounded-md mb-4">
                     <DataTable
                         columns={columns}
                         data={displayData}

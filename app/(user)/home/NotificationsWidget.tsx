@@ -169,7 +169,7 @@ export default function NotificationsWidget() {
                     "mb-3 rounded-md border-2",
                     isCritical && "border-red-300 bg-red-50",
                     isWarning && "border-yellow-300 bg-yellow-50",
-                    !isCritical && !isWarning && "border-slate-200 bg-white"
+                    !isCritical && !isWarning && "border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"
                 )}
             >
                 <div className="flex items-center px-4 py-3">
@@ -220,10 +220,10 @@ export default function NotificationsWidget() {
             <DropdownMenuContent className="w-[400px]">
                 <Tabs defaultValue="all">
                     <TabsList>
-                        <TabsTrigger value="all">
+                        <TabsTrigger value="all" className="cursor-pointer!">
                             All ({notifications.length})
                         </TabsTrigger>
-                        <TabsTrigger value="unread">
+                        <TabsTrigger value="unread" className="cursor-pointer!">
                             Unread ({unreadCount})
                         </TabsTrigger>
                     </TabsList>
@@ -240,7 +240,7 @@ export default function NotificationsWidget() {
 
                             <TabsContent value="unread">
                                 <Accordion type="single" collapsible>
-                                    {notifications.filter(n => !n.read).length > 0
+                                    {notifications.filter(n => n.read).length > 0
                                         ? notifications
                                             .filter(n => !n.read)
                                             .map(renderNotification)

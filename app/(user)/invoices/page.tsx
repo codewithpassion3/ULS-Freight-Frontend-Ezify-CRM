@@ -11,6 +11,7 @@ import DynamicInvoicesTable from "./components/DynamicInvoicesTable"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useSearchParams } from "next/navigation"
 
 const CARRIER_TYPES = [
     { label: "Carrier Name 1", value: "CARRIER_1" },
@@ -45,7 +46,6 @@ export default function InvoicesDashboardPage() {
     const [shipmentDetail, setShipmentDetail] = useState("")
     const [selectedPackaging, setSelectedPackaging] = useState<string[]>([])
     const [selectedBookedBy, setSelectedBookedBy] = useState<string>("")
-
     const [showFilters, setShowFilters] = useState(true)
     const [currencyFilter, setCurrencyFilter] = useState("both")
 
@@ -57,6 +57,12 @@ export default function InvoicesDashboardPage() {
         unpaid: 6,
         paid: 5
     })
+
+    const searchParams = useSearchParams()
+    const tabParam = searchParams.get("tab")
+
+
+
 
     return (
         <div className="container mx-auto pb-8 pt-20 px-4 max-w-7xl">
@@ -192,8 +198,8 @@ export default function InvoicesDashboardPage() {
             )}
 
             {/* Tabs */}
-            <Tabs defaultValue="all" className="w-full">
-                <TabsList className="flex w-full justify-start h-max gap-4 bg-transparent border-b p-0 rounded-none">
+            <Tabs defaultValue={tabParam || "all"} className="w-full">
+                <TabsList className="flex w-full justify-start h-max! gap-4 bg-transparent border-b p-0 rounded-none">
                     {[
                         { icon: FileText, label: "All Invoices", value: "all", count: count.all },
                         { icon: Calendar, label: "Upcoming", value: "upcoming", count: count.upcoming, color: "text-[#0070c0]" },

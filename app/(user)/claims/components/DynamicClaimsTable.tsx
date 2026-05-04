@@ -52,7 +52,7 @@ export default function DynamicClaimsTable({ filters, claimCategory }: Props) {
     return (
         displayData.length > 0 ?
             <>
-                <div className="shadow-sm border rounded-md mb-4 bg-white">
+                <div className="shadow-sm border rounded-md mb-4">
                     <DataTable
                         columns={columns}
                         data={displayData}

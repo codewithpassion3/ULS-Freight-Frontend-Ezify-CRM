@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DateRangePicker } from "@/components/common/date-picker/DateRangePicker"
 import DynamicTrackingTable from "./components/DynamicTrackingTable"
+import { useSearchParams } from "next/navigation"
 
 const PACKAGING_TYPES = [
     { label: "Courier Pak", value: "COURIER_PAK" },
@@ -36,6 +37,11 @@ export default function TrackingDashboardPage() {
         saved: 0,
         spot: 0
     })
+    const searchParams = useSearchParams()
+    const tabParam = searchParams.get("tab")
+
+    // tab param
+
 
     return (
         <div className="container mx-auto pb-8 pt-20 px-4 max-w-7xl">
@@ -199,7 +205,7 @@ export default function TrackingDashboardPage() {
             )}
 
             {/* Tabs */}
-            <Tabs defaultValue="all" >
+            <Tabs defaultValue={tabParam || "all"} >
                 <TabsList className="gap-2 bg-white dark:bg-slate-800 border border-blue-200 p-1 group-data-[orientation=horizontal]/tabs:h-fit max-w-full overflow-x-scroll no-scrollbar" >
                     {[
                         { icon: Heart, label: "All Active", value: "all", count: count.all },
