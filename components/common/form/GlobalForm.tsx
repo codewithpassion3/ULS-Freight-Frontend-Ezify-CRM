@@ -28,6 +28,12 @@ export const FieldRenderer = memo(({ field, type }: any) => {
       return <FormDate field={field} />
     case "time":
       return <FormTime field={field} />
+    case "non-input":
+      return (
+        <div className={`${field.wrapperClassName} ${field.show ? "block" : "hidden"}`}>
+          {field.children}
+        </div>
+      )
     default:
       return null
   }
@@ -37,7 +43,7 @@ export function GlobalForm({ fields, formWrapperClassName, extra }: { fields: an
   return (
     <div className={formWrapperClassName || ""}>
       {fields.map((field) => (
-        <FieldRenderer key={field.name} field={field} />
+        <FieldRenderer key={field.name + field.label} field={field} />
       ))}
       {extra}
     </div>

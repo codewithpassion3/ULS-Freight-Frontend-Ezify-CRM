@@ -9,18 +9,21 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 import LegalPolicyModal from "@/components/static/LegalPolicyModal"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
+import { Loader2 } from "lucide-react"
 
 interface Step3FormProps {
   onBack: () => void
+  isPending: boolean
 }
 
-export function Step3Form({ onBack }: Step3FormProps) {
+export function Step3Form({ onBack, isPending }: Step3FormProps) {
   const router = useRouter()
   const form = useFormContext<RegisterSchemaTypes>()
   const {
     register,
     control,
     watch,
+
     formState: { errors, isValid }
   } = form
 
@@ -117,11 +120,12 @@ export function Step3Form({ onBack }: Step3FormProps) {
         </Button>
         <Button
           type="submit"
-          disabled={!isValid}
+          disabled={!isValid || isPending}
           className="w-full sm:w-max bg-[#0070c0] hover:bg-[#005999] text-white px-8"
         >
+          {isPending ? <Loader2 className="animate-spin" /> : ""}
           Finish Registration
-        </Button>
+        </Button>``
 
       </div>
     </div>

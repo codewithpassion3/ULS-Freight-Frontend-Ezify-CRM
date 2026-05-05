@@ -1,124 +1,229 @@
-import { Truck } from "lucide-react"
+import { Truck, ChevronUp } from "lucide-react"
 import { Label } from "@/components/ui/label"
-import { Controller } from "react-hook-form"
+import { Controller, FormProvider, useForm } from "react-hook-form"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Info } from "lucide-react"
-// import { QuoteSchemaTypes } from "@/lib/validations/quote/spot-quote-schema"
-// import { FormRadio } from "@/components/common/form/fields/FormRadio"
-// import { FormCheckbox } from "@/components/common/form/fields/FormCheckbox"
 import { useFormContext } from "react-hook-form"
 import FormRadio from "@/components/common/form/fields/FormRadio"
 import FormCheckbox from "@/components/common/form/fields/FormCheckbox"
+import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
+import { GlobalForm } from "@/components/common/form/GlobalForm"
+import InBond from "../AdditionalService/InBond"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
-interface EquimentTypeSelectorProps {
-    shipmentType: "SPOT_LTL" | "SPOT_FTL" | "TIME_CRITICAL"
-}
+import { forwardRef, useImperativeHandle, useState } from "react"
 
-export const EquimentTypeSelector = ({ shipmentType }: EquimentTypeSelectorProps) => {
-    const { watch } = useFormContext<any>()
-    const isRefrigerated = watch("equipment.type") === "Refrigerated Services"
+export const EquimentTypeSelector = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }, ref) => {
+    const [isOpen, setIsOpen] = useState(false)
+    const methods = useForm({
+        defaultValues: {
+            spotEquipment: {
+                "dryVan": false,
+                "flatbed": false,
+                "ventilatedTrailer": false,
+                "refrigeratedCheckbox": false,
+                "refrigerated": {
+                    type: "FRESH"
+                },
+                // refrigerated: {
+                //     type: ""
+                // },
+                nextFlighOut: {
+                    isKnownShipper: false,
+                }
+            },
+            services: {
+                inBondCheckbox: false,
+                inBond: {
+                    bondType: "",
+                    bondCancler: "",
+                    contactKey: "",
+                    contactValue: "",
+                    address: ""
+                },
+                protectFromFreeze: false,
+                limitedAccessCheckbox: false,
+                limitedAccess: "",
+                limitedAccessDescription: "",
+                dangerousGoods: false,
+                allPalletsStackable: false,
+                somePalletsStackable: false,
+            }
+        },
+    })
+
+    useImperativeHandle(ref, () => ({
+        getValues: methods.getValues,
+        trigger: methods.trigger,
+        open: () => setIsOpen(true)
+    }))
+
+    const isRefrigerated = methods.watch("spotEquipment.refrigeratedCheckbox") === true
     const isTimeCritical = shipmentType === "TIME_CRITICAL"
+
+    const ltlOptions = [
+        { label: "Dry Van", value: "dryVan" },
+        { label: "Refrigerated Services", value: "refrigerated" },
+    ]
     const timeCriticalOptions = [
         { label: "Truck", value: "truck" },
         { label: "Car", value: "car" },
         { label: "Van", value: "van" },
         { label: "Next Flight Out", value: "nextFlightOut" },
     ]
-    const ltlOptions = [
+    const ftlOptions = [
         { label: "Dry Van", value: "Dry Van" },
         { label: "Refrigerated Services", value: "Refrigerated Services" },
         { label: "Flatbed", value: "Flatbed" },
         { label: "Ventilated Trailer", value: "Ventilated Trailer" },
     ]
+
     return (
-        <div className="shadow-lg border border-border rounded-md p-4 bg-white dark:bg-card">
-            <h3 className="font-semibold flex items-center gap-2 pb-4 text-lg border-b mb-4">
-                <Truck size={20} /> Equipment Type & {!isTimeCritical ? "Additional Services" : ""}
-            </h3>
-            <div className="space-y-6">
-                <div className="space-y-3">
-                    <FormRadio
-                        field={{
-                            name: "equipment.type",
-                            label: "Please describe the equipment required for this shipment",
-                            options: isTimeCritical ? timeCriticalOptions : ltlOptions
-                        }}
-                    />
-                </div>
+        <FormProvider {...methods}>
+            <Accordion type="single" collapsible value={isOpen ? "equipment" : ""} onValueChange={(val) => setIsOpen(!!val)} className="shadow-lg border border-border rounded-md bg-white dark:bg-card">
+                <AccordionItem value="equipment" className="border-none">
+                    <AccordionTrigger className="group px-6 py-4 hover:no-underline items-center cursor-pointer [&>svg]:hidden!">
+                        <h2 className="flex gap-2 items-center text-lg font-semibold text-slate-800 dark:text-slate-100">
+                            <Truck size={20} />
+                            Equipment Type & {!isTimeCritical ? "Additional Services" : ""}
+                            <ChevronUp className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                        </h2>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-6 pb-6 space-y-6 h-full">
+                        <div className="space-y-6">
+                            <GlobalForm
+                                formWrapperClassName="grid grid-cols-1 md:grid-cols-6 gap-6"
+                                fields={
+                                    [
+                                        {
+                                            name: "spotEquipment.type",
+                                            type: "radio",
+                                            label: "Please describe the equipment required for this shipment",
+                                            options: shipmentType === "SPOT_LTL" ? ltlOptions : shipmentType === "SPOT_FTL" ? ftlOptions : timeCriticalOptions,
+                                            wrapperClassName: "col-span-full flex flex-col gap-4",
+                                        },
+                                        {
+                                            name: "spotEquipment.refrigerated.type",
+                                            type: "radio",
+                                            label: "Please specify what kind of Refrigerated Service is required:",
+                                            options: [
+                                                { label: "Fresh (32°F / 0°C)", value: "FRESH" },
+                                                { label: "Frozen (0°F / -17°C)", value: "FROZEN" },
+                                            ],
+                                            selectedClassName: "text-amber-500 border-amber-500",
+                                            show: isRefrigerated,
+                                            wrapperClassName: "col-span-full flex flex-col gap-4",
 
-                {isRefrigerated && (
-                    <div className="bg-blue-50/20 p-4 border border-blue-50 rounded-md space-y-3 shadow-sm">
-                        <FormRadio
-                            field={{
-                                name: "equipment.refrigeratedType",
-                                label: "Please specify what kind of Refrigerated Service is required:",
-                                options: [
-                                    { label: "Fresh (32°F / 0°C)", value: "Fresh" },
-                                    { label: "Frozen (0°F / -17°C)", value: "Frozen" },
-                                ],
-                                selectedClassName: "text-amber-500 border-amber-500"
-                            }}
-                        />
-                    </div>
-                )}
+                                        },
+                                        {
+                                            name: "spotEquipment.isKnownShipper",
+                                            type: "radio",
+                                            label: "For <b>Next Flight Out</b> service, please verify if you are a known shipper",
+                                            options: [
+                                                { label: "Yes, I am a known shipper", value: "Yes" },
+                                                { label: "No, I am not a known shipper", value: "No" },
+                                            ],
+                                            selectedClassName: "text-amber-500 border-amber-500",
+                                            show: isTimeCritical,
+                                        },
+                                        {
+                                            type: "non-input",
+                                            children: <p className="mt-4 text-sm font-medium">Please specify any details regarding this shipment</p>,
+                                            wrapperClassName: "col-span-full",
+                                        },
+                                        {
+                                            name: "services.inBondCheckbox",
+                                            type: "checkbox",
+                                            label: "In-Bond",
+                                            show: shipmentType === "SPOT_LTL",
+                                            wrapperClassName: "col-span-1",
+                                        },
+                                        {
+                                            name: "spotEquipment.protectFromFreeze",
+                                            type: "checkbox",
+                                            label: "Protect from Freeze",
+                                            show: shipmentType === "SPOT_LTL",
+                                            wrapperClassName: "col-span-1",
 
-                {isTimeCritical && (
-                    <div className="bg-blue-50/20 p-4 border border-blue-50 rounded-md space-y-3 shadow-sm">
-                        <p className="text-sm text-muted-foreground">For <b>Next Flight Out</b> service, please verify if you are a known shipper</p>
-                        <FormRadio
-                            field={{
-                                name: "equipment.isKnownShipper",
-                                options: [
-                                    { label: "Yes, I am a known shipper", value: "Yes" },
-                                    { label: "No, I am not a known shipper", value: "No" },
-                                ],
-                                selectedClassName: "text-amber-500 border-amber-500"
-                            }}
-                        />
-                    </div>
-                )}
+                                        },
+                                        {
+                                            name: "services.limitedAccessCheckbox",
+                                            type: "checkbox",
+                                            label: "Limited Access",
+                                            show: shipmentType === "SPOT_LTL",
+                                            wrapperClassName: "col-span-1",
+                                        },
+                                        {
+                                            name: "spotEquipment.dangerousGoods",
+                                            type: "checkbox",
+                                            label: "Dangerous Goods",
+                                            show: shipmentType === "SPOT_FTL",
+                                        },
+                                        {
+                                            name: "spotEquipment.allPalletsStackable",
+                                            type: "checkbox",
+                                            label: "All Pallets Stackable",
+                                            show: shipmentType === "SPOT_FTL",
+                                        },
+                                        {
+                                            name: "spotEquipment.somePalletsStackable",
+                                            type: "checkbox",
+                                            label: "Some Pallets Stackable",
+                                            show: shipmentType === "SPOT_FTL",
+                                        },
 
-                <div className="space-y-3 pt-2">
-                    <Label className="text-base font-normal text-muted-foreground block border-t pt-4">Please specify any details regarding this shipment</Label>
-                    <div className="flex flex-wrap gap-6">
-                        {shipmentType !== "SPOT_FTL" ? (
-                            [
-                                { name: "equipment.inBond", label: "In-Bond" },
-                                { name: "equipment.protectFromFreeze", label: "Protect from Freeze" },
-                                { name: "equipment.limitedAccess", label: "Limited Access" },
-                            ].map((item) => (
-                                <FormCheckbox
-                                    key={item.name}
-                                    field={{
-                                        name: item.name,
-                                        label: item.label,
-                                        icon: <Info size={14} className="text-[#0070c0]" />
-                                    }}
-                                />
-                            ))
-
-                        ) : (
-                            [
-                                { name: "equipment.dangerousGoods", label: "Dangerous Goods" },
-                                { name: "equipment.allPalletsStackable", label: "All Pallets are Stackable" },
-                                { name: "equipment.somePalletsStackable", label: "Some Pallets are Stackable" },
-                            ].map((item) => (
-                                <div key={item.name}>
-                                    <FormCheckbox
-                                        field={{
-                                            name: item.name,
-                                            label: item.label,
-                                            icon: <Info size={14} className="text-[#0070c0]" />
-                                        }}
-                                    />
+                                    ]
+                                }
+                            />
+                            {methods.watch("services.inBondCheckbox") &&
+                                <div className="my-4">
+                                    <InBond />
                                 </div>
-                            ))
-                        )}
-                    </div>
-                </div>
-            </div>
-        </div>
+                            }
+                            {methods.watch("services.limitedAccessCheckbox") &&
+                                <div className="my-4">
+                                    <GlobalForm
+                                        fields={[
+                                            {
+                                                name: "services.limitedAccess",
+                                                label: "Location",
+                                                type: "radio",
+                                                valueType: "string",
+
+                                                options: [
+                                                    { value: "constructionSite", label: "Construction Site" },
+                                                    { value: "individualStorageUnit", label: "Individual (Mini) Storage Unit" },
+                                                    { value: "fairAmusementPark", label: "Fair/Amusement Park" },
+                                                    { value: "placeOfWorship", label: "Place of Worship" },
+                                                    { value: "farmCountryClubEstate", label: "Farm/Country Club/Estate" },
+                                                    { value: "securedLocationsDelivery", label: "Secured Locations Delivery - prisons, military bases, airport" },
+                                                    { value: "schoolUniversity", label: "School/University" },
+                                                    { value: "plazaMallDeliveries", label: "Plaza/Mall deliveries or stores with only parking lot/Street access" },
+                                                    { value: "groceryRetailLocations", label: "Grocery/Retail Locations (ex: Costco or Walmart)" },
+                                                    { value: "other", label: "Other" },
+                                                ],
+                                                className: "grid grid-cols-2 gap-4",
+                                                wrapperClassName: "flex flex-col gap-4"
+                                            },
+                                            {
+                                                name: "services.limitedAccessDescription",
+                                                // label: "Other Location",
+                                                placeholder: "Please specify",
+                                                type: "text",
+                                                className: "w-1/3 ml-[50%]",
+                                                show: methods.watch("services.limitedAccess") === "other"
+                                            }
+                                        ]}
+                                    />
+
+                                </div>
+                            }
+                        </div>
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
+        </FormProvider>
     )
-}
+})

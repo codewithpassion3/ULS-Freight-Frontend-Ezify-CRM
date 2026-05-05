@@ -29,11 +29,11 @@ export const contactInformation = z.object({
 })
 export const spotLTLSchema = z.object({
     addresses: addressesSchema,
-    shipmentType: z.literal("SPOT_LTL")
+    shipmentType: z.literal("LTL_PARTIAL")
 })
 export const spotFTLSchema = z.object({
     addresses: addressesSchema,
-    shipmentType: z.literal("SPOT_FTL")
+    shipmentType: z.literal("FULL_TRUCK_LOAD")
 })
 export const spotTimeCriticalSchema = z.object({
     addresses: addressesSchema,

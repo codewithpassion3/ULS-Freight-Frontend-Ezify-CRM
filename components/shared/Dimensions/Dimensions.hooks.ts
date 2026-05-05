@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from "react"
 import { getSingleQuote } from "@/api/services/quotes.api"
 // import { shipmentSchema, ShipmentFormValues } from "./Dimensions.schema"
 import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
-import { courierLineItemSchema, ftlLineItemSchema, lineItemSchema, packageLineItemSchema, palletLineItemSchema } from "./Dimensions.schema"
+import { courierLineItemSchema, ftlLineItemSchema, packageLineItemSchema, palletLineItemSchema, spotFtlLineItemSchema, spotLtlLineItemSchema } from "./Dimensions.schema"
 
 export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOptions]) {
     const [isOpen, setIsOpen] = useState(true)
@@ -22,15 +22,21 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
                 return courierLineItemSchema
             case "STANDARD_FTL":
                 return ftlLineItemSchema
+            case "SPOT_LTL":
+                return spotLtlLineItemSchema
+            case "SPOT_FTL":
+                return spotFtlLineItemSchema
+            case "TIME_CRITICAL":
+                return spotFtlLineItemSchema
         }
     }
 
     const schema = useMemo(() => {
         return dynamicSchema(shipmentType)
     }, [shipmentType])
-
+    const resolver = useMemo(() => zodResolver(schema as any), [schema])
     const methods = useForm<any>({
-        resolver: zodResolver(schema as any) as any,
+        resolver,
         mode: "onChange",
         defaultValues: {
             shipmentType: shipmentType,
@@ -48,7 +54,7 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
 
 
 
-    const { control, setValue, formState: { errors } } = methods
+    const { control, setValue, reset, formState: { errors } } = methods
     const fieldArray = useFieldArray({ control, name: "lineItem.units" })
 
     const quoteId = useSearchParams().get("id")
@@ -58,6 +64,9 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
         enabled: !!quoteId,
         staleTime: 1000 * 60 * 5,
     })
+
+    // print errors
+    console.log("errors", errors)
 
     useEffect(() => {
         if (!cachedSingleQuote) return

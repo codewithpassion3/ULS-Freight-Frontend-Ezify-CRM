@@ -54,6 +54,9 @@ export const ShippingTypeSelector = ({ shipmentType, setShipmentType, quoteType 
             return <Loader />
         }
     }
+
+    // print shipment type on change
+    console.log("shipmentType", shipmentType)
     return (
         <div className="border border-border rounded-md p-4 bg-white dark:bg-card shadow-lg">
             <div className="flex items-center justify-between pb-4">

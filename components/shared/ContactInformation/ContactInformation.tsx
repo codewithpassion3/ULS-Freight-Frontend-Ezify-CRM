@@ -1,7 +1,29 @@
+import { forwardRef, useImperativeHandle } from "react";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
-export default function ContactInformation() {
+import { useForm } from "react-hook-form";
+
+const ContactInformation = forwardRef((props, ref) => {
+    const form = useForm({
+        defaultValues: {
+            spotContact: {
+                contactName: "",
+                phoneNumber: "",
+                shipDate: "",
+                emailAddress: "",
+                spotQuoteName: "",
+            },
+        },
+    })
+
+    useImperativeHandle(ref, () => ({
+        getValues: form.getValues,
+        trigger: form.trigger
+    }))
+
     return (
-        <GlobalForm
+        <form {...form.register("spotContact")}>
+            <GlobalForm
+
                 formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 gap-4"
                 fields={[
                     {
@@ -37,5 +59,8 @@ export default function ContactInformation() {
                     },
                 ]}
             />
+        </form>
     )
-}
+})
+
+export default ContactInformation;

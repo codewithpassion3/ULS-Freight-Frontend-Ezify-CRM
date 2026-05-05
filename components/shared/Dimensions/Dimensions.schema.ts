@@ -48,6 +48,31 @@ export const palletLineItemSchema = z.object({
   })
 })
 
+export const spotLtlLineItemSchema = z.object({
+  shipmentType: z.literal("SPOT_LTL"),
+  lineItem: z.object({
+    type: z.literal("SPOT_LTL"),
+    measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
+    quantity: z.number().default(1),
+    units: z.array(
+      z.object({
+        length: z.coerce.number(" ").min(1),
+        width: z.coerce.number(" ").min(1),
+        height: z.coerce.number(" ").min(1),
+        weight: z.coerce.number(" ").min(1),
+        freightClass: z.string(" ").optional(),
+        nmfc: z.string().optional(),
+        palletUnitType: z.string(" ").optional(),
+        unitsOnPallet: z.coerce.number(" ").optional(),
+        stackable: z.boolean().optional(),
+        description: z.string().optional(),
+      })
+    ),
+  })
+})
+
+
+
 export const packageLineItemSchema = z.object({
   shipmentType: z.literal("PACKAGE"),
   lineItem: z.object({
@@ -55,6 +80,27 @@ export const packageLineItemSchema = z.object({
     measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
     dangerousGoods: z.boolean().optional(),
     units: z.array(packageUnitSchema).min(1, "Add at least one package"),
+  })
+})
+
+export const spotFtlLineItemSchema = z.object({
+  shipmentType: z.literal("SPOT_FTL"),
+  lineItem: z.object({
+    type: z.literal("SPOT_FTL"),
+    measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
+    quantity: z.number().default(1),
+    units: z.array(
+      z.object({
+        length: z.coerce.number(" ").min(1),
+        width: z.coerce.number(" ").min(1),
+        height: z.coerce.number(" ").min(1),
+        weight: z.coerce.number(" ").min(1),
+        unitsOnPallet: z.coerce.number(" ").optional(),
+        description: z.string().optional(),
+        palletUnitType: z.string(" ").optional(),
+        stackable: z.boolean().optional(),
+      })
+    ),
   })
 })
 
@@ -100,3 +146,5 @@ export type CourierUnit = z.infer<typeof courierUnitSchema>
 export type FTLUnit = z.infer<typeof ftlUnitSchema>
 export type LineItem = z.infer<typeof lineItemSchema>
 export type DimensionsValues = z.infer<typeof dimensionsSchema>
+export type spotLTLUnit = z.infer<typeof spotLtlLineItemSchema>
+export type spotFTLUnit = z.infer<typeof spotFtlLineItemSchema>

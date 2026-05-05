@@ -26,6 +26,8 @@ import { useRouter } from "next/navigation"
 import { Loader, LoaderCircle } from "lucide-react"
 import { formatTime12h } from "@/app/(user)/settings/(address-book)/mappers/contact.mapper"
 import ShippingRates from "../ShippingRates/ShippingRates"
+import SendRequest from "../SendRequest/SendRequest"
+
 export type ShipmentTypes = "PALLET" | "PACKAGE" | "COURIER_PAK" | "STANDARD_FTL" | "SPOT_LTL" | "SPOT_FTL" | "TIME_CRITICAL"
 export type QuoteTypes = "SPOT" | "STANDARD"
 export type ShipmentOptions = {
@@ -54,6 +56,9 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     const servicesRef = useRef<any>(null)
     const insuranceRef = useRef<any>(null)
     const signatureRef = useRef<any>(null)
+    const equipmentRef = useRef<any>(null)
+    const contactRef = useRef<any>(null)
+    const sendRequestRef = useRef<any>(null)
 
     const handleSwapAddress = () => {
         if (fromAddressRef.current && toAddressRef.current) {
@@ -64,15 +69,25 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         }
     }
     const [currentStep, setCurrentStep] = useState(1)
-    const handleNextStep1 = async () => {
-        const fromValid = await fromAddressRef.current?.trigger()
-        const toValid = await toAddressRef.current?.trigger()
+    // const handleNextStep1 = async () => {
+    //     const fromValid = await fromAddressRef.current?.trigger()
+    //     const toValid = await toAddressRef.current?.trigger()
 
-        if (fromValid && toValid) {
-            dimensionsRef.current?.open()
-            setCurrentStep(2)
-        }
-    }
+    //     if (fromValid && toValid) {
+    //         dimensionsRef.current?.open()
+    //         setCurrentStep(2)
+    //     }
+    // }
+
+    // const handleNextStep2 = async () => {
+    //     const dimValid = await dimensionsRef.current?.trigger()
+    //     const equipValid = isSpotQuote ? await equipmentRef.current?.trigger() : true
+    //     const contactValid = isSpotQuote ? await contactRef.current?.trigger() : true
+
+    //     if (dimValid && equipValid && contactValid) {
+    //         setCurrentStep(3)
+    //     }
+    // }
 
     // scroll to section in which there is errors, check by ref
     const scrollToErrorSection = () => {
@@ -148,6 +163,12 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         }
     })
 
+    const spotShipmentType: any = {
+        "SPOT_LTL": "LTL_PARTIAL",
+        "SPOT_FTL": "FULL_TRUCK_LOAD",
+        "TIME_CRITICAL": "TIME_CRITICAL",
+    }
+
 
     const fromAddress = fromAddressRef.current?.getValues() || {}
     const toAddress = toAddressRef.current?.getValues() || {}
@@ -164,7 +185,8 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         const services = servicesRef.current?.getValues() || {}
         const insurance = insuranceRef.current?.getValues() || {}
         const signature = signatureRef.current?.getValues() || {}
-
+        const equipment = equipmentRef.current?.getValues() || {}
+        const spotContact = contactRef.current?.getValues() || {}
         let completePayload = {
             addresses: [fromAddress, toAddress],
             ...dimensions,
@@ -174,16 +196,31 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         if (Object.keys(fromAddress).length > 0) addresses.push(fromAddress)
         if (Object.keys(toAddress).length > 0) addresses.push(toAddress)
 
-        if (insurance.insurance.amount) {
+        if (insurance.insurance.amount > 0) {
             completePayload = { ...completePayload, ...insurance }
         }
         if (Object.keys(services).length > 0) {
             completePayload = { ...completePayload, ...services }
         }
+        // equipment
+        if (Object.keys(equipment).length > 0) {
+            completePayload = { ...completePayload, spotDetails: { ...equipment, spotType: spotShipmentType[shipmentType as ShipmentOptions[keyof ShipmentOptions]] } }
+        }
         if (Object.keys(signature).length > 0) {
             completePayload = { ...completePayload, ...signature }
         }
+        // spotContact
+        if (Object.keys(spotContact).length > 0) {
+            completePayload = { ...completePayload, spotDetails: { ...completePayload.spotDetails, ...spotContact } }
+        }
 
+        const sendRequestData = sendRequestRef.current?.getValues() || {}
+        if (Object.keys(sendRequestData).length > 0) {
+            completePayload = { ...completePayload, ...sendRequestData }
+        }
+        // if (quoteType === "SPOT") {
+        //     completePayload = { ...completePayload, spotDetails: { ...equipment, ...spotContact } }
+        // }
         return completePayload
     }
 
@@ -210,6 +247,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         if (servicesRef.current) valid = valid && await servicesRef.current.trigger()
         if (insuranceRef.current) valid = valid && await insuranceRef.current.trigger()
         if (signatureRef.current) valid = valid && await signatureRef.current.trigger()
+        if (sendRequestRef.current) valid = valid && await sendRequestRef.current.trigger()
 
         // const snapshot = getFormSnapshot()
         const mergedData = getMergedPayload()
@@ -336,7 +374,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             </div> : ""}
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                <div className={`${isShipment ? "lg:col-span-3" : "lg:col-span-3"}`}>
+                <div className="lg:col-span-3">
                     <div className="space-y-6">
                         <ShippingTypeSelector quoteType={quoteType} shipmentType={shipmentType} setShipmentType={setShipmentType} />
                         <div className="flex flex-col md:flex-row gap-6">
@@ -348,29 +386,42 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                             </div>
 
                         </div>
-
+                        <div className="space-y-6 mt-6">
+                            <EquimentTypeSelector ref={equipmentRef} shipmentType={shipmentType} />
+                        </div>
                         <div className="space-y-6 mt-6">
                             <Dimensions ref={dimensionsRef} shipmentType={shipmentType} />
                         </div>
                         {shipmentType !== "STANDARD_FTL" ? <div className="mt-6">
-                            <AdditionalServices ref={servicesRef} shipmentType={shipmentType} />
+                            <AdditionalServices quoteType={quoteType} ref={servicesRef} shipmentType={shipmentType} />
                         </div> : ""}
 
                     </div>
-                    {isStandardQuote && <div className="mt-6"><AdditionalInsurance ref={insuranceRef} /></div>}
+                    <div className="mt-6"><AdditionalInsurance ref={insuranceRef} /></div>
                     {(shipmentType === "PACKAGE" || shipmentType === "COURIER_PAK" || isShipment) && <div className="mt-6"><SignaturePreference ref={signatureRef} /></div>}
                     <div className="mt-6">
                         <ShippingRates selectedCarrier={selectedCarrier} setSelectedCarrier={setSelectedCarrier} openGetRates={openGetRates} setOpenGetRates={setOpenGetRates} dimensions={dimensions} fromAddress={fromAddress} toAddress={toAddress} />
                     </div>
+
+                    {quoteType === "SPOT" && (
+                        <div className="mt-6">
+                            <SendRequest
+                                ref={sendRequestRef}
+                                contactInfo={contactRef.current?.getValues()?.contactInformation}
+                                equipmentDetails={equipmentRef.current?.getValues()}
+                                fromAddress={fromAddressRef.current?.getValues()}
+                                toAddress={toAddressRef.current?.getValues()}
+                                dimensions={dimensionsRef.current?.getValues()}
+                                services={servicesRef.current?.getValues()}
+                                onPrevious={() => { }}
+                                onSubmit={onSubmit}
+                            />
+                        </div>
+                    )}
+
+
                     <div className="w-full flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
                         <div className="flex gap-4">
-                            {/* <Button variant="outline" onClick={() => {
-                                handleStatus("DRAFT")
-                                onSubmit()
-                            }} type="button">{isEditing ? "Update as Draft" : "Save as Draft"}</Button> */}
-
-
-
                             {isShipment ?
                                 <Button
                                     disabled={createShipmentMutation.isPending || updateShipmentMutation.isPending}
@@ -397,13 +448,15 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                                 {bookShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
                                 Book Shipment
                             </Button>
+
+                            {/* Sidebar */}
                         </div>
                     </div>
                 </div>
-
-                {/* Sidebar */}
                 <SideBar currentStep={currentStep} setCurrentStep={setCurrentStep} />
+
             </div>
         </div>
     )
 }
+

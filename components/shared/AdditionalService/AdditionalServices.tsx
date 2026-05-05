@@ -18,8 +18,9 @@ import FormRadio from "@/components/common/form/fields/FormRadio"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { FormInput } from "@/components/common/forms/FormInput"
+import DangerousGoodsForm from "../Dimensions/DangerousGoodDetails"
 
-const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }, ref) => {
+const AdditionalServices = forwardRef(({ shipmentType, quoteType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions], quoteType: "SPOT" | "STANDARD" }, ref) => {
     const additionalServicesSchema = z.object({
         limitedAccess: z.boolean().optional(),
         inBondCheckbox: z.boolean().optional(),
@@ -27,7 +28,7 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
             bondType: z.string().optional(),
             bondCancler: z.string().optional(),
             contactKey: z.string().optional(),
-            contactValue: z.string().optional(),
+            contactValue: z.string().optional().default("EMAIL"),
             address: z.string().optional()
         }).optional(),
         services: z.object({
@@ -49,8 +50,11 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
             insideDeliveryStairs: z.boolean().optional(),
             insidePickupStairs: z.boolean().optional(),
             // limitedAccess.location:z.string().optional(),
-            limitedAccessDescription: z.string().optional()
-        })
+            limitedAccessDescription: z.string().optional(),
+            dangerousGood: z.boolean().optional(),
+
+        }),
+
     })
     const methods = useForm({
         resolver: zodResolver(additionalServicesSchema),
@@ -124,176 +128,151 @@ const AdditionalServices = forwardRef(({ shipmentType }: { shipmentType: Shipmen
                     <AccordionContent className="px-6 pb-6 space-y-6 h-full">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div className="sm:col-span-3 ">
-                                <FormCheckbox
+                                {quoteType !== "SPOT" ? <FormCheckbox
                                     field={{
                                         name: "limitedAccess",
                                         label: "Limited Access",
                                         defaultValue: false,
                                         icon: <Info size={16} />,
                                     }}
-                                />
-                                {watch("limitedAccess") &&
-                                    <div className="my-4">
-                                        <GlobalForm
-                                            // formWrapperClassName="grid grid-cols-1"
-                                            fields={[
-                                                {
-                                                    name: "services.limitedAccess",
-                                                    label: "Location",
-                                                    type: "radio",
-                                                    options: [
-                                                        { value: "constructionSite", label: "Construction Site" },
-                                                        { value: "individualStorageUnit", label: "Individual (Mini) Storage Unit" },
-                                                        { value: "fairAmusementPark", label: "Fair/Amusement Park" },
-                                                        { value: "placeOfWorship", label: "Place of Worship" },
-                                                        { value: "farmCountryClubEstate", label: "Farm/Country Club/Estate" },
-                                                        { value: "securedLocationsDelivery", label: "Secured Locations Delivery - prisons, military bases, airport" },
-                                                        { value: "schoolUniversity", label: "School/University" },
-                                                        { value: "plazaMallDeliveries", label: "Plaza/Mall deliveries or stores with only parking lot/Street access" },
-                                                        { value: "groceryRetailLocations", label: "Grocery/Retail Locations (ex: Costco or Walmart)" },
-                                                        { value: "other", label: "Other" },
-                                                    ],
-                                                    className: "grid grid-cols-2 gap-4"
-                                                },
-                                                {
-                                                    name: "limitedAccessDescription",
-                                                    // label: "Other Location",
-                                                    placeholder: "Please specify",
-                                                    type: "text",
-                                                    className: "w-1/3 ml-[50%]",
-                                                    show: watch("services.limitedAccess") === "other"
-                                                }
-                                            ]}
-                                        />
-                                        {/* <FormRadio
-                                            field={{
-                                                className: "grid grid-cols-2 gap-4",
-                                                name: "limitedAccess.location",
+                                /> : ""}
+
+                                <div className="my-4">
+                                    <GlobalForm
+                                        formWrapperClassName="grid grid-cols-1 sm:grid-cols-3 gap-4"
+                                        fields={[
+                                            // dangerous good
+                                            {
+                                                name: "services.dangerousGood",
+                                                label: "Dangerous Good",
+                                                type: "checkbox",
+                                                defaultValue: false,
+                                                icon: <Info size={16} />,
+                                                show: quoteType === "SPOT",
+                                                wrapperClassName: "col-span-full"
+                                            },
+                                            {
+                                                type: "non-input",
+                                                children: <DangerousGoodsForm />,
+                                                show: watch("services.dangerousGood"),
+                                                wrapperClassName: "col-span-full"
+                                            },
+                                            // limited access
+                                            {
+                                                name: "limitedAccess",
+                                                label: "Limited Access",
+                                                type: "checkbox",
+                                                defaultValue: false,
+                                                icon: <Info size={16} />,
+                                                show: quoteType !== "SPOT"
+                                            },
+                                            {
+                                                name: "services.limitedAccess",
                                                 label: "Location",
+                                                type: "radio",
                                                 options: [
-                                                    {
-                                                        value: "constructionSite",
-                                                        label: "Construction Site",
-                                                    },
-                                                    {
-                                                        value: "individualStorageUnit",
-                                                        label: "Individual (Mini) Storage Unit",
-                                                    },
-                                                    {
-                                                        value: "fairAmusementPark",
-                                                        label: "Fair/Amusement Park",
-                                                    },
-                                                    {
-                                                        value: "placeOfWorship",
-                                                        label: "Place of Worship",
-                                                    },
-                                                    {
-                                                        value: "farmCountryClubEstate",
-                                                        label: "Farm/Country Club/Estate",
-                                                    },
-                                                    {
-                                                        value: "securedLocationsDelivery",
-                                                        label: "Secured Locations Delivery - prisons, military bases, airport",
-                                                    },
-                                                    {
-                                                        value: "schoolUniversity",
-                                                        label: "School/University",
-                                                    },
-                                                    {
-                                                        value: "plazaMallDeliveries",
-                                                        label: "Plaza/Mall deliveries or stores with only parking lot/Street access",
-                                                    },
-                                                    {
-                                                        value: "groceryRetailLocations",
-                                                        label: "Grocery/Retail Locations (ex: Costco or Walmart)",
-                                                    },
-                                                    {
-                                                        value: "other",
-                                                        label: "Other",
-                                                    },
-
+                                                    { value: "constructionSite", label: "Construction Site" },
+                                                    { value: "individualStorageUnit", label: "Individual (Mini) Storage Unit" },
+                                                    { value: "fairAmusementPark", label: "Fair/Amusement Park" },
+                                                    { value: "placeOfWorship", label: "Place of Worship" },
+                                                    { value: "farmCountryClubEstate", label: "Farm/Country Club/Estate" },
+                                                    { value: "securedLocationsDelivery", label: "Secured Locations Delivery - prisons, military bases, airport" },
+                                                    { value: "schoolUniversity", label: "School/University" },
+                                                    { value: "plazaMallDeliveries", label: "Plaza/Mall deliveries or stores with only parking lot/Street access" },
+                                                    { value: "groceryRetailLocations", label: "Grocery/Retail Locations (ex: Costco or Walmart)" },
+                                                    { value: "other", label: "Other" },
                                                 ],
+                                                className: "grid grid-cols-2 gap-4",
+                                                show: watch("limitedAccess")
+                                            },
+                                            {
+                                                name: "limitedAccessDescription",
+                                                // label: "Other Location",
+                                                placeholder: "Please specify",
+                                                type: "text",
+                                                className: "w-1/3 ml-[50%]",
+                                                show: watch("services.limitedAccess") === "other"
+                                            },
+                                            // services.appointmentDelivery
+                                            {
+                                                name: "appointmentDelivery",
+                                                label: "Appointment Delivery",
+                                                type: "checkbox",
+                                                defaultValue: false,
+                                                icon: <Info size={16} />,
+                                            },
+                                            // services.thresholdDelivery
+                                            {
+                                                name: "thresholdDelivery",
+                                                label: "Threshold Delivery",
+                                                type: "checkbox",
+                                                defaultValue: false,
+                                                icon: <Info size={16} />,
+                                            },
+                                            // services.thresholdPickup
+                                            {
+                                                name: "thresholdPickup",
+                                                label: "Threshold Pickup",
+                                                type: "checkbox",
+                                                defaultValue: false,
+                                                icon: <Info size={16} />,
+                                            },
+                                            // services.protectFromFreeze
+                                            {
+                                                name: "protectFromFreeze",
+                                                label: "Protect From Freeze",
+                                                type: "checkbox",
+                                                defaultValue: false,
+                                                icon: <Info size={16} />,
+                                                show: quoteType !== "SPOT"
 
-                                                // text field for other selection
+                                            },
+                                            // services.tradeShowDelivery
+                                            {
+                                                name: "tradeShowDelivery",
+                                                label: "Trade Show Delivery",
+                                                type: "checkbox",
+                                                defaultValue: false,
+                                                icon: <Info size={16} />,
+                                            },
+                                            // services.amazonOrFbaDelivery
+                                            {
+                                                name: "amazonOrFbaDelivery",
+                                                label: "Amazon or FBA Delivery",
+                                                type: "checkbox",
+                                                defaultValue: false,
+                                                icon: <Info size={16} />,
+                                            },
+                                            // services.refrigeratedServices
+                                            {
+                                                name: "refrigeratedServices",
+                                                label: "Refrigerated Services",
+                                                type: "checkbox",
+                                                defaultValue: false,
+                                                icon: <Info size={16} />,
+                                                show: quoteType !== "SPOT"
 
-                                            }}
-                                        /> */}
+                                            },
+                                            // Grocery/Retail Distribution Center
+                                            {
+                                                name: "groceryRetailDistributionCenter",
+                                                label: "Grocery/Retail Distribution Center",
+                                                type: "checkbox",
+                                                defaultValue: false,
+                                                icon: <Info size={16} />,
+                                                show: quoteType === "SPOT"
+                                            },
+                                            // services.looseFreight
 
-                                    </div>
-                                }
+                                        ]}
+                                    />
+
+
+                                </div>
+
                             </div>
 
-                            <FormCheckbox
-                                field={{
-                                    name: "services.appointmentDelivery",
-                                    label: "Appointment Delivery",
-                                    defaultValue: false,
-                                    icon: <Info size={16} />,
-                                }}
-                            />
-                            <FormCheckbox
-                                field={{
-                                    name: "services.thresholdDelivery",
-                                    label: "Threshold Delivery",
-                                    defaultValue: false,
-                                    icon: <Info size={16} />
-                                }}
-                            />
-                            <FormCheckbox
-                                field={{
-                                    name: "services.thresholdPickup",
-                                    label: "Threshold Pickup",
-                                    defaultValue: false,
-                                    icon: <Info size={16} />
-                                }}
-                            />
-                            <div className="sm:col-span-3">
-                                <FormCheckbox
-                                    field={{
-                                        name: "inBondCheckbox",
-                                        label: "In Bond",
-                                        defaultValue: false,
-                                        icon: <Info size={16} />
-                                    }}
-                                />
-                                {watch("inBondCheckbox") &&
-                                    <div className="my-4">
-                                        <InBond />
-                                    </div>
-                                }
-                            </div>
-                            <FormCheckbox
-                                field={{
-                                    name: "services.protectFromFreeze",
-                                    label: "Protect from Freeze",
-                                    defaultValue: false,
-                                    icon: <Info size={16} />
-                                }}
-                            />
-                            <FormCheckbox
-                                field={{
-                                    name: "services.tradeShowDelivery",
-                                    label: "Trade Show Delivery",
-                                    defaultValue: false,
-                                    icon: <Info size={16} />
-                                }}
-                            />
-                            <FormCheckbox
-                                field={{
-                                    name: "services.amazonOrFbaDelivery",
-                                    label: "Amazon/FBA Delivery",
-                                    defaultValue: false,
-                                    icon: <Info size={16} />
-                                }}
-                            />
-                            <FormCheckbox
-                                field={{
-                                    name: "services.refrigeratedServices",
-                                    label: "Refrigerated Services",
-                                    defaultValue: false,
-                                    icon: <Info size={16} />
-                                }}
-                            />
+
                         </div>
                     </AccordionContent>
                 </AccordionItem>

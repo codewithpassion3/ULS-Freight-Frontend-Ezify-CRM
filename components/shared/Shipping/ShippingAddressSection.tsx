@@ -455,6 +455,16 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       valueType: "number",
       wrapperClassName: !isShipment ? "col-span-2" : "",
     },
+    // additional notes
+    {
+      name: "additionalNotes",
+      label: "Additional Notes (Optional)",
+      type: "text",
+      placeholder: "Additional Notes",
+      show: showAdditionalNotes,
+      wrapperClassName: "col-span-full",
+    },
+
     {
       name: "isResidential",
       label: "Residential Address",

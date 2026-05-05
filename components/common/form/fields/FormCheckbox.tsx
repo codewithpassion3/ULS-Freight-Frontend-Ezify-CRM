@@ -23,7 +23,7 @@ const FormCheckbox = memo(({ field: config }: { field: FormCheckboxTypes }) => {
                 className={`${field.value ? config.selectedClassName : ""} ${error ? "border-red-500 bg-red-50 placeholder:text-red-500" : ""} border-border cursor-pointer`}
             />
             {config.label && (
-                <Label htmlFor={field.name + config.addressType} className={`cursor-pointer ${error ? "text-red-500" : ""}`}>
+                <Label htmlFor={field.name + config.addressType} className={`cursor-pointer ${error ? "text-red-500" : ""} ${config.labelClassName || ""}`}>
                     {config.label}
                 </Label>
             )}

@@ -10,7 +10,7 @@ import { useFormContext } from "react-hook-form"
 
 export default function InBond() {
     const { watch } = useFormContext()
-    const contactType = watch("inBound.contactKey").toLowerCase()
+    const contactType = watch("inBound.contactKey")?.toLowerCase()
 
 
     return (
@@ -31,7 +31,8 @@ export default function InBond() {
                             { label: "(T&E) Transportation & Export Bond", value: "T_E_BOND" },
                             { label: "(IT) Immediate Transportation Bond", value: "IT_BOND" },
                         ],
-                        wrapperClassName: "col-span-2"
+                        wrapperClassName: "col-span-2 flex flex-col gap-4",
+
                     },
                     {
                         name: "inBound.bondCancler",

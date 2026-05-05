@@ -197,7 +197,7 @@ export default function RegisterPage() {
               )} className="flex-1">
                 {step === 1 && <Step1Form onNext={handleNext} />}
                 {step === 2 && <Step2Form onNext={handleNext} onBack={handleBack} />}
-                {step === 3 && <Step3Form onBack={handleBack} />}
+                {step === 3 && <Step3Form onBack={handleBack} isPending={registerMutation.isPending} />}
               </form>
             </FormProvider>
 

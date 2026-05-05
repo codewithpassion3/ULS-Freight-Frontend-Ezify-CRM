@@ -169,6 +169,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
                 { label: "Yes", value: true },
               ],
               valueType: "boolean",
+              wrapperClassName: "flex flex-col gap-4"
             },
 
           ]}

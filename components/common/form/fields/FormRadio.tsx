@@ -10,11 +10,12 @@ const FormRadio = memo(({ field: config }: { field: FormRadioTypes }) => {
     const { field, error } = useFieldController(config.name)
     return (
         <div className={config.wrapperClassName}>
+            {config.label &&
+                <Label>
+                    {config.label}
+                </Label>}
             <RadioGroup
-                // onValueChange={(value) => {
-                //     field.onChange(config.valueType === "number" ? Number(value) : value)
-
-                // }}
+                value={field.value?.toString() ?? ""}
                 onValueChange={(value) => {
                     let parsed: any = value
 
