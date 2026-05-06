@@ -183,7 +183,7 @@ const AdditionalServices = forwardRef(({ shipmentType, quoteType }: { shipmentTy
                                                     { value: "other", label: "Other" },
                                                 ],
                                                 className: "grid grid-cols-2 gap-4",
-                                                show: watch("limitedAccess")
+                                                show: quoteType !== "SPOT" && watch("limitedAccess")
                                             },
                                             {
                                                 name: "limitedAccessDescription",

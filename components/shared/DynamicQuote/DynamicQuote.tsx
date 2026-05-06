@@ -204,7 +204,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         }
         // equipment
         if (Object.keys(equipment).length > 0) {
-            completePayload = { ...completePayload, spotDetails: { ...equipment, spotType: spotShipmentType[shipmentType as ShipmentOptions[keyof ShipmentOptions]] } }
+            completePayload = { ...completePayload, services: { ...equipment.services }, spotDetails: { spotEquipment: { dryVan: true }, spotType: spotShipmentType[shipmentType as ShipmentOptions[keyof ShipmentOptions]] } }
         }
         if (Object.keys(signature).length > 0) {
             completePayload = { ...completePayload, ...signature }
@@ -386,9 +386,14 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                             </div>
 
                         </div>
-                        <div className="space-y-6 mt-6">
-                            <EquimentTypeSelector ref={equipmentRef} shipmentType={shipmentType} />
-                        </div>
+                        {quoteType === "SPOT" ?
+                            <div className="space-y-6 mt-6">
+                                <EquimentTypeSelector ref={equipmentRef} shipmentType={shipmentType} />
+                            </div> : ""}
+                        {quoteType === "SPOT" ?
+                            <div className="space-y-6 mt-6">
+                                <ContactInformation quoteType={quoteType} ref={contactRef} />
+                            </div> : ""}
                         <div className="space-y-6 mt-6">
                             <Dimensions ref={dimensionsRef} shipmentType={shipmentType} />
                         </div>

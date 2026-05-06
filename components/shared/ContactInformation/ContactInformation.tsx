@@ -1,8 +1,8 @@
 import { forwardRef, useImperativeHandle } from "react";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
-const ContactInformation = forwardRef((props, ref) => {
+const ContactInformation = forwardRef(({ quoteType }: { quoteType: "SPOT" | "STANDARD" }, ref) => {
     const form = useForm({
         defaultValues: {
             spotContact: {
@@ -21,45 +21,46 @@ const ContactInformation = forwardRef((props, ref) => {
     }))
 
     return (
-        <form {...form.register("spotContact")}>
-            <GlobalForm
+        <FormProvider {...form}>
+            <form>
+                <GlobalForm
+                    formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                    fields={[
+                        {
+                            name: "spotContact.contactName",
+                            label: "Contact Name *",
+                            type: "text",
+                            placeholder: "Contact Name",
 
-                formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 gap-4"
-                fields={[
-                    {
-                        name: "contactInformation.contactName",
-                        label: "Contact Name *",
-                        type: "text",
-                        placeholder: "Contact Name",
-
-                    },
-                    {
-                        name: "contactInformation.phoneNumber",
-                        label: "Phone Number*",
-                        type: "phone",
-                        placeholder: "Phone Number",
-                    },
-                    {
-                        name: "contactInformation.shipDate",
-                        label: "Ship Date*",
-                        type: "date",
-                        placeholder: "Ship Date",
-                    },
-                    {
-                        name: "contactInformation.emailAddress",
-                        label: "Email Address*",
-                        type: "email",
-                        placeholder: "Email Address",
-                    },
-                    {
-                        name: "contactInformation.spotQuoteName",
-                        label: "Spot Quote Name (optional)",
-                        type: "text",
-                        placeholder: "Spot Quote Name",
-                    },
-                ]}
-            />
-        </form>
+                        },
+                        {
+                            name: "spotContact.phoneNumber",
+                            label: "Phone Number*",
+                            type: "phone",
+                            placeholder: "Phone Number",
+                        },
+                        {
+                            name: "spotContact.shipDate",
+                            label: "Ship Date*",
+                            type: "date",
+                            placeholder: "Ship Date",
+                        },
+                        {
+                            name: "spotContact.email",
+                            label: "Email Address*",
+                            type: "email",
+                            placeholder: "Email Address",
+                        },
+                        {
+                            name: "spotContact.spotQuoteName",
+                            label: "Spot Quote Name (optional)",
+                            type: "text",
+                            placeholder: "Spot Quote Name",
+                        },
+                    ]}
+                />
+            </form>
+        </FormProvider>
     )
 })
 

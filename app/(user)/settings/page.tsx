@@ -27,6 +27,8 @@ import {
     FileStack,
 } from "lucide-react";
 import { MyPackages } from "../packages/MyPackages";
+import ULSWalletSettings from "./(payment-settings)/ULSWalletSettings";
+import { Wallet, Landmark, ReceiptText } from "lucide-react";
 
 
 
@@ -159,6 +161,42 @@ export default function Settings() {
                             </TabsContent>
                         </Card>
 
+                    </Tabs>
+                </TabsContent>
+
+                <TabsContent value="payment">
+                    <Tabs defaultValue="wallet-settings" orientation="vertical" className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                        <Card className="lg:col-span-1">
+                            <CardHeader>
+                                <CardTitle>Payment Settings</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-2">
+                                <TabsList className="h-max w-full gap-4 bg-transparent">
+                                    {[
+                                        { title: "ULS Wallet", value: "wallet-settings", icon: <Wallet /> },
+                                        { title: "Billing Preferences", value: "billing-preferences", icon: <Landmark /> },
+                                        { title: "Invoicing Preferences", value: "invoicing-preferences", icon: <ReceiptText /> },
+                                    ].map((subTab) => (
+                                        <TabsTrigger key={subTab.value} value={subTab.value} className="p-2 w-full justify-start cursor-pointer data-[state=active]:text-primary data-[state=active]:bg-primary/10 data-[state=active]:border-primary border data-[state=active]:shadow-lg gap-2">
+                                            {subTab.icon}
+                                            {subTab.title}
+                                            <div className="ml-auto opacity-50">→</div>
+                                        </TabsTrigger>
+                                    ))}
+                                </TabsList>
+                            </CardContent>
+                        </Card>
+                        <Card className="px-6 py-6 lg:col-span-3">
+                            <TabsContent value="wallet-settings">
+                                <ULSWalletSettings />
+                            </TabsContent>
+                            <TabsContent value="billing-preferences">
+                                <div className="text-muted-foreground italic">Billing Preferences section is coming soon...</div>
+                            </TabsContent>
+                            <TabsContent value="invoicing-preferences">
+                                <div className="text-muted-foreground italic">Invoicing Preferences section is coming soon...</div>
+                            </TabsContent>
+                        </Card>
                     </Tabs>
                 </TabsContent>
             </Tabs>

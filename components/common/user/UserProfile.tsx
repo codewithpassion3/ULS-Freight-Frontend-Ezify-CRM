@@ -66,7 +66,7 @@ export default function UserProfile() {
                             Welcome, {user?.user?.firstName} {user?.user?.lastName}
                         </p>
                         <p className="text-xs dark:text-white text-primary">
-                            Available Credit: $1,080.62
+                            Available Credit: ${user?.user?.wallet?.balance}
                         </p>
                     </div>
 

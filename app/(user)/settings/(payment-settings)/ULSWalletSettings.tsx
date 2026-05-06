@@ -1,0 +1,277 @@
+"use client";
+
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Wallet, CreditCard, Plus, Download, Upload, Info, CheckCircle2 } from "lucide-react";
+import { ulswalletSettingsSchema, type ULSWalletSettingsValues } from "./ULSWalletSettings.schema";
+import { GlobalForm } from "@/components/common/form/GlobalForm";
+import { Separator } from "@/components/ui/separator";
+import { useState } from "react";
+import AddCardModal from "./AddCardModal";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createIntent, getCards, topupWallet } from "@/api/services/payment.api";
+import { Loader } from "@/components/common/Loader";
+import { useAuth } from "@/context/auth.context";
+
+const MOCK_BALANCES = {
+  accountLimit: 3000.00,
+  availableBalance: 343.71,
+  invoicedCharges: 528.35,
+  pendingCharges: 2127.94,
+};
+
+const MOCK_CARDS = [
+  { id: "1", brand: "VISA", last4: "9472", isPrimary: true },
+];
+
+export default function ULSWalletSettings() {
+  // get user
+  const { user } = useAuth();
+
+  const [isAddCardModalOpen, setIsAddCardModalOpen] = useState(false);
+  const methods = useForm<ULSWalletSettingsValues>({
+    // @ts-ignore
+    resolver: zodResolver(ulswalletSettingsSchema),
+    defaultValues: {
+      primaryCard: "1",
+      notifyExpiry: true,
+      email: "",
+    },
+  });
+
+  const onSubmit = (data: ULSWalletSettingsValues) => {
+    console.log("Saving wallet settings:", data);
+  };
+
+  // get cards
+  const { data: card, isLoading: isLoadingCards, isError: isErrorCards } = useQuery({
+    queryKey: ["cards"],
+    queryFn: () => getCards(),
+  })
+
+  console.log("Cards:", card)
+
+  const fields = [
+    {
+      name: "primaryCard",
+      label: "Select Primary Card :",
+      type: "select",
+      options: MOCK_CARDS.map(card => ({
+        label: `${card.brand} (Ending in ${card.last4} )`,
+        value: card.id
+      })),
+      wrapperClassName: "w-full md:w-1/2",
+    },
+    {
+      type: "non-input",
+      show: true,
+      children: (
+        <div className="flex items-start gap-2 text-sm text-blue-600 bg-blue-50 p-3 rounded-md my-4">
+          <Info size={16} className="mt-0.5 shrink-0" />
+          <p>
+            Please note that your primary card will be your default card when booking shipments on all Freightcom systems, including the previous version of Freightcom system.
+          </p>
+        </div>
+      )
+    },
+    {
+      name: "notifyExpiry",
+      label: "Notify me when my cards are close to expiry",
+      type: "checkbox",
+      wrapperClassName: "flex items-center gap-2 my-4",
+    },
+    {
+      name: "email",
+      label: "Email Address",
+      type: "text",
+      placeholder: "",
+      wrapperClassName: "w-full md:w-1/2 mt-4",
+    }
+  ];
+
+  const [clientSecret, setClientSecret] = useState("")
+
+  // create payment intent mutation
+  const { mutate: createPaymentIntent, isPending: isPendingPaymentIntent, data: paymentIntent } = useMutation({
+    mutationFn: () => createIntent(user.user.stripeCustomerId!),
+    retry: 1,
+    onSuccess: (data) => {
+      console.log("Payment intent created");
+      setClientSecret(data.clientSecret)
+
+    },
+    onError: () => {
+      console.error("Failed to create payment intent");
+    }
+  })
+  const { mutate: charge, isPending: isPendingCharge, data: chargeData } = useMutation({
+    mutationFn: (payload: any) => topupWallet(payload),
+    retry: 1,
+    onSuccess: () => {
+      console.log("Payment intent created");
+      // setClientSecret()
+
+    },
+    onError: () => {
+      console.error("Failed to create payment intent");
+    }
+  })
+
+  console.log(user.user)
+  const handleAddCard = () => {
+    if (user.user.stripeCustomerId) {
+      createPaymentIntent(user.user.stripeCustomerId)
+      setIsAddCardModalOpen(true);
+    }
+
+  }
+  if (isPendingPaymentIntent || isLoadingCards) {
+    return (
+      <Loader />
+    )
+  }
+  const chargePayload = {
+    amount: 10000,
+    currency: "usd",
+    cardId: "dd72eb3e-67ac-481f-b292-4d7411d4c996",
+  }
+
+  // charge(chargePayload)
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-2 text-xl font-semibold mb-6">
+        <Wallet className="text-primary" />
+        <h2>Freightcom Wallet</h2>
+      </div>
+
+      <Separator />
+
+      {/* Account Balances Section */}
+      <section className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h3 className="font-semibold text-blue-900">Account Balances</h3>
+          <Button variant="link" className="text-primary flex items-center gap-1 p-0">
+            <Download size={16} />
+            Download New Credit Application
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div>
+            <p className="text-muted-foreground">Account Limit:</p>
+            <p className="font-bold">${MOCK_BALANCES.accountLimit.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Available Balance:</p>
+            <p className="font-bold">${MOCK_BALANCES.availableBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Invoiced Charges:</p>
+            <p className="font-bold text-primary">${MOCK_BALANCES.invoicedCharges.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Pending Charges:</p>
+            <p className="font-bold">${MOCK_BALANCES.pendingCharges.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+          </div>
+        </div>
+
+        <Button variant="outline" className="text-primary border-primary">
+          Upload New Application
+        </Button>
+        {/* // add charge button */}
+        <Button variant="outline" className="text-primary border-primary"
+          onClick={() => charge(chargePayload)}
+        >
+          Add Charge
+        </Button>
+      </section>
+
+      <Separator />
+
+      {/* Credit Cards Section */}
+      <section className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h3 className="font-semibold text-blue-900">Credit Cards on File</h3>
+          <Button
+            variant="link"
+            className="text-primary flex items-center gap-1 p-0"
+            onClick={handleAddCard}
+          >
+            <Plus size={16} />
+            Add New Card
+          </Button>
+        </div>
+
+        <div className="flex flex-wrap gap-4">
+          {/* Primary Card Card */}
+          <div className="w-full md:w-72">
+            <div className="flex items-center gap-2 text-xs text-green-600 font-semibold mb-2">
+              <CheckCircle2 size={14} />
+              Primary Card
+            </div>
+            <div className="border-2 border-primary bg-blue-50 rounded-lg p-4 relative overflow-hidden">
+              <div className="font-bold text-slate-700 text-sm mb-4">ULS FREIGHT CARD</div>
+              <div className="flex justify-between items-end">
+                <div className="text-2xl font-italic text-primary font-bold italic">{card?.brand}</div>
+                <div className="text-right">
+                  <div className="text-[10px] text-muted-foreground uppercase">Card Number</div>
+                  <div className="text-sm font-mono">**** **** **** {card?.last4}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Add New Card Placeholder */}
+          <div
+            className="w-full md:w-64 border-2 border-dashed border-slate-200 rounded-lg flex flex-col items-center justify-center p-4 hover:border-primary transition-colors cursor-pointer text-primary"
+            onClick={handleAddCard}
+          >
+            <Plus size={24} />
+            <span className="text-sm font-semibold mt-2">Add New Card</span>
+          </div>
+        </div>
+
+        <div className="flex items-start gap-2 text-sm text-blue-600 bg-blue-50 border border-blue-100 p-3 rounded-md">
+          <Info size={16} className="mt-0.5 shrink-0" />
+          <p>
+            If you would like to switch to a <span className="font-bold text-slate-800">Credit Card account</span> (and no longer use your <span className="font-bold text-slate-800">Account Balance</span>), please select “Change Account Type”
+          </p>
+        </div>
+
+        <Button className="bg-primary hover:bg-primary/90 text-white font-semibold">
+          Change Account Type
+        </Button>
+      </section>
+
+      <Separator />
+
+      {/* Form Section */}
+      <FormProvider {...methods}>
+        {/* @ts-ignore */}
+        <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
+          <GlobalForm
+            fields={fields}
+            extra={
+              <Button
+                type="button"
+                onClick={() => methods.trigger("email")}
+                className="bg-primary hover:bg-primary/90 text-white font-semibold mt-2"
+              >
+                Add Email
+              </Button>
+            }
+          />
+        </form>
+      </FormProvider>
+
+      <AddCardModal
+        open={isAddCardModalOpen}
+        onOpenChange={setIsAddCardModalOpen}
+        clientSecret={clientSecret}
+      />
+    </div>
+  );
+}

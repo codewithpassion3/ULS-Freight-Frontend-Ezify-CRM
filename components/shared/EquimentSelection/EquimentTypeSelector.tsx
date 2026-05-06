@@ -13,26 +13,26 @@ import { GlobalForm } from "@/components/common/form/GlobalForm"
 import InBond from "../AdditionalService/InBond"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
-import { forwardRef, useImperativeHandle, useState } from "react"
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react"
 
 export const EquimentTypeSelector = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }, ref) => {
     const [isOpen, setIsOpen] = useState(false)
     const methods = useForm({
         defaultValues: {
+            refrigeratedCheckbox: false,
             spotEquipment: {
-                "dryVan": false,
-                "flatbed": false,
-                "ventilatedTrailer": false,
-                "refrigeratedCheckbox": false,
-                "refrigerated": {
-                    type: "FRESH"
+                dryVan: false,
+                flatbed: false,
+                ventilatedTrailer: false,
+                refrigerated: {
+                    type: ""
                 },
-                // refrigerated: {
-                //     type: ""
-                // },
                 nextFlighOut: {
                     isKnownShipper: false,
                 }
+            },
+            refrigerated: {
+                type: "FRESH"
             },
             services: {
                 inBondCheckbox: false,
@@ -60,12 +60,12 @@ export const EquimentTypeSelector = forwardRef(({ shipmentType }: { shipmentType
         open: () => setIsOpen(true)
     }))
 
-    const isRefrigerated = methods.watch("spotEquipment.refrigeratedCheckbox") === true
+    // const isRefrigerated = methods.watch("spotEquipment") === "refrigerated"
+    const [isRefrigerated, setIsRefrigerated] = useState(false)
     const isTimeCritical = shipmentType === "TIME_CRITICAL"
 
     const ltlOptions = [
         { label: "Dry Van", value: "dryVan" },
-        { label: "Refrigerated Services", value: "refrigerated" },
     ]
     const timeCriticalOptions = [
         { label: "Truck", value: "truck" },
@@ -74,10 +74,10 @@ export const EquimentTypeSelector = forwardRef(({ shipmentType }: { shipmentType
         { label: "Next Flight Out", value: "nextFlightOut" },
     ]
     const ftlOptions = [
-        { label: "Dry Van", value: "Dry Van" },
-        { label: "Refrigerated Services", value: "Refrigerated Services" },
-        { label: "Flatbed", value: "Flatbed" },
-        { label: "Ventilated Trailer", value: "Ventilated Trailer" },
+        { label: "Dry Van", value: "dryVan" },
+        { label: "Refrigerated Services", value: "refrigerated" },
+        { label: "Flatbed", value: "flatbed" },
+        { label: "Ventilated Trailer", value: "ventilatedTrailer" },
     ]
 
     return (
@@ -98,7 +98,7 @@ export const EquimentTypeSelector = forwardRef(({ shipmentType }: { shipmentType
                                 fields={
                                     [
                                         {
-                                            name: "spotEquipment.type",
+                                            name: "spotEquipment",
                                             type: "radio",
                                             label: "Please describe the equipment required for this shipment",
                                             options: shipmentType === "SPOT_LTL" ? ltlOptions : shipmentType === "SPOT_FTL" ? ftlOptions : timeCriticalOptions,
@@ -193,16 +193,16 @@ export const EquimentTypeSelector = forwardRef(({ shipmentType }: { shipmentType
                                                 valueType: "string",
 
                                                 options: [
-                                                    { value: "constructionSite", label: "Construction Site" },
-                                                    { value: "individualStorageUnit", label: "Individual (Mini) Storage Unit" },
-                                                    { value: "fairAmusementPark", label: "Fair/Amusement Park" },
-                                                    { value: "placeOfWorship", label: "Place of Worship" },
-                                                    { value: "farmCountryClubEstate", label: "Farm/Country Club/Estate" },
-                                                    { value: "securedLocationsDelivery", label: "Secured Locations Delivery - prisons, military bases, airport" },
-                                                    { value: "schoolUniversity", label: "School/University" },
-                                                    { value: "plazaMallDeliveries", label: "Plaza/Mall deliveries or stores with only parking lot/Street access" },
-                                                    { value: "groceryRetailLocations", label: "Grocery/Retail Locations (ex: Costco or Walmart)" },
-                                                    { value: "other", label: "Other" },
+                                                    { value: "CONSTRUCTION_SITE", label: "Construction Site" },
+                                                    { value: "INDIVIDUAL_STORAGE_UNIT", label: "Individual (Mini) Storage Unit" },
+                                                    { value: "FAIR_AMUSEMENT_PARK", label: "Fair/Amusement Park" },
+                                                    { value: "PLACE_OF_WORSHIP", label: "Place of Worship" },
+                                                    { value: "FARM_COUNTRY_CLUB_ESTATE", label: "Farm/Country Club/Estate" },
+                                                    { value: "SECURED_LOCATIONS_DELIVERY", label: "Secured Locations Delivery - prisons, military bases, airport" },
+                                                    { value: "SCHOOL_UNIVERSITY", label: "School/University" },
+                                                    { value: "PLAZA_MALL_DELIVERIES", label: "Plaza/Mall deliveries or stores with only parking lot/Street access" },
+                                                    { value: "GROCERY_RETAIL_LOCATIONS", label: "Grocery/Retail Locations (ex: Costco or Walmart)" },
+                                                    { value: "OTHER", label: "Other" },
                                                 ],
                                                 className: "grid grid-cols-2 gap-4",
                                                 wrapperClassName: "flex flex-col gap-4"
@@ -213,7 +213,7 @@ export const EquimentTypeSelector = forwardRef(({ shipmentType }: { shipmentType
                                                 placeholder: "Please specify",
                                                 type: "text",
                                                 className: "w-1/3 ml-[50%]",
-                                                show: methods.watch("services.limitedAccess") === "other"
+                                                show: methods.watch("services.limitedAccess") === "OTHER"
                                             }
                                         ]}
                                     />

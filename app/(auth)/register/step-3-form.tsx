@@ -125,7 +125,7 @@ export function Step3Form({ onBack, isPending }: Step3FormProps) {
         >
           {isPending ? <Loader2 className="animate-spin" /> : ""}
           Finish Registration
-        </Button>``
+        </Button>
 
       </div>
     </div>
