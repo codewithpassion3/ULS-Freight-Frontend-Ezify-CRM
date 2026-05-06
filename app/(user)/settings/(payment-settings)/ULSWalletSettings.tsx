@@ -5,15 +5,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Wallet, CreditCard, Plus, Download, Upload, Info, CheckCircle2 } from "lucide-react";
-import { ulswalletSettingsSchema, type ULSWalletSettingsValues } from "./ULSWalletSettings.schema";
+import { TopupFormValues, ulswalletSettingsSchema, type ULSWalletSettingsValues } from "./ULSWalletSettings.schema";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import AddCardModal from "./AddCardModal";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createIntent, getCards, topupWallet } from "@/api/services/payment.api";
 import { Loader } from "@/components/common/Loader";
 import { useAuth } from "@/context/auth.context";
+import TopupModal from "./TopupModal";
 
 const MOCK_BALANCES = {
   accountLimit: 3000.00,
@@ -90,7 +91,19 @@ export default function ULSWalletSettings() {
       wrapperClassName: "w-full md:w-1/2 mt-4",
     }
   ];
+  const [isTopupModalOpen, setIsTopupModalOpen] = useState(false);
 
+  const handleTopupSubmit = (data: TopupFormValues) => {
+    if (card && card.length > 0) {
+      charge({
+        amount: data.amount * 100, // Convert to cents if needed, depends on backend
+        currency: data.currency.toLowerCase(),
+        cardId: card[0].id, // Using the first card as a fallback
+      });
+    } else {
+      console.error("No card available for top up");
+    }
+  };
   const [clientSecret, setClientSecret] = useState("")
 
   // create payment intent mutation
@@ -106,11 +119,15 @@ export default function ULSWalletSettings() {
       console.error("Failed to create payment intent");
     }
   })
+
+  // get query client
+  const queryClient = useQueryClient();
   const { mutate: charge, isPending: isPendingCharge, data: chargeData } = useMutation({
     mutationFn: (payload: any) => topupWallet(payload),
     retry: 1,
     onSuccess: () => {
       console.log("Payment intent created");
+      queryClient.invalidateQueries({ queryKey: ["user"] })
       // setClientSecret()
 
     },
@@ -132,11 +149,7 @@ export default function ULSWalletSettings() {
       <Loader />
     )
   }
-  const chargePayload = {
-    amount: 10000,
-    currency: "usd",
-    cardId: "dd72eb3e-67ac-481f-b292-4d7411d4c996",
-  }
+
 
   // charge(chargePayload)
 
@@ -162,31 +175,32 @@ export default function ULSWalletSettings() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           <div>
             <p className="text-muted-foreground">Account Limit:</p>
-            <p className="font-bold">${MOCK_BALANCES.accountLimit.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+            <p className="font-bold">${3000}</p>
           </div>
           <div>
             <p className="text-muted-foreground">Available Balance:</p>
-            <p className="font-bold">${MOCK_BALANCES.availableBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+            <p className="font-bold">${user?.user?.wallet?.balance || 0}</p>
           </div>
           <div>
             <p className="text-muted-foreground">Invoiced Charges:</p>
-            <p className="font-bold text-primary">${MOCK_BALANCES.invoicedCharges.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+            <p className="font-bold text-primary">${0}</p>
           </div>
           <div>
             <p className="text-muted-foreground">Pending Charges:</p>
-            <p className="font-bold">${MOCK_BALANCES.pendingCharges.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+            <p className="font-bold">${0}</p>
           </div>
         </div>
-
-        <Button variant="outline" className="text-primary border-primary">
-          Upload New Application
-        </Button>
-        {/* // add charge button */}
-        <Button variant="outline" className="text-primary border-primary"
-          onClick={() => charge(chargePayload)}
-        >
-          Add Charge
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" className="text-primary border-primary">
+            Upload New Application
+          </Button>
+          <TopupModal
+            open={isTopupModalOpen}
+            onOpenChange={setIsTopupModalOpen}
+            onSubmit={handleTopupSubmit}
+            isPending={isPendingCharge}
+          />
+        </div>
       </section>
 
       <Separator />
@@ -208,17 +222,17 @@ export default function ULSWalletSettings() {
         <div className="flex flex-wrap gap-4">
           {/* Primary Card Card */}
           <div className="w-full md:w-72">
-            <div className="flex items-center gap-2 text-xs text-green-600 font-semibold mb-2">
+            {/* <div className="flex items-center gap-2 text-xs text-green-600 font-semibold mb-2">
               <CheckCircle2 size={14} />
               Primary Card
-            </div>
+            </div> */}
             <div className="border-2 border-primary bg-blue-50 rounded-lg p-4 relative overflow-hidden">
               <div className="font-bold text-slate-700 text-sm mb-4">ULS FREIGHT CARD</div>
               <div className="flex justify-between items-end">
-                <div className="text-2xl font-italic text-primary font-bold italic">{card?.brand}</div>
+                <div className="text-2xl font-italic text-primary font-bold italic capitalize">{user?.user?.savedCards[0]?.brand}</div>
                 <div className="text-right">
                   <div className="text-[10px] text-muted-foreground uppercase">Card Number</div>
-                  <div className="text-sm font-mono">**** **** **** {card?.last4}</div>
+                  <div className="text-sm font-mono">**** **** **** {user?.user?.savedCards[0]?.last4}</div>
                 </div>
               </div>
             </div>

@@ -34,6 +34,7 @@ const FormSelect = memo(({ field: config }: { field: FormSelectTypes }) => {
                             key={config.optionKey ? opt[config.optionKey] : opt.value}
                             value={config.optionKey ? opt[config.optionKey].toString() : opt.value.toString()}
                             className="cursor-pointer"
+                            disabled={opt.disabled}
                         >
                             {config.optionValue ? opt[config.optionValue] : opt.label}
                         </SelectItem>
