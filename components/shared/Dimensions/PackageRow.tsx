@@ -132,7 +132,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                             options: FREIGHT_CLASS_OPTIONS,
                             labelClassName: "text-xs text-muted-foreground",
                             placeholder: "Select Freight Class",
-                            show: shipmentType === "PALLET" || shipmentType === "LTL_PARTIAL"
+                            show: shipmentType === "PALLET" || shipmentType === "SPOT_LTL"
                         },
                         {
                             name: `lineItem.units.${index}.nmfc`,
@@ -163,7 +163,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                             ],
                             labelClassName: "text-xs text-muted-foreground",
                             placeholder: "Select Pallet Unit Type",
-                            show: shipmentType === "PALLET" || shipmentType === "LTL_PARTIAL" || shipmentType === "FULL_TRUCK_LOAD" || shipmentType === "TIME_CRITICAL"
+                            show: shipmentType === "PALLET" || shipmentType === "SPOT_LTL" || shipmentType === "SPOT_FTL" || shipmentType === "TIME_CRITICAL"
                         },
                         {
                             name: `lineItem.units.${index}.unitsOnPallet`,
@@ -172,7 +172,7 @@ export function PackageRow({ index, fieldId, shipmentType, canRemove, onRemove, 
                             placeholder: "Units on Pallet",
                             min: 0,
                             labelClassName: "text-xs text-muted-foreground",
-                            show: shipmentType === "PALLET" || shipmentType === "LTL_PARTIAL" || shipmentType === "FULL_TRUCK_LOAD" || shipmentType === "TIME_CRITICAL"
+                            show: shipmentType === "PALLET" || shipmentType === "SPOT_LTL" || shipmentType === "SPOT_FTL" || shipmentType === "TIME_CRITICAL"
 
                         },
                         {
