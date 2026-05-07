@@ -183,9 +183,9 @@ export default function NotificationsWidget() {
                         <TabsTrigger value="all" className="cursor-pointer!">
                             All ({notifications.length})
                         </TabsTrigger>
-                        <TabsTrigger value="unread" className="cursor-pointer!">
+                        {/* <TabsTrigger value="unread" className="cursor-pointer!">
                             Unread ({unreadCount})
-                        </TabsTrigger>
+                        </TabsTrigger> */}
                     </TabsList>
 
                     {isLoading ? <Loader /> : (
@@ -198,13 +198,13 @@ export default function NotificationsWidget() {
                                 </Accordion>
                             )}
 
-                            {activeTab === "unread" && (
+                            {/* {activeTab === "unread" && (
                                 <Accordion type="single" collapsible>
                                     {unreadNotifications.length > 0
                                         ? unreadNotifications.map(renderNotification)
                                         : <p className="text-center">No unread notifications</p>}
                                 </Accordion>
-                            )}
+                            )} */}
                         </div>
                     )}
                 </Tabs>
