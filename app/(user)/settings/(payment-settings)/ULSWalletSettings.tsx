@@ -63,7 +63,7 @@ export default function ULSWalletSettings() {
         label: `${card.brand} (Ending in ${card.last4} )`,
         value: card.id
       })),
-      defaultValue: cards[0]?.id || "",
+      // defaultValue: cards[0]?.id || "",
       wrapperClassName: "w-full md:w-1/2",
       optionClassName: "capitalize",
 
