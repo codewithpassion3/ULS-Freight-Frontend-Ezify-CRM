@@ -1,11 +1,18 @@
+"use client";
 import { Button } from '@/components/ui/button';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
-export default function AddCardForm({ clientSecret }: { clientSecret: string }) {
+export default function AddCardForm({ clientSecret, onOpenChange }: { clientSecret: string, onOpenChange: (open: boolean) => void }) {
     const stripe = useStripe();
     const elements = useElements();
-
+    const [loading, setLoading] = useState(false);
+    const clientQueryClient = useQueryClient();
     const handleSubmit = async (e: any) => {
+        setLoading(true);
+
         e.preventDefault();
 
         if (!stripe || !elements) return;
@@ -30,7 +37,6 @@ export default function AddCardForm({ clientSecret }: { clientSecret: string }) 
         }
 
         console.log("Calling backend...");
-
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/payments/cards`,
             {
@@ -42,7 +48,9 @@ export default function AddCardForm({ clientSecret }: { clientSecret: string }) 
         );
 
         const data = await res.json();
-        console.log("Backend response:", data);
+        setLoading(false);
+        onOpenChange(false)
+        clientQueryClient.invalidateQueries({ queryKey: ['user'] })
     };
 
     return (
@@ -53,8 +61,9 @@ export default function AddCardForm({ clientSecret }: { clientSecret: string }) 
                 <Button
                     type="submit"
                     className="bg-primary hover:bg-primary/90 text-white min-w-[120px]"
-                // disabled={!methods.watch("acceptTerms")}
+                    disabled={loading}
                 >
+                    {loading ? <Loader2 className='animate-spin' /> : ''}
                     Add New Card
                 </Button>
             </div>

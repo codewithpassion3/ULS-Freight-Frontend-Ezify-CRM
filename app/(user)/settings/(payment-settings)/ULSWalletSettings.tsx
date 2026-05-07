@@ -47,23 +47,26 @@ export default function ULSWalletSettings() {
   };
 
   // get cards
-  const { data: card, isLoading: isLoadingCards, isError: isErrorCards } = useQuery({
+  const { data: cards, isLoading: isLoadingCards, isError: isErrorCards } = useQuery({
     queryKey: ["cards"],
     queryFn: () => getCards(),
   })
 
-  console.log("Cards:", card)
+  console.log("Cards:", cards)
 
   const fields = [
     {
       name: "primaryCard",
       label: "Select Primary Card :",
       type: "select",
-      options: MOCK_CARDS.map(card => ({
+      options: cards?.map((card: any) => ({
         label: `${card.brand} (Ending in ${card.last4} )`,
         value: card.id
       })),
+      defaultValue: cards[0]?.id || "",
       wrapperClassName: "w-full md:w-1/2",
+      optionClassName: "capitalize",
+
     },
     {
       type: "non-input",
@@ -94,11 +97,11 @@ export default function ULSWalletSettings() {
   const [isTopupModalOpen, setIsTopupModalOpen] = useState(false);
 
   const handleTopupSubmit = (data: TopupFormValues) => {
-    if (card && card.length > 0) {
+    if (cards && cards.length > 0) {
       charge({
         amount: data.amount * 100, // Convert to cents if needed, depends on backend
         currency: data.currency.toLowerCase(),
-        cardId: card[0].id, // Using the first card as a fallback
+        cardId: cards[0].id, // Using the first card as a fallback
       });
     } else {
       console.error("No card available for top up");
@@ -166,10 +169,10 @@ export default function ULSWalletSettings() {
       <section className="space-y-4">
         <div className="flex justify-between items-center">
           <h3 className="font-semibold text-blue-900">Account Balances</h3>
-          <Button variant="link" className="text-primary flex items-center gap-1 p-0">
+          {/* <Button variant="link" className="text-primary flex items-center gap-1 p-0">
             <Download size={16} />
             Download New Credit Application
-          </Button>
+          </Button> */}
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -191,9 +194,9 @@ export default function ULSWalletSettings() {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="text-primary border-primary">
+          {/* <Button variant="outline" className="text-primary border-primary">
             Upload New Application
-          </Button>
+          </Button> */}
           <TopupModal
             open={isTopupModalOpen}
             onOpenChange={setIsTopupModalOpen}
@@ -229,10 +232,10 @@ export default function ULSWalletSettings() {
             <div className="border-2 border-primary bg-blue-50 rounded-lg p-4 relative overflow-hidden">
               <div className="font-bold text-slate-700 text-sm mb-4">ULS FREIGHT CARD</div>
               <div className="flex justify-between items-end">
-                <div className="text-2xl font-italic text-primary font-bold italic capitalize">{user?.user?.savedCards[0]?.brand}</div>
+                <div className="text-2xl font-italic text-primary font-bold italic capitalize">{user?.user?.savedCards[user?.user?.savedCards.length - 1]?.brand}</div>
                 <div className="text-right">
                   <div className="text-[10px] text-muted-foreground uppercase">Card Number</div>
-                  <div className="text-sm font-mono">**** **** **** {user?.user?.savedCards[0]?.last4}</div>
+                  <div className="text-sm font-mono">**** **** **** {user?.user?.savedCards[user?.user?.savedCards.length - 1]?.last4}</div>
                 </div>
               </div>
             </div>
@@ -263,8 +266,7 @@ export default function ULSWalletSettings() {
       <Separator />
 
       {/* Form Section */}
-      <FormProvider {...methods}>
-        {/* @ts-ignore */}
+      {/* <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
           <GlobalForm
             fields={fields}
@@ -279,7 +281,7 @@ export default function ULSWalletSettings() {
             }
           />
         </form>
-      </FormProvider>
+      </FormProvider> */}
 
       <AddCardModal
         open={isAddCardModalOpen}

@@ -27,6 +27,9 @@ import { Loader, LoaderCircle } from "lucide-react"
 import { formatTime12h } from "@/app/(user)/settings/(address-book)/mappers/contact.mapper"
 import ShippingRates from "../ShippingRates/ShippingRates"
 import SendRequest from "../SendRequest/SendRequest"
+import { userAgent } from "next/server"
+import { useAuth } from "@/context/auth.context"
+import AddFundsModal from "@/components/common/AddFundsModal"
 
 export type ShipmentTypes = "PALLET" | "PACKAGE" | "COURIER_PAK" | "STANDARD_FTL" | "SPOT_LTL" | "SPOT_FTL" | "TIME_CRITICAL"
 export type QuoteTypes = "SPOT" | "STANDARD"
@@ -357,111 +360,122 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     }
 
     const [openGetRates, setOpenGetRates] = useState("")
-    const [selectedCarrier, setSelectedCarrier] = useState<string | null>(null)
-
+    const [selectedCarrier, setSelectedCarrier] = useState<any>(null)
+    const { user } = useAuth()
+    const [inSufficientModal, setInSufficientModal] = useState(false)
     const handleBookShipment = () => {
-        const bookShipmentPayload = {
-            quoteId: singleQuote?.quote?.id,
-            carrier: selectedCarrier,
-            shipDate: singleQuote?.quote?.shipDate,
+        // check wallet balance and selected carrier price show modal with top-up and redirect user to payment settings screen
+        if (user.user.wallet.balance < Number(selectedCarrier?.totalPrice)) {
+            console.log("insufficient balance")
+            setInSufficientModal(true)
         }
-        bookShipmentMutation.mutate(bookShipmentPayload)
+        else {
+            const bookShipmentPayload = {
+                quoteId: singleQuote?.quote?.id,
+                carrier: selectedCarrier.carrier,
+                shipDate: singleQuote?.quote?.shipDate,
+            }
+            bookShipmentMutation.mutate(bookShipmentPayload)
+        }
     }
     return (
-        <div className="container mx-auto py-8 px-4 max-w-7xl">
-            {!isShipment ? <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold capitalize">{isEditing ? `Edit ${quoteType.toLowerCase()} Quote` : `Create New ${quoteType.toLowerCase()} Quote`}</h1>
-            </div> : ""}
+        <>
+            <AddFundsModal onOpenChange={setInSufficientModal} open={inSufficientModal} />
+            <div className="container mx-auto py-8 px-4 max-w-7xl">
+                {!isShipment ? <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-2xl font-bold capitalize">{isEditing ? `Edit ${quoteType.toLowerCase()} Quote` : `Create New ${quoteType.toLowerCase()} Quote`}</h1>
+                </div> : ""}
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                <div className="lg:col-span-3">
-                    <div className="space-y-6">
-                        <ShippingTypeSelector quoteType={quoteType} shipmentType={shipmentType} setShipmentType={setShipmentType} />
-                        <div className="flex flex-col md:flex-row gap-6">
-                            <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
-                                <ShippingAddressSection ref={fromAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="FROM" title="Shipping From" />
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    <div className="lg:col-span-3">
+                        <div className="space-y-6">
+                            <ShippingTypeSelector quoteType={quoteType} shipmentType={shipmentType} setShipmentType={setShipmentType} />
+                            <div className="flex flex-col md:flex-row gap-6">
+                                <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
+                                    <ShippingAddressSection ref={fromAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="FROM" title="Shipping From" />
+                                </div>
+                                <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
+                                    <ShippingAddressSection ref={toAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="TO" title="Shipping To" />
+                                </div>
+
                             </div>
-                            <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
-                                <ShippingAddressSection ref={toAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="TO" title="Shipping To" />
+                            {quoteType === "SPOT" ?
+                                <div className="space-y-6 mt-6">
+                                    <EquimentTypeSelector ref={equipmentRef} shipmentType={shipmentType} />
+                                </div> : ""}
+                            {quoteType === "SPOT" ?
+                                <div className="space-y-6 mt-6">
+                                    <ContactInformation quoteType={quoteType} ref={contactRef} />
+                                </div> : ""}
+                            <div className="space-y-6 mt-6">
+                                <Dimensions ref={dimensionsRef} shipmentType={shipmentType} />
                             </div>
+                            {shipmentType !== "STANDARD_FTL" ? <div className="mt-6">
+                                <AdditionalServices quoteType={quoteType} ref={servicesRef} shipmentType={shipmentType} />
+                            </div> : ""}
 
                         </div>
-                        {quoteType === "SPOT" ?
-                            <div className="space-y-6 mt-6">
-                                <EquimentTypeSelector ref={equipmentRef} shipmentType={shipmentType} />
-                            </div> : ""}
-                        {quoteType === "SPOT" ?
-                            <div className="space-y-6 mt-6">
-                                <ContactInformation quoteType={quoteType} ref={contactRef} />
-                            </div> : ""}
-                        <div className="space-y-6 mt-6">
-                            <Dimensions ref={dimensionsRef} shipmentType={shipmentType} />
-                        </div>
-                        {shipmentType !== "STANDARD_FTL" ? <div className="mt-6">
-                            <AdditionalServices quoteType={quoteType} ref={servicesRef} shipmentType={shipmentType} />
-                        </div> : ""}
-
-                    </div>
-                    <div className="mt-6"><AdditionalInsurance ref={insuranceRef} /></div>
-                    {(shipmentType === "PACKAGE" || shipmentType === "COURIER_PAK" || isShipment) && <div className="mt-6"><SignaturePreference ref={signatureRef} /></div>}
-                    <div className="mt-6">
-                        <ShippingRates selectedCarrier={selectedCarrier} setSelectedCarrier={setSelectedCarrier} openGetRates={openGetRates} setOpenGetRates={setOpenGetRates} dimensions={dimensions} fromAddress={fromAddress} toAddress={toAddress} />
-                    </div>
-
-                    {quoteType === "SPOT" && (
+                        <div className="mt-6"><AdditionalInsurance ref={insuranceRef} /></div>
+                        {(shipmentType === "PACKAGE" || shipmentType === "COURIER_PAK" || isShipment) && <div className="mt-6"><SignaturePreference ref={signatureRef} /></div>}
                         <div className="mt-6">
-                            <SendRequest
-                                ref={sendRequestRef}
-                                contactInfo={contactRef.current?.getValues()?.contactInformation}
-                                equipmentDetails={equipmentRef.current?.getValues()}
-                                fromAddress={fromAddressRef.current?.getValues()}
-                                toAddress={toAddressRef.current?.getValues()}
-                                dimensions={dimensionsRef.current?.getValues()}
-                                services={servicesRef.current?.getValues()}
-                                onPrevious={() => { }}
-                                onSubmit={onSubmit}
-                            />
+                            <ShippingRates selectedCarrier={selectedCarrier} setSelectedCarrier={setSelectedCarrier} openGetRates={openGetRates} setOpenGetRates={setOpenGetRates} dimensions={dimensions} fromAddress={fromAddress} toAddress={toAddress} />
                         </div>
-                    )}
+
+                        {quoteType === "SPOT" && (
+                            <div className="mt-6">
+                                <SendRequest
+                                    ref={sendRequestRef}
+                                    contactInfo={contactRef.current?.getValues()?.contactInformation}
+                                    equipmentDetails={equipmentRef.current?.getValues()}
+                                    fromAddress={fromAddressRef.current?.getValues()}
+                                    toAddress={toAddressRef.current?.getValues()}
+                                    dimensions={dimensionsRef.current?.getValues()}
+                                    services={servicesRef.current?.getValues()}
+                                    onPrevious={() => { }}
+                                    onSubmit={onSubmit}
+                                />
+                            </div>
+                        )}
 
 
-                    <div className="w-full flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
-                        <div className="flex gap-4">
-                            {isShipment ?
-                                <Button
-                                    disabled={createShipmentMutation.isPending || updateShipmentMutation.isPending}
-                                    variant="outline"
-                                    onClick={() => {
+                        <div className="w-full flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
+                            <div className="flex gap-4">
+                                {isShipment ?
+                                    <Button
+                                        disabled={createShipmentMutation.isPending || updateShipmentMutation.isPending}
+                                        variant="outline"
+                                        onClick={() => {
 
-                                        onSubmit()
-                                    }} type="button">
-                                    {createShipmentMutation.isPending || updateShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
-                                    {isEditing ? "Update Shipment" : "Save Shipment"}
+                                            onSubmit()
+                                        }} type="button">
+                                        {createShipmentMutation.isPending || updateShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
+                                        {isEditing ? "Update Shipment" : "Save Shipment"}
+                                    </Button>
+                                    :
+                                    <Button
+                                        disabled={createQuoteMutation.isPending || updateQuoteMutation.isPending}
+                                        variant="outline"
+                                        onClick={() => {
+                                            onSubmit()
+                                        }} type="button">
+                                        {createQuoteMutation.isPending || updateQuoteMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
+                                        {isEditing ? "Update Quote" : "Save Quote"}
+                                    </Button>
+                                }
+                                <Button onClick={handleBookShipment} disabled={bookShipmentMutation.isPending || !singleQuote}>
+                                    {bookShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
+                                    Book Shipment
                                 </Button>
-                                :
-                                <Button
-                                    disabled={createQuoteMutation.isPending || updateQuoteMutation.isPending}
-                                    variant="outline"
-                                    onClick={() => {
-                                        onSubmit()
-                                    }} type="button">
-                                    {createQuoteMutation.isPending || updateQuoteMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
-                                    {isEditing ? "Update Quote" : "Save Quote"}
-                                </Button>
-                            }
-                            <Button onClick={handleBookShipment} disabled={bookShipmentMutation.isPending || !singleQuote}>
-                                {bookShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
-                                Book Shipment
-                            </Button>
 
-                            {/* Sidebar */}
+                                {/* Sidebar */}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <SideBar currentStep={currentStep} setCurrentStep={setCurrentStep} />
+                    <SideBar currentStep={currentStep} setCurrentStep={setCurrentStep} />
 
+                </div>
             </div>
-        </div>
+        </>
     )
 }
 

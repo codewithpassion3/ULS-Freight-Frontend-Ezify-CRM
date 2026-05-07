@@ -137,7 +137,7 @@ export default function AddCardModal({ open, onOpenChange, clientSecret }: AddCa
 
 
         <Elements stripe={stripePromise}>
-          <AddCardForm clientSecret={clientSecret} />
+          <AddCardForm clientSecret={clientSecret} onOpenChange={onOpenChange} />
         </Elements>
 
         {/* <DialogFooter className="px-6 py-4 border-t bg-slate-50 gap-2 sm:justify-end">

@@ -30,6 +30,7 @@ export type FormSelectTypes = {
     valueType?: "string" | "number";
     wrapperClassName?: string;
     show?: boolean;
+    optionClassName?: string;
 }
 export type FormCheckboxTypes = {
     name: string

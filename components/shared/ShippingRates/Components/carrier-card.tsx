@@ -15,7 +15,7 @@ interface CarrierCardProps {
     result: CarrierResult;
     index: number;
     setSelectedCarrier: (carrier: string) => void;
-    selectedCarrier: string | null;
+    selectedCarrier: any;
 }
 
 export function CarrierCard({ result, index, selectedCarrier, setSelectedCarrier }: CarrierCardProps) {
@@ -38,7 +38,7 @@ export function CarrierCard({ result, index, selectedCarrier, setSelectedCarrier
                 </TableRow>
             ) : result?.quotes?.length ? (
                 result.quotes.map((quote: any, index: number) => (
-                    <TableRow key={index} className={selectedCarrier === quote.carrier ? "border-primary bg-primary/10" : ""}>
+                    <TableRow key={index} className={selectedCarrier?.carrier === quote.carrier ? "border-primary bg-primary/10" : ""}>
                         {/* Carrier */}
                         <TableCell>
                             <div className="h-16 w-16 flex items-center justify-center">
@@ -81,12 +81,12 @@ export function CarrierCard({ result, index, selectedCarrier, setSelectedCarrier
                         {/* Action */}
                         <TableCell className="cursor-pointer" >
                             <Button
-                                variant={selectedCarrier === quote.carrier ? "default" : "outline"}
+                                variant={selectedCarrier?.carrier === quote.carrier ? "default" : "outline"}
                                 onClick={() => {
-                                    setSelectedCarrier(quote.carrier)
+                                    setSelectedCarrier(quote)
                                 }}
                             >
-                                {selectedCarrier === quote.carrier ? "Selected" : "Select"}
+                                {selectedCarrier?.carrier === quote.carrier ? "Selected" : "Select"}
                             </Button>
                         </TableCell>
                     </TableRow>

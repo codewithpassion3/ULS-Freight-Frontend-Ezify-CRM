@@ -29,12 +29,15 @@ import {
 import { MyPackages } from "../packages/MyPackages";
 import ULSWalletSettings from "./(payment-settings)/ULSWalletSettings";
 import { Wallet, Landmark, ReceiptText } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 
 
 export default function Settings() {
     const { data: user, isLoading, error } = useUser()
-
+    // get active tab from params
+    const searchParams = useSearchParams()
+    const activeTab = searchParams.get("tab")
     useEffect(() => {
         if (user) console.log("user updated", user)
     }, [user])
@@ -84,7 +87,7 @@ export default function Settings() {
 
     return (
         <div className="p-4 md:p-8 w-full mx-auto">
-            <Tabs defaultValue="account" className="space-y-6">
+            <Tabs defaultValue={activeTab || "account"} className="space-y-6">
                 <TabsList className="flex flex-wrap gap-2">
                     {settings.map((setting) => (
                         <TabsTrigger key={setting.value} value={setting.value} className="cursor-pointer p-4! data-[state=active]:text-primary data-[state=active]:bg-primary/10  data-[state=active]:border-primary border">{setting.icon} {setting.title}</TabsTrigger>
@@ -180,7 +183,6 @@ export default function Settings() {
                                         <TabsTrigger key={subTab.value} value={subTab.value} className="p-2 w-full justify-start cursor-pointer data-[state=active]:text-primary data-[state=active]:bg-primary/10 data-[state=active]:border-primary border data-[state=active]:shadow-lg gap-2">
                                             {subTab.icon}
                                             {subTab.title}
-                                            <div className="ml-auto opacity-50">→</div>
                                         </TabsTrigger>
                                     ))}
                                 </TabsList>

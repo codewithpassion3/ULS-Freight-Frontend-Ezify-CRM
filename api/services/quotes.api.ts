@@ -38,7 +38,7 @@ export const getSingleQuote = async (id: string) => {
 
 export const getAllQuotes = async (search: string, dateRange: string[], shipmentType: string) => {
     // /api/v1/quotes?status=draft&quoteNumber&dateFrom&dateTo&shipmentType
-    const response = await apiClient.get(`/quotes?search=${search}&dateFrom=${dateRange[0]}&dateTo=${dateRange[1]}&shipmentType=${shipmentType}`);
+    const response = await apiClient.get(`/quotes`);
     return response.data;
 };
 export const getFavoriteQuotes = async () => {

@@ -151,9 +151,9 @@ export default function ShippingRates({
                 </AccordionTrigger>
                 <AccordionContent className="h-max">
                     {/* // 2 tabs Best Price and Quickest */}
-                    <div className="flex items-center gap-2 w-full mb-4">
+                    {/* <div className="flex items-center gap-2 w-full mb-4">
                         <div className="border border-primary bg-primary/10 rounded-md p-2 w-1/2">
-                            {/* // tick badge icon */}
+                    
                             <div className="flex gap-2 items-center mb-2">
                                 <BadgeCheck className="text-primary" />
                                 Best Price:
@@ -161,14 +161,14 @@ export default function ShippingRates({
                             <span className="text-primary font-bold">Cheapest Carrier Name</span>
                         </div>
                         <div className="border border-yellow-500 bg-yellow-500/10 rounded-md p-2 w-1/2">
-                            {/* // tick badge icon */}
+                    
                             <div className="flex gap-2 items-center mb-2">
                                 <TruckElectric className="text-yellow-500" />
                                 Quickest:
                             </div>
                             <span className="text-yellow-500 font-bold">Fastest Carrier Name</span>
                         </div>
-                    </div>
+                    </div> */}
                     <ShippingRatesStream payload={payload} selectedCarrier={selectedCarrier} setSelectedCarrier={setSelectedCarrier} />
                     {/* <ShippingRatesTable selectedCarrier={selectedCarrier} setSelectedCarrier={setSelectedCarrier} dimensions={dimensions} fromAddress={fromAddress} toAddress={toAddress} /> */}
                     {/* get rates button */}
