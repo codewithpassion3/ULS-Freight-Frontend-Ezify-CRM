@@ -36,7 +36,7 @@ export function CreateReminderDialog({ children }: Props) {
 
     const methods = useForm<ReminderFormValues>({
         resolver: zodResolver(reminderSchema),
-        mode: "onChange",
+        mode: "all",
         defaultValues: {
             recipients: [],
             hourName: "11",

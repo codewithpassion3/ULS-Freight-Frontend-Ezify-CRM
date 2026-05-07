@@ -30,7 +30,10 @@ import NotificationsWidget from "@/app/(user)/home/NotificationsWidget"
 
 export default function Header() {
     const { user } = useAuth();
-    const pathname = usePathname()
+    const pathname = usePathname();
+
+    const userPermissions = user?.user?.permissions.map( (permission: Record<string, any>) => permission.name);
+
     return (
         <header className="w-full  fixed bg-white/10 backdrop-blur-md border-b border-b-black/20 dark:border-b-white/20 z-10">
             <div className="flex h-20 container mx-auto items-center justify-between">
@@ -52,6 +55,7 @@ export default function Header() {
                         <NavigationMenuList>
 
                             {navItems.map((item) => (
+                                
                                 <NavigationMenuItem key={item.title}>
 
                                     {!item.items ? (
@@ -79,15 +83,15 @@ export default function Header() {
                                                 :
                                                 <DropdownMenuTrigger asChild>
                                                     {
-                                                        item.title === "Ship" ? user?.permissions?.includes("shipping") ? <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
+                                                        item.title === "Shipment" ? userPermissions.includes("shipping") ? <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
                                                             {item.title}
                                                             <ChevronDown className="size-4" />
                                                         </button> : "" :
-                                                            item.title === "Invoices" ? user?.permissions?.includes("billing") ? <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
+                                                            item.title === "Invoices" ? userPermissions.includes("invoicing") ? <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
                                                                 {item.title}
                                                                 <ChevronDown className="size-4" />
                                                             </button> : "" :
-                                                                item.title === "Claims" ? user?.permissions?.includes("claims") ? <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
+                                                                item.title === "Claims" ? userPermissions.includes("claims") ? <button className="cursor-pointer flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-50 dark:hover:text-black">
                                                                     {item.title}
                                                                     <ChevronDown className="size-4" />
                                                                 </button> : "" :

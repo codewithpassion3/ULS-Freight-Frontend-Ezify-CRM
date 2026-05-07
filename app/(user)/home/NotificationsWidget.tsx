@@ -25,7 +25,7 @@ interface Notification {
     id: number;
     type: string;
     severity: string;
-    read?: boolean; // ✅ added
+    read?: boolean;
     payload: {
         title: string;
         message: string;
@@ -36,31 +36,25 @@ interface Notification {
 export default function NotificationsWidget() {
     const queryClient = useQueryClient();
     const eventSourceRef = useRef<EventSource | null>(null);
+    const [activeTab, setActiveTab] = useState("all");
 
-    const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
-
-    // ✅ Fetch notifications
     const { data, isLoading } = useQuery({
         queryKey: ["notifications"],
         queryFn: getNotifications,
+        staleTime: 0,
     });
 
     const notifications: Notification[] = data?.notifications ?? [];
-
-    // ✅ derived unread count (no manual state bugs)
     const unreadCount = notifications.filter(n => !n.read).length;
 
-    // ✅ Request browser permission once
     useEffect(() => {
         if (Notification.permission === "default") {
             Notification.requestPermission();
         }
     }, []);
 
-    // ✅ SSE Connection
     useEffect(() => {
         connectSSE();
-
         return () => {
             if (eventSourceRef.current) {
                 eventSourceRef.current.close();
@@ -69,84 +63,55 @@ export default function NotificationsWidget() {
     }, []);
 
     const connectSSE = () => {
-        // ✅ close old connection (important)
         if (eventSourceRef.current) {
             eventSourceRef.current.close();
         }
 
-        setConnectionStatus('connecting');
-
         const companyId = 1;
-
         const es = new EventSource(
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/notifications/stream?companyId=${companyId}`,
             { withCredentials: true }
         );
-
         eventSourceRef.current = es;
 
-        es.onopen = () => {
-            setConnectionStatus('connected');
-            console.log("✅ SSE Connected");
-        };
-
         es.addEventListener('notification.new', (e) => {
-            const data: Notification = JSON.parse(e.data);
+            const incoming: Notification = JSON.parse(e.data);
 
-            console.log("🔔 New Notification:", data);
-
-            // ✅ update react-query cache safely
+            // Optimistic update for instant UI response
             queryClient.setQueryData(["notifications"], (old: any) => {
-                // console old
-                console.log("Old notifications:", old);
                 if (!old) return old;
-
                 const exists = old.notifications.some(
-                    (n: Notification) => (n.userNotificationId || n.id) === (data.userNotificationId || data.id)
+                    (n: Notification) => n.id === incoming.id
                 );
-                // console exists
-                console.log("Exists:", exists);
                 if (exists) return old;
-
                 return {
                     ...old,
-                    notifications: [
-                        { ...data, read: false }, // normalize
-                        ...old.notifications,
-                    ],
+                    notifications: [{ ...incoming, read: false }, ...old.notifications],
                 };
             });
 
-            // ✅ browser notification
-            if (Notification.permission === 'granted' && data?.payload) {
-                const title = data.payload.title || "New Notification";
-                const message = data.payload.message || "";
-                new Notification(title, {
-                    body: message,
+            // Sync with server in background
+            queryClient.invalidateQueries({ queryKey: ["notifications"] });
+
+            if (Notification.permission === 'granted' && incoming?.payload) {
+                new Notification(incoming.payload.title || "New Notification", {
+                    body: incoming.payload.message || "",
                     icon: '/favicon.ico'
                 });
             }
         });
 
         es.onerror = (err) => {
-            console.error("❌ SSE Error:", err);
-            setConnectionStatus('disconnected');
-
+            console.error("SSE Error:", err);
             es.close();
-
-            // ✅ reconnect safely
-            setTimeout(() => {
-                connectSSE();
-            }, 3000);
+            setTimeout(() => connectSSE(), 3000);
         };
     };
 
-    // ✅ dismiss mutation
     const dismissMutation = useMutation({
         mutationFn: (id: number) => dismissNotification(id),
         onSuccess: () => {
             toast.success("Notification dismissed");
-
             queryClient.invalidateQueries({ queryKey: ["notifications"] });
         },
         onError: (error: AxiosError<ApiError>) => {
@@ -154,10 +119,8 @@ export default function NotificationsWidget() {
         }
     });
 
-    // ✅ render notification
     const renderNotification = (notif: Notification) => {
         if (!notif || !notif.payload) return null;
-
         const isCritical = notif.type === 'critical';
         const isWarning = notif.type === 'warning';
 
@@ -176,16 +139,13 @@ export default function NotificationsWidget() {
                     <div className="mr-3">
                         {isCritical ? <OctagonAlert /> : <AlertCircle />}
                     </div>
-
                     <div className="flex-1">
                         <p className="font-semibold">{notif.payload?.title || ""}</p>
                     </div>
-
                     <div className="flex items-center gap-2">
                         <AccordionTrigger className="[&>svg]:hidden [&_svg]:hidden">
                             View
                         </AccordionTrigger>
-
                         <Button
                             size="sm"
                             variant="destructive"
@@ -195,7 +155,6 @@ export default function NotificationsWidget() {
                         </Button>
                     </div>
                 </div>
-
                 <AccordionContent className="px-4 pb-3">
                     {notif.payload?.message || ""}
                 </AccordionContent>
@@ -203,50 +162,49 @@ export default function NotificationsWidget() {
         );
     };
 
+    const unreadNotifications = notifications.filter(n => !n.read);
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="relative rounded-full">
                     <Bell />
-
-                    {notifications.length > 0 && (
+                    {unreadCount > 0 && (
                         <span className="absolute flex items-center justify-center -top-2 -right-2 text-xs bg-primary text-white h-5 w-5 rounded-full">
-                            {notifications.length}
+                            {unreadCount}
                         </span>
                     )}
                 </Button>
             </DropdownMenuTrigger>
 
             <DropdownMenuContent className="w-[400px]">
-                <Tabs defaultValue="all">
+                <Tabs value={activeTab} onValueChange={setActiveTab}>
                     <TabsList>
                         <TabsTrigger value="all" className="cursor-pointer!">
                             All ({notifications.length})
                         </TabsTrigger>
-                        <TabsTrigger value="unread" className="cursor-pointer!">
+                        {/* <TabsTrigger value="unread" className="cursor-pointer!">
                             Unread ({unreadCount})
-                        </TabsTrigger>
+                        </TabsTrigger> */}
                     </TabsList>
 
                     {isLoading ? <Loader /> : (
                         <div className="max-h-[60vh] overflow-y-auto p-3">
-                            <TabsContent value="all">
+                            {activeTab === "all" && (
                                 <Accordion type="single" collapsible>
                                     {notifications.length > 0
                                         ? notifications.map(renderNotification)
                                         : <p className="text-center">No notifications</p>}
                                 </Accordion>
-                            </TabsContent>
+                            )}
 
-                            <TabsContent value="unread">
+                            {/* {activeTab === "unread" && (
                                 <Accordion type="single" collapsible>
-                                    {notifications.filter(n => n.read).length > 0
-                                        ? notifications
-                                            .filter(n => !n.read)
-                                            .map(renderNotification)
+                                    {unreadNotifications.length > 0
+                                        ? unreadNotifications.map(renderNotification)
                                         : <p className="text-center">No unread notifications</p>}
                                 </Accordion>
-                            </TabsContent>
+                            )} */}
                         </div>
                     )}
                 </Tabs>
