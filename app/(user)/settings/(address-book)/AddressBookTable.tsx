@@ -34,8 +34,6 @@ export function AddressBookTable({ handleSelect, type }: { handleSelect?: (conta
         retry: 1
     })
 
-    console.log("recentContacts", recentContacts)
-    console.log("addressBook", addressBook)
     let updatedColumns = columns
     if (handleSelect) {
         updatedColumns = columns.map((column) => {

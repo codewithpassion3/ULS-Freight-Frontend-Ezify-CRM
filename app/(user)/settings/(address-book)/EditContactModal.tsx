@@ -68,18 +68,16 @@ export function EditContactModal(
                         Edit Contact
                     </DialogTitle>
                 </DialogHeader>
-                {isLoading || isPending ?
-                    <Loader /> :
-                    <ScrollArea className="flex-1 overflow-y-auto px-6 py-6">
-                        <ContactForm
-                            onSubmit={handleSubmit}
-                            defaultValues={data}
-                            isLoading={mutation.isPending}
-                            open={open}
-                            setOpen={setOpen}
-                            setIsValid={setIsValid}
-                        />
-                    </ScrollArea>}
+                <ScrollArea className="flex-1 overflow-y-auto px-6 py-6">
+                    <ContactForm
+                        onSubmit={handleSubmit}
+                        defaultValues={data}
+                        isLoading={mutation.isPending}
+                        open={open}
+                        setOpen={setOpen}
+                        setIsValid={setIsValid}
+                    />
+                </ScrollArea>
                 <DialogFooter className="px-6 py-4 border-t border-border bg-muted/20 sm:justify-start gap-2">
                     <DialogClose asChild>
                         <Button type="button" variant="outline" className="w-[120px]">
