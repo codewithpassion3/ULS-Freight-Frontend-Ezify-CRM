@@ -46,6 +46,7 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
                 measurementUnit: "IMPERIAL",
                 stackable: false,
                 units: [{
+                    palletUnitType: "PALLET",
                     description: "",
                 }],
             }

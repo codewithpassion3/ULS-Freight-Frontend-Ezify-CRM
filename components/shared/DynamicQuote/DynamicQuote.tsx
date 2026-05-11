@@ -62,6 +62,8 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     const equipmentRef = useRef<any>(null)
     const contactRef = useRef<any>(null)
     const sendRequestRef = useRef<any>(null)
+    const getRatesRef = useRef<any>(null)
+    const [getRatesLoading, setGetRatesLoading] = useState(false)
 
     const handleSwapAddress = () => {
         if (fromAddressRef.current && toAddressRef.current) {
@@ -108,7 +110,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     })
 
     useEffect(() => {
-        console.log("singleQuote", singleQuote)
+
         if (singleQuote?.quote?.shipment?.id) {
             setShipmentId(singleQuote.quote.shipment.id)
         }
@@ -118,12 +120,23 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         mutationFn: (data: unknown) => createQuote(data),
         onSuccess: () => {
             toast.success("Quote created successfully")
-            router.push("/quotes")
+            // router.push("/quotes")
         },
         onError: (error: AxiosError<ApiError>) => {
             toast.error(error.response?.data.message)
         }
     })
+
+    const createQuoteAndConvertToShipmentMutation = useMutation({
+        mutationFn: (data: unknown) => createQuote(data),
+        onSuccess: (res) => {
+            router.push(`/shipment/?id=${res.quote.id}`)
+        },
+        onError: (error: AxiosError<ApiError>) => {
+            toast.error(error.response?.data.message)
+        }
+    })
+
     const updateQuoteMutation = useMutation({
         mutationFn: (data: unknown) => updateQuote(quoteId!, data),
         onSuccess: () => {
@@ -226,42 +239,60 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         // }
         return completePayload
     }
-
-
-    const onSubmit = async () => {
+    const validateAllForms = async () => {
         const fromValid = await fromAddressRef.current?.trigger()
         const toValid = await toAddressRef.current?.trigger()
         const dimValid = await dimensionsRef.current?.trigger()
 
-        // We validate core sections First. Then conditionally attached ones depending on if they are rendered
+        let valid = fromValid && toValid && dimValid
 
-        let valid = fromValid && toValid && dimValid;
-        // console all valids
-        console.log("fromValid", fromValid)
-        console.log("toValid", toValid)
-        console.log("dimValid", dimValid)
-        console.log("valid", valid)
-        // print every validation
         if (!valid) {
             toast.error("Please fill in all required fields correctly.")
-            return
+            return false
         }
 
-        if (servicesRef.current) valid = valid && await servicesRef.current.trigger()
-        if (insuranceRef.current) valid = valid && await insuranceRef.current.trigger()
-        if (signatureRef.current) valid = valid && await signatureRef.current.trigger()
-        if (sendRequestRef.current) valid = valid && await sendRequestRef.current.trigger()
+        return valid
+        // if (servicesRef.current) valid = valid && await servicesRef.current.trigger()
+        // if (insuranceRef.current) valid = valid && await insuranceRef.current.trigger()
+        // if (signatureRef.current) valid = valid && await signatureRef.current.trigger()
+        // if (sendRequestRef.current) valid = valid && await sendRequestRef.current.trigger()
 
-        // const snapshot = getFormSnapshot()
+    }
+    const buildPayloads = () => {
         const mergedData = getMergedPayload()
-        payloadTransformer(mergedData)
+
+        return payloadTransformer(mergedData)
+    }
+
+    const onSubmit = async () => {
+        const valid = await validateAllForms()
+
+        if (!valid) return
+
+        const { finalQuotePayload, shipmentPayload } = buildPayloads()
 
 
+
+        if (isEditing) {
+            if (isShipment) {
+                updateShipmentMutation.mutate(shipmentPayload)
+            } else {
+                updateQuoteMutation.mutate(finalQuotePayload)
+            }
+        } else {
+            if (isShipment) {
+
+                createShipmentMutation.mutate(shipmentPayload)
+            } else {
+
+                createQuoteMutation.mutate(finalQuotePayload)
+            }
+        }
     }
 
     const payloadTransformer = (data: any) => {
         const formattedAddresses = data.addresses?.map((address: any) => {
-            console.log("address", address)
+
             if (address.addressBookId) {
                 return {
                     addressBookId: address.addressBookId,
@@ -278,17 +309,16 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                 address.closeTimeMinute,
                 address.closeTimeAmPm
             )
-
+            const addressWithType = { ...address.address, type: address.type }
             return {
 
-                ...address.address,
+                ...addressWithType,
                 palletShippingReadyTime,
                 palletShippingCloseTime,
                 type: address.type,
             }
         })
 
-        console.log("formattedAddresses", formattedAddresses)
 
         const payload = {
             ...data,
@@ -343,20 +373,27 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
 
         }
 
-        console.log("finalShipmentPayload", shipmentPayload)
-        if (isEditing) {
-            if (isShipment) {
-                updateShipmentMutation.mutate(shipmentPayload)
-            } else {
-                updateQuoteMutation.mutate(finalQuotePayload)
-            }
-        } else {
-            if (isShipment) {
-                createShipmentMutation.mutate(shipmentPayload)
-            } else {
-                createQuoteMutation.mutate(finalQuotePayload)
-            }
+        return { finalQuotePayload, shipmentPayload }
+    }
+    const handleGetRates = async () => {
+        const fromValid = await fromAddressRef.current?.trigger()
+        const toValid = await toAddressRef.current?.trigger()
+        const dimValid = await dimensionsRef.current?.trigger()
+
+        let valid = fromValid && toValid && dimValid;
+
+        // print every validation
+        if (!valid) {
+            toast.error("Please fill in all required fields correctly.")
+            return
         }
+
+        if (servicesRef.current) valid = valid && await servicesRef.current.trigger()
+        if (insuranceRef.current) valid = valid && await insuranceRef.current.trigger()
+        if (signatureRef.current) valid = valid && await signatureRef.current.trigger()
+        if (sendRequestRef.current) valid = valid && await sendRequestRef.current.trigger()
+        getRatesRef.current?.handleStart()
+        setGetRatesLoading(true)
     }
 
     const [openGetRates, setOpenGetRates] = useState("")
@@ -365,19 +402,38 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     const [inSufficientModal, setInSufficientModal] = useState(false)
     const handleBookShipment = () => {
         // check wallet balance and selected carrier price show modal with top-up and redirect user to payment settings screen
-        if (user.user.wallet.balance < Number(selectedCarrier?.totalPrice)) {
-            console.log("insufficient balance")
-            setInSufficientModal(true)
+        // if (user.user.wallet.balance < Number(selectedCarrier?.totalPrice)) {
+        //     console.log("insufficient balance")
+        //     setInSufficientModal(true)
+        // }
+        // else {
+        //     const bookShipmentPayload = {
+        //         quoteId: singleQuote?.quote?.id,
+        //         carrier: selectedCarrier.carrier,
+        //         shipDate: singleQuote?.quote?.shipDate,
+        //     }
+        //     bookShipmentMutation.mutate(bookShipmentPayload)
+        // }
+        const bookShipmentPayload = {
+            quoteId: singleQuote?.quote?.id,
+            carrier: selectedCarrier.carrier,
+            shipDate: singleQuote?.quote?.shipDate,
         }
-        else {
-            const bookShipmentPayload = {
-                quoteId: singleQuote?.quote?.id,
-                carrier: selectedCarrier.carrier,
-                shipDate: singleQuote?.quote?.shipDate,
-            }
-            bookShipmentMutation.mutate(bookShipmentPayload)
-        }
+        bookShipmentMutation.mutate(bookShipmentPayload)
     }
+
+    const handleConvertToShipment = async () => {
+        const valid = await validateAllForms()
+
+        if (!valid) return
+
+        const { finalQuotePayload } = buildPayloads()
+
+        console.log("finalQuotePayload", finalQuotePayload)
+
+        createQuoteAndConvertToShipmentMutation.mutate(finalQuotePayload)
+    }
+
     return (
         <>
             <AddFundsModal onOpenChange={setInSufficientModal} open={inSufficientModal} />
@@ -418,7 +474,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                         <div className="mt-6"><AdditionalInsurance ref={insuranceRef} /></div>
                         {(shipmentType === "PACKAGE" || shipmentType === "COURIER_PAK" || isShipment) && <div className="mt-6"><SignaturePreference ref={signatureRef} /></div>}
                         <div className="mt-6">
-                            <ShippingRates selectedCarrier={selectedCarrier} setSelectedCarrier={setSelectedCarrier} openGetRates={openGetRates} setOpenGetRates={setOpenGetRates} dimensions={dimensions} fromAddress={fromAddress} toAddress={toAddress} />
+                            <ShippingRates getRatesLoading={getRatesLoading} setGetRatesLoading={setGetRatesLoading} ref={getRatesRef} selectedCarrier={selectedCarrier} setSelectedCarrier={setSelectedCarrier} openGetRates={openGetRates} setOpenGetRates={setOpenGetRates} dimensions={dimensions} fromAddress={fromAddress} toAddress={toAddress} />
                         </div>
 
                         {quoteType === "SPOT" && (
@@ -438,7 +494,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                         )}
 
 
-                        <div className="w-full flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
+                        <div className="w-full z-10 flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
                             <div className="flex gap-4">
                                 {isShipment ?
                                     <Button
@@ -452,26 +508,44 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                                         {isEditing ? "Update Shipment" : "Save Shipment"}
                                     </Button>
                                     :
-                                    <Button
-                                        disabled={createQuoteMutation.isPending || updateQuoteMutation.isPending}
-                                        variant="outline"
-                                        onClick={() => {
-                                            onSubmit()
-                                        }} type="button">
-                                        {createQuoteMutation.isPending || updateQuoteMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
-                                        {isEditing ? "Update Quote" : "Save Quote"}
-                                    </Button>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            disabled={createQuoteMutation.isPending || updateQuoteMutation.isPending}
+                                            variant="outline"
+                                            onClick={() => {
+                                                onSubmit()
+                                            }} type="button">
+                                            {createQuoteMutation.isPending || updateQuoteMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
+                                            {isEditing ? "Update Quote" : "Save Quote"}
+                                        </Button>
+                                        <Button
+                                            disabled={createQuoteAndConvertToShipmentMutation.isPending}
+                                            onClick={handleConvertToShipment}
+                                        >
+                                            {createQuoteAndConvertToShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
+                                            Convert to Shipment
+                                        </Button>
+                                    </div>
                                 }
                                 <Button onClick={handleBookShipment} disabled={bookShipmentMutation.isPending || !singleQuote}>
                                     {bookShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
                                     Book Shipment
                                 </Button>
+                                {/* get rates */}
+                                <Button
+                                    disabled={getRatesLoading}
+                                    onClick={handleGetRates}>
+                                    {getRatesLoading ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
+                                    Get Rates
+                                </Button>
+
+                                {/* Convert to shipment */}
 
                                 {/* Sidebar */}
                             </div>
                         </div>
                     </div>
-                    <SideBar currentStep={currentStep} setCurrentStep={setCurrentStep} />
+                    <SideBar isPending={createQuoteMutation.isPending || updateQuoteMutation.isPending} onSubmit={onSubmit} setQuoteStatus={setQuoteStatus} currentStep={currentStep} setCurrentStep={setCurrentStep} />
 
                 </div>
             </div>

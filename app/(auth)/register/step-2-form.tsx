@@ -16,6 +16,7 @@ import { Controller, useForm, useFormContext } from "react-hook-form"
 import { registerSchema, RegisterSchemaTypes } from "@/lib/validations/auth/register-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
+import { COUNTRIES, PROVINCES } from "@/shared-date/geo.data"
 
 interface Step2FormProps {
   onNext: () => void
@@ -51,6 +52,13 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
     if (valid) onNext()
     // console.log(form.getValues())
   }
+  const country = watch("address.country");
+
+  const filteredProvinces = React.useMemo(() => {
+    if (!country) return [];
+    return PROVINCES.filter((p) => p.country === country);
+  }, [country]);
+
   return (
     <div className="space-y-6">
       <GlobalForm
@@ -91,22 +99,15 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
             label: "Province/State*",
             placeholder: "Enter your province/state",
             type: "select",
-            options: [
-              { value: "ontario", label: "Ontario" },
-              { value: "british-columbia", label: "British Columbia" },
-              { value: "new-york", label: "New York" },
-              { value: "california", label: "California" },
-            ],
+            options: filteredProvinces?.length ? filteredProvinces : PROVINCES,
+
           },
           {
             name: "address.country",
             label: "Country*",
             placeholder: "Enter your country",
             type: "select",
-            options: [
-              { value: "CA", label: "Canada" },
-              { value: "USA", label: "United States" },
-            ],
+            options: COUNTRIES,
           },
         ]}
       />

@@ -28,6 +28,8 @@ import { useOTPFlow } from "@/context/otp.context"
 import { useEffect, useState } from "react";
 import { useUser } from "@/hooks/useUser"
 import { Loader } from "@/components/common/Loader"
+import { AxiosError } from "axios"
+import { ApiError } from "next/dist/server/api-utils"
 export default function RegisterPage() {
 
   // const { data, isLoading } = useUser();
@@ -80,11 +82,8 @@ export default function RegisterPage() {
       })
       router.push(`/otp-verification`)
     },
-    onError: (error: any) => {
-      console.error("Registration failed:", error?.response?.data || error.message)
-      toast("Registration Failed", {
-        description: "Please try again.",
-      })
+    onError: (error: AxiosError<ApiError>) => {
+      toast(error.response?.data?.message)
     },
   })
   const onSubmit = (data: RegisterSchemaTypes) => {

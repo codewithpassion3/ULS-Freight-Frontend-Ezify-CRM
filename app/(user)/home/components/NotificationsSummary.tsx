@@ -94,7 +94,11 @@ export default function NotificationsSummary() {
     return (
         <div className="bg-white dark:bg-card border border-slate-200 dark:border-border rounded overflow-hidden mb-6">
             <div className="flex items-center justify-between px-4 py-3 border-slate-200 dark:border-border">
-                <h3 className="font-semibold text-sm text-slate-800 dark:text-slate-200">28 Items For Mar 5, 2026</h3>
+                <h3 className="font-semibold text-sm text-slate-800 dark:text-slate-200">{data?.notifications.length || 0} Items For {new Date().toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                })}</h3>
                 <div className="flex items-center gap-4 text-xs font-medium text-slate-500 dark:text-slate-400">
                     <CreateReminderDialog >
                         <Button variant="outline" className="dark:bg-slate-800 dark:text-white dark:border-slate-700">

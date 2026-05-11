@@ -128,7 +128,7 @@ const AdditionalServices = forwardRef(({ shipmentType, quoteType }: { shipmentTy
                     <AccordionContent className="px-6 pb-6 space-y-6 h-full">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div className="sm:col-span-3 ">
-                                {quoteType !== "SPOT" ? <FormCheckbox
+                                {quoteType === "SPOT" ? <FormCheckbox
                                     field={{
                                         name: "limitedAccess",
                                         label: "Limited Access",
@@ -182,7 +182,8 @@ const AdditionalServices = forwardRef(({ shipmentType, quoteType }: { shipmentTy
                                                     { value: "groceryRetailLocations", label: "Grocery/Retail Locations (ex: Costco or Walmart)" },
                                                     { value: "other", label: "Other" },
                                                 ],
-                                                className: "grid grid-cols-2 gap-4",
+                                                wrapperClassName: " col-span-full",
+                                                className: "grid grid-cols-2 gap-4 mt-4",
                                                 show: quoteType !== "SPOT" && watch("limitedAccess")
                                             },
                                             {
@@ -191,7 +192,8 @@ const AdditionalServices = forwardRef(({ shipmentType, quoteType }: { shipmentTy
                                                 placeholder: "Please specify",
                                                 type: "text",
                                                 className: "w-1/3 ml-[50%]",
-                                                show: watch("services.limitedAccess") === "other"
+                                                show: watch("services.limitedAccess") === "other",
+                                                wrapperClassName: "col-span-full"
                                             },
                                             // services.appointmentDelivery
                                             {

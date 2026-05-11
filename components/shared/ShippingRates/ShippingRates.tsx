@@ -10,7 +10,7 @@ import { ApiError } from "next/dist/server/api-utils";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ShippingRatesTable } from "./ShippingRatesTable";
-import ShippingRatesStream from "./ShippingRatesStream";
+import { ShippingRatesStream } from "./ShippingRatesStream";
 // shipping rates table component
 export default function ShippingRates({
     dimensions,
@@ -19,7 +19,8 @@ export default function ShippingRates({
     openGetRates,
     setOpenGetRates,
     selectedCarrier,
-    setSelectedCarrier
+    setSelectedCarrier,
+    ref, getRatesLoading, setGetRatesLoading
 }: {
     dimensions: any
     fromAddress: any
@@ -28,13 +29,12 @@ export default function ShippingRates({
     setOpenGetRates: (value: string) => void
     selectedCarrier: string | null
     setSelectedCarrier: (value: string) => void
+    ref: any
+    getRatesLoading: boolean
+    setGetRatesLoading: (value: boolean) => void
 }) {
-    console.log("dimensions", dimensions)
-    console.log("fromAddress", fromAddress)
-    console.log("toAddress", toAddress)
-
-    // const myPayload = { ...dimensions, ...fromAddress, ...toAddress }
-    // console.log("myPayload", myPayload)
+    const myPayload = { ...dimensions, ...fromAddress, ...toAddress }
+    console.log("myPayload", myPayload)
 
     const payload =
     {
@@ -169,7 +169,7 @@ export default function ShippingRates({
                             <span className="text-yellow-500 font-bold">Fastest Carrier Name</span>
                         </div>
                     </div> */}
-                    <ShippingRatesStream payload={payload} selectedCarrier={selectedCarrier} setSelectedCarrier={setSelectedCarrier} />
+                    <ShippingRatesStream getRatesLoading={getRatesLoading} setGetRatesLoading={setGetRatesLoading} ref={ref} payload={payload} selectedCarrier={selectedCarrier} setSelectedCarrier={setSelectedCarrier} />
                     {/* <ShippingRatesTable selectedCarrier={selectedCarrier} setSelectedCarrier={setSelectedCarrier} dimensions={dimensions} fromAddress={fromAddress} toAddress={toAddress} /> */}
                     {/* get rates button */}
                 </AccordionContent>

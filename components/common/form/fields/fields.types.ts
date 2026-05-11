@@ -14,6 +14,8 @@ export type FormFieldTypes = {
     show?: boolean;
     min?: number;
     max?: number;
+    tooltipIcon?: React.ReactNode;
+    tooltipMessage?: string
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 export type FormSelectTypes = {

@@ -90,6 +90,7 @@ const AdditionalInsurance = forwardRef((props, ref) => {
                                     <Controller
                                         control={control}
                                         name="insurance.currency"
+                                        defaultValue="CAD"
                                         render={({ field }) => (
                                             <RadioGroup
                                                 value={field.value}

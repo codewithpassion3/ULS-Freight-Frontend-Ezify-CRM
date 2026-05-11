@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Package, Truck, ShoppingCart, Info, Check, CloudCog } from "lucide-react"
+import { Package, Truck, ShoppingCart, Info, Check, CloudCog, FileQuestionMark, CircleQuestionMark } from "lucide-react"
 import { useForm, Controller, useFormContext, FormProvider } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { registerSchema, type RegisterSchemaTypes } from "@/lib/validations/auth/register-schema"
@@ -159,6 +159,8 @@ export function Step1Form({ onNext }: Step1FormProps) {
               label: "Sign up Code",
               placeholder: "Enter your sign up code",
               type: "text",
+              tooltipIcon: <CircleQuestionMark size={16} />,
+              tooltipMessage: "If you were provided a code from ULS Freight Management or a partner, please enter it here."
             },
             {
               name: "user.freightBroker",

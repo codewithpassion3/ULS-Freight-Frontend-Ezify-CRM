@@ -66,7 +66,7 @@ export default function UserProfile() {
                             Welcome, {user?.user?.firstName} {user?.user?.lastName}
                         </p>
                         <p className="text-xs dark:text-white text-primary">
-                            Available Credit: ${user?.user?.wallet?.balance}
+                            Available Credit: ${user?.user?.company?.wallet?.balance}
                         </p>
                     </div>
 

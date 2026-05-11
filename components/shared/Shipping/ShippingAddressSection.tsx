@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeftRight, BookUser, InfoIcon, Plus, X } from "lucide-react"
 import { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import z, { ZodType } from "zod"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { usePathname, useSearchParams } from "next/navigation"
 import { getSingleQuote } from "@/api/services/quotes.api"
 import { addressSchema } from "@/lib/validations/quote/standard-quote-schema"
@@ -42,6 +42,7 @@ import { contactSchema } from "@/app/(user)/settings/(address-book)/schemas/addC
 import { getAddressByPostalCode } from "@/api/services/shipment.api"
 import { Input } from "@/components/ui/input"
 import { parseTime12h } from "@/app/(user)/settings/(address-book)/mappers/contact.mapper"
+import { COUNTRIES, PROVINCES } from "@/shared-date/geo.data"
 export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, type, title, onNextStep, onSwap, setShipDate }: { quoteType: keyof ShipmentOptions, shipmentType: ShipmentOptions[keyof ShipmentOptions], type: "TO" | "FROM", title: string, onNextStep?: (data: any) => void, onSwap?: () => void, setShipDate?: (date: Date | undefined) => void }, ref) => {
   // check if route includes shipment to check if it quote or shipment
   const pathname = usePathname()
@@ -179,7 +180,10 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
   const index = type === "FROM" ? 0 : 1
   // print errors
   console.log("errors", methods.formState.errors);
+  console.log("cachedSingleQuote", cachedSingleQuote);
   useEffect(() => {
+    console.log("cachedSingleQuote", cachedSingleQuote);
+
     if (!cachedSingleQuote) return;
 
     const quoteAddress = cachedSingleQuote.quote.addresses[index].address
@@ -188,7 +192,22 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
     // const completeAddressFromAddressBook = cachedSingleQuote.quote.addresses[index]?.addressBookEntry;
 
     if (quoteAddress) {
+      if (!cachedSingleQuote) return;
+      if (!COUNTRIES.length || !PROVINCES.length) return;
+
+      const quoteAddress =
+        cachedSingleQuote.quote.addresses[index]?.address ??
+        cachedSingleQuote.quote.addresses[index]?.addressBookEntry;
+
+      if (!quoteAddress) return;
       setAddressLocked(true);
+      console.log("quoteAddress", quoteAddress);
+      methods.reset({
+        address: {
+          country: "",
+          state: ""
+        }
+      })
       methods.reset({
         type,
         ...(isAddressBookEntry && { addressBookId: quoteAddress.id ?? null }),
@@ -196,8 +215,8 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
           address1: quoteAddress.address.address1 || "",
           postalCode: quoteAddress.address.postalCode || "",
           city: quoteAddress.address.city || "",
-          state: quoteAddress.address.state || "",
           country: quoteAddress.address.country || "",
+          state: quoteAddress.address.state || "",
         },
         ...(showLocationType && { locationTypeId: quoteAddress.locationTypeId }),
         ...(isShipment && { companyName: quoteAddress.companyName }),
@@ -211,10 +230,12 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       });
     }
 
-  }, [cachedSingleQuote, index, type, shipmentType, methods]);
+  }, [cachedSingleQuote, index, type, shipmentType, methods, COUNTRIES, PROVINCES]);
 
   const handleAddressSelect = (contact: ContactType) => {
     console.log("contact", contact);
+    console.log("STATE VALUE:", methods.getValues("address.state"));
+    console.log("PROVINCES:", PROVINCES.filter(p => p.country === contact.address?.country));
     markContactAsRecent.mutate(contact.id || "")
     setAddressLocked(true)
     methods.setValue("addressBookId", Number(contact.id));
@@ -224,8 +245,8 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       address1: contact.address?.address1 || "",
       postalCode: contact.address?.postalCode || "",
       city: contact.address?.city || "",
-      state: contact.address?.state || "",
       country: contact.address?.country || "",
+      state: contact.address?.state || "",
       ...(isShipment && { unit: contact.address?.unit || "" }),
     },
       {
@@ -314,7 +335,12 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
     }
     // print location type
   }
+  const country = methods.watch("address.country");
 
+  const filteredProvinces = useMemo(() => {
+    if (!country) return [];
+    return PROVINCES.filter((p) => p.country === country);
+  }, [country]);
   const { data: locationTypeData, isLoading: locationTypeLoading, isPending: locationTypeIsPending } = useQuery({
     queryKey: ["palletShippingLocationTypes"],
     queryFn: getAllPalletShippingLocationTypes
@@ -371,6 +397,9 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       onNextStep(data);
     }
   };
+
+
+
 
   const formFields: FormFieldUnion[] = [
     {
@@ -430,15 +459,17 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
     {
       name: "address.state",
       label: "Province/State",
-      type: "text",
+      type: "select",
+      options: filteredProvinces?.length ? filteredProvinces : PROVINCES,
       placeholder: "State/Province",
       disabled: addressLocked,
     },
     {
       name: "address.country",
       label: "Country",
-      type: "text",
       placeholder: "Country",
+      type: "select",
+      options: COUNTRIES,
       disabled: addressLocked,
     },
     {

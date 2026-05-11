@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Eye, FileUser, Package, Save, Truck } from "lucide-react"
+import { ArrowRight, Check, Eye, FileUser, LoaderCircle, Package, Save, Truck } from "lucide-react"
 import {
     Carousel,
     CarouselContent,
@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import PromoBannerWidget from "@/app/(user)/home/components/PromoBannerWidget"
-export function SideBar({ currentStep, setCurrentStep }: { currentStep: number, setCurrentStep: (step: number) => void }) {
+export function SideBar({ currentStep, setCurrentStep, onSubmit, setQuoteStatus, isPending }: { currentStep: number, setCurrentStep: (step: number) => void, setQuoteStatus: any, onSubmit: () => void, isPending: boolean }) {
 
     return (
         <div className="lg:col-span-1">
@@ -49,10 +49,15 @@ export function SideBar({ currentStep, setCurrentStep }: { currentStep: number, 
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-3 text-[#0070c0] pt-4 cursor-pointer hover:underline text-sm font-medium">
-                            <Save size={16} />
+                        <Button
+                            variant="outline" onClick={() => {
+                                setQuoteStatus("SAVED")
+                                onSubmit();
+                            }
+                            } className="flex items-center justify-center gap-3 text-[#0070c0] cursor-pointer hover:underline text-sm font-medium">
+                            {isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : <Save size={16} />}
                             <span>Save For Later</span>
-                        </div>
+                        </Button>
                     </div>
                 </div>
 

@@ -7,9 +7,10 @@ import { ContactFormProps, ContactFormValues } from "../schemas/addContact.schem
 import { LocationType, Signature } from "../types/addContact.types"
 import { Loader } from "@/components/common/Loader"
 import { contactSchema } from "../schemas/addContact.schema"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
 import z from "zod"
+import { COUNTRIES, PROVINCES } from "@/shared-date/geo.data"
 
 
 export function ContactForm({
@@ -108,160 +109,161 @@ export function ContactForm({
     }, [methods.formState.isValid])
 
     console.log("errors", methods.formState.errors)
-
+    const country = methods.watch("address.country");
+    const filteredProvinces = useMemo(() => {
+        if (!country) return [];
+        return PROVINCES.filter((p) => p.country === country);
+    }, [country]);
     return (
-        isLoading ?
-            <Loader /> : <>
-                <FormProvider {...methods}>
-                    <form id="contact-form" onSubmit={onSubmit ? methods.handleSubmit(onSubmit) : () => { }} className="space-y-6 p-1">
-                        <GlobalForm
-                            formWrapperClassName="grid grid-cols-1 md:grid-cols-2 gap-6"
-                            fields={[
-                                {
-                                    name: "companyName",
-                                    label: "Company Name*",
-                                    type: "text",
-                                    placeholder: "Company Name",
-                                },
-                                {
-                                    name: "contactId",
-                                    label: "Contact ID (optional)",
-                                    type: "text",
-                                    placeholder: "Contact ID",
-                                },
-                                {
-                                    name: "address.address1",
-                                    label: "Address 1*",
-                                    type: "text",
-                                    placeholder: "Address 1",
-                                },
-                                {
-                                    name: "address.address2",
-                                    label: "Address 2",
-                                    type: "text",
-                                    placeholder: "Address 2",
-                                },
+        <FormProvider {...methods}>
+            <form id="contact-form" onSubmit={onSubmit ? methods.handleSubmit(onSubmit) : () => { }} className="space-y-6 p-1">
+                <GlobalForm
+                    formWrapperClassName="grid grid-cols-1 md:grid-cols-2 gap-6"
+                    fields={[
+                        {
+                            name: "companyName",
+                            label: "Company Name*",
+                            type: "text",
+                            placeholder: "Company Name",
+                        },
+                        {
+                            name: "contactId",
+                            label: "Contact ID (optional)",
+                            type: "text",
+                            placeholder: "Contact ID",
+                        },
+                        {
+                            name: "address.address1",
+                            label: "Address 1*",
+                            type: "text",
+                            placeholder: "Address 1",
+                        },
+                        {
+                            name: "address.address2",
+                            label: "Address 2",
+                            type: "text",
+                            placeholder: "Address 2",
+                        },
 
-                                {
-                                    name: "address.unit",
-                                    label: "Unit/Floor #",
-                                    type: "text",
-                                    placeholder: "Unit/Floor",
-                                },
-                                {
-                                    name: "address.postalCode",
-                                    label: "Postal/ZIP Code*",
-                                    type: "text",
-                                    placeholder: "Postal/ZIP Code",
-                                },
-                                {
-                                    name: "address.city",
-                                    label: "City*",
-                                    type: "text",
-                                    placeholder: "City",
-                                },
-                                {
-                                    name: "address.state",
-                                    label: "State/Province*",
-                                    type: "text",
-                                    placeholder: "State/Province",
-                                },
-                                // {
-                                //     name: "address.country",
-                                //     label: "Country*",
-                                //     type: "select",
-                                //     options: [
-                                //         { value: "canada", label: "Canada" },
-                                //         { value: "united-states", label: "United States" },
-                                //     ],
-                                //     placeholder: "Country",
-                                // },
-                                // text based country
-                                {
-                                    name: "address.country",
-                                    label: "Country*",
-                                    type: "text",
-                                    placeholder: "Country",
-                                },
-                                {
-                                    name: "contactName",
-                                    label: "Contact Name*",
-                                    type: "text",
-                                    placeholder: "Contact Name",
-                                },
-                                {
-                                    name: "email",
-                                    label: "Email*",
-                                    type: "text",
-                                    placeholder: "Email",
-                                },
-                                // defaultInstructions
-                                {
-                                    name: "defaultInstructions",
-                                    label: "Default Instructions",
-                                    type: "text",
-                                    placeholder: "Default Instructions",
-                                },
-                                {
-                                    name: "readyTime",
-                                    label: "Ready Time",
-                                    type: "time",
-                                    placeholder: "Ready Time",
-                                    hourName: "readyTimeHour",
-                                    minuteName: "readyTimeMinute",
-                                    ampmName: "readyTimeAmPm",
-                                },
-                                // close time
-                                {
-                                    name: "closeTime",
-                                    label: "Close Time",
-                                    type: "time",
-                                    placeholder: "Close Time",
-                                    hourName: "closeTimeHour",
-                                    minuteName: "closeTimeMinute",
-                                    ampmName: "closeTimeAmPm",
-                                },
-                                {
-                                    name: "phoneNumber",
-                                    label: "Phone*",
-                                    type: "phone",
-                                    placeholder: "Phone",
-                                },
-                                {
-                                    name: "locationTypeId",
-                                    label: "Location Type*",
-                                    type: "select",
-                                    placeholder: "Location Type",
-                                    options: palletShippingLocationTypesRes?.palletShippingLocationTypes.map((palletShipping: LocationType) => ({
-                                        value: palletShipping.id.toString(),
-                                        label: palletShipping.name
-                                    })),
-                                    show: !isPendingPallet && !isLoadingPallet,
-                                    valueType: "number"
-                                },
-                                {
-                                    name: "isResidential",
-                                    label: "Residential Address",
-                                    type: "checkbox",
-                                    placeholder: "Residential Address",
-                                    className: "col-span-2"
-                                },
-                                {
-                                    name: "signatureId",
-                                    label: "Signature*",
-                                    type: "radio",
-                                    placeholder: "Signature",
-                                    options: signatures?.map((signature: Signature) => ({
-                                        value: signature.id.toString(),
-                                        label: signature.name
-                                    })),
-                                    show: !isLoadingSignatures,
-                                    valueType: "number"
-                                }
-                            ]}
-                        />
-                    </form>
-                </FormProvider>
-            </>
+                        {
+                            name: "address.unit",
+                            label: "Unit/Floor #",
+                            type: "text",
+                            placeholder: "Unit/Floor",
+                        },
+                        {
+                            name: "address.postalCode",
+                            label: "Postal/ZIP Code*",
+                            type: "text",
+                            placeholder: "Postal/ZIP Code",
+                        },
+                        {
+                            name: "address.city",
+                            label: "City*",
+                            type: "text",
+                            placeholder: "City",
+                        },
+                        {
+                            name: "address.state",
+                            label: "State/Province*",
+                            type: "select",
+                            placeholder: "State/Province",
+                            options: filteredProvinces?.length ? filteredProvinces : PROVINCES,
+                            wrapperClassName: "relative"
+                        },
+                        // text based country
+                        {
+                            // name: "address.country",
+                            // label: "Country*",
+                            // type: "text",
+                            // placeholder: "Country",
+                        },
+                        {
+                            name: "address.country",
+                            label: "Country",
+                            placeholder: "Country",
+                            type: "select",
+                            options: COUNTRIES,
+                        },
+                        {
+                            name: "contactName",
+                            label: "Contact Name*",
+                            type: "text",
+                            placeholder: "Contact Name",
+                        },
+                        {
+                            name: "email",
+                            label: "Email*",
+                            type: "text",
+                            placeholder: "Email",
+                        },
+                        // defaultInstructions
+                        {
+                            name: "defaultInstructions",
+                            label: "Default Instructions",
+                            type: "text",
+                            placeholder: "Default Instructions",
+                        },
+                        {
+                            name: "readyTime",
+                            label: "Ready Time",
+                            type: "time",
+                            placeholder: "Ready Time",
+                            hourName: "readyTimeHour",
+                            minuteName: "readyTimeMinute",
+                            ampmName: "readyTimeAmPm",
+                        },
+                        // close time
+                        {
+                            name: "closeTime",
+                            label: "Close Time",
+                            type: "time",
+                            placeholder: "Close Time",
+                            hourName: "closeTimeHour",
+                            minuteName: "closeTimeMinute",
+                            ampmName: "closeTimeAmPm",
+                        },
+                        {
+                            name: "phoneNumber",
+                            label: "Phone*",
+                            type: "phone",
+                            placeholder: "Phone",
+                        },
+                        {
+                            name: "locationTypeId",
+                            label: "Location Type*",
+                            type: "select",
+                            placeholder: "Location Type",
+                            options: palletShippingLocationTypesRes?.palletShippingLocationTypes.map((palletShipping: LocationType) => ({
+                                value: palletShipping.id.toString(),
+                                label: palletShipping.name
+                            })),
+                            show: !isPendingPallet && !isLoadingPallet,
+                            valueType: "number"
+                        },
+                        {
+                            name: "isResidential",
+                            label: "Residential Address",
+                            type: "checkbox",
+                            placeholder: "Residential Address",
+                            className: "col-span-2"
+                        },
+                        {
+                            name: "signatureId",
+                            label: "Signature*",
+                            type: "radio",
+                            placeholder: "Signature",
+                            options: signatures?.map((signature: Signature) => ({
+                                value: signature.id.toString(),
+                                label: signature.name
+                            })),
+                            show: !isLoadingSignatures,
+                            wrapperClassName: "flex flex-col gap-2",
+                            valueType: "number"
+                        }
+                    ]}
+                />
+            </form>
+        </FormProvider>
     )
 }

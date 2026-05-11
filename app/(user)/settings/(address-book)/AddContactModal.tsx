@@ -12,7 +12,7 @@ import { ApiError } from "next/dist/server/api-utils"
 import { useState } from "react"
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { UserSquare2 } from "lucide-react";
+import { Loader2, UserSquare2 } from "lucide-react";
 
 export function AddContactModal() {
     const [open, setOpen] = useState(false)
@@ -60,16 +60,19 @@ export function AddContactModal() {
                         setIsValid={setIsValid}
                     />
                 </ScrollArea>
-                {!mutation.isPending && <DialogFooter className="px-6 py-4 border-t border-border bg-muted/20 sm:justify-start gap-2">
+                <DialogFooter className="px-6 py-4 border-t border-border bg-muted/20 sm:justify-start gap-2">
                     <DialogClose asChild>
                         <Button type="button" variant="outline" className="w-[120px]">
                             Cancel
                         </Button>
                     </DialogClose>
-                    <Button type="submit" form="contact-form" className="bg-[#0070c0] hover:bg-[#005999] text-white w-[140px]">
+                    <Button
+                        disabled={mutation.isPending}
+                        type="submit" form="contact-form" className="bg-[#0070c0] hover:bg-[#005999] text-white w-[140px]">
+                        {mutation.isPending ? <Loader2 className="animate-spin" /> : ""}
                         Save Contact
                     </Button>
-                </DialogFooter>}
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     )

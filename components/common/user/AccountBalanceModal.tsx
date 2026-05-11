@@ -14,6 +14,7 @@ import {
     Tooltip as RechartsTooltip,
 } from "recharts"
 import { DollarSign } from "lucide-react"
+import { useUser } from "@/hooks/useUser"
 
 interface AccountBalanceModalProps {
     open: boolean
@@ -27,7 +28,14 @@ export function AccountBalanceModal({ open, onOpenChange }: AccountBalanceModalP
         { name: "Unpaid Invoices", value: 1678.07, color: "#29B6F6" },
     ]
 
-    const totalLimit = 3000.0
+    // const totalLimit = 3000.0
+
+    const { data: user } = useUser();
+
+    const totalLimit = 3000.0;
+    const availableBalance = user?.user?.company?.wallet?.balance || 0;
+    const unpaidInvoices = user?.user?.company?.wallet?.unpaidInvoices || 0;
+    const shipmentsNotBilled = user?.user?.company?.wallet?.shipmentsNotBilled || 0;
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -93,7 +101,7 @@ export function AccountBalanceModal({ open, onOpenChange }: AccountBalanceModalP
                         <div className="flex items-center justify-between py-4 border-b">
                             <div className="flex items-center gap-12 w-full max-w-[300px]">
                                 <span className="text-sm text-right w-[180px]">Unpaid Invoices</span>
-                                <span className="text-sm font-semibold w-[100px] text-right">$1,678.07</span>
+                                <span className="text-sm font-semibold w-[100px] text-right">${unpaidInvoices.toLocaleString("en-US", { minimumFractionDigits: 2 })}</span>
                             </div>
                             <div className="flex-1 ml-4 text-left">
                                 <a href="#" className="text-sm text-primary hover:underline">View Unpaid Invoices</a>
@@ -104,7 +112,7 @@ export function AccountBalanceModal({ open, onOpenChange }: AccountBalanceModalP
                         <div className="flex items-center justify-between py-4 border-b">
                             <div className="flex items-center gap-12 w-full max-w-[300px]">
                                 <span className="text-sm text-right w-[180px]">Shipments (Not Invoiced)</span>
-                                <span className="text-sm font-semibold w-[100px] text-right">$241.31</span>
+                                <span className="text-sm font-semibold w-[100px] text-right">${shipmentsNotBilled.toLocaleString("en-US", { minimumFractionDigits: 2 })}</span>
                             </div>
                             <div className="flex-1 ml-4 text-left">
                                 <button className="text-sm text-primary hover:underline flex items-center gap-1">
@@ -118,7 +126,7 @@ export function AccountBalanceModal({ open, onOpenChange }: AccountBalanceModalP
                         <div className="flex items-center justify-between py-4">
                             <div className="flex items-center gap-12 w-full max-w-[300px]">
                                 <span className="text-sm text-right w-[180px]">Available Balance</span>
-                                <span className="text-sm font-semibold w-[100px] text-right">$1,080.62</span>
+                                <span className="text-sm font-semibold w-[100px] text-right">${availableBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}</span>
                             </div>
                             <div className="flex-1 ml-4 text-left">
                                 {/* Empty for alignment */}

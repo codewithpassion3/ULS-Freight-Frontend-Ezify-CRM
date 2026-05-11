@@ -182,7 +182,7 @@ export default function ULSWalletSettings() {
           </div>
           <div>
             <p className="text-muted-foreground">Available Balance:</p>
-            <p className="font-bold">${user?.user?.wallet?.balance || 0}</p>
+            <p className="font-bold">${user?.user?.company?.wallet?.balance || 0}</p>
           </div>
           <div>
             <p className="text-muted-foreground">Invoiced Charges:</p>
@@ -232,10 +232,10 @@ export default function ULSWalletSettings() {
             <div className="border-2 border-primary bg-blue-50 rounded-lg p-4 relative overflow-hidden">
               <div className="font-bold text-slate-700 text-sm mb-4">ULS FREIGHT CARD</div>
               <div className="flex justify-between items-end">
-                <div className="text-2xl font-italic text-primary font-bold italic capitalize">{user?.user?.savedCards[user?.user?.savedCards.length - 1]?.brand}</div>
+                <div className="text-2xl font-italic text-primary font-bold italic capitalize">{user?.user?.company?.savedCards[user?.user?.company?.savedCards.length - 1]?.brand}</div>
                 <div className="text-right">
                   <div className="text-[10px] text-muted-foreground uppercase">Card Number</div>
-                  <div className="text-sm font-mono">**** **** **** {user?.user?.savedCards[user?.user?.savedCards.length - 1]?.last4}</div>
+                  <div className="text-sm font-mono">**** **** **** {user?.user?.company?.savedCards[user?.user?.company?.savedCards.length - 1]?.last4}</div>
                 </div>
               </div>
             </div>

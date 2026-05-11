@@ -56,7 +56,9 @@ export function EditContactModal(
         const payload = mapFormToPayload(data)
         mutation.mutate(payload)
     }
-
+    if (mutation.isPending) {
+        return <Loader />
+    }
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent

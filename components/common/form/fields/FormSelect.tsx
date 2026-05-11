@@ -29,7 +29,7 @@ const FormSelect = memo(({ field: config }: { field: FormSelectTypes }) => {
 
                 <SelectContent>
 
-                    {config.options.map((opt: any) => (
+                    {config.options?.map((opt: any) => (
                         <SelectItem
                             key={config.optionKey ? opt[config.optionKey] : opt.value}
                             value={config.optionKey ? opt[config.optionKey].toString() : opt.value.toString()}

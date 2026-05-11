@@ -14,7 +14,9 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-
+import { forwardRef, useEffect, useImperativeHandle } from "react"
+import { Loader } from '@/components/common/Loader';
+import FetchingRatesModal from './Components/fetchingRatesModal';
 const API_URL = 'https://api.ulsfreight.ca';
 // const API_URL = 'https://your-live-backend.com';
 
@@ -57,10 +59,24 @@ const API_URL = 'https://api.ulsfreight.ca';
 //     ],
 // } as const;
 
-export default function ShippingRatesStream({ payload, selectedCarrier, setSelectedCarrier }: { payload: any, selectedCarrier: string | null, setSelectedCarrier: (carrier: string) => void }) {
+export const ShippingRatesStream = forwardRef(({ payload, selectedCarrier, setSelectedCarrier, getRatesLoading, setGetRatesLoading }: { payload: any, selectedCarrier: string | null, setSelectedCarrier: (carrier: string) => void, getRatesLoading: boolean, setGetRatesLoading: (value: boolean) => void }, ref) => {
     const { results, status, error, start, stop, reset } = useCarrierStream(API_URL);
 
-    const handleStart = () => start(payload);
+    const handleStart = () => {
+        console.log("payload", payload)
+        start(payload)
+        setGetRatesLoading(true)
+    };
+    useImperativeHandle(ref, () => ({
+        handleStart,
+        status
+    }))
+
+    useEffect(() => {
+        if (status !== "connecting" && status !== "streaming") {
+            setGetRatesLoading(false)
+        }
+    }, [status])
 
     return (
         <div>
@@ -111,6 +127,15 @@ export default function ShippingRatesStream({ payload, selectedCarrier, setSelec
                 {status === 'streaming' || status === 'connecting' ? <Loader2 className='h-4 w-4 animate-spin' /> : ""}
                 Get Rates
             </Button>
+            {/* {status === 'streaming' || status === 'connecting' ?
+                <FetchingRatesModal open={status === 'streaming' || status === 'connecting'} onOpenChange={(open) => {
+                    if (!open) {
+                        stop()
+                        reset()
+                    }
+                }} />
+                : null
+            } */}
         </div>
     );
-}
+})

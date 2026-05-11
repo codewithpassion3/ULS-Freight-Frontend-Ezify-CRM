@@ -2,11 +2,12 @@
 
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { Eye, EyeOff } from "lucide-react"
+import { Eye, EyeOff, FileQuestionMark, Info } from "lucide-react"
 import { memo, useState } from "react"
 import { Textarea } from "@/components/ui/textarea"
 import { useFieldController } from "../useFieldController"
 import { FormFieldTypes } from "./fields.types"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 const FormField = memo(({ field: config }: { field: FormFieldTypes }) => {
     if (!config) return null  // safely skip undefined
@@ -36,10 +37,23 @@ const FormField = memo(({ field: config }: { field: FormFieldTypes }) => {
     return (
         <div className={config.wrapperClassName}>
             <div className={`flex flex-col gap-2 ${config.className}`}>
-                <Label htmlFor={config.name} className={`${error ? "text-red-500" : ""} ${config.labelClassName}`}>
-                    {config.label}
-                </Label>
-
+                <div className="flex gap-2">
+                    <Label htmlFor={config.name} className={`${error ? "text-red-500" : ""} ${config.labelClassName}`}>
+                        {config.label}
+                    </Label>
+                    {/* info tooltip to show what is input is about */}
+                    {(config.tooltipIcon || config.tooltipMessage) &&
+                        <TooltipProvider>
+                            <Tooltip >
+                                <TooltipTrigger className="cursor-pointer">
+                                    {config.tooltipIcon || <Info />}
+                                </TooltipTrigger>
+                                <TooltipContent side="bottom" className="shadow-lg">
+                                    <p>{config.tooltipMessage}</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>}
+                </div>
                 {config.type !== "textarea" ? <div className="relative">
                     <Input
                         id={config.name}
