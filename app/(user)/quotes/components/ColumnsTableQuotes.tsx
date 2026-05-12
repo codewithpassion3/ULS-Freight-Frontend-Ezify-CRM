@@ -100,10 +100,14 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "shipFrom",
     header: "Ship From",
     cell: ({ row }) => {
+      const address = row.original.addresses[0].addressBookEntry ? row.original.addresses[0].addressBookEntry.address : row.original.addresses[0].address
+      const address1 = address?.address1
+      const city = address?.city
+      const state = address?.state
+      const country = address?.country
       return (
         <span className="text-[#0070c0] font-medium whitespace-nowrap">
-          {/* {row.original.addresses[0].address.city} */}
-          Lahore
+          {address1}<br />{city}, {state}, {country}
         </span>
       )
     },
@@ -112,10 +116,14 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "shipTo",
     header: "Ship To",
     cell: ({ row }) => {
+      const address = row.original.addresses[1].addressBookEntry ? row.original.addresses[1].addressBookEntry.address : row.original.addresses[1].address
+      const address1 = address?.address1
+      const city = address?.city
+      const state = address?.state
+      const country = address?.country
       return (
         <span className="text-[#0070c0] font-medium whitespace-nowrap">
-          {/* {row.original.addresses[1].address.city} */}
-          Karachi
+          {address1}<br />{city}, {state}, {country}
         </span>
       )
     },

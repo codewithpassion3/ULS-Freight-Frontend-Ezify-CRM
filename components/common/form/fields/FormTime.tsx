@@ -45,6 +45,7 @@ const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
                     // hide control buttons
                     className={`w-14 px-2 text-center ${hourError ? "border-red-500" : ""} [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
                     value={hourField.value ?? ""}
+                    disabled={config.disabled}
                 />
                 <span>:</span>
 
@@ -75,6 +76,7 @@ const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
                     // }}
                     className={`w-14 px-2 text-center ${minuteError ? "border-red-500" : ""} [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
                     value={minuteField.value ?? ""}
+                    disabled={config.disabled}
                 />
 
 
@@ -82,20 +84,22 @@ const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
                     <button
                         type="button"
                         onClick={() => ampmField.onChange("AM")}
-                        className={`px-3 py-2 text-xs font-semibold cursor-pointer ${ampmField.value === "AM"
+                        className={`px-3 py-2 text-xs font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${ampmField.value === "AM"
                             ? "bg-muted text-[#4aa0e3]"
                             : "hover:bg-muted/50"
                             }`}
+                        disabled={config.disabled}
                     >
                         AM
                     </button>
                     <button
                         type="button"
                         onClick={() => ampmField.onChange("PM")}
-                        className={`px-3 py-2 text-xs font-semibold cursor-pointer ${ampmField.value === "PM"
+                        className={`px-3 py-2 text-xs font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${ampmField.value === "PM"
                             ? "bg-muted text-[#4aa0e3]"
                             : "hover:bg-muted/50"
                             } ${ampmError ? "border-red-500" : ""}`}
+                        disabled={config.disabled}
                     >
                         PM
                     </button>

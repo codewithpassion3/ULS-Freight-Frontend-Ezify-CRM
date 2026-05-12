@@ -64,7 +64,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     const sendRequestRef = useRef<any>(null)
     const getRatesRef = useRef<any>(null)
     const [getRatesLoading, setGetRatesLoading] = useState(false)
-
+    const [isFetchedQuoteShipment, setIsFetchedQuoteShipment] = useState(false)
     const handleSwapAddress = () => {
         if (fromAddressRef.current && toAddressRef.current) {
             const fromVals = fromAddressRef.current.getValues()
@@ -137,6 +137,10 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         }
     })
 
+    const handleCreateShipment = ({ shipmentPayload }: any) => {
+        createShipmentMutation.mutate(shipmentPayload)
+    }
+
     const updateQuoteMutation = useMutation({
         mutationFn: (data: unknown) => updateQuote(quoteId!, data),
         onSuccess: () => {
@@ -147,6 +151,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             toast.error(error.response?.data.message)
         }
     })
+
     //  create shipment mutation
     const createShipmentMutation = useMutation({
         mutationFn: (data: unknown) => createShipment(data),
@@ -162,12 +167,13 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         mutationFn: (data: unknown) => updateShipment(shipmentId!, data),
         onSuccess: () => {
             toast.success("Shipment updated successfully")
-            router.push("/shipments")
+            router.push("/quotes")
         },
         onError: (error: AxiosError<ApiError>) => {
             toast.error(error.response?.data.message)
         }
     })
+
     const bookShipmentMutation = useMutation({
         mutationFn: (data: unknown) => bookShipment(data),
         onSuccess: () => {
@@ -265,33 +271,35 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     }
 
     const onSubmit = async () => {
-        const valid = await validateAllForms()
+        console.log("isFetchedQuoteShipment", isFetchedQuoteShipment)
+        console.log("isShipment", isShipment)
+        // const valid = await validateAllForms()
 
-        if (!valid) return
+        // if (!valid) return
 
-        const { finalQuotePayload, shipmentPayload } = buildPayloads()
+        // const { finalQuotePayload, shipmentPayload } = buildPayloads()
+
+        // print isFetchedQuoteShipment
 
 
+        // if (isEditing) {
+        //     if (isShipment) {
+        //         updateShipmentMutation.mutate(shipmentPayload)
+        //     } else {
+        //         updateQuoteMutation.mutate(finalQuotePayload)
+        //     }
+        // } else {
+        //     if (isShipment) {
+        //         createShipmentMutation.mutate(shipmentPayload)
+        //     } else {
 
-        if (isEditing) {
-            if (isShipment) {
-                updateShipmentMutation.mutate(shipmentPayload)
-            } else {
-                updateQuoteMutation.mutate(finalQuotePayload)
-            }
-        } else {
-            if (isShipment) {
-
-                createShipmentMutation.mutate(shipmentPayload)
-            } else {
-
-                createQuoteMutation.mutate(finalQuotePayload)
-            }
-        }
+        //         createQuoteMutation.mutate(finalQuotePayload)
+        //     }
+        // }
     }
 
     const payloadTransformer = (data: any) => {
-        const formattedAddresses = data.addresses?.map((address: any) => {
+        const formattedAddresses = data.addresses?.map((address: any, index: number) => {
 
             if (address.addressBookId) {
                 return {
@@ -309,13 +317,18 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                 address.closeTimeMinute,
                 address.closeTimeAmPm
             )
-            const addressWithType = { ...address.address, type: address.type }
+            // const addressWithType = { ...address.address, type: address.type }
+            // console.log("address", addressWithType)
             return {
 
-                ...addressWithType,
+                // ...addressWithType,
                 palletShippingReadyTime,
                 palletShippingCloseTime,
-                type: address.type,
+                contactName: address.contactName,
+                phoneNumber: address.phoneNumber,
+                email: address.email,
+                defaulInstruction: address.defaulInstruction,
+                type: index === 0 ? "FROM" : "TO",
             }
         })
 
@@ -348,7 +361,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
             addresses: transformedAddresses,
         };
 
-        const ftlSelectedService = payloadTransformed?.lineItem?.units[0]?.name
+        const ftlSelectedService = shipmentType === "STANDARD_FTL" ? payloadTransformed?.lineItem?.units[0]?.name : null
         let ftlLineItemToServiceMapping = {
             services: {
                 [ftlSelectedService]: {
@@ -448,10 +461,10 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                             <ShippingTypeSelector quoteType={quoteType} shipmentType={shipmentType} setShipmentType={setShipmentType} />
                             <div className="flex flex-col md:flex-row gap-6">
                                 <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
-                                    <ShippingAddressSection ref={fromAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="FROM" title="Shipping From" />
+                                    <ShippingAddressSection isFetchedQuoteShipment={isFetchedQuoteShipment} setIsFetchedQuoteShipment={setIsFetchedQuoteShipment} ref={fromAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="FROM" title="Shipping From" />
                                 </div>
                                 <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
-                                    <ShippingAddressSection ref={toAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="TO" title="Shipping To" />
+                                    <ShippingAddressSection isFetchedQuoteShipment={isFetchedQuoteShipment} setIsFetchedQuoteShipment={setIsFetchedQuoteShipment} ref={toAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="TO" title="Shipping To" />
                                 </div>
 
                             </div>
@@ -518,19 +531,32 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                                             {createQuoteMutation.isPending || updateQuoteMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
                                             {isEditing ? "Update Quote" : "Save Quote"}
                                         </Button>
-                                        <Button
+                                        {/* <Button
                                             disabled={createQuoteAndConvertToShipmentMutation.isPending}
                                             onClick={handleConvertToShipment}
                                         >
                                             {createQuoteAndConvertToShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
                                             Convert to Shipment
-                                        </Button>
+                                        </Button> */}
                                     </div>
                                 }
-                                <Button onClick={handleBookShipment} disabled={bookShipmentMutation.isPending || !singleQuote}>
-                                    {bookShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
-                                    Book Shipment
-                                </Button>
+                                {isFetchedQuoteShipment ?
+                                    <Button onClick={handleBookShipment} disabled={bookShipmentMutation.isPending || !singleQuote}>
+                                        {bookShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
+                                        Book Shipment
+                                    </Button> :
+
+                                    <Button
+                                        onClick={() => {
+                                            onSubmit()
+                                        }}
+                                        disabled={createQuoteAndConvertToShipmentMutation.isPending}
+                                    >
+                                        {createQuoteAndConvertToShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
+                                        Convert to Shipment
+                                    </Button>
+
+                                }
                                 {/* get rates */}
                                 <Button
                                     disabled={getRatesLoading}

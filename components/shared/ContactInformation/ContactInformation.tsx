@@ -5,9 +5,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { ListTodo } from "lucide-react";
 import { ChevronUp } from "lucide-react";
 import { useMemo, useState } from "react";
+// import { QuoteType } from "@/types/quote/quote.types";
+import { QuoteTypes } from "../DynamicQuote/DynamicQuote";
 
 
-const ContactInformation = forwardRef((quoteType: "SPOT" | "STANDARD", ref: any) => {
+const ContactInformation = forwardRef(({ quoteType }: { quoteType: QuoteTypes }, ref: any) => {
     const [isOpen, setIsOpen] = useState(false);
     const form = useForm({
         defaultValues: {

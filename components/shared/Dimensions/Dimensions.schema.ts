@@ -38,7 +38,7 @@ export const palletLineItemSchema = z.object({
         height: z.coerce.number(" ").min(1),
         weight: z.coerce.number(" ").min(1),
         freightClass: z.string(" ").optional(),
-        nmfc: z.string().optional(),
+        nmfc: z.string().nullable().optional(),
         // palletUnitType: z.string(" ").optional(),
         palletUnitType: z.enum(["PALLET", "DRUM", "BOXES", "ROLLS", "PIPES_OR_TUBES", "BALES", "BAGS", "CYLINDER", "PAILS", "REELS", "CRATE", "LOOSE", "PIECES"]).optional(),
         unitsOnPallet: z.coerce.number(" ").optional(),

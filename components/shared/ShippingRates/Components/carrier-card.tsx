@@ -29,13 +29,14 @@ export function CarrierCard({ result, index, selectedCarrier, setSelectedCarrier
         <>
 
             {isError ? (
-                <TableRow>
-                    <TableCell colSpan={5}>
-                        <code className="text-red-500 text-sm">
-                            {result.error}
-                        </code>
-                    </TableCell>
-                </TableRow>
+                // <TableRow>
+                //     <TableCell colSpan={5}>
+                //         <code className="text-red-500 text-sm">
+                //             {result.error}
+                //         </code>
+                //     </TableCell>
+                // </TableRow>
+                ""
             ) : result?.quotes?.length ? (
                 result.quotes.map((quote: any, index: number) => (
                     <TableRow key={index} className={selectedCarrier?.carrier === quote.carrier ? "border-primary bg-primary/10" : ""}>

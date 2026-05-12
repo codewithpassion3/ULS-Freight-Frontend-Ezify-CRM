@@ -78,6 +78,7 @@ export type FormDateTypes = {
     onSelect?: (value: Date | undefined) => void
     wrapperClassName?: string;
     futureDatesOnly?: boolean;
+    isEditing?: boolean
 }
 
 export type FormTimeProps = {
@@ -85,6 +86,7 @@ export type FormTimeProps = {
     hourName: string
     minuteName: string
     ampmName: string
+    disabled?: boolean
 }
 
 export type FormFieldUnion = FormFieldTypes | FormSelectTypes | FormCheckboxTypes | FormRadioTypes | FormDateTypes | FormTimeProps

@@ -25,7 +25,7 @@ export default function UserLayout({
   const isNoHeaderRoute = noHeaderRoutes.includes(pathname);
 
   return (
-    !isExceptionalRoute ?
+    (!isExceptionalRoute || user?.user) ?
       <>
         {!isNoHeaderRoute && <Header />}
         {/* <Infobar/> */}

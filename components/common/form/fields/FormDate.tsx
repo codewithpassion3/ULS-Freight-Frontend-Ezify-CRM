@@ -69,7 +69,7 @@ const FormDate = memo(({ field: config }: { field: any }) => {
                         }}
 
                         disabled={(date) => {
-                            if (!config.futureDatesOnly) return false;
+                            if (!config.futureDatesOnly || config.isEditing) return false;
                             return date < minDate;
                         }}
                     />

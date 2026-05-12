@@ -13,7 +13,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: user, isLoading, isPending, error } = useUser()
-    
     const value = React.useMemo(() => ({ user, isLoading, isPending, error }), [user, isLoading, isPending, error]);
 
     return (
