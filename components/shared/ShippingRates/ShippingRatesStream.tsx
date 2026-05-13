@@ -63,7 +63,6 @@ export const ShippingRatesStream = forwardRef(({ payload, selectedCarrier, setSe
     const { results, status, error, start, stop, reset } = useCarrierStream(API_URL);
 
     const handleStart = () => {
-        console.log("payload", payload)
         start(payload)
         setGetRatesLoading(true)
     };
@@ -121,12 +120,12 @@ export const ShippingRatesStream = forwardRef(({ payload, selectedCarrier, setSe
 
 
             {/* </div> */}
-            <Button
+            {/* <Button
                 disabled={status === 'connecting' || status === 'streaming'}
                 className='w-max bg-[#0070c0] hover:bg-[#005999]' onClick={handleStart}>
                 {status === 'streaming' || status === 'connecting' ? <Loader2 className='h-4 w-4 animate-spin' /> : ""}
                 Get Rates
-            </Button>
+            </Button> */}
             {/* {status === 'streaming' || status === 'connecting' ?
                 <FetchingRatesModal open={status === 'streaming' || status === 'connecting'} onOpenChange={(open) => {
                     if (!open) {

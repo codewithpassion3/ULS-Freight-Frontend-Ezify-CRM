@@ -19,6 +19,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { FormInput } from "@/components/common/forms/FormInput"
 import DangerousGoodsForm from "../Dimensions/DangerousGoodDetails"
+import { LIMITED_ACCESS_LOCATIONS } from "@/shared-date/shipment.data"
 
 const AdditionalServices = forwardRef(({ shipmentType, quoteType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions], quoteType: "SPOT" | "STANDARD" }, ref) => {
     const additionalServicesSchema = z.object({
@@ -170,18 +171,7 @@ const AdditionalServices = forwardRef(({ shipmentType, quoteType }: { shipmentTy
                                                 name: "services.limitedAccess",
                                                 label: "Location",
                                                 type: "radio",
-                                                options: [
-                                                    { value: "constructionSite", label: "Construction Site" },
-                                                    { value: "individualStorageUnit", label: "Individual (Mini) Storage Unit" },
-                                                    { value: "fairAmusementPark", label: "Fair/Amusement Park" },
-                                                    { value: "placeOfWorship", label: "Place of Worship" },
-                                                    { value: "farmCountryClubEstate", label: "Farm/Country Club/Estate" },
-                                                    { value: "securedLocationsDelivery", label: "Secured Locations Delivery - prisons, military bases, airport" },
-                                                    { value: "schoolUniversity", label: "School/University" },
-                                                    { value: "plazaMallDeliveries", label: "Plaza/Mall deliveries or stores with only parking lot/Street access" },
-                                                    { value: "groceryRetailLocations", label: "Grocery/Retail Locations (ex: Costco or Walmart)" },
-                                                    { value: "other", label: "Other" },
-                                                ],
+                                                options: LIMITED_ACCESS_LOCATIONS,
                                                 wrapperClassName: " col-span-full",
                                                 className: "grid grid-cols-2 gap-4 mt-4",
                                                 show: quoteType !== "SPOT" && watch("limitedAccess")

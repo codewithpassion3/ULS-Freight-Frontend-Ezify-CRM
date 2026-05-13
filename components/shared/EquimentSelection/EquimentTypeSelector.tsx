@@ -14,6 +14,7 @@ import InBond from "../AdditionalService/InBond"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react"
+import { LIMITED_ACCESS_LOCATIONS } from "@/shared-date/shipment.data"
 
 export const EquimentTypeSelector = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }, ref) => {
     const [isOpen, setIsOpen] = useState(false)
@@ -191,19 +192,7 @@ export const EquimentTypeSelector = forwardRef(({ shipmentType }: { shipmentType
                                                 label: "Location",
                                                 type: "radio",
                                                 valueType: "string",
-
-                                                options: [
-                                                    { value: "CONSTRUCTION_SITE", label: "Construction Site" },
-                                                    { value: "INDIVIDUAL_STORAGE_UNIT", label: "Individual (Mini) Storage Unit" },
-                                                    { value: "FAIR_AMUSEMENT_PARK", label: "Fair/Amusement Park" },
-                                                    { value: "PLACE_OF_WORSHIP", label: "Place of Worship" },
-                                                    { value: "FARM_COUNTRY_CLUB_ESTATE", label: "Farm/Country Club/Estate" },
-                                                    { value: "SECURED_LOCATIONS_DELIVERY", label: "Secured Locations Delivery - prisons, military bases, airport" },
-                                                    { value: "SCHOOL_UNIVERSITY", label: "School/University" },
-                                                    { value: "PLAZA_MALL_DELIVERIES", label: "Plaza/Mall deliveries or stores with only parking lot/Street access" },
-                                                    { value: "GROCERY_RETAIL_LOCATIONS", label: "Grocery/Retail Locations (ex: Costco or Walmart)" },
-                                                    { value: "OTHER", label: "Other" },
-                                                ],
+                                                options: LIMITED_ACCESS_LOCATIONS,
                                                 className: "grid grid-cols-2 gap-4",
                                                 wrapperClassName: "flex flex-col gap-4"
                                             },

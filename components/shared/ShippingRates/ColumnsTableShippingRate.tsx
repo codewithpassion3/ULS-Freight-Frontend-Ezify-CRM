@@ -30,6 +30,7 @@ export const getColumns = (setSelectedCarrier: (carrier: string) => void, select
     accessorKey: "carrier",
     header: "Carrier",
     cell: ({ row }) => {
+      console.log("ROW:", row.original)
       const carrier = row.original.carrier
       return (
         <div className="h-24 w-24 p-2 flex justify-center items-center">

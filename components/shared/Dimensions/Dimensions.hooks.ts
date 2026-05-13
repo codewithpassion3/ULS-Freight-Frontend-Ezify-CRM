@@ -80,8 +80,8 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
                 : units
         )
         setValue("lineItem.measurementUnit", cachedSingleQuote.lineItem?.measurementUnit ?? "IMPERIAL")
-        setValue("lineItem.dangerousGoods", cachedSingleQuote.lineItem?.dangerousGoods ?? false)
-        setValue("lineItem.stackable", cachedSingleQuote.lineItem?.stackable ?? false)
+        setValue("lineItem.dangerousGoods", cachedSingleQuote.lineItem?.dangerousGoods)
+        setValue("lineItem.stackable", cachedSingleQuote.lineItem?.stackable)
         // cachedSingleQuote.lineItem?.specialHandlingRequired && setValue("specialHandlingRequired", cachedSingleQuote.lineItem?.specialHandlingRequired ?? false)
         setValue("lineItem.quantity", cachedSingleQuote.lineItem?.quantity ?? 1)
         setIsOpen(true)

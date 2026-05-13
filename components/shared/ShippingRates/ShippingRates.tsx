@@ -33,20 +33,84 @@ export default function ShippingRates({
     getRatesLoading: boolean
     setGetRatesLoading: (value: boolean) => void
 }) {
-    const myPayload = { ...dimensions, ...fromAddress, ...toAddress }
-    console.log("myPayload", myPayload)
-
-    const payload =
-    {
+    console.log("fromAddress", fromAddress)
+    console.log("toAddress", toAddress)
+    console.log("dimensions", dimensions)
+    // const fedexPayload = {
+    //     "from": {
+    //         "postalCode": fromAddress.address.postalCode,
+    //         "countryCode": fromAddress.address.country
+    //     },
+    //     "to": {
+    //         "postalCode": toAddress.address.postalCode,
+    //         "countryCode": toAddress.address.country
+    //     }
+    // }
+    // const tstPayload = {
+    //     "from": {
+    //         "name": fromAddress.contactName,
+    //         "address": fromAddress.address.address1,
+    //         "postalCode": fromAddress.address.postalCode,
+    //         "city": fromAddress.address.city,
+    //         "state": fromAddress.address.state
+    //     },
+    //     "to": {
+    //         "name": toAddress.contactName,
+    //         "address": toAddress.address.address1,
+    //         "postalCode": toAddress.address.postalCode,
+    //         "city": toAddress.address.city,
+    //         "state": toAddress.address.state
+    //     }
+    // }
+    // const dimensionsPayload = () => {
+    //     if (dimensions.lineItem.units.length < 1) {
+    //         return []
+    //     }
+    //     return dimensions.lineItem.units.map((unit: any) => {
+    //         return [{
+    //             "weightUnit": dimensions.lineItem.measurementUnit === "IMPERIAL" ? "LB" : "KG",
+    //             "weight": unit.weight,
+    //             "dimensionsUnit": dimensions.lineItem.measurementUnit === "IMPERIAL" ? "IN" : "CM",
+    //             "length": unit.length,
+    //             "width": unit.width,
+    //             "height": unit.height,
+    //             "handlingUnits": unit.unitsOnPallet ?? 1,
+    //             "packaging": unit.palletUnitType
+    //         }]
+    //     })
+    // }
+    // const payload =
+    // {
+    //     "quoteType": "STANDARD",
+    //     "fedex": fedexPayload,
+    //     "tst": tstPayload,
+    //     "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
+    //     "rateRequestType": ["LIST"],
+    //     "serviceType": "FEDEX_EXPRESS_SAVER",
+    //     // "packages": [{
+    //     //     "weightUnit": "LB",
+    //     //     "weight": 10,
+    //     //     "dimensionsUnit": "IN",
+    //     //     "length": 20,
+    //     //     "width": 20,
+    //     //     "height": 40,
+    //     //     "handlingUnits": 1,
+    //     //     "packaging": "BOX"
+    //     // }]
+    //     "packages": dimensionsPayload()
+    // }
+    const payload = {
         "quoteType": "STANDARD",
         "fedex": {
             "from": {
                 "postalCode": "38117",
-                "countryCode": "US"
+                "countryCode": "US",
+                "isResidential": true
             },
             "to": {
                 "postalCode": "90210",
-                "countryCode": "US"
+                "countryCode": "US",
+                "isResidential": true
             }
         },
         "tst": {
@@ -65,9 +129,30 @@ export default function ShippingRates({
                 "state": "MI"
             }
         },
+        "tforce": {
+            "from": {
+                "city": "Memphis",
+                "state": "TN",
+                "postalCode": "38117",
+                "countryCode": "US",
+                "isResidential": true
+            },
+            "to": {
+                "city": "Beverly Hills",
+                "state": "CA",
+                "postalCode": "90210",
+                "countryCode": "US",
+                "isResidential": true
+            }
+        },
         "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
         "rateRequestType": ["LIST"],
         "serviceType": "FEDEX_EXPRESS_SAVER",
+        "services": {
+            "limitedAccess": {},
+            "tradeShowDelivery": true,
+            "protectFromFreeze": true
+        },
         "packages": [{
             "weightUnit": "LB",
             "weight": 10,
@@ -75,7 +160,7 @@ export default function ShippingRates({
             "length": 20,
             "width": 20,
             "height": 40,
-            "handlingUnits": 1,
+            "handlingUnits": 2,
             "packaging": "BOX"
         }]
     }
@@ -149,7 +234,7 @@ export default function ShippingRates({
                         <ChevronUp className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                     </h2>
                 </AccordionTrigger>
-                <AccordionContent className="h-max">
+                <AccordionContent content="rates" className="h-max">
                     {/* // 2 tabs Best Price and Quickest */}
                     {/* <div className="flex items-center gap-2 w-full mb-4">
                         <div className="border border-primary bg-primary/10 rounded-md p-2 w-1/2">

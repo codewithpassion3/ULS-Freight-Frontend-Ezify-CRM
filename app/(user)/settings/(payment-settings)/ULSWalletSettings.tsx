@@ -224,22 +224,24 @@ export default function ULSWalletSettings() {
 
         <div className="flex flex-wrap gap-4">
           {/* Primary Card Card */}
-          <div className="w-full md:w-72">
-            {/* <div className="flex items-center gap-2 text-xs text-green-600 font-semibold mb-2">
+          {cards && cards.length > 0 ? (
+            <div className="w-full md:w-72">
+              {/* <div className="flex items-center gap-2 text-xs text-green-600 font-semibold mb-2">
               <CheckCircle2 size={14} />
               Primary Card
             </div> */}
-            <div className="border-2 border-primary bg-blue-50 rounded-lg p-4 relative overflow-hidden">
-              <div className="font-bold text-slate-700 text-sm mb-4">ULS FREIGHT CARD</div>
-              <div className="flex justify-between items-end">
-                <div className="text-2xl font-italic text-primary font-bold italic capitalize">{user?.user?.company?.savedCards[user?.user?.company?.savedCards.length - 1]?.brand}</div>
-                <div className="text-right">
-                  <div className="text-[10px] text-muted-foreground uppercase">Card Number</div>
-                  <div className="text-sm font-mono">**** **** **** {user?.user?.company?.savedCards[user?.user?.company?.savedCards.length - 1]?.last4}</div>
+              <div className="border-2 border-primary bg-blue-50 rounded-lg p-4 relative overflow-hidden">
+                <div className="font-bold text-slate-700 text-sm mb-4">ULS FREIGHT CARD</div>
+                <div className="flex justify-between items-end">
+                  <div className="text-2xl font-italic text-primary font-bold italic capitalize">{user?.user?.company?.savedCards[user?.user?.company?.savedCards.length - 1]?.brand}</div>
+                  <div className="text-right">
+                    <div className="text-[10px] text-muted-foreground uppercase">Card Number</div>
+                    <div className="text-sm font-mono">**** **** **** {user?.user?.company?.savedCards[user?.user?.company?.savedCards.length - 1]?.last4}</div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          ) : ""}
 
           {/* Add New Card Placeholder */}
           <div

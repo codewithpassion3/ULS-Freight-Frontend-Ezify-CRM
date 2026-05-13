@@ -44,7 +44,7 @@ import { Input } from "@/components/ui/input"
 import { parseTime12h } from "@/app/(user)/settings/(address-book)/mappers/contact.mapper"
 import { COUNTRIES, PROVINCES } from "@/shared-date/geo.data"
 import { Loader } from "@/components/common/Loader"
-export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, type, title, onNextStep, onSwap, isFetchedQuoteShipment, setIsFetchedQuoteShipment, step, setStep }: { quoteType: keyof ShipmentOptions, shipmentType: ShipmentOptions[keyof ShipmentOptions], type: "TO" | "FROM", title: string, onNextStep?: (data: any) => void, onSwap?: () => void, setShipDate?: (date: Date | undefined) => void, isFetchedQuoteShipment: boolean, setIsFetchedQuoteShipment: (value: boolean) => void, step: number, setStep: (step: number) => void }, ref) => {
+export const ShippingAddressSection = forwardRef(({ step, setStep, quoteType, shipmentType, type, title, onNextStep, onSwap, isFetchedQuoteShipment, setIsFetchedQuoteShipment }: { quoteType: keyof ShipmentOptions, shipmentType: ShipmentOptions[keyof ShipmentOptions], type: "TO" | "FROM", title: string, onNextStep?: (data: any) => void, onSwap?: () => void, setShipDate?: (date: Date | undefined) => void, isFetchedQuoteShipment: boolean, setIsFetchedQuoteShipment: (value: boolean) => void, step: number, setStep: (step: number) => void }, ref) => {
   // check if route includes shipment to check if it quote or shipment
   const pathname = usePathname()
   const isShipment = pathname.includes("shipment")
@@ -298,7 +298,10 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
     queryKey: ["palletShippingLocationTypes"],
     queryFn: getAllPalletShippingLocationTypes
   })
-
+  // params check mode 
+  const searchParam = useSearchParams()
+  const isEdit = searchParam.get("mode") === "edit";
+  const isConversion = searchParam.get("mode") === "conversion";
   const handleClearAddress = () => {
     setAddressLocked(false)
     methods.reset({
@@ -336,26 +339,35 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
     setIsFetchedQuoteShipment(!!cachedSingleQuote?.quote?.shipment?.id)
     if (!cachedSingleQuote) return;
     setIsEditing(true)
-    const quoteAddress = cachedSingleQuote.quote.addresses[index].address
-      ? cachedSingleQuote.quote.addresses[index] : cachedSingleQuote.quote.addresses[index]?.addressBookEntry;
-    const isAddressBookEntry = cachedSingleQuote.quote.addresses[index]?.addressBookEntry?.address;
-    // const completeAddressFromAddressBook = cachedSingleQuote.quote.addresses[index]?.addressBookEntry;
-    console.log("STATE VALUE:", methods.getValues("address.state"));
-    console.log("PROVINCES:", PROVINCES.filter(p => p.country === cachedSingleQuote.address?.country));
+    // if(isEdit){
+    //   const quoteAddress = cachedSingleQuote.quote.addresses[index].address
+    //     ? cachedSingleQuote.quote.addresses[index] : cachedSingleQuote.quote.addresses[index]?.id;
+    //   const isAddressBookEntry = cachedSingleQuote.quote.addresses[index]?.addressBookEntry?.address;
+    //   const completeAddressFromAddressBook = cachedSingleQuote.quote.addresses[index]?.addressBookEntry;
+
+    // }
+
+    const quoteAddress = cachedSingleQuote.quote.addresses[index];
+    const isAddressBookEntry = cachedSingleQuote.quote.addresses[index]?.id;
+
 
     if (quoteAddress) {
-      setAddressLocked(true);
+      console.log("THIS IS QUOTE ADDRESS!!!!!", quoteAddress)
+      if (isEdit) {
+        setAddressLocked(true);
+      }
       setFinalShipmentType(quoteAddress?.shipmentType);
       setShowLocationType(quoteType === "SPOT" || finalShipmentType === "PALLET");
-
+      methods.setValue("addressBookId", Number(quoteAddress.id));
+      const isAddressFromAddressBook = !!quoteAddress?.address?.address1
       methods.reset({
         ...(isAddressBookEntry && { addressBookId: quoteAddress.id ?? null }),
         address: {
-          address1: quoteAddress?.address?.address1 || "",
-          postalCode: quoteAddress?.address?.postalCode || "",
-          city: quoteAddress?.address?.city || "",
-          country: quoteAddress?.address?.country || "",
-          state: "", // important
+          address1: (isAddressFromAddressBook) ? quoteAddress?.address?.address1 : quoteAddress?.address1 || "",
+          postalCode: (isAddressFromAddressBook) ? quoteAddress?.address?.postalCode : quoteAddress?.postalCode || "",
+          city: (isAddressFromAddressBook) ? quoteAddress?.address?.city : quoteAddress?.city || "",
+          country: (isAddressFromAddressBook) ? quoteAddress?.address?.country : quoteAddress?.country || "",
+          state: (isAddressFromAddressBook) ? quoteAddress?.address?.state : quoteAddress?.state || "", // important
         },
         ...(showLocationType && { locationTypeId: quoteAddress.locationTypeId }),
         ...(isShipment && { companyName: quoteAddress.companyName }),
@@ -379,32 +391,32 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
 
       const [readyTimeHour, readyTimeMinute, readyTimeAmPm] = parseTime12h(quoteAddress.palletShippingReadyTime);
       const [closeTimeHour, closeTimeMinute, closeTimeAmPm] = parseTime12h(quoteAddress.palletShippingCloseTime);
-      methods.setValue("readyTimeHour", readyTimeHour || "",
+      methods.setValue("readyTimeHour", readyTimeHour || "00",
         {
           shouldValidate: true,
         }
       );
-      methods.setValue("readyTimeAmPm", readyTimeAmPm || "",
+      methods.setValue("readyTimeAmPm", readyTimeAmPm || "AM",
         {
           shouldValidate: true,
         }
       );
-      methods.setValue("readyTimeMinute", readyTimeMinute || "",
+      methods.setValue("readyTimeMinute", readyTimeMinute || "00",
         {
           shouldValidate: true,
         }
       );
-      methods.setValue("closeTimeHour", closeTimeHour || "",
+      methods.setValue("closeTimeHour", closeTimeHour || "00",
         {
           shouldValidate: true,
         }
       );
-      methods.setValue("closeTimeAmPm", closeTimeAmPm || "",
+      methods.setValue("closeTimeAmPm", closeTimeAmPm || "PM",
         {
           shouldValidate: true,
         }
       );
-      methods.setValue("closeTimeMinute", closeTimeMinute || "",
+      methods.setValue("closeTimeMinute", closeTimeMinute || "00",
         {
           shouldValidate: true,
         }
@@ -419,24 +431,24 @@ export const ShippingAddressSection = forwardRef(({ quoteType, shipmentType, typ
       setTimeout(() => {
         methods.setValue(
           "address.state",
-          quoteAddress.address.state || "",
+          (isAddressFromAddressBook ? quoteAddress.address.state : quoteAddress.state) || "",
           {
             shouldValidate: true,
             shouldDirty: true,
           }
         );
-      }, 0);
+      }, 10);
 
       setTimeout(() => {
         methods.setValue(
           "address.country",
-          quoteAddress?.address?.country || "",
+          (isAddressFromAddressBook ? quoteAddress?.address?.country : quoteAddress?.country) || "",
           {
             shouldValidate: true,
             shouldDirty: true,
           }
         );
-      }, 0);
+      }, 10);
 
 
     }

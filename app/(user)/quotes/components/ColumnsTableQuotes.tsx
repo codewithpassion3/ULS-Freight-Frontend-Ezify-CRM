@@ -194,7 +194,7 @@ export const columns: ColumnDef<any>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-max">
               <DropdownMenuItem className="cursor-pointer">
-                <Link className="flex gap-2 items-center w-full" href={row.original.shipment ? `/shipment?id=${row.original.id}` : `/quote?id=${row.original.id}`}>
+                <Link className="flex gap-2 items-center w-full" href={row.original.shipment ? `/shipment?id=${row.original.id}` : `/shipment?id=${row.original.id}&mode=conversion`}>
                   <CircleCheck size={14} /> Book Now
                 </Link>
 
@@ -206,7 +206,7 @@ export const columns: ColumnDef<any>[] = [
                 <Heart size={14} /> Add to Favorites
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer">
-                <Link className="flex gap-2 items-center w-full" href={row.original.shipment ? `/shipment?id=${row.original.id}` : `/quote?id=${row.original.id}`}>
+                <Link className="flex gap-2 items-center w-full" href={row.original.shipment ? `/shipment?id=${row.original.id}&mode=edit` : `/quote?id=${row.original.id}&mode=edit`}>
                   <Edit size={14} /> Edit
                 </Link>
               </DropdownMenuItem>

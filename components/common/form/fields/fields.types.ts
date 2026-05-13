@@ -17,6 +17,7 @@ export type FormFieldTypes = {
     tooltipIcon?: React.ReactNode;
     tooltipMessage?: string
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+    defaultValue?: string | number
 }
 export type FormSelectTypes = {
     name: string;
