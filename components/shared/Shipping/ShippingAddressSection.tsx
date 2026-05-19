@@ -235,7 +235,7 @@ export const ShippingAddressSection = forwardRef(({ step, setStep, quoteType, sh
       );
     }
     if (showLocationType) {
-      methods.setValue("address.locationTypeId", contact?.locationTypeId as any || "",
+      methods.setValue("address.locationTypeId", contact?.locationTypeId as any || null,
         {
           shouldValidate: true,
         }
@@ -367,6 +367,10 @@ export const ShippingAddressSection = forwardRef(({ step, setStep, quoteType, sh
     const quoteAddress = cachedSingleQuote.quote.addresses[index];
     const isAddressBookEntry = cachedSingleQuote.quote.addresses[index]?.id;
 
+    console.log("QUOTE LOCATION TYPE:", {
+      root: quoteAddress?.locationTypeId,
+      nested: quoteAddress?.address?.locationTypeId,
+    });
 
     if (quoteAddress) {
       console.log("THIS IS QUOTE ADDRESS!!!!!", addressLocked)
@@ -385,7 +389,8 @@ export const ShippingAddressSection = forwardRef(({ step, setStep, quoteType, sh
           city: (isAddressFromAddressBook) ? quoteAddress?.address?.city : quoteAddress?.city || "",
           country: (isAddressFromAddressBook) ? quoteAddress?.address?.country : quoteAddress?.country || "",
           state: (isAddressFromAddressBook) ? quoteAddress?.address?.state : quoteAddress?.state || "", // important
-          ...(showLocationType && { locationTypeId: quoteAddress?.locationTypeId }),
+          // ...(showLocationType && { locationTypeId: quoteAddress?.locationTypeId }),
+          locationTypeId: quoteAddress?.locationTypeId
         },
         ...(isShipment && { companyName: quoteAddress.companyName }),
         ...(isShipment && { contactId: quoteAddress.contactId }),
@@ -396,6 +401,19 @@ export const ShippingAddressSection = forwardRef(({ step, setStep, quoteType, sh
         ...(isShipment && { phoneNumber: quoteAddress.phoneNumber }),
 
       });
+      if (showLocationType) {
+        setTimeout(() => {
+          methods.setValue(
+            "address.locationTypeId",
+            quoteAddress?.locationTypeId ||
+            null,
+            {
+              shouldValidate: true,
+              shouldDirty: true,
+            }
+          );
+        }, 10);
+      }
       methods.setValue("type", type);
       // @ts-ignore
       // const fetchedShipDate = cachedSingleQuote.quote.shipment.shipDate;

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { X } from "lucide-react";
+import { useEffect } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 
 export function FTLPackageDimensions() {

@@ -47,7 +47,7 @@ export function LanguageToggle() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="text-sm font-medium text-black dark:text-white hover:text-primary/80 flex items-center gap-2 px-2"
+          className="text-sm font-medium text-black dark:text-white hover:text-primary/80 flex items-center gap-2 px-2 border border-primary/10"
         >
           <Globe className="h-4 w-4" />
           <span className="hidden sm:inline">

@@ -24,8 +24,8 @@ export default function PromoBannerWidget() {
                                 <Image
                                     src="/enorth-logo.svg"
                                     alt="Logo"
-                                    width={60}
-                                    height={40}
+                                    width={80}
+                                    height={80}
                                 />
 
                                 <Button>Learn More</Button>

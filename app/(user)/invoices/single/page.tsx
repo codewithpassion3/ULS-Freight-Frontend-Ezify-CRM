@@ -355,7 +355,7 @@ export default function SingleInvoicePage() {
                 onOpenChange={setIsPayModalOpen}
                 amount={MOCK_INVOICE.charges.totalDue}
                 currency={MOCK_INVOICE.currency}
-                invoiceId={invoiceId}
+                invoiceId={invoiceId || ""}
             />
         </div>
     )
