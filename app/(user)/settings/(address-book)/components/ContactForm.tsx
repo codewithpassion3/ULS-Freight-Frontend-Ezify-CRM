@@ -10,7 +10,7 @@ import { contactSchema } from "../schemas/addContact.schema"
 import { useEffect, useMemo } from "react"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
 import z from "zod"
-import { COUNTRIES, PROVINCES } from "@/shared-date/geo.data"
+import { COUNTRIES, PROVINCES } from "@/shared-data/geo.data"
 
 
 export function ContactForm({
@@ -37,6 +37,17 @@ export function ContactForm({
         )
     }, {
         message: "All time fields are required",
+    }).refine(data => {
+        const ready =
+            `${data.readyTimeHour}:${data.readyTimeMinute}:${data.readyTimeAmPm}`
+
+        const close =
+            `${data.closeTimeHour}:${data.closeTimeMinute}:${data.closeTimeAmPm}`
+
+        return ready !== close
+    }, {
+        message: "Ready time and close time cannot be the same",
+        path: ["closeTimeHour"],
     })
     type AddAddressSchemaTypes = z.infer<typeof addAddressSchema>
     const methods = useForm<AddAddressSchemaTypes>({

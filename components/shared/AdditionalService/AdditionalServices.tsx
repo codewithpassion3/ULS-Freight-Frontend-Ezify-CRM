@@ -19,9 +19,9 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { FormInput } from "@/components/common/forms/FormInput"
 import DangerousGoodsForm from "../Dimensions/DangerousGoodDetails"
-import { LIMITED_ACCESS_LOCATIONS } from "@/shared-date/shipment.data"
+import { LIMITED_ACCESS_LOCATIONS } from "@/shared-data/shipment.data"
 
-const AdditionalServices = forwardRef(({ shipmentType, quoteType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions], quoteType: "SPOT" | "STANDARD" }, ref) => {
+const AdditionalServices = forwardRef(({ shipmentType, quoteType, onChange }: { shipmentType: ShipmentOptions[keyof ShipmentOptions], quoteType: "SPOT" | "STANDARD", onChange?: (data: any) => void }, ref) => {
     const additionalServicesSchema = z.object({
         limitedAccess: z.boolean().optional(),
         inBondCheckbox: z.boolean().optional(),
@@ -70,6 +70,16 @@ const AdditionalServices = forwardRef(({ shipmentType, quoteType }: { shipmentTy
             }
         }
     })
+
+    useEffect(() => {
+        const subscription = methods.watch((value) => {
+            if (onChange) {
+                onChange(value);
+            }
+        });
+        return () => subscription.unsubscribe();
+    }, [methods, onChange]);
+
     const { watch, setValue, getValues } = methods
     const [isOpen, setIsOpen] = useState(false)
     useImperativeHandle(ref, () => ({
@@ -187,7 +197,7 @@ const AdditionalServices = forwardRef(({ shipmentType, quoteType }: { shipmentTy
                                             },
                                             // services.appointmentDelivery
                                             {
-                                                name: "appointmentDelivery",
+                                                name: "services.appointmentDelivery",
                                                 label: "Appointment Delivery",
                                                 type: "checkbox",
                                                 defaultValue: false,
@@ -195,7 +205,7 @@ const AdditionalServices = forwardRef(({ shipmentType, quoteType }: { shipmentTy
                                             },
                                             // services.thresholdDelivery
                                             {
-                                                name: "thresholdDelivery",
+                                                name: "services.thresholdDelivery",
                                                 label: "Threshold Delivery",
                                                 type: "checkbox",
                                                 defaultValue: false,
@@ -203,7 +213,7 @@ const AdditionalServices = forwardRef(({ shipmentType, quoteType }: { shipmentTy
                                             },
                                             // services.thresholdPickup
                                             {
-                                                name: "thresholdPickup",
+                                                name: "services.thresholdPickup",
                                                 label: "Threshold Pickup",
                                                 type: "checkbox",
                                                 defaultValue: false,
@@ -211,7 +221,7 @@ const AdditionalServices = forwardRef(({ shipmentType, quoteType }: { shipmentTy
                                             },
                                             // services.protectFromFreeze
                                             {
-                                                name: "protectFromFreeze",
+                                                name: "services.protectFromFreeze",
                                                 label: "Protect From Freeze",
                                                 type: "checkbox",
                                                 defaultValue: false,
@@ -221,7 +231,7 @@ const AdditionalServices = forwardRef(({ shipmentType, quoteType }: { shipmentTy
                                             },
                                             // services.tradeShowDelivery
                                             {
-                                                name: "tradeShowDelivery",
+                                                name: "services.tradeShowDelivery",
                                                 label: "Trade Show Delivery",
                                                 type: "checkbox",
                                                 defaultValue: false,
@@ -229,7 +239,7 @@ const AdditionalServices = forwardRef(({ shipmentType, quoteType }: { shipmentTy
                                             },
                                             // services.amazonOrFbaDelivery
                                             {
-                                                name: "amazonOrFbaDelivery",
+                                                name: "services.amazonOrFbaDelivery",
                                                 label: "Amazon or FBA Delivery",
                                                 type: "checkbox",
                                                 defaultValue: false,
@@ -237,7 +247,7 @@ const AdditionalServices = forwardRef(({ shipmentType, quoteType }: { shipmentTy
                                             },
                                             // services.refrigeratedServices
                                             {
-                                                name: "refrigeratedServices",
+                                                name: "services.refrigeratedServices",
                                                 label: "Refrigerated Services",
                                                 type: "checkbox",
                                                 defaultValue: false,
@@ -247,7 +257,7 @@ const AdditionalServices = forwardRef(({ shipmentType, quoteType }: { shipmentTy
                                             },
                                             // Grocery/Retail Distribution Center
                                             {
-                                                name: "groceryRetailDistributionCenter",
+                                                name: "services.groceryRetailDistributionCenter",
                                                 label: "Grocery/Retail Distribution Center",
                                                 type: "checkbox",
                                                 defaultValue: false,

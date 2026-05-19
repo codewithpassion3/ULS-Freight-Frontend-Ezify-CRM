@@ -7,8 +7,8 @@ export default function PromoBannerWidget() {
         <div className="w-full max-w-3xl border rounded-md overflow-hidden">
 
             {/* Top Label */}
-            <div className="bg-[#0072BC] dark:bg-[#005085] text-white p-2 text-sm w-full">
-                <span className="rounded-2xl py-1 px-2 bg-white dark:bg-card text-[#0072BC] dark:text-white text-xs">
+            <div className="bg-primary dark:bg-[#005085] text-white p-2 text-sm w-full">
+                <span className="rounded-2xl py-1 px-2 bg-white dark:bg-card text-primary dark:text-white text-xs">
                     New White Glove Options
                 </span>
             </div>
@@ -22,7 +22,7 @@ export default function PromoBannerWidget() {
 
                             <div className="flex flex-col xl:flex-row items-center gap-4">
                                 <Image
-                                    src="/logo.png"
+                                    src="/enorth-logo.svg"
                                     alt="Logo"
                                     width={60}
                                     height={40}
@@ -50,7 +50,7 @@ export default function PromoBannerWidget() {
                 </CarouselContent>
 
                 <CarouselPrevious className="left-2 z-50" />
-  <CarouselNext className="right-2 z-50" />
+                <CarouselNext className="right-2 z-50" />
             </Carousel>
         </div>
     )

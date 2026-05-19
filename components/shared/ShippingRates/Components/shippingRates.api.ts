@@ -26,7 +26,9 @@ export class ShipmentApi {
         signal: AbortSignal,
         callbacks: StreamCallbacks
     ): Promise<void> {
-        const response = await fetch(`${this.baseUrl}/api/v1/shipment-carriers/rates/stream`, {
+        console.log("process.env.NEXT_PUBLIC_API_BASE_URL", process.env.NEXT_PUBLIC_API_BASE_URL);
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/shipment-carriers/rates/stream`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dto),

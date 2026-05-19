@@ -144,7 +144,7 @@ export default function NotificationsSummary() {
                             value="reminders"
                             className="bg-transparent flex items-center gap-1.5 text-slate-500 dark:text-slate-400 data-[state=active]:text-slate-800 dark:data-[state=active]:text-slate-200 data-[state=active]:border-b-2 data-[state=active]:border-b-orange-400 rounded-sm pb-2 -mb-[2px] shadow-none data-[state=active]:shadow-none! cursor-pointer! px-0"
                         >
-                            <Clock className="size-4 text-[#0072BC]" />
+                            <Clock className="size-4 text-primary" />
                             Reminders (0)
                         </TabsTrigger>
                     </TabsList>

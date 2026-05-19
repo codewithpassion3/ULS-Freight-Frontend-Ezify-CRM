@@ -8,6 +8,7 @@ import { ShipmentDocumentsWidget } from "./components/ShipmentDocumentsWidget";
 import { getSingleQuote } from "@/api/services/quotes.api";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
+import { Loader } from "@/components/common/Loader";
 
 export default function SingleShipmentTrackingPage() {
   // Using static mock data directly inside the components for now to match the provided UI layout
@@ -23,14 +24,20 @@ export default function SingleShipmentTrackingPage() {
     enabled: true
   })
   console.log("quote", quote)
-
+  if (isLoading || isPending) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader />
+      </div>
+    )
+  }
   return (
     <div className="container mx-auto p-4 md:p-6 lg:p-8 bg-slate-50/50 min-h-screen">
-      <ShipmentHeader quote={quote?.quote} />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Main Content Column */}
         <div className="lg:col-span-8 flex flex-col">
+          <ShipmentHeader quote={quote?.quote} />
           <ShipmentDetailsCard quote={quote?.quote} />
           <ShipmentBreakdownCard quote={quote?.quote} />
           <PackagingDetailsCard quote={quote?.quote} />

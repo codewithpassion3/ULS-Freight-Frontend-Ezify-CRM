@@ -63,7 +63,7 @@ type AddPackageProps = {
     open: boolean;
     setOpen: (open: boolean) => void;
 };
-export const normalText = (text: string) => text?.toLowerCase().replace("_", " ");
+export const normalText = (text: string) => text?.toLowerCase().replaceAll("_", " ");
 
 export default function AddPackage({ id, shipmentType, initialData, onSave, children, open, setOpen }: AddPackageProps) {
     // Determine Add or Edit mode

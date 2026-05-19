@@ -99,7 +99,7 @@ export default function ClaimsDashboardPage() {
                                 />
                                 <Button
                                     type="button"
-                                    className="rounded-l-none bg-[#0070c0] hover:bg-[#005999] px-3"
+                                    className="rounded-l-none bg-primary hover:bg-[#005999] px-3"
                                 >
                                     <Search size={16} />
                                 </Button>
@@ -153,7 +153,7 @@ export default function ClaimsDashboardPage() {
                                 />
                                 <Button
                                     type="button"
-                                    className="rounded-l-none bg-[#0070c0] hover:bg-[#005999] px-3"
+                                    className="rounded-l-none bg-primary hover:bg-[#005999] px-3"
                                 >
                                     <Search size={16} />
                                 </Button>

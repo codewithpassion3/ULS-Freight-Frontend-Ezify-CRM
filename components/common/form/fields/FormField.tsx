@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useFieldController } from "../useFieldController"
 import { FormFieldTypes } from "./fields.types"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import InfoToolTip from "../../tooltip/InfoToolTip"
 
 const FormField = memo(({ field: config }: { field: FormFieldTypes }) => {
     if (!config) return null  // safely skip undefined
@@ -35,7 +36,7 @@ const FormField = memo(({ field: config }: { field: FormFieldTypes }) => {
         }
     }
     return (
-        <div className={config.wrapperClassName}>
+        <div className={config.wrapperClassName || "w-full"}>
             <div className={`flex flex-col gap-2 ${config.className}`}>
                 <div className="flex gap-2">
                     <Label htmlFor={config.name} className={`${error ? "text-red-500" : ""} ${config.labelClassName}`}>
@@ -43,16 +44,11 @@ const FormField = memo(({ field: config }: { field: FormFieldTypes }) => {
                     </Label>
                     {/* info tooltip to show what is input is about */}
                     {(config.tooltipIcon || config.tooltipMessage) &&
-                        <TooltipProvider>
-                            <Tooltip >
-                                <TooltipTrigger className="cursor-pointer">
-                                    {config.tooltipIcon || <Info />}
-                                </TooltipTrigger>
-                                <TooltipContent side="bottom" className="shadow-lg">
-                                    <p>{config.tooltipMessage}</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>}
+                        <InfoToolTip
+                            tooltipIcon={config.tooltipIcon}
+                            message={config.tooltipMessage}
+                        />
+                    }
                 </div>
                 {config.type !== "textarea" ? <div className="relative">
                     <Input

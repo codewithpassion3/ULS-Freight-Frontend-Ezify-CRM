@@ -1,3 +1,4 @@
+import { ShipmentSurchargesResponse } from "@/types/api/payment.types";
 import apiClient from "../client";
 
 export const createIntent = async (customerId: string) => {
@@ -12,5 +13,10 @@ export const getCards = async () => {
 
 export const topupWallet = async (payload: any) => {
     const response = await apiClient.post("/payments/charge", payload);
+    return response.data;
+};
+// create surcharges
+export const createSurcharges = async (payload: ShipmentSurchargesResponse) => {
+    const response = await apiClient.post("/surcharges", payload);
     return response.data;
 };

@@ -67,14 +67,14 @@ export function ShippingRatesTable(
     //     },
     //     // "tst": {
     //     //     "from": {
-    //     //         "name": "ULS Freight",
+    //     //         "name": "ENorth Logistics",
     //     //         "address": "123 Main St",
     //     //         "postalCode": "M5V3A8",
     //     //         "city": "Toronto",
     //     //         "state": "ON"
     //     //     },
     //     //     "to": {
-    //     //         "name": "ULS Freight",
+    //     //         "name": "ENorth Logistics",
     //     //         "address": "456 Hollywood Blvd",
     //     //         "postalCode": "48226",
     //     //         "city": "Detroit",
@@ -110,14 +110,14 @@ export function ShippingRatesTable(
         },
         "tst": {
             "from": {
-                "name": "ULS Freight",
+                "name": "ENorth Logistics",
                 "address": "123 Main St",
                 "postalCode": "M5V3A8",
                 "city": "Toronto",
                 "state": "ON"
             },
             "to": {
-                "name": "ULS Freight",
+                "name": "ENorth Logistics",
                 "address": "456 Hollywood Blvd",
                 "postalCode": "48226",
                 "city": "Detroit",

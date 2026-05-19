@@ -23,41 +23,70 @@ export function CarrierCard({ result, index, selectedCarrier, setSelectedCarrier
     const quotes = JSON.stringify(result.quotes);
     const carrierName = result?.carrier || null;
 
+    const quotesList = Array.isArray(result?.quotes)
+        ? result.quotes
+        : result?.quotes
+            ? [result.quotes]
+            : [];
+
+    const isSelected = (quote: any) => {
+        return selectedCarrier?.carrier === result.carrier && selectedCarrier?.serviceType === quote.serviceType;
+    };
+
+    function getCarrierImg(carrierName: string) {
+        switch (carrierName?.toLowerCase()) {
+            case "fedex":
+                return <Image
+                    src="/FedExFreight.svg"
+                    width={80}
+                    height={80}
+                    alt="FedEx"
+                />;
+            case "tst":
+                return <Image
+                    src="/tst.png"
+                    width={80}
+                    height={80}
+                    alt="TST"
+                />;
+            case "tforce":
+                return <Image
+                    src="/tforce.png"
+                    width={80}
+                    height={80}
+                    alt="TForce"
+                />;
+            default:
+                return <Image
+                    src="/tst.png"
+                    width={80}
+                    height={80}
+                    alt="TST"
+                />;
+        }
+    }
+
     console.log(result);
     return (
 
         <>
 
             {isError ? (
-                // <TableRow>
-                //     <TableCell colSpan={5}>
-                //         <code className="text-red-500 text-sm">
-                //             {result.error}
-                //         </code>
-                //     </TableCell>
-                // </TableRow>
-                ""
-            ) : result?.quotes?.length ? (
-                result.quotes.map((quote: any, index: number) => (
-                    <TableRow key={index} className={selectedCarrier?.carrier === quote.carrier ? "border-primary bg-primary/10" : ""}>
+                <TableRow>
+                    <TableCell colSpan={5}>
+                        <code className="text-red-500 text-sm">
+                            {result.error}
+                        </code>
+                    </TableCell>
+                </TableRow>
+                // ""
+            ) : quotesList.length > 0 ? (
+                quotesList.map((quote: any, index: number) => (
+                    <TableRow key={index} className={isSelected(quote) ? "border-primary bg-primary/10" : ""}>
                         {/* Carrier */}
                         <TableCell>
                             <div className="h-16 w-16 flex items-center justify-center">
-                                {carrierName === "fedex" ? (
-                                    <Image
-                                        src="/FedExFreight.svg"
-                                        width={80}
-                                        height={80}
-                                        alt="FedEx"
-                                    />
-                                ) : (
-                                    <Image
-                                        src="/tst.png"
-                                        width={80}
-                                        height={80}
-                                        alt="TST"
-                                    />
-                                )}
+                                {getCarrierImg(result.carrier)}
                             </div>
                         </TableCell>
 
@@ -82,12 +111,12 @@ export function CarrierCard({ result, index, selectedCarrier, setSelectedCarrier
                         {/* Action */}
                         <TableCell className="cursor-pointer" >
                             <Button
-                                variant={selectedCarrier?.carrier === quote.carrier ? "default" : "outline"}
+                                variant={isSelected(quote) ? "default" : "outline"}
                                 onClick={() => {
                                     setSelectedCarrier(quote)
                                 }}
                             >
-                                {selectedCarrier?.carrier === quote.carrier ? "Selected" : "Select"}
+                                {isSelected(quote) ? "Selected" : "Select"}
                             </Button>
                         </TableCell>
                     </TableRow>

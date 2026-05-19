@@ -20,13 +20,13 @@ interface ReqItem {
 export const NmfcCodeRequestModal = () => {
     const [open, setOpen] = useState(false)
     const [unit, setUnit] = useState<"IMPERIAL" | "METRIC">("IMPERIAL")
-    
+
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [company, setCompany] = useState("")
     const [phone, setPhone] = useState("")
     const [ext, setExt] = useState("")
-    
+
     const [items, setItems] = useState<ReqItem[]>([
         { id: Date.now(), length: "", width: "", height: "", weight: "", commodity: "" }
     ])
@@ -52,7 +52,7 @@ export const NmfcCodeRequestModal = () => {
     const addItem = () => {
         setItems([...items, { id: Date.now(), length: "", width: "", height: "", weight: "", commodity: "" }])
     }
-    
+
     const duplicateAllAsFirst = () => {
         if (items.length > 0) {
             const first = items[0]
@@ -84,7 +84,7 @@ export const NmfcCodeRequestModal = () => {
                         NMFC Code Request Form
                     </DialogTitle>
                 </DialogHeader>
-                
+
                 <form onSubmit={handleSubmit}>
                     <div className="p-6 md:p-8 overflow-y-auto max-h-[75vh] bg-slate-50/50">
                         <div className="bg-white border rounded-lg p-6 shadow-sm mb-6 space-y-6">
@@ -191,7 +191,7 @@ export const NmfcCodeRequestModal = () => {
                         <Button type="button" variant="outline" onClick={() => setOpen(false)} className="w-full sm:w-32 bg-white border-slate-300">
                             Cancel
                         </Button>
-                        <Button type="submit" className="w-full sm:w-32 bg-[#0070c0] hover:bg-[#005f9e] text-white">
+                        <Button type="submit" className="w-full sm:w-32 bg-primary hover:bg-[#005f9e] text-white">
                             Submit
                         </Button>
                     </DialogFooter>

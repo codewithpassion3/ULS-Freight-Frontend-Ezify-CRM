@@ -6,12 +6,12 @@ import { useFieldController } from "../useFieldController"
 import { Input } from "@/components/ui/input"
 import { FormTimeProps } from "./fields.types"
 
-const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
+const FormTime = memo(({ field: config, wrapperClassName }: { field: FormTimeProps, wrapperClassName?: string }) => {
     const { field: hourField, error: hourError } = useFieldController(config.hourName)
     const { field: minuteField, error: minuteError } = useFieldController(config.minuteName)
     const { field: ampmField, error: ampmError } = useFieldController(config.ampmName)
     return (
-        <div className="space-y-2">
+        <div className={`${config.wrapperClassName} space-y-2`}>
             <Label className="text-xs text-muted-foreground font-medium">
                 {config.label}
             </Label>
@@ -43,7 +43,7 @@ const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
                     //     }
                     // }}
                     // hide control buttons
-                    className={`w-14 px-2 text-center ${hourError ? "border-red-500" : ""} [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
+                    className={`w-9 px-2 text-center ${hourError ? "border-red-500" : ""} [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
                     value={hourField.value ?? ""}
                     disabled={config.disabled}
                 />
@@ -74,7 +74,7 @@ const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
                     //         minuteField.onChange(value)
                     //     }
                     // }}
-                    className={`w-14 px-2 text-center ${minuteError ? "border-red-500" : ""} [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
+                    className={`w-9 px-2 text-center ${minuteError ? "border-red-500" : ""} [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
                     value={minuteField.value ?? ""}
                     disabled={config.disabled}
                 />
@@ -84,7 +84,7 @@ const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
                     <button
                         type="button"
                         onClick={() => ampmField.onChange("AM")}
-                        className={`px-3 py-2 text-xs font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${ampmField.value === "AM"
+                        className={`px-2 py-2 text-xs font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${ampmField.value === "AM"
                             ? "bg-muted text-[#4aa0e3]"
                             : "hover:bg-muted/50"
                             }`}
@@ -95,7 +95,7 @@ const FormTime = memo(({ field: config }: { field: FormTimeProps }) => {
                     <button
                         type="button"
                         onClick={() => ampmField.onChange("PM")}
-                        className={`px-3 py-2 text-xs font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${ampmField.value === "PM"
+                        className={`px-2 py-2 text-xs font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${ampmField.value === "PM"
                             ? "bg-muted text-[#4aa0e3]"
                             : "hover:bg-muted/50"
                             } ${ampmError ? "border-red-500" : ""}`}

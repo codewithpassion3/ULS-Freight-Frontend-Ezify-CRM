@@ -50,7 +50,7 @@ export function AddressBookTable({ handleSelect, type }: { handleSelect?: (conta
                             <Button
                                 size="sm"
                                 onClick={() => handleSelect(props.row.original)}
-                                className="bg-[#0070c0] hover:bg-[#005999]"
+                                className="bg-primary hover:bg-[#005999]"
                             >
                                 Select
                             </Button>
@@ -63,12 +63,13 @@ export function AddressBookTable({ handleSelect, type }: { handleSelect?: (conta
         })
     }
 
+
     return (
         <div className="flex justify-center items-center">
             {isLoading || isPending || isLoadingRecent || isPendingRecent ? (
                 <Loader className="h-full" />
             ) : (
-                addressBook?.data.length > 0 ?
+                addressBook?.data.filter((address: any) => !address.isTemporary).length > 0 ?
                     <div className="w-full">
                         <div className="flex items-center gap-2 my-2">
                             <UserSquare2 className="h-6 w-6 text-primary" />
@@ -93,7 +94,7 @@ export function AddressBookTable({ handleSelect, type }: { handleSelect?: (conta
                                 data={
                                     type === "recent"
                                         ? recentContacts?.data ?? []
-                                        : addressBook?.data ?? []
+                                        : addressBook?.data.filter((address: any) => !address.isTemporary) ?? []
                                 }
                                 sorting={sorting}
                                 // @ts-ignore

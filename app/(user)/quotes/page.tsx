@@ -49,7 +49,7 @@ export default function QuotesDashboardPage() {
         <h1 className="text-2xl font-bold mb-1">Quotes Dashboard</h1>
         {/* <p className="text-sm">
           <span className="text-[#0070c0] font-semibold flex items-center gap-1 cursor-pointer hover:underline">
-            <span className="bg-[#0070c0] text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">?</span>
+            <span className="bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">?</span>
             Click here
           </span>{" "}
           <span className="text-muted-foreground">for a quick tour</span>
@@ -89,7 +89,7 @@ export default function QuotesDashboardPage() {
                 />
                 <Button
                   type="button"
-                  className="rounded-l-none bg-[#0070c0] hover:bg-[#005999] px-3"
+                  className="rounded-l-none bg-primary hover:bg-[#005999] px-3"
                   onClick={() => { }}
                 >
                   <Search size={16} />

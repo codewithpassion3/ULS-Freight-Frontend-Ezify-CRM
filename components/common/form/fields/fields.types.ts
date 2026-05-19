@@ -88,6 +88,7 @@ export type FormTimeProps = {
     minuteName: string
     ampmName: string
     disabled?: boolean
+    wrapperClassName?: string;
 }
 
 export type FormFieldUnion = FormFieldTypes | FormSelectTypes | FormCheckboxTypes | FormRadioTypes | FormDateTypes | FormTimeProps

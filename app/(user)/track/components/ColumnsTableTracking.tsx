@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { CheckCircle, CircleCheck, Edit, Eye, Heart, MoreVertical, Trash2 } from "lucide-react"
+import { CheckCircle, CircleCheck, CircleDollarSign, Edit, Eye, Heart, MoreVertical, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query"
 import { addToFavorite, deleteQuote, removeFromFavorite } from "@/api/services/quotes.api"
@@ -18,6 +18,8 @@ import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
 import { normalText } from "../../packages/AddPackage"
 import Image from "next/image"
+import { AddSurchargesModal } from "../(AdditionalSurcharges)/AddSurchargesModal"
+import { useState } from "react"
 
 export const columns: ColumnDef<any>[] = [
   {
@@ -191,6 +193,7 @@ export const columns: ColumnDef<any>[] = [
         mutationRemoveFromFavorite.mutate(id)
       }
       const isFavorite = true
+      const [open, setOpen] = useState(false)
       return (
         <div className="flex items-center gap-4 w-max">
           <DropdownMenu>
@@ -198,6 +201,17 @@ export const columns: ColumnDef<any>[] = [
               <MoreVertical size={16} className="cursor-pointer" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-max">
+              {/* if role is admin enabled for testing for now */}
+              {true ?
+                <DropdownMenuItem className="cursor-pointer">
+                  <Button
+                    variant={"ghost"}
+                    className="w-full"
+                    onClick={() => setOpen(true)}
+                  >
+                    <CircleDollarSign size={14} /> Add Surcharges
+                  </Button>
+                </DropdownMenuItem> : ""}
               <DropdownMenuItem className="cursor-pointer">
                 <Link className="flex gap-2 items-center w-full" href={`/track/single?id=${row.original.id}`}>
                   {/* view */}
@@ -207,6 +221,11 @@ export const columns: ColumnDef<any>[] = [
 
             </DropdownMenuContent>
           </DropdownMenu>
+          <AddSurchargesModal
+            bookedShipment={row.original}
+            open={open}
+            onOpenChange={(open) => setOpen(open)}
+          />
         </div>
       )
     },

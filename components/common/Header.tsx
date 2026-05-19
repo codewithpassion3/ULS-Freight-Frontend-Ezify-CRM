@@ -32,7 +32,7 @@ export default function Header() {
     const { user } = useAuth();
     const pathname = usePathname();
 
-    const userPermissions = user?.user?.permissions.map( (permission: Record<string, any>) => permission.name);
+    const userPermissions = user?.user?.permissions.map((permission: Record<string, any>) => permission.name);
 
     return (
         <header className="w-full  fixed bg-white/10 backdrop-blur-md border-b border-b-black/20 dark:border-b-white/20 z-10">
@@ -41,10 +41,10 @@ export default function Header() {
                 <div className="flex items-center gap-6">
                     <Link href="/">
                         <Image
-                            src="/logo.png"
+                            src="/enorth-logo.svg"
                             alt="logo"
-                            width={100}
-                            height={100}
+                            width={200}
+                            height={200}
                             unoptimized
                         />
                     </Link>
@@ -55,7 +55,7 @@ export default function Header() {
                         <NavigationMenuList>
 
                             {navItems.map((item) => (
-                                
+
                                 <NavigationMenuItem key={item.title}>
 
                                     {!item.items ? (

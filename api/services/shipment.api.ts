@@ -2,6 +2,7 @@ import axios from "axios";
 import apiClient from "../client";
 
 export const createShipment = async (payload: any) => {
+    console.log(payload)
     const response = await apiClient.post("/shipments", payload);
     return response.data;
 };

@@ -16,7 +16,7 @@ import { Controller, useForm, useFormContext } from "react-hook-form"
 import { registerSchema, RegisterSchemaTypes } from "@/lib/validations/auth/register-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
-import { COUNTRIES, PROVINCES } from "@/shared-date/geo.data"
+import { COUNTRIES, PROVINCES } from "@/shared-data/geo.data"
 
 interface Step2FormProps {
   onNext: () => void
@@ -117,14 +117,14 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
           type="button"
           variant="outline"
           onClick={onBack}
-          className="text-[#0070c0] border border-[#0070c0] hover:bg-[#0070c0]/10 bg-transparent px-8"
+          className="text-[#0070c0] border border-[#0070c0] hover:bg-primary/10 bg-transparent px-8"
         >
           Previous Step
         </Button>
         <Button
           onClick={handleNext}
           // type="submit"
-          className="bg-[#0070c0] hover:bg-[#005999] text-white px-8"
+          className="bg-primary hover:bg-[#005999] text-white px-8"
         >
           Next Step
         </Button>

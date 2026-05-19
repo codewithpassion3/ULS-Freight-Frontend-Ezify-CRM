@@ -160,7 +160,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
               placeholder: "Enter your sign up code",
               type: "text",
               tooltipIcon: <CircleQuestionMark size={16} />,
-              tooltipMessage: "If you were provided a code from ULS Freight Management or a partner, please enter it here."
+              tooltipMessage: "If you were provided a code from ENorth Logistics Management or a partner, please enter it here."
             },
             {
               name: "user.freightBroker",
@@ -310,7 +310,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
           disabled={form.formState.isSubmitting}
           // type="submit"
           onClick={handleNext}
-          className="bg-[#0070c0] hover:bg-[#005999] text-white px-8 py-2">
+          className="bg-primary hover:bg-[#005999] text-white px-8 py-2">
           Next Step
         </Button>
       </div>

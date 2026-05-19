@@ -141,8 +141,8 @@ export default function ULSWalletSettings() {
 
   console.log(user.user)
   const handleAddCard = () => {
-    if (user.user.stripeCustomerId) {
-      createPaymentIntent(user.user.stripeCustomerId)
+    if (user?.user?.stripeCustomerId) {
+      createPaymentIntent(user?.user?.stripeCustomerId)
       setIsAddCardModalOpen(true);
     }
 
@@ -231,7 +231,7 @@ export default function ULSWalletSettings() {
               Primary Card
             </div> */}
               <div className="border-2 border-primary bg-blue-50 rounded-lg p-4 relative overflow-hidden">
-                <div className="font-bold text-slate-700 text-sm mb-4">ULS FREIGHT CARD</div>
+                <div className="font-bold text-slate-700 text-sm mb-4">ENorth Logistics CARD</div>
                 <div className="flex justify-between items-end">
                   <div className="text-2xl font-italic text-primary font-bold italic capitalize">{user?.user?.company?.savedCards[user?.user?.company?.savedCards.length - 1]?.brand}</div>
                   <div className="text-right">

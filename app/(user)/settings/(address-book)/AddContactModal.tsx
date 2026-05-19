@@ -38,7 +38,7 @@ export function AddContactModal() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2 border-[#0070c0] text-[#0070c0] bg-transparent hover:bg-[#0070c0]/10 w-full sm:w-auto">
+                <Button variant="outline" className="flex items-center gap-2 border-[#0070c0] text-[#0070c0] bg-transparent hover:bg-primary/10 w-full sm:w-auto">
                     <span className="text-xl leading-none font-medium mb-0.5">+</span> Add New Contact
                 </Button>
             </DialogTrigger>
@@ -68,7 +68,7 @@ export function AddContactModal() {
                     </DialogClose>
                     <Button
                         disabled={mutation.isPending}
-                        type="submit" form="contact-form" className="bg-[#0070c0] hover:bg-[#005999] text-white w-[140px]">
+                        type="submit" form="contact-form" className="bg-primary hover:bg-[#005999] text-white w-[140px]">
                         {mutation.isPending ? <Loader2 className="animate-spin" /> : ""}
                         Save Contact
                     </Button>

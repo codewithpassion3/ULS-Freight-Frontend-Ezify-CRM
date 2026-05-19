@@ -25,7 +25,7 @@ export function SideBar({ currentStep, setCurrentStep, onSubmit, setQuoteStatus,
                     <div className="absolute left-4 top-5 bottom-8 w-px bg-slate-200 dark:bg-slate-800 z-0 hidden lg:block"></div>
                     <div className="space-y-6 relative z-10">
                         <div className={`flex items-center gap-3 ${currentStep >= 1 ? "text-[#0070c0] font-medium" : "text-muted-foreground"}`}>
-                            <div className={`p-1 rounded-full flex items-center justify-center text-xs ${currentStep === 1 ? 'bg-[#0070c0] text-white' : 'border-2 border-[#0070c0] text-[#0070c0] bg-white'}`}>
+                            <div className={`p-1 rounded-full flex items-center justify-center text-xs ${currentStep === 1 ? 'bg-primary text-white' : 'border-2 border-[#0070c0] text-[#0070c0] bg-white'}`}>
                                 {currentStep > 1 ? <Check size={10} /> : <ArrowRight size={12} />}
                             </div>
                             <div className="flex justify-between w-full items-center">
@@ -37,7 +37,7 @@ export function SideBar({ currentStep, setCurrentStep, onSubmit, setQuoteStatus,
                         <div className={`flex items-center gap-3 ${currentStep >= 2 ? "text-[#0070c0] font-medium" : "text-muted-foreground"}`}>
                             <div className={`w-5 h-5 flex shrink-0 items-center justify-center ${currentStep === 2 ? 'text-[#0070c0]' : 'text-muted-foreground'}`}>
                                 {currentStep === 2 ?
-                                    <div className="bg-[#0070c0] text-white rounded-full p-1"><ArrowRight size={12} /></div> :
+                                    <div className="bg-primary text-white rounded-full p-1"><ArrowRight size={12} /></div> :
                                     <div className="border border-muted-foreground/30 text-muted-foreground/30 rounded-full p-1 bg-white dark:bg-transparent">
                                         <Package size={12} />
                                     </div>

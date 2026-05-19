@@ -7,9 +7,9 @@ export function ShipmentDocumentsWidget({ quote }: { quote?: any }) {
   if (!quote) return null;
 
   return (
-    <Card className="rounded-sm shadow-sm border-slate-200">
+    <Card className="rounded-sm pt-0 shadow-sm border-slate-200">
       <CardHeader className="bg-slate-50 py-3 px-4 border-b">
-        <CardTitle className="text-sm font-semibold">
+        <CardTitle className="text-xl">
           Shipment Documents
         </CardTitle>
       </CardHeader>
@@ -22,7 +22,7 @@ export function ShipmentDocumentsWidget({ quote }: { quote?: any }) {
         <div className="space-y-4 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Checkbox id="shipping-label" />
+              <Checkbox id="shipping-label" disabled />
               <label
                 htmlFor="shipping-label"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -30,9 +30,9 @@ export function ShipmentDocumentsWidget({ quote }: { quote?: any }) {
                 Shipping Label
               </label>
             </div>
-            <a href="#" className="flex items-center text-primary font-medium text-xs hover:underline">
+            <Button variant="link" disabled>
               View/Download
-            </a>
+            </Button>
           </div>
 
           <div className="flex items-center justify-between">
@@ -45,9 +45,9 @@ export function ShipmentDocumentsWidget({ quote }: { quote?: any }) {
                 Order Summary
               </label>
             </div>
-            <a href="#" className="flex items-center text-primary font-medium text-xs hover:underline">
+            <Button variant="link">
               View/Download
-            </a>
+            </Button>
           </div>
         </div>
 

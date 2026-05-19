@@ -114,14 +114,14 @@ export function Step3Form({ onBack, isPending }: Step3FormProps) {
           type="button"
           variant="outline"
           onClick={onBack}
-          className="w-full sm:w-max text-[#0070c0] border border-[#0070c0] hover:bg-[#0070c0]/10 bg-transparent px-8"
+          className="w-full sm:w-max text-[#0070c0] border border-[#0070c0] hover:bg-primary/10 bg-transparent px-8"
         >
           Previous Step
         </Button>
         <Button
           type="submit"
           disabled={!isValid || isPending}
-          className="w-full sm:w-max bg-[#0070c0] hover:bg-[#005999] text-white px-8"
+          className="w-full sm:w-max bg-primary hover:bg-[#005999] text-white px-8"
         >
           {isPending ? <Loader2 className="animate-spin" /> : ""}
           Finish Registration

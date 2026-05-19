@@ -209,7 +209,7 @@ export function CreateReminderDialog({ children }: Props) {
                             <Button
                                 type="submit"
                                 disabled={!isValid || createReminderMutation.isPending}
-                                className="bg-[#0072BC] hover:bg-[#005f9e] text-white font-semibold flex-1 max-w-[180px]"
+                                className="bg-primary hover:bg-[#005f9e] text-white font-semibold flex-1 max-w-[180px]"
                             >
                                 Create Reminder
                             </Button>

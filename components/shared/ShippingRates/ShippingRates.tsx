@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ShippingRatesTable } from "./ShippingRatesTable";
 import { ShippingRatesStream } from "./ShippingRatesStream";
+import { useSearchParams } from "next/navigation";
 // shipping rates table component
 export default function ShippingRates({
     dimensions,
@@ -99,6 +100,10 @@ export default function ShippingRates({
     //     // }]
     //     "packages": dimensionsPayload()
     // }
+    // get id from search params
+    const searchParams = useSearchParams()
+    const id = searchParams.get("id")
+
     const payload = {
         "quoteType": "STANDARD",
         "fedex": {
@@ -108,26 +113,38 @@ export default function ShippingRates({
                 "isResidential": true
             },
             "to": {
-                "postalCode": "90210",
-                "countryCode": "US",
+                "postalCode": "M5V3A8",
+                "countryCode": "CA",
                 "isResidential": true
             }
         },
         "tst": {
             "from": {
-                "name": "ULS Freight",
+                "name": "ENorth Logistics",
                 "address": "123 Main St",
                 "postalCode": "M5V3A8",
                 "city": "Toronto",
                 "state": "ON"
             },
             "to": {
-                "name": "ULS Freight",
+                "name": "ENorth Logistics",
                 "address": "456 Hollywood Blvd",
                 "postalCode": "48226",
                 "city": "Detroit",
                 "state": "MI"
             }
+
+            // "quoteId": id || 1,
+            // "carrier": "TST",
+            // "shipDate": "2026-07-24",
+            // "selectedRate": {
+            //     "serviceType": "ST",
+            //     "serviceName": "Standard LTL",
+            //     "packagingType": "SKD",
+            //     "totalCharge": 245.50,
+            //     "currency": "CAD",
+            //     "transitDays": 2
+            // }
         },
         "tforce": {
             "from": {
@@ -147,7 +164,7 @@ export default function ShippingRates({
         },
         "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
         "rateRequestType": ["LIST"],
-        "serviceType": "FEDEX_EXPRESS_SAVER",
+        // "serviceType": "FEDEX_EXPRESS_SAVER",
         "services": {
             "limitedAccess": {},
             "tradeShowDelivery": true,
@@ -162,7 +179,8 @@ export default function ShippingRates({
             "height": 40,
             "handlingUnits": 2,
             "packaging": "BOX"
-        }]
+        }],
+        "shipmentType": "PACKAGE"
     }
     // const mutation = useMutation({
     //     mutationFn: (payload: any) => getShipmentRates(payload),

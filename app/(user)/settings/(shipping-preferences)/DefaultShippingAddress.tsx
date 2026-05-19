@@ -131,7 +131,7 @@ export default function DefaultShippingAddress() {
                 ]}
             />
             <div className="pt-4">
-                <Button type="button" className="bg-[#0070c0] hover:bg-[#005999] text-white">
+                <Button type="button" className="bg-primary hover:bg-[#005999] text-white">
                     Save Default Address
                 </Button>
             </div>

@@ -29,16 +29,16 @@ interface AddressData {
 
 interface SendRequestProps {
     contactInfo?: {
-        contactName: string
-        phoneNumber: string
-        emailAddress: string
-        shipDate: string
-        spotQuoteName?: string
+        spotContact?: {
+            contactName: string
+            phoneNumber: string
+            email: string
+            shipDate: any
+            spotQuoteName?: string
+        }
     }
     equipmentDetails?: {
-        spotEquipment?: {
-            type: string
-        }
+        spotEquipment?: string
     }
     fromAddress?: AddressData
     toAddress?: AddressData
@@ -85,12 +85,11 @@ const SendRequest = forwardRef(({
     const totalPallets = dimensions?.lineItem?.units?.length || 0
     const totalUnits = dimensions?.lineItem?.units?.reduce((acc: number, unit: any) => acc + (Number(unit.count) || 0), 0) || 0
     const totalCubicFeet = dimensions?.lineItem?.totalCubicFeet || "00.000"
-
     return (
         <FormProvider {...methods}>
             <form className="bg-white dark:bg-card border border-border rounded-lg shadow-lg overflow-hidden">
                 <div className="p-4 border-b flex items-center gap-2 bg-slate-50/50 dark:bg-slate-900/50">
-                    <Clipboard className="text-slate-600" size={20} />
+                    <Clipboard className="text-slate-700" size={20} />
                     <h1 className="text-xl font-bold">Send Request</h1>
                 </div>
 
@@ -104,23 +103,23 @@ const SendRequest = forwardRef(({
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
                                 <p className="text-sm text-muted-foreground">Contact Name:</p>
-                                <p className="font-medium">{contactInfo?.contactName || "-"}</p>
+                                <p className="font-medium">{contactInfo?.spotContact?.contactName || "-"}</p>
                             </div>
                             <div>
                                 <p className="text-sm text-muted-foreground">Phone Number:</p>
-                                <p className="font-medium">{contactInfo?.phoneNumber || "-"}</p>
+                                <p className="font-medium">{contactInfo?.spotContact?.phoneNumber || "-"}</p>
                             </div>
                             <div>
                                 <p className="text-sm text-muted-foreground">Email Address:</p>
-                                <p className="font-medium">{contactInfo?.emailAddress || "-"}</p>
+                                <p className="font-medium">{contactInfo?.spotContact?.email || "-"}</p>
                             </div>
                             <div>
                                 <p className="text-sm text-muted-foreground">Equipment Details:</p>
-                                <p className="font-medium capitalize">{equipmentDetails?.spotEquipment?.type || "-"}</p>
+                                <p className="font-medium capitalize">{typeof equipmentDetails?.spotEquipment === "string" ? equipmentDetails.spotEquipment : "-"}</p>
                             </div>
                             <div>
                                 <p className="text-sm text-muted-foreground">Ship Date:</p>
-                                <p className="font-medium">{contactInfo?.shipDate || "-"}</p>
+                                <p className="font-medium">{contactInfo?.spotContact?.shipDate instanceof Date ? contactInfo.spotContact.shipDate.toLocaleDateString() : contactInfo?.spotContact?.shipDate || "-"}</p>
                             </div>
                         </div>
                     </section>
@@ -242,7 +241,7 @@ const SendRequest = forwardRef(({
 
                 {/* Footer Buttons */}
                 <div className="p-6 bg-slate-50/50 dark:bg-slate-900/50 border-t flex justify-end items-center">
-                    <Button onClick={onSubmit} className="bg-[#0070c0] hover:bg-[#005a9c] text-white px-8">
+                    <Button onClick={onSubmit} className="bg-primary hover:bg-[#005a9c] text-white px-8">
                         Request Quote
                     </Button>
                 </div>

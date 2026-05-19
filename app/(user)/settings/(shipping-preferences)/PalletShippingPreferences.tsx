@@ -15,8 +15,8 @@ export default function PalletShippingPreferences() {
             <div className="space-y-4 border-b pb-6">
                 <h4 className="text-[#0070c0] font-medium text-base">Pallet Shipping Preferences</h4>
                 <p className="text-sm text-foreground">Set Default "Shipping To" Location Type</p>
-                
-                <GlobalForm 
+
+                <GlobalForm
                     formWrapperClassName="w-full md:w-[300px]"
                     fields={[
                         {
@@ -36,11 +36,11 @@ export default function PalletShippingPreferences() {
             <div className="space-y-4 border-b pb-6">
                 <h4 className="text-sm text-foreground">Additional Services for Pallets</h4>
                 <p className="text-sm text-muted-foreground flex items-center gap-1">
-                    <Info size={14} className="text-[#0070c0]" /> 
+                    <Info size={14} className="text-[#0070c0]" />
                     By checking off these additional services, they will be added for every new pallet shipment
                 </p>
 
-                <GlobalForm 
+                <GlobalForm
                     formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 gap-y-2 mt-4"
                     fields={[
                         { name: "palletLimitedAccess", label: "Limited Access ℹ", type: "checkbox" },
@@ -56,7 +56,7 @@ export default function PalletShippingPreferences() {
                 />
 
                 <div className="pt-2">
-                    <Button type="button" className="bg-[#0070c0] hover:bg-[#005999] text-white">
+                    <Button type="button" className="bg-primary hover:bg-[#005999] text-white">
                         Save Additional Services for Pallets
                     </Button>
                 </div>
@@ -66,7 +66,7 @@ export default function PalletShippingPreferences() {
                 <h4 className="text-[#0070c0] font-medium text-base">Set Pallet Custom Broker Default</h4>
 
                 <div className="py-2">
-                    <GlobalForm 
+                    <GlobalForm
                         fields={[
                             {
                                 name: "palletProvideBrokerDetails",
@@ -77,7 +77,7 @@ export default function PalletShippingPreferences() {
                     />
                 </div>
 
-                <GlobalForm 
+                <GlobalForm
                     formWrapperClassName="grid grid-cols-1 md:grid-cols-2 gap-4"
                     fields={[
                         {
@@ -94,7 +94,7 @@ export default function PalletShippingPreferences() {
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end mt-4">
-                    <GlobalForm 
+                    <GlobalForm
                         formWrapperClassName="w-full"
                         fields={[
                             {
@@ -105,7 +105,7 @@ export default function PalletShippingPreferences() {
                         ]}
                     />
                     <div className="flex gap-4 w-full">
-                        <GlobalForm 
+                        <GlobalForm
                             formWrapperClassName="flex-1"
                             fields={[
                                 {
@@ -115,7 +115,7 @@ export default function PalletShippingPreferences() {
                                 },
                             ]}
                         />
-                        <GlobalForm 
+                        <GlobalForm
                             formWrapperClassName="w-24"
                             fields={[
                                 {
@@ -128,7 +128,7 @@ export default function PalletShippingPreferences() {
                     </div>
                 </div>
 
-                <GlobalForm 
+                <GlobalForm
                     formWrapperClassName="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4"
                     fields={[
                         {
@@ -150,7 +150,7 @@ export default function PalletShippingPreferences() {
                 />
 
                 <div className="pt-4">
-                    <Button type="button" className="bg-[#0070c0] hover:bg-[#005999] text-white">
+                    <Button type="button" className="bg-primary hover:bg-[#005999] text-white">
                         Save as Pallet Default
                     </Button>
                 </div>

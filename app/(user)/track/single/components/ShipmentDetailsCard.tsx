@@ -1,18 +1,21 @@
-import { Info, Check } from "lucide-react";
+import { Info, Check, ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 
 export function ShipmentDetailsCard({ quote }: { quote?: any }) {
   if (!quote) return null;
 
-  const fromAddress = quote.addresses?.find((a: any) => a.type === "FROM")?.addressBookEntry;
-  const toAddress = quote.addresses?.find((a: any) => a.type === "TO")?.addressBookEntry;
+  const fromAddress = quote.addresses?.find((a: any) => a.type === "FROM");
+  const toAddress = quote.addresses?.find((a: any) => a.type === "TO");
 
+  console.log("fromAddress", fromAddress)
+  console.log("toAddress", toAddress)
   return (
-    <Card className="mb-6 rounded-sm shadow-sm">
+
+    <Card className="mb-6 pt-0 rounded-sm shadow-sm">
       <CardHeader className="bg-slate-50 border-b py-3 px-4">
-        <CardTitle className="text-sm font-semibold flex items-center gap-2">
-          <Info className="w-4 h-4" />
+        <CardTitle className="text-xl flex items-center gap-2">
+          <Info className="w-6 h-6" />
           Shipment Details
         </CardTitle>
       </CardHeader>
@@ -24,14 +27,14 @@ export function ShipmentDetailsCard({ quote }: { quote?: any }) {
           </div>
           <div>
             <span className="text-muted-foreground block mb-0.5">Booked by:</span>
-            <span className="font-medium">{quote.createdBy}</span>
+            {/* <span className="font-medium">{quote.createdBy}</span> */}
           </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 mb-6">
           <div className="space-y-3">
             <h3 className="font-semibold flex items-center gap-2">
-              <span className="text-primary text-lg">➥</span> Shipping From
+              <ArrowDownLeft /> Shipping From
             </h3>
             <div className="border-t pt-3">
               <p>{fromAddress?.companyName}</p>
@@ -51,7 +54,7 @@ export function ShipmentDetailsCard({ quote }: { quote?: any }) {
 
           <div className="space-y-3">
             <h3 className="font-semibold flex items-center gap-2">
-              <span className="text-primary text-lg">➥</span> Shipping To
+              <ArrowUpRight /> Shipping To
             </h3>
             <div className="border-t pt-3">
               <p>{toAddress?.companyName}</p>

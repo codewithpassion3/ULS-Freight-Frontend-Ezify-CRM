@@ -22,11 +22,6 @@ interface AccountBalanceModalProps {
 }
 
 export function AccountBalanceModal({ open, onOpenChange }: AccountBalanceModalProps) {
-    const data = [
-        { name: "Available Balance", value: 1080.62, color: "#4CAF50" },
-        { name: "Shipments (Not Invoiced)", value: 241.31, color: "#0288D1" },
-        { name: "Unpaid Invoices", value: 1678.07, color: "#29B6F6" },
-    ]
 
     // const totalLimit = 3000.0
 
@@ -36,6 +31,11 @@ export function AccountBalanceModal({ open, onOpenChange }: AccountBalanceModalP
     const availableBalance = user?.user?.company?.wallet?.balance || 0;
     const unpaidInvoices = user?.user?.company?.wallet?.unpaidInvoices || 0;
     const shipmentsNotBilled = user?.user?.company?.wallet?.shipmentsNotBilled || 0;
+    const data = [
+        { name: "Available Balance", value: availableBalance, color: "#4CAF50" },
+        { name: "Shipments (Not Invoiced)", value: shipmentsNotBilled, color: "#0288D1" },
+        { name: "Unpaid Invoices", value: unpaidInvoices, color: "#29B6F6" },
+    ]
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>

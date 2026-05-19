@@ -1,4 +1,4 @@
-import { getAllPalletShippingLocationTypes } from "@/api/services/address-book.api"
+import { getAllPalletShippingLocationTypes, getAllSignatures } from "@/api/services/address-book.api"
 import { useForm, FormProvider } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ContactType } from "../../../app/(user)/settings/(address-book)/types/addContact.types"
@@ -14,7 +14,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { usePathname, useSearchParams } from "next/navigation"
 import { getSingleQuote } from "@/api/services/quotes.api"
 import { addressSchema } from "@/lib/validations/quote/standard-quote-schema"
-
+import { getFormFields } from "./ShippingAddressFields"
 export { addressSchema }
 
 export const addressesSchema = z.object({
@@ -42,17 +42,18 @@ import { contactSchema } from "@/app/(user)/settings/(address-book)/schemas/addC
 import { getAddressByPostalCode } from "@/api/services/shipment.api"
 import { Input } from "@/components/ui/input"
 import { parseTime12h } from "@/app/(user)/settings/(address-book)/mappers/contact.mapper"
-import { COUNTRIES, PROVINCES } from "@/shared-date/geo.data"
+import { COUNTRIES, PROVINCES } from "@/shared-data/geo.data"
 import { Loader } from "@/components/common/Loader"
-export const ShippingAddressSection = forwardRef(({ step, setStep, quoteType, shipmentType, type, title, onNextStep, onSwap, isFetchedQuoteShipment, setIsFetchedQuoteShipment }: { quoteType: keyof ShipmentOptions, shipmentType: ShipmentOptions[keyof ShipmentOptions], type: "TO" | "FROM", title: string, onNextStep?: (data: any) => void, onSwap?: () => void, setShipDate?: (date: Date | undefined) => void, isFetchedQuoteShipment: boolean, setIsFetchedQuoteShipment: (value: boolean) => void, step: number, setStep: (step: number) => void }, ref) => {
+export const ShippingAddressSection = forwardRef(({ step, setStep, quoteType, shipmentType, type, title, onNextStep, onSwap, isFetchedQuoteShipment, setIsFetchedQuoteShipment, onChange }: { quoteType: keyof ShipmentOptions, shipmentType: ShipmentOptions[keyof ShipmentOptions], type: "TO" | "FROM", title: string, onNextStep?: (data: any) => void, onSwap?: () => void, setShipDate?: (date: Date | undefined) => void, isFetchedQuoteShipment: boolean, setIsFetchedQuoteShipment: (value: boolean) => void, step: number, setStep: (step: number) => void, onChange?: (data: any) => void }, ref) => {
   // check if route includes shipment to check if it quote or shipment
   const pathname = usePathname()
   const isShipment = pathname.includes("shipment")
   const quoteId = useSearchParams().get("id")
   const markContactAsRecent = useMarkContactAsRecent()
   const [addressLocked, setAddressLocked] = useState(false)
-  const [finalShipmentType, setFinalShipmentType] = useState(shipmentType)
-  const [showLocationType, setShowLocationType] = useState(quoteType === "SPOT" || finalShipmentType === "PALLET");
+  // const [finalShipmentType, setFinalShipmentType] = useState(shipmentType)
+  // const [showLocationType, setShowLocationType] = useState(quoteType === "SPOT" || finalShipmentType === "PALLET");
+  const showLocationType = shipmentType === "PALLET" || shipmentType === "PACKAGE";
   const showAdditionalNotes = quoteType === "SPOT";
   const [billingRefs, setBillingRefs] = useState<string[]>([""])
   const [isEditing, setIsEditing] = useState<boolean>(false)
@@ -125,7 +126,7 @@ export const ShippingAddressSection = forwardRef(({ step, setStep, quoteType, sh
       });
 
       if (showLocationType) {
-        schema = schema.extend({ locationTypeId: z.number("Location type is required") }) as any;
+        schema = schema.extend({ address: schema.shape.address.extend({ locationTypeId: z.number("Location type is required") }) }) as any;
       }
       return schema;
     }
@@ -140,6 +141,15 @@ export const ShippingAddressSection = forwardRef(({ step, setStep, quoteType, sh
     defaultValues: defaultValues,
     shouldUnregister: false,
   });
+
+  useEffect(() => {
+    const subscription = methods.watch((value) => {
+      if (onChange) {
+        onChange(value);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [methods, onChange]);
 
   // set ship date to today
   // make ship date undefined
@@ -217,9 +227,15 @@ export const ShippingAddressSection = forwardRef(({ step, setStep, quoteType, sh
         }
       );
     }
-
+    if (shipmentType === "COURIER_PAK") {
+      methods.setValue("signatureId", contact?.signatureId?.toString() || "",
+        {
+          shouldValidate: true,
+        }
+      );
+    }
     if (showLocationType) {
-      methods.setValue("locationTypeId", contact?.locationTypeId || "",
+      methods.setValue("address.locationTypeId", contact?.locationTypeId as any || "",
         {
           shouldValidate: true,
         }
@@ -252,6 +268,7 @@ export const ShippingAddressSection = forwardRef(({ step, setStep, quoteType, sh
           shouldValidate: true,
         }
       );
+
       // readytime
       const [readyTimeHour, readyTimeMinute, readyTimeAmPm] = parseTime12h(contact.palletShippingReadyTime);
       const [closeTimeHour, closeTimeMinute, closeTimeAmPm] = parseTime12h(contact.palletShippingCloseTime);
@@ -352,14 +369,14 @@ export const ShippingAddressSection = forwardRef(({ step, setStep, quoteType, sh
 
 
     if (quoteAddress) {
-      console.log("THIS IS QUOTE ADDRESS!!!!!", quoteAddress)
-      if (isEdit) {
-        setAddressLocked(true);
-      }
-      setFinalShipmentType(quoteAddress?.shipmentType);
-      setShowLocationType(quoteType === "SPOT" || finalShipmentType === "PALLET");
+      console.log("THIS IS QUOTE ADDRESS!!!!!", addressLocked)
+      // setFinalShipmentType(quoteAddress?.shipmentType);
+      // setShowLocationType(quoteType === "SPOT" || finalShipmentType === "PALLET");
       methods.setValue("addressBookId", Number(quoteAddress.id));
       const isAddressFromAddressBook = !!quoteAddress?.address?.address1
+      if (isAddressFromAddressBook) {
+        setAddressLocked(true);
+      }
       methods.reset({
         ...(isAddressBookEntry && { addressBookId: quoteAddress.id ?? null }),
         address: {
@@ -368,8 +385,8 @@ export const ShippingAddressSection = forwardRef(({ step, setStep, quoteType, sh
           city: (isAddressFromAddressBook) ? quoteAddress?.address?.city : quoteAddress?.city || "",
           country: (isAddressFromAddressBook) ? quoteAddress?.address?.country : quoteAddress?.country || "",
           state: (isAddressFromAddressBook) ? quoteAddress?.address?.state : quoteAddress?.state || "", // important
+          ...(showLocationType && { locationTypeId: quoteAddress?.locationTypeId }),
         },
-        ...(showLocationType && { locationTypeId: quoteAddress.locationTypeId }),
         ...(isShipment && { companyName: quoteAddress.companyName }),
         ...(isShipment && { contactId: quoteAddress.contactId }),
         ...(isShipment && { address2: quoteAddress.address2 }),
@@ -477,230 +494,24 @@ export const ShippingAddressSection = forwardRef(({ step, setStep, quoteType, sh
   };
 
 
+  const { data: signatures, isLoading: isLoadingSignatures, isPending: isPendingSignatures } = useQuery({
+    queryKey: ["signatures"],
+    queryFn: getAllSignatures
+  })
 
-
-  const formFields: FormFieldUnion[] = [
-    {
-      name: "companyName",
-      label: "Company Name",
-      type: "text",
-      placeholder: "Company Name",
-      disabled: addressLocked,
-      show: isShipment,
-    },
-    {
-      name: "contactId",
-      label: "Contact ID",
-      type: "text",
-      placeholder: "Contact ID",
-      disabled: addressLocked,
-      show: isShipment,
-    },
-    {
-      name: "address.address1",
-      label: "Address",
-      type: "text",
-      placeholder: "Address",
-      disabled: addressLocked,
-    },
-    {
-      name: "address.address2",
-      label: "Address 2 (optional)",
-      type: "text",
-      // placeholder: "Address",
-      disabled: addressLocked,
-      show: isShipment,
-    },
-    {
-      name: "address.unit",
-      label: "Unit/Floor #",
-      type: "text",
-      // placeholder: "Address",
-      disabled: addressLocked,
-      show: isShipment,
-
-    },
-    {
-      name: "address.postalCode",
-      label: "Postal/ZIP Code *",
-      type: "text",
-      placeholder: "A1A 1A1",
-      disabled: addressLocked,
-    },
-    {
-      name: "address.city",
-      label: "City",
-      type: "text",
-      placeholder: "City Name",
-      disabled: addressLocked,
-    },
-    {
-      name: "address.state",
-      label: "Province/State",
-      type: "select",
-      options: filteredProvinces?.length ? filteredProvinces : PROVINCES,
-      placeholder: "State/Province",
-      disabled: addressLocked,
-    },
-    {
-      name: "address.country",
-      label: "Country",
-      placeholder: "Country",
-      type: "select",
-      options: COUNTRIES,
-      disabled: addressLocked,
-    },
-    {
-      name: "locationTypeId",
-      label: "Location Type*",
-      type: "select",
-      placeholder: "Location Type",
-      options: locationTypeLoading || locationTypeIsPending ? [] : locationTypeData?.palletShippingLocationTypes?.map((item: any) => ({
-        value: item.id,
-        label: item.name
-      })),
-      disabled: addressLocked,
-      show: showLocationType,
-      valueType: "number",
-      wrapperClassName: !isShipment ? "col-span-2" : "",
-    },
-    // additional notes
-    {
-      name: "additionalNotes",
-      label: "Additional Notes (Optional)",
-      type: "text",
-      placeholder: "Additional Notes",
-      show: showAdditionalNotes,
-      wrapperClassName: "col-span-full",
-    },
-
-    {
-      name: "isResidential",
-      label: "Residential Address",
-      type: "checkbox",
-      placeholder: "Location Type",
-      icon: <InfoIcon size={16} />,
-      disabled: addressLocked,
-      show: shipmentType === "PACKAGE" || shipmentType === "COURIER_PAK",
-      wrapperClassName: "col-span-2",
-      addressType: type,
-    },
-    // include straps for FTL
-    {
-      name: "includeStraps",
-      label: "Include Straps",
-      type: "checkbox",
-      placeholder: "Include Straps",
-      icon: <InfoIcon size={16} />,
-      // disabled: addressLocked,
-      show: shipmentType === "STANDARD_FTL" && type === "FROM",
-      wrapperClassName: "col-span-2",
-    },
-    // apointment delivery for ftl for type TO
-    {
-      name: "appointmentDelivery",
-      label: "Appointment Delivery",
-      type: "checkbox",
-      placeholder: "Appointment Delivery",
-      icon: <InfoIcon size={16} />,
-      // disabled: addressLocked,
-      show: shipmentType === "STANDARD_FTL" && type === "TO",
-      wrapperClassName: "col-span-2",
-    },
-    // contact information
-    {
-      name: "contactName",
-      label: "Contact Name",
-      type: "text",
-      placeholder: "Contact Name",
-      disabled: addressLocked,
-      show: isShipment,
-    },
-    {
-      name: "email",
-      label: "Email",
-      type: "email",
-      placeholder: "Email",
-      show: isShipment,
-      disabled: addressLocked,
-    },
-    {
-      name: "phoneNumber",
-      label: "Phone",
-      type: "phone",
-      placeholder: "Phone",
-      show: isShipment,
-      disabled: addressLocked,
-    },
-    {
-      name: "defaultInstructions",
-      label: "Default Instructions",
-      type: "text",
-      placeholder: "Default Instructions",
-      show: isShipment,
-      disabled: addressLocked,
-      wrapperClassName: "col-span-2",
-    },
-    // ready time
-    {
-      name: "palletShippingReadyTime",
-      label: "Ready Time",
-      type: "time",
-      placeholder: "Ready Time",
-      show: isShipment && shipmentType === "PALLET" || isShipment && shipmentType === "STANDARD_FTL",
-      disabled: addressLocked,
-      hourName: "readyTimeHour",
-      minuteName: "readyTimeMinute",
-      ampmName: "readyTimeAmPm",
-    },
-    {
-      name: "palletShippingCloseTime",
-      label: "Close Time",
-      type: "time",
-      placeholder: "Close Time",
-      hourName: "closeTimeHour",
-      minuteName: "closeTimeMinute",
-      ampmName: "closeTimeAmPm",
-      show: isShipment && shipmentType === "PALLET" || isShipment && shipmentType === "STANDARD_FTL",
-      disabled: addressLocked,
-    },
-    // save contact to address book
-    {
-      name: "saveToAddressBook",
-      label: "Save Contact to Address Book",
-      type: "checkbox",
-      placeholder: "Save Contact to Address Book",
-      show: isShipment,
-      // disabled: addressLocked,
-      icon: <InfoIcon size={16} />,
-      wrapperClassName: "col-span-2",
-    },
-    // save as new default
-    {
-      name: "saveAsNewDefault",
-      label: "Save as New Default",
-      type: "checkbox",
-      placeholder: "Save as New Default",
-      show: isShipment && type === "FROM",
-      // disabled: addressLocked,
-      icon: <InfoIcon size={16} />,
-      wrapperClassName: "col-span-2",
-    },
-
-    // ship date
-    {
-      name: "shipDate",
-      label: "Ship Date",
-      type: "date",
-      placeholder: "Ship Date",
-      show: isShipment && type === "FROM",
-      futureDatesOnly: true,
-      // isEditing: isEditing,
-      // disabled: addressLocked,
-    },
-
-
-  ];
+  const formFields = getFormFields({
+    addressLocked,
+    isShipment,
+    shipmentType,
+    filteredProvinces,
+    locationTypeLoading,
+    locationTypeIsPending,
+    locationTypeData,
+    showAdditionalNotes,
+    type,
+    signatures,
+    isLoadingSignatures,
+  });
   const addBillingRef = () => {
     if (billingRefs.length < 3) {
       setBillingRefs([...billingRefs, ""])
@@ -720,7 +531,8 @@ export const ShippingAddressSection = forwardRef(({ step, setStep, quoteType, sh
 
   console.log("values", methods.getValues());
 
-
+  // show form errors
+  console.log("ADDRESS ERRORS", methods.formState.errors);
   return (
     <>
       <div className="flex justify-between items-center">

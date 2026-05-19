@@ -86,7 +86,7 @@ export function EditContactModal(
                             Cancel
                         </Button>
                     </DialogClose>
-                    <Button disabled={!isValid || mutation.isPending} onClick={() => handleSubmit} form="contact-form" className="bg-[#0070c0] hover:bg-[#005999] text-white w-[140px]">
+                    <Button disabled={!isValid || mutation.isPending} onClick={() => handleSubmit} form="contact-form" className="bg-primary hover:bg-[#005999] text-white w-[140px]">
                         Update Contact
                     </Button>
                 </DialogFooter>

@@ -67,7 +67,8 @@ const SignaturePreference = forwardRef((props, ref) => {
                                     { value: 1, label: "No Signature Required" },
                                     { value: 2, label: "Signature Required" },
                                     { value: 3, label: "Adult Signature Required" },
-                                ]
+                                ],
+                                wrapperClassName: "flex flex-col gap-4"
                             }}
                         />
                     </AccordionContent>

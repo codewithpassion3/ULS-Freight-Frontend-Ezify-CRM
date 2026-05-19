@@ -44,6 +44,7 @@ export default function UserProfile() {
     const router = useRouter()
     const [open, setOpen] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const { data: user, isLoading, error } = useUser()
     const logoutMutation = useLogoutMutation({
         onSuccess: () => toast.success("User logged out successfully"),
@@ -131,7 +132,7 @@ export default function UserProfile() {
                     <AccountBalanceModal open={modalOpen} onOpenChange={setModalOpen} />
 
                     {/* MOBILE MENU */}
-                    <Sheet>
+                    <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                         <SheetTrigger asChild>
                             <Button
                                 variant="ghost"
@@ -156,6 +157,7 @@ export default function UserProfile() {
                                             {!item.items ? (
                                                 <Link
                                                     href={item.href!}
+                                                    onClick={() => setIsMobileMenuOpen(false)}
                                                     className="block p-4 text-sm font-medium"
                                                 >
                                                     {item.title}
@@ -175,6 +177,7 @@ export default function UserProfile() {
                                                                 <Link
                                                                     key={sub.title}
                                                                     href={sub.href}
+                                                                    onClick={() => setIsMobileMenuOpen(false)}
                                                                     className="text-sm px-4 text-muted-foreground hover:text-black"
                                                                 >
                                                                     {sub.title}

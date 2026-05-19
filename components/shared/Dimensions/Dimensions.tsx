@@ -1,5 +1,5 @@
 "use client"
-import { forwardRef, useImperativeHandle, useState } from "react"
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react"
 import { FormProvider } from "react-hook-form"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Cuboid, ChevronUp, Info, PackageCheck } from "lucide-react"
@@ -13,10 +13,19 @@ import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import { usePathname } from "next/navigation"
 import { FTLPackageDimensions } from "./FTLPackageDimensions"
 
-const Dimensions = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }, ref) => {
+const Dimensions = forwardRef(({ shipmentType, onChange }: { shipmentType: ShipmentOptions[keyof ShipmentOptions], onChange?: (data: any) => void }, ref) => {
 
   const { methods, fieldArray, handleAddPackage, handleClearDimensions, isOpen, setIsOpen } = useDimensions(shipmentType)
   const { watch, setValue } = methods
+
+  useEffect(() => {
+    const subscription = methods.watch((value) => {
+      if (onChange) {
+        onChange(value);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [methods, onChange]);
   const { fields, append, remove } = fieldArray
 
   const [packageDialogOpen, setPackageDialogOpen] = useState(false)

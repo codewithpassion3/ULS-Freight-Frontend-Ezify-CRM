@@ -3,20 +3,25 @@ import { DataTable } from "@/components/common/table/DataTable"
 import { DataTablePagination } from "@/components/common/table/DataTablePagination"
 import { columns } from "./ColumnsTableInvoices"
 import { SortingState } from "@tanstack/react-table"
-import { CircleSlash, FileText, Plus, RefreshCcw, Trash2 } from "lucide-react"
-import { useState } from "react"
+import { CircleSlash, FileText, RefreshCcw, Trash2 } from "lucide-react"
+import { useMemo, useState } from "react"
 import { useDebounce } from "../../../../hooks/useDebounce.hook"
 import { useQuery } from "@tanstack/react-query"
 import { Loader } from "@/components/common/Loader"
 import EmptyUI from "@/components/common/empty/Empty"
 import Link from "next/link"
-import { getAllTrackings } from "@/api/services/tracking.api"
+import { getAllInvoices } from "@/api/services/invoices.api"
 
 interface Props {
     filters: {
         dateRange: any
         search: string
         selectedPackaging: string[]
+        selectedCarrier: string
+        selectedService: string
+        selectedStatus: string
+        shipmentDetail: string
+        selectedBookedBy: string
     }
     invoiceCategory: any
     currencyFilter: string
@@ -26,11 +31,28 @@ export default function DynamicInvoicesTable({ filters, invoiceCategory, currenc
     const [sorting, setSorting] = useState<SortingState>([])
     const [page, setPage] = useState(1)
     const debouncedSearch = useDebounce(filters.search, 500)
+    const debouncedShipmentDetail = useDebounce(filters.shipmentDetail, 500)
+    // const displayData = useMemo(() => invoicesResponse?.data || [], [invoicesResponse]);
 
-    // Using tracking API as requested
-    const { data: trackings, isLoading, isPending, isError } = useQuery({
-        queryKey: ["invoices", invoiceCategory, debouncedSearch, currencyFilter],
-        queryFn: () => getAllTrackings(),
+    const { data: invoicesResponse, isLoading, isPending, isError } = useQuery({
+        queryKey: ["invoices", invoiceCategory, debouncedSearch, debouncedShipmentDetail, filters, currencyFilter],
+        queryFn: () => {
+            const dateFrom = filters.dateRange?.from ? new Date(filters.dateRange.from).toISOString().split('T')[0] : "";
+            const dateTo = filters.dateRange?.to ? new Date(filters.dateRange.to).toISOString().split('T')[0] : "";
+
+            return getAllInvoices(
+                debouncedSearch,
+                [dateFrom, dateTo],
+                filters.selectedPackaging?.join(",") || "",
+                filters.selectedCarrier || "",
+                filters.selectedService || "",
+                filters.selectedStatus || "",
+                debouncedShipmentDetail,
+                filters.selectedBookedBy || "",
+                invoiceCategory,
+                currencyFilter
+            )
+        },
         retry: 1,
         enabled: true
     })
@@ -49,16 +71,14 @@ export default function DynamicInvoicesTable({ filters, invoiceCategory, currenc
         />
     )
 
-    // Mock filtering based on currency toggle for visual representation
-    let displayData = trackings?.data || [];
 
     return (
-        displayData.length > 0 ?
+        invoicesResponse.length > 0 ?
             <>
                 <div className="shadow-sm border rounded-md mb-4">
                     <DataTable
                         columns={columns}
-                        data={displayData}
+                        data={invoicesResponse}
                         sorting={sorting}
                         setSorting={setSorting}
                     />
@@ -88,3 +108,4 @@ export default function DynamicInvoicesTable({ filters, invoiceCategory, currenc
             />
     )
 }
+

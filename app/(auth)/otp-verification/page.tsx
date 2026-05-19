@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { useOTPFlow } from "@/context/otp.context";
 import { useAuth } from "@/context/auth.context";
 import { AuthLayout } from "../AuthLayout";
+import { LoaderCircle } from "lucide-react";
 
 export default function OTPVerificationPage() {
     const { email, purpose, setToken } = useOTPFlow()
@@ -150,7 +151,10 @@ export default function OTPVerificationPage() {
                         </InputOTP>
                     )}
                 />
-                <Button type="submit" className="w-full">
+                <Button
+                    disabled={verifyMutation.isPending}
+                    type="submit" className="w-full">
+                    {verifyMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
                     Verify Code
                 </Button>
             </form>

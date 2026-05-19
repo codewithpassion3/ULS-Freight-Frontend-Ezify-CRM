@@ -15,7 +15,7 @@ export default function InvoicingUpdatesWidget() {
                     {/* Upcoming Invoices */}
                     <Link href="/invoices?tab=upcoming" className="no-underline! border border-slate-200 dark:border-slate-800 rounded flex flex-col justify-center overflow-hidden bg-white dark:bg-slate-900 shadow-sm cursor-pointer hover:shadow transition-shadow">
                         <div className="flex items-center gap-1.5 p-3 border-slate-100 dark:border-slate-800">
-                            <Gift className="size-4 text-[#0072BC] dark:text-[#3da9fc]" />
+                            <Gift className="size-4 text-primary dark:text-[#3da9fc]" />
                             <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">5 Upcoming Invoices</span>
                         </div>
                     </Link>

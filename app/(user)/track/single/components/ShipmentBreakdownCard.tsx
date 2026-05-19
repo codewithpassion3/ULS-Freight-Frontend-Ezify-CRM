@@ -3,15 +3,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
+import { normalText } from "@/app/(user)/packages/AddPackage";
 
 export function ShipmentBreakdownCard({ quote }: { quote?: any }) {
   if (!quote) return null;
 
   return (
-    <Card className="mb-6 rounded-sm shadow-sm">
+    <Card className="mb-6 pt-0 rounded-sm shadow-sm">
       <CardHeader className="bg-slate-50 border-b py-3 px-4">
-        <CardTitle className="text-sm font-semibold flex items-center gap-2">
-          <Info className="w-4 h-4" />
+        <CardTitle className="text-xl flex items-center gap-2">
+          <Info className="w-6 h-6" />
           Shipment Breakdown
         </CardTitle>
       </CardHeader>
@@ -34,7 +35,7 @@ export function ShipmentBreakdownCard({ quote }: { quote?: any }) {
             <AccordionTrigger className="text-primary font-semibold py-2 hover:no-underline text-sm border-b">
               Detailed Tracking History
             </AccordionTrigger>
-            <AccordionContent className="pt-2">
+            <AccordionContent className="pt-2 h-full">
               <Table>
                 <TableHeader>
                   <TableRow className="hover:bg-transparent">
@@ -44,11 +45,13 @@ export function ShipmentBreakdownCard({ quote }: { quote?: any }) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
-                    <TableCell className="font-medium">{quote.status === "DRAFT" ? "Draft Created" : quote.status}</TableCell>
-                    <TableCell>{quote.createdAt ? format(new Date(quote.createdAt), 'hh:mm a, MMM dd, yyyy') : 'N/A'}</TableCell>
-                    <TableCell className="text-right">Label Created</TableCell>
-                  </TableRow>
+                  {quote.shipment.trackingEvents.map((event: any) => (
+                    <TableRow key={event.id}>
+                      <TableCell className="capitalize">{event.status.replaceAll("_", " ").toLowerCase()}</TableCell>
+                      <TableCell>{event.occurredAt ? format(new Date(event.occurredAt), 'hh:mm a, MMM dd, yyyy') : 'N/A'}</TableCell>
+                      <TableCell className="text-right">{event.rawPayload.description}</TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </AccordionContent>

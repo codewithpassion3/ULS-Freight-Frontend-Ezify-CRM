@@ -28,14 +28,14 @@ const API_URL = 'https://api.ulsfreight.ca';
 //     },
 //     tst: {
 //         from: {
-//             name: 'ULS Freight',
+//             name: 'ENorth Logistics',
 //             address: '123 Main St',
 //             postalCode: 'M5V3A8',
 //             city: 'Toronto',
 //             state: 'ON',
 //         },
 //         to: {
-//             name: 'ULS Freight',
+//             name: 'ENorth Logistics',
 //             address: '456 Hollywood Blvd',
 //             postalCode: '48226',
 //             city: 'Detroit',
@@ -62,6 +62,8 @@ const API_URL = 'https://api.ulsfreight.ca';
 export const ShippingRatesStream = forwardRef(({ payload, selectedCarrier, setSelectedCarrier, getRatesLoading, setGetRatesLoading }: { payload: any, selectedCarrier: string | null, setSelectedCarrier: (carrier: string) => void, getRatesLoading: boolean, setGetRatesLoading: (value: boolean) => void }, ref) => {
     const { results, status, error, start, stop, reset } = useCarrierStream(API_URL);
 
+
+    console.log("ALL quotes results:", results)
     const handleStart = () => {
         start(payload)
         setGetRatesLoading(true)
@@ -122,7 +124,7 @@ export const ShippingRatesStream = forwardRef(({ payload, selectedCarrier, setSe
             {/* </div> */}
             {/* <Button
                 disabled={status === 'connecting' || status === 'streaming'}
-                className='w-max bg-[#0070c0] hover:bg-[#005999]' onClick={handleStart}>
+                className='w-max bg-primary hover:bg-[#005999]' onClick={handleStart}>
                 {status === 'streaming' || status === 'connecting' ? <Loader2 className='h-4 w-4 animate-spin' /> : ""}
                 Get Rates
             </Button> */}

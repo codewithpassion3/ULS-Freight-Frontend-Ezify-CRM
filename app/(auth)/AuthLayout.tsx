@@ -19,7 +19,7 @@ export const AuthLayout = ({
     title,
     subtitle,
     leftImage = "/login-bg.png",
-    logoSrc = "/logo.png",
+    logoSrc = "/enorth-logo.svg",
     footerText,
 }: AuthLayoutProps) => {
     return (
@@ -42,16 +42,15 @@ export const AuthLayout = ({
                 <div className="mx-auto w-full max-w-[400px] flex flex-col justify-between gap-2 py-8">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-16">
-                        <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-                            <Image
-                                loading="eager"
-                                src={logoSrc}
-                                alt="Logo"
-                                height={200}
-                                width={200}
-                                className="w-auto h-auto"
-                            />
-                        </Link>
+
+                        <Image
+                            loading="eager"
+                            src={logoSrc}
+                            alt="Logo"
+                            height={250}
+                            width={250}
+                        // className="w-auto h-auto"
+                        />
                         <div className="flex items-center gap-2">
                             <LanguageToggle />
                             <ModeToggle />

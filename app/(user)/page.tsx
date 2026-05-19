@@ -37,7 +37,7 @@ export default function Home() {
     }
     if (user) {
         return (
-            <div className="min-h-screen bg-[#f8fafc] dark:bg-background py-8">
+            <div className="min-h-screen bg-primary/5 dark:bg-background py-8">
                 <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col lg:flex-row gap-6">
                         {/* Main Column (Left) */}

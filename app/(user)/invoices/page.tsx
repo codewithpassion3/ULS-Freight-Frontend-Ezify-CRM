@@ -108,7 +108,7 @@ export default function InvoicesDashboardPage() {
                                 />
                                 <Button
                                     type="button"
-                                    className="rounded-l-none bg-[#0070c0] hover:bg-[#005999] px-3"
+                                    className="rounded-l-none bg-primary hover:bg-[#005999] px-3"
                                 >
                                     <Search size={16} />
                                 </Button>
@@ -162,7 +162,7 @@ export default function InvoicesDashboardPage() {
                                 />
                                 <Button
                                     type="button"
-                                    className="rounded-l-none bg-[#0070c0] hover:bg-[#005999] px-3"
+                                    className="rounded-l-none bg-primary hover:bg-[#005999] px-3"
                                 >
                                     <Search size={16} />
                                 </Button>
@@ -226,7 +226,7 @@ export default function InvoicesDashboardPage() {
 
                 <div className="flex justify-between items-center my-4 gap-4">
                     <div className="flex gap-2">
-                        <Button className="bg-[#0070c0] hover:bg-[#005999] flex items-center">
+                        <Button className="bg-primary hover:bg-[#005999] flex items-center">
                             Pay Invoices <ChevronDown className="w-4 h-4 ml-2" />
                         </Button>
                     </div>
@@ -248,23 +248,23 @@ export default function InvoicesDashboardPage() {
                 </div>
 
                 <TabsContent value="all">
-                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging }} invoiceCategory="all" currencyFilter={currencyFilter} />
+                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="all" currencyFilter={currencyFilter} />
                 </TabsContent>
                 <TabsContent value="upcoming">
-                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging }} invoiceCategory="upcoming" currencyFilter={currencyFilter} />
+                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="upcoming" currencyFilter={currencyFilter} />
                 </TabsContent>
                 {/* Other Tabs */}
                 <TabsContent value="overdue">
-                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging }} invoiceCategory="overdue" currencyFilter={currencyFilter} />
+                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="overdue" currencyFilter={currencyFilter} />
                 </TabsContent>
                 <TabsContent value="urgent">
-                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging }} invoiceCategory="urgent" currencyFilter={currencyFilter} />
+                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="urgent" currencyFilter={currencyFilter} />
                 </TabsContent>
                 <TabsContent value="unpaid">
-                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging }} invoiceCategory="unpaid" currencyFilter={currencyFilter} />
+                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="unpaid" currencyFilter={currencyFilter} />
                 </TabsContent>
                 <TabsContent value="paid">
-                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging }} invoiceCategory="paid" currencyFilter={currencyFilter} />
+                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="paid" currencyFilter={currencyFilter} />
                 </TabsContent>
             </Tabs>
         </div>

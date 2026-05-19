@@ -23,7 +23,7 @@ export default function InvoicePdfPage() {
                 <div className="flex items-center">
                     {/* Assuming logo exists, falling back to text if not or using next/image with placeholder */}
                     <img
-                        src="https://live.ulsfreight.ca/logo.png"
+                        src="https://live.ulsfreight.ca/e-north-logo.svg"
                         alt="ULS Logo"
                         style={{ width: 150, height: 40, objectFit: "contain" }}
                     />
@@ -38,7 +38,7 @@ export default function InvoicePdfPage() {
             <div className="flex justify-between mb-8 text-sm">
                 <div>
                     <div className="text-gray-600 mb-1">Bill to / Facturer à :</div>
-                    <div className="font-medium">ULS Freight Inc</div>
+                    <div className="font-medium">ENorth Logistics Inc</div>
                     <div>2960 Drew Rd Suite 156</div>
                     <div>Mississauga, ON, L4T0A5, CA</div>
                     <div>2893241968</div>
@@ -163,7 +163,7 @@ export default function InvoicePdfPage() {
             <div className="text-[9px] text-gray-400 leading-tight mb-8">
                 <div className="font-bold mb-1">Terms & Conditions / Conditions générales</div>
                 <p>
-                    1. You have thirty (30) days from the Invoice Date above to dispute charges on this invoice after which date you will be deemed to have waived your right to dispute these charges. 2. Please pay the Amount Due in full by the Payment Due date stated above before initiating any invoice dispute or any claim with ULS Freight Inc. to avoid service interruptions. In the event your invoice dispute or claim is approved of by ULS Freight Inc., such approved amounts will be credited or remitted to you. 3. For further details regarding payment terms, please refer to the Terms of Service on your account details dashboard. / 1. Vous disposez de trente (30) jours à compter de la date de facturation ci-dessus pour contester les frais figurant sur cette facture, date après laquelle vous serez réputé avoir renoncé à votre droit de contester ces frais. 2. Veuillez payer le montant dû dans son intégralité à la date d'échéance du paiement indiquée ci-dessus avant d'entamer toute contestation de facture ou toute réclamation auprès de ULS Freight Inc. afin d'éviter toute interruption de service. Dans le cas où votre contestation de facture ou votre réclamation est approuvée par ULS Freight Inc., les montants approuvés vous seront crédités ou remis. 3. Pour plus de détails concernant les conditions de paiement, veuillez vous référer aux Conditions de service sur le tableau de bord des détails de votre compte.
+                    1. You have thirty (30) days from the Invoice Date above to dispute charges on this invoice after which date you will be deemed to have waived your right to dispute these charges. 2. Please pay the Amount Due in full by the Payment Due date stated above before initiating any invoice dispute or any claim with ENorth Logistics Inc. to avoid service interruptions. In the event your invoice dispute or claim is approved of by ENorth Logistics Inc., such approved amounts will be credited or remitted to you. 3. For further details regarding payment terms, please refer to the Terms of Service on your account details dashboard. / 1. Vous disposez de trente (30) jours à compter de la date de facturation ci-dessus pour contester les frais figurant sur cette facture, date après laquelle vous serez réputé avoir renoncé à votre droit de contester ces frais. 2. Veuillez payer le montant dû dans son intégralité à la date d'échéance du paiement indiquée ci-dessus avant d'entamer toute contestation de facture ou toute réclamation auprès de ENorth Logistics Inc. afin d'éviter toute interruption de service. Dans le cas où votre contestation de facture ou votre réclamation est approuvée par ENorth Logistics Inc., les montants approuvés vous seront crédités ou remis. 3. Pour plus de détails concernant les conditions de paiement, veuillez vous référer aux Conditions de service sur le tableau de bord des détails de votre compte.
                 </p>
             </div>
 

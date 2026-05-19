@@ -77,7 +77,7 @@ export function CustomDateRangePicker({ value, onChange }: CustomDateRangePicker
           </Button>
           <Button
             type="button"
-            className="rounded-l-none bg-[#0070c0]  px-3"
+            className="rounded-l-none bg-primary  px-3"
             aria-label="Open date range picker"
           >
             <CalendarIcon size={16} />
@@ -157,7 +157,7 @@ export function CustomDateRangePicker({ value, onChange }: CustomDateRangePicker
           >
             Clear
           </Button>
-          <Button type="button" className="bg-[#0070c0] hover:bg-[#005999] px-6" onClick={apply}>
+          <Button type="button" className="bg-primary hover:bg-[#005999] px-6" onClick={apply}>
             Apply
           </Button>
         </div>

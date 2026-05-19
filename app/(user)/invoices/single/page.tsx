@@ -4,171 +4,236 @@ import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Info, FileText, Download, Calendar } from "lucide-react"
+import { Info, FileText, Download, Calendar, MapPin, Phone, Mail, Building2 } from "lucide-react"
+import { useState } from "react"
+import { PayInvoiceModal } from "../components/PayInvoiceModal"
 import { useQuery } from "@tanstack/react-query"
-import { getSingleQuote } from "@/api/services/quotes.api"
+import { getInvoiceById } from "@/api/services/invoices.api"
 import { Loader } from "@/components/common/Loader"
+
+// Mock Data
+const MOCK_INVOICE = {
+    id: "FC15017348",
+    status: "Upcoming",
+    dueDate: "May 12, 2026",
+    invoiceDate: "Apr 12, 2026",
+    currency: "CAD",
+    billTo: {
+        company: "ENorth Logistics Inc",
+        address: "2960 Drew Rd Suite 156",
+        city: "Mississauga",
+        state: "ON",
+        postalCode: "L4T0A5",
+        country: "CA",
+        phone: "2893241968"
+    },
+    charges: {
+        freight: 105.48,
+        fuel: 41.03,
+        accessorials: 70.01,
+        tax: 0.00,
+        subtotal: 216.52,
+        paid: 0.00,
+        totalDue: 216.52
+    },
+    shipments: [
+        {
+            trackingNumber: "7914856338",
+            referenceNumber: "REF123456",
+            freight: 105.48,
+            adjustment: 0.00,
+            additional: 111.04,
+            tax: 0.00,
+            total: 216.52
+        }
+    ],
+    remitPayment: {
+        canadian: {
+            address: "77 Pillsworth Ave, Unit #1",
+            city: "Bolton",
+            state: "ON",
+            postalCode: "L7E 4G4"
+        },
+        american: {
+            address: "9220 Bass Lake Road, Suite 302",
+            city: "New Hope",
+            state: "MN",
+            postalCode: "55428"
+        }
+    },
+    contact: {
+        email: "accounting@ulsfreight.com",
+        phoneCA: "(289) 371-1005",
+        phoneUS: "(718) 535-3358",
+        tollFree: "(877) 335-8740"
+    }
+}
 
 export default function SingleInvoicePage() {
     const searchParams = useSearchParams()
     const invoiceId = searchParams.get("id")
 
-    const { data: quote, isLoading, isPending } = useQuery({
-        queryKey: ["quote", invoiceId],
-        queryFn: () => getSingleQuote(invoiceId!),
-        retry: 1,
-        enabled: !!invoiceId
+    const { data: apiInvoice, isLoading, isError } = useQuery({
+        queryKey: ["invoice", invoiceId],
+        queryFn: () => getInvoiceById(Number(invoiceId)),
+        enabled: !!invoiceId,
     })
 
-    if (isLoading || isPending) return <Loader className="py-20" />
-    // if quote.shipment does exist add exception for empty UI
-    if (!quote.shipment) return null
+    const invoice = apiInvoice || MOCK_INVOICE
+    const [isPayModalOpen, setIsPayModalOpen] = useState(false)
+
+    if (isLoading) return <Loader className="py-20" />
 
     const handleCSVDownload = () => {
         const headers = [
             "Tracking/BOL #",
             "Reference Number",
-            "Original Charge",
+            "Freight Charge",
             "Adjustment",
             "Additional",
             "Tax",
             "Applicable Charge"
         ];
 
-        const rows = [
-            [
-                quote.shipment.trackingNumber || "N/A",
-                quote.shipment.referenceNumber || "N/A",
-                quote.shipment.totalBaseCharge || "N/A" + quote.shipment.currency,
-                quote.shipment.adjustment || "N/A",
-                quote.shipment.totalSurcharges || "N/A",
-                quote.shipment.totalTax || "N/A",
-                quote.shipment.totalBaseCharge || "N/A"
-            ]
-        ];
+        const rows = (invoice.shipments || MOCK_INVOICE.shipments).map((s: any) => [
+            s.trackingNumber,
+            s.referenceNumber,
+            s.freight,
+            s.adjustment,
+            s.additional,
+            s.tax,
+            s.total
+        ]);
 
-        const csvArray = [
-            headers,
-            ...rows
-        ];
-
-        const csvContent =
-            "\uFEFF" + // BOM for Excel
-            csvArray.map(row => row.join(",")).join("\n");
-
+        const csvArray = [headers, ...rows];
+        const csvContent = "\uFEFF" + csvArray.map(row => row.join(",")).join("\n");
         const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-
         const url = URL.createObjectURL(blob);
-
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", `invoice_${invoiceId || "FC15017348"}_shipments.csv`);
-
+        link.setAttribute("download", `invoice_${invoiceId || invoice.id}_shipments.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-
         URL.revokeObjectURL(url);
     };
 
-    function calculateDaysOld(dateString: string): string {
-        const createdDate = new Date(dateString);
-        const today = new Date();
-
-        // Reset hours/minutes/seconds for both to ensure accurate day diff
-        createdDate.setHours(0, 0, 0, 0);
-        today.setHours(0, 0, 0, 0);
-
-        const diffInMs = today.getTime() - createdDate.getTime();
-        const daysOld = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-        return `${daysOld} Days`;
-    }
-
     return (
         <div className="container mx-auto pb-8 pt-20 px-4 max-w-7xl">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-800 mb-1">Invoice Summary</h1>
-                    <div className="flex flex-col text-sm text-[#0070c0] font-medium mt-2">
-                        <div className="flex items-center">
-                            <Calendar className="w-4 h-4 mr-1" />
-                            <span>Upcoming</span>
-                        </div>
-                        <span className="text-muted-foreground text-xs ml-5">Due May 12, 2026</span>
+                    <div className="flex items-center gap-3 mb-1">
+                        <h1 className="text-3xl font-bold text-slate-900">Invoice #{invoice.invoiceNumber || invoice.id}</h1>
+                        <span className="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-full border border-blue-100 uppercase tracking-wider">
+                            {invoice.status}
+                        </span>
+                    </div>
+                    <div className="flex items-center text-slate-500 text-sm">
+                        <Calendar className="w-4 h-4 mr-1.5" />
+                        <span>Issued on {invoice.invoiceDate || invoice.createdAt} • Due by <span className="font-semibold text-slate-900">{invoice.dueDate}</span></span>
                     </div>
                 </div>
-                <Button className="bg-[#0070c0] hover:bg-[#005999] px-8 mt-4 md:mt-0">
-                    Pay Invoice
-                </Button>
+                <div className="flex gap-3">
+                    <Button variant="outline" className="text-slate-600 border-slate-200" onClick={() => window.open(`/invoices/single/pdf?id=${invoiceId || invoice.id}`, '_blank')}>
+                        <Download className="w-4 h-4 mr-2" />
+                        PDF Download
+                    </Button>
+                    <Button className="bg-primary hover:bg-[#005999] px-8 shadow-sm" onClick={() => setIsPayModalOpen(true)}>
+                        Pay ${(invoice.charges?.totalDue || invoice.totalAmount || 0).toFixed(2)} {invoice.currency}
+                    </Button>
+                </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column: Invoice Details */}
-                <div className="lg:col-span-2">
-                    <Card className="rounded-md border shadow-sm">
-                        <CardHeader className="bg-slate-50 border-b pb-4 pt-4">
-                            <CardTitle className="text-base font-semibold flex items-center text-slate-800">
-                                <Info className="w-5 h-5 mr-2 text-slate-700" />
+                <div className="lg:col-span-2 space-y-6">
+                    <Card className="rounded-xl border shadow-sm overflow-hidden">
+                        <CardHeader className="bg-slate-50/50 border-b py-4">
+                            <CardTitle className="text-lg font-bold flex items-center text-slate-800">
+                                <Info className="w-5 h-5 mr-2.5 text-blue-600" />
                                 Invoice Details
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-0">
-                            {/* Invoice Overview */}
-                            <div className="p-6">
-                                <h3 className="text-sm font-semibold text-[#0070c0] flex items-center mb-4">
-                                    <FileText className="w-4 h-4 mr-2" />
-                                    Invoice Overview
-                                </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 text-sm">
-                                    <div className="grid grid-cols-2">
-                                        <span className="text-muted-foreground">Invoice Number:</span>
-                                        <span className="font-medium text-right md:text-left">{quote?.shipment?.id || 'FC15017348'}</span>
+                            {/* Billing and Remit Info */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
+                                <div>
+                                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center">
+                                        <Building2 className="w-4 h-4 mr-2" />
+                                        Bill To
+                                    </h3>
+                                    <div className="space-y-1.5">
+                                        <p className="font-bold text-slate-900 text-lg">{MOCK_INVOICE.billTo.company}</p>
+                                        <p className="text-slate-600">{MOCK_INVOICE.billTo.address}</p>
+                                        <p className="text-slate-600">{MOCK_INVOICE.billTo.city}, {MOCK_INVOICE.billTo.state}, {MOCK_INVOICE.billTo.postalCode}, {MOCK_INVOICE.billTo.country}</p>
+                                        <p className="text-slate-600 flex items-center mt-2">
+                                            <Phone className="w-3.5 h-3.5 mr-2 text-slate-400" />
+                                            {MOCK_INVOICE.billTo.phone}
+                                        </p>
                                     </div>
-                                    <div className="grid grid-cols-2">
-                                        <span className="text-muted-foreground">Invoice Amount:</span>
-                                        <span className="font-medium text-right md:text-left">{quote?.shipment?.totalBaseCharge || 'N/A' + quote?.shipment?.currency || 'N/A'}</span>
-                                    </div>
-                                    <div className="grid grid-cols-2">
-                                        <span className="text-muted-foreground">Invoice Date:</span>
-                                        <span className="font-medium text-right md:text-left">{quote?.shipment?.createdAt || 'N/A'}</span>
-                                    </div>
-                                    <div className="grid grid-cols-2">
-                                        <span className="text-muted-foreground">Total Taxes:</span>
-                                        <span className="font-medium text-right md:text-left">{quote?.shipment?.totalTax || 'N/A' + quote?.shipment?.currency || 'N/A'}</span>
-                                    </div>
-                                    <div className="grid grid-cols-2">
-                                        <span className="text-muted-foreground">Invoice Age:</span>
-                                        {/* // calculate days old from date created */}
-                                        <span className="font-medium text-right md:text-left">
-                                            {
-                                                calculateDaysOld(quote?.shipment?.createdAt)
-                                            }
-                                        </span>
-                                    </div>
-                                    <div className="grid grid-cols-2">
-                                        <span className="text-muted-foreground">Amount Due:</span>
-                                        <span className="font-bold text-right md:text-left">{quote?.shipment?.totalBaseCharge || 'N/A' + quote?.shipment?.currency || 'N/A'}</span>
+                                </div>
+                                <div>
+                                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center">
+                                        <MapPin className="w-4 h-4 mr-2" />
+                                        Remit Payment To
+                                    </h3>
+                                    <div className="grid grid-cols-1 gap-4">
+                                        <div>
+                                            <p className="font-bold text-slate-800 text-xs mb-1">Canadian Address</p>
+                                            <p className="text-slate-600 text-sm">{MOCK_INVOICE.remitPayment.canadian.address}</p>
+                                            <p className="text-slate-600 text-sm">{MOCK_INVOICE.remitPayment.canadian.city}, {MOCK_INVOICE.remitPayment.canadian.state}, {MOCK_INVOICE.remitPayment.canadian.postalCode}</p>
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-slate-800 text-xs mb-1">American Address</p>
+                                            <p className="text-slate-600 text-sm">{MOCK_INVOICE.remitPayment.american.address}</p>
+                                            <p className="text-slate-600 text-sm">{MOCK_INVOICE.remitPayment.american.city}, {MOCK_INVOICE.remitPayment.american.state}, {MOCK_INVOICE.remitPayment.american.postalCode}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <Separator />
 
-                            {/* Invoice Breakdown */}
+                            {/* Charges Breakdown */}
                             <div className="p-6">
-                                <h3 className="text-sm font-semibold text-[#0070c0] flex items-center mb-4">
+                                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center">
                                     <FileText className="w-4 h-4 mr-2" />
-                                    Invoice Breakdown
+                                    Charges Breakdown
                                 </h3>
-                                <div className="w-full md:w-1/2 space-y-3 text-sm">
-                                    <div className="flex justify-between">
-                                        <span className="text-muted-foreground">Base/Freight Charge:</span>
-                                        <span className="font-medium">$105.48</span>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
+                                    <div className="flex justify-between items-center text-sm py-1 border-b border-slate-50">
+                                        <span className="text-slate-500">Freight Charges</span>
+                                        <span className="font-semibold text-slate-900">${MOCK_INVOICE.charges.freight.toFixed(2)}</span>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-muted-foreground">All Accessorials:</span>
-                                        <span className="font-medium">$111.04</span>
+                                    <div className="flex justify-between items-center text-sm py-1 border-b border-slate-50">
+                                        <span className="text-slate-500">Fuel Charges</span>
+                                        <span className="font-semibold text-slate-900">${MOCK_INVOICE.charges.fuel.toFixed(2)}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-sm py-1 border-b border-slate-50">
+                                        <span className="text-slate-500">Accessorials</span>
+                                        <span className="font-semibold text-slate-900">${MOCK_INVOICE.charges.accessorials.toFixed(2)}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-sm py-1 border-b border-slate-50">
+                                        <span className="text-slate-500">Taxes</span>
+                                        <span className="font-semibold text-slate-900">${MOCK_INVOICE.charges.tax.toFixed(2)}</span>
+                                    </div>
+                                </div>
+
+                                <div className="mt-8 flex justify-end">
+                                    <div className="w-full md:w-72 space-y-3 bg-slate-50/50 p-4 rounded-lg border border-slate-100">
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="text-slate-500 font-medium">Subtotal</span>
+                                            <span className="font-semibold text-slate-900">${MOCK_INVOICE.charges.subtotal.toFixed(2)}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="text-slate-500 font-medium">Total Paid</span>
+                                            <span className="font-semibold text-green-600">-${MOCK_INVOICE.charges.paid.toFixed(2)}</span>
+                                        </div>
+                                        <Separator className="bg-slate-200" />
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-slate-900 font-bold">Amount Due</span>
+                                            <span className="text-xl font-black text-[#0070c0]">${MOCK_INVOICE.charges.totalDue.toFixed(2)} <span className="text-xs font-bold text-slate-400">{MOCK_INVOICE.currency}</span></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -177,84 +242,121 @@ export default function SingleInvoicePage() {
 
                             {/* Shipments Table */}
                             <div className="p-6">
-                                <h3 className="text-sm font-semibold text-slate-800 mb-4">
-                                    Total # Of Shipments: 1
-                                </h3>
-                                <div className="overflow-x-auto border rounded-md">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-sm font-bold text-slate-800">
+                                        Shipments Included ({MOCK_INVOICE.shipments.length})
+                                    </h3>
+                                    <Button variant="ghost" size="sm" className="text-[#0070c0] hover:bg-blue-50" onClick={handleCSVDownload}>
+                                        <Download className="w-3.5 h-3.5 mr-1.5" />
+                                        Export CSV
+                                    </Button>
+                                </div>
+                                <div className="overflow-x-auto border rounded-xl bg-white">
                                     <table className="w-full text-sm text-left">
-                                        <thead className="bg-slate-50 text-xs text-muted-foreground border-b">
+                                        <thead className="bg-slate-50/80 text-xs text-slate-500 uppercase tracking-wider border-b font-bold">
                                             <tr>
-                                                <th className="px-4 py-3 font-medium">Tracking/BOL #</th>
-                                                <th className="px-4 py-3 font-medium">Reference Number</th>
-                                                <th className="px-4 py-3 font-medium">Original Charge <Info className="inline w-3 h-3" /></th>
-                                                <th className="px-4 py-3 font-medium">Adjustment <Info className="inline w-3 h-3" /></th>
-                                                <th className="px-4 py-3 font-medium">Additional <Info className="inline w-3 h-3" /></th>
-                                                <th className="px-4 py-3 font-medium">Tax</th>
-                                                <th className="px-4 py-3 font-medium">Applicable Charge <Info className="inline w-3 h-3" /></th>
+                                                <th className="px-4 py-4">Tracking/BOL #</th>
+                                                <th className="px-4 py-4">Reference</th>
+                                                <th className="px-4 py-4 text-right">Freight</th>
+                                                <th className="px-4 py-4 text-right">Adj.</th>
+                                                <th className="px-4 py-4 text-right">Addtl.</th>
+                                                <th className="px-4 py-4 text-right font-bold text-slate-900">Total</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr className="border-b last:border-0 hover:bg-slate-50/50">
-                                                <td className="px-4 py-4 text-[#0070c0]">{quote?.shipment?.trackingNumber || "N/A"}</td>
-                                                <td className="px-4 py-4 text-[#0070c0]">{quote?.shipment?.referenceNumber || "N/A"}</td>
-                                                <td className="px-4 py-4">{quote?.shipment?.originalCharge || "N/A"} {quote?.shipment?.currency || "N/A"}</td>
-                                                <td className="px-4 py-4">{quote?.shipment?.adjustment || "N/A"} {quote?.shipment?.currency || "N/A"}</td>
-                                                <td className="px-4 py-4">{quote?.shipment?.totalSurcharges || "N/A"} {quote?.shipment?.currency || "N/A"}</td>
-                                                <td className="px-4 py-4">{quote?.shipment?.totalTax || "N/A"} {quote?.shipment?.currency || "N/A"}</td>
-                                                <td className="px-4 py-4">{quote?.shipment?.totalBaseCharge || "N/A"} {quote?.shipment?.currency || "N/A"}</td>
-                                            </tr>
+                                        <tbody className="divide-y divide-slate-100">
+                                            {MOCK_INVOICE.shipments.map((shipment, idx) => (
+                                                <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
+                                                    <td className="px-4 py-4 text-[#0070c0] font-bold underline cursor-pointer">{shipment.trackingNumber}</td>
+                                                    <td className="px-4 py-4 text-slate-600">{shipment.referenceNumber}</td>
+                                                    <td className="px-4 py-4 text-right text-slate-600">${shipment.freight.toFixed(2)}</td>
+                                                    <td className="px-4 py-4 text-right text-slate-600">${shipment.adjustment.toFixed(2)}</td>
+                                                    <td className="px-4 py-4 text-right text-slate-600">${shipment.additional.toFixed(2)}</td>
+                                                    <td className="px-4 py-4 text-right font-bold text-slate-900">${shipment.total.toFixed(2)}</td>
+                                                </tr>
+                                            ))}
                                         </tbody>
                                     </table>
-                                </div>
-                                <div className="flex justify-between items-center mt-4">
-                                    <Button variant="outline" className="text-[#0070c0] border-[#0070c0]" onClick={handleCSVDownload}>
-                                        CSV Download
-                                    </Button>
-                                    <div className="text-sm text-muted-foreground flex items-center">
-                                        View
-                                        <select className="mx-2 border rounded p-1 text-slate-800 outline-none">
-                                            <option>50</option>
-                                            <option>100</option>
-                                        </select>
-                                        of 1 Shipments
-                                    </div>
-                                </div>
-                                <div className="flex justify-end mt-8">
-                                    <Button className="bg-[#0070c0] hover:bg-[#005999] px-8">
-                                        Pay Invoice
-                                    </Button>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
+
+                    {/* Support and Contact Footer */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 py-4">
+                        <div className="p-4 bg-white rounded-xl border border-slate-100 shadow-sm flex flex-col items-center text-center">
+                            <Mail className="w-5 h-5 text-blue-500 mb-2" />
+                            <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Email Support</p>
+                            <p className="text-xs font-semibold text-slate-700">{MOCK_INVOICE.contact.email}</p>
+                        </div>
+                        <div className="p-4 bg-white rounded-xl border border-slate-100 shadow-sm flex flex-col items-center text-center">
+                            <Phone className="w-5 h-5 text-green-500 mb-2" />
+                            <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Canada Phone</p>
+                            <p className="text-xs font-semibold text-slate-700">{MOCK_INVOICE.contact.phoneCA}</p>
+                        </div>
+                        <div className="p-4 bg-white rounded-xl border border-slate-100 shadow-sm flex flex-col items-center text-center">
+                            <Phone className="w-5 h-5 text-red-500 mb-2" />
+                            <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">USA Phone</p>
+                            <p className="text-xs font-semibold text-slate-700">{MOCK_INVOICE.contact.phoneUS}</p>
+                        </div>
+                        <div className="p-4 bg-white rounded-xl border border-slate-100 shadow-sm flex flex-col items-center text-center">
+                            <Info className="w-5 h-5 text-purple-500 mb-2" />
+                            <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Toll Free</p>
+                            <p className="text-xs font-semibold text-slate-700">{MOCK_INVOICE.contact.tollFree}</p>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Right Column: Documents */}
-                <div className="lg:col-span-1">
-                    <Card className="rounded-md border shadow-sm">
-                        <CardHeader className="bg-white border-b pb-4 pt-4">
-                            <CardTitle className="text-base font-semibold text-slate-800">
+                {/* Right Column: Actions & Documents */}
+                <div className="lg:col-span-1 space-y-6">
+                    <Card className="rounded-xl border shadow-sm sticky top-24 overflow-hidden">
+                        <CardHeader className="bg-white border-b py-4">
+                            <CardTitle className="text-lg font-bold text-slate-800">
                                 Invoice Documents
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="p-6">
-                            <div className="flex justify-between items-center mb-8">
-                                <span className="text-sm font-medium">Detailed Invoice</span>
-                                <Button variant="ghost" className="text-[#0070c0] hover:bg-[#0070c0]/10 flex items-center h-auto py-1 px-2" onClick={() => window.open(`/invoices/single/pdf?id=${invoiceId || 'FC15017348'}`, '_blank')}>
-                                    <Download className="w-4 h-4 mr-1" />
-                                    <span className="text-sm">Download</span>
+                        <CardContent className="p-6 space-y-4">
+                            <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-100 flex justify-between items-center group hover:bg-blue-50 transition-colors cursor-pointer" onClick={() => window.open(`/invoices/single/pdf?id=${invoiceId}`, '_blank')}>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-white rounded-lg border border-blue-200 flex items-center justify-center text-blue-600 shadow-sm">
+                                        <FileText className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-slate-800">Detailed Invoice</p>
+                                        <p className="text-[10px] text-blue-600 font-bold uppercase">PDF Document</p>
+                                    </div>
+                                </div>
+                                <Download className="w-5 h-5 text-slate-300 group-hover:text-blue-600 transition-colors" />
+                            </div>
+
+                            <Separator />
+
+                            <div className="space-y-3 pt-2">
+                                <Button className="w-full bg-primary hover:bg-[#005999] h-11 font-bold shadow-md shadow-blue-200/50" onClick={() => setIsPayModalOpen(true)}>
+                                    Pay This Invoice
+                                </Button>
+                                <Button variant="outline" className="w-full h-11 font-bold border-slate-200 text-slate-600 hover:bg-slate-50" onClick={() => window.open(`/invoices/single/pdf?id=${invoiceId}`, '_blank')}>
+                                    Download All (1)
                                 </Button>
                             </div>
-                            <div className="flex justify-center">
-                                <Button variant="outline" className="w-full text-[#0070c0] border-[#0070c0] hover:bg-[#0070c0]/5 flex items-center justify-center" onClick={() => window.open(`/invoices/single/pdf?id=${invoiceId || 'FC15017348'}`, '_blank')}>
-                                    <Download className="w-4 h-4 mr-2" />
-                                    Download All
-                                </Button>
+
+                            <div className="pt-4 mt-4 border-t border-slate-100">
+                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-3">Terms & Conditions</p>
+                                <p className="text-[11px] text-slate-500 leading-relaxed">
+                                    You have thirty (30) days from the Invoice Date to dispute charges. Please pay the Amount Due in full by the Due Date.
+                                </p>
                             </div>
                         </CardContent>
                     </Card>
                 </div>
             </div>
+
+            <PayInvoiceModal
+                open={isPayModalOpen}
+                onOpenChange={setIsPayModalOpen}
+                amount={MOCK_INVOICE.charges.totalDue}
+                currency={MOCK_INVOICE.currency}
+                invoiceId={invoiceId}
+            />
         </div>
     )
 }

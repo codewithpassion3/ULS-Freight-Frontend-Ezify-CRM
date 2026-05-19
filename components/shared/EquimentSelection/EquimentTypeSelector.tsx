@@ -14,9 +14,9 @@ import InBond from "../AdditionalService/InBond"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react"
-import { LIMITED_ACCESS_LOCATIONS } from "@/shared-date/shipment.data"
+import { LIMITED_ACCESS_LOCATIONS } from "@/shared-data/shipment.data"
 
-export const EquimentTypeSelector = forwardRef(({ shipmentType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions] }, ref) => {
+export const EquimentTypeSelector = forwardRef(({ shipmentType, onChange }: { shipmentType: ShipmentOptions[keyof ShipmentOptions], onChange?: (data: any) => void }, ref) => {
     const [isOpen, setIsOpen] = useState(false)
     const methods = useForm({
         defaultValues: {
@@ -54,6 +54,15 @@ export const EquimentTypeSelector = forwardRef(({ shipmentType }: { shipmentType
             }
         },
     })
+
+    useEffect(() => {
+        const subscription = methods.watch((value) => {
+            if (onChange) {
+                onChange(value);
+            }
+        });
+        return () => subscription.unsubscribe();
+    }, [methods, onChange]);
 
     useImperativeHandle(ref, () => ({
         getValues: methods.getValues,

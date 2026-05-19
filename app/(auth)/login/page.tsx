@@ -54,7 +54,7 @@ export default function LoginPage() {
 
   return (
     <AuthLayout
-      title="To access your ULS FREIGHT account, sign in below."
+      title="To access your ENorth Logistics account, sign in below."
       leftImage="/login-bg.png"
       footerText={
         <>

@@ -100,7 +100,7 @@ export default function RegisterPage() {
       <div className="w-full py-2 flex justify-center items-center bg-gray-50 dark:bg-muted/50 border-b border-border text-sm">
         <span className="text-muted-foreground mr-1 flex items-center gap-1">
           <ArrowRight className="h-4 w-4 text-primary" />
-          Already have a ULS FREIGHT account?
+          Already have a ENorth Logistics account?
         </span>
         <Link href="/login" className="text-primary hover:underline font-medium">
           Login here!
@@ -166,7 +166,7 @@ export default function RegisterPage() {
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
               <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-                <Image loading="eager" src="/logo.png" alt="ULS Freight" width={200} height={200} />
+                <Image loading="eager" src="/enorth-logo.svg" alt="ENorth Logistics" width={200} height={200} />
               </Link>
               <div className="flex items-center gap-2">
                 <LanguageToggle />

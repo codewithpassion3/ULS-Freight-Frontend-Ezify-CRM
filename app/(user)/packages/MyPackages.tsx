@@ -51,7 +51,7 @@ export function MyPackages({ selectedPackage, onSelect }: { selectedPackage?: st
                                     onSelect(props.row.original);
                                     setOpen(false)
                                 }}
-                                className="bg-[#0070c0] hover:bg-[#005999]"
+                                className="bg-primary hover:bg-[#005999]"
                             >
                                 Select
                             </Button>

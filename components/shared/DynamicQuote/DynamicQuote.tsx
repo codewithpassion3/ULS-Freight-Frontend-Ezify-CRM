@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useEffect, useMemo, useState, useRef } from "react"
+import { createContext, useEffect, useMemo, useState, useRef, useCallback } from "react"
 import { useForm, FormProvider, useFormContext } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { SideBar } from "../SideBar"
@@ -162,9 +162,11 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     //  create shipment mutation
     const createShipmentMutation = useMutation({
         mutationFn: (data: unknown) => createShipment(data),
-        onSuccess: () => {
+        onSuccess: (res) => {
             toast.success("Shipment created successfully")
-            router.push("/quotes")
+            // router.push("/quotes")
+            console.log("CREATE SHIPMENT RESPONSE:", res)
+            return res.data
         },
         onError: (error: AxiosError<ApiError>) => {
             toast.error(error.response?.data.message)
@@ -183,8 +185,9 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
 
     const bookShipmentMutation = useMutation({
         mutationFn: (data: unknown) => bookShipment(data),
-        onSuccess: () => {
+        onSuccess: (res) => {
             toast.success("Shipment booked successfully")
+            console.log("CREATE SHIPMENT RESPONSE:", res)
             router.push("/track")
         },
         onError: (error: AxiosError<ApiError>) => {
@@ -193,9 +196,9 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     })
 
     const spotShipmentType: any = {
-        "SPOT_LTL": "LTL_PARTIAL",
-        "SPOT_FTL": "FULL_TRUCK_LOAD",
-        "TIME_CRITICAL": "TIME_CRITICAL",
+        SPOT_LTL: "LTL_PARTIAL",
+        SPOT_FTL: "FULL_TRUCK_LOAD",
+        TIME_CRITICAL: "TIME_CRITICAL",
     }
 
 
@@ -205,6 +208,12 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
     const services = servicesRef.current?.getValues() || {}
     const insurance = insuranceRef.current?.getValues() || {}
     const signature = signatureRef.current?.getValues() || {}
+
+    const [realTimeData, setRealTimeData] = useState<any>({})
+
+    const syncRealTimeData = useCallback(() => {
+        setRealTimeData(getMergedPayload())
+    }, [])
 
     const getMergedPayload = () => {
         const fromAddress = fromAddressRef.current?.getValues() || {}
@@ -225,7 +234,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         if (Object.keys(fromAddress).length > 0) addresses.push(fromAddress)
         if (Object.keys(toAddress).length > 0) addresses.push(toAddress)
 
-        if (insurance.insurance.amount > 0) {
+        if (insurance?.insurance?.amount > 0) {
             completePayload = { ...completePayload, ...insurance }
         }
         if (Object.keys(services).length > 0) {
@@ -233,7 +242,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         }
         // equipment
         if (Object.keys(equipment).length > 0) {
-            completePayload = { ...completePayload, services: { ...equipment.services }, spotDetails: { spotEquipment: { dryVan: true }, spotType: spotShipmentType[shipmentType as ShipmentOptions[keyof ShipmentOptions]] } }
+            completePayload = { ...completePayload, services: { ...equipment.services }, spotDetails: { spotEquipment: equipment.spotEquipment, spotType: spotShipmentType[shipmentType as ShipmentOptions[keyof ShipmentOptions]] } }
         }
         if (Object.keys(signature).length > 0) {
             completePayload = { ...completePayload, ...signature }
@@ -247,9 +256,9 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         if (Object.keys(sendRequestData).length > 0) {
             completePayload = { ...completePayload, ...sendRequestData }
         }
-        // if (quoteType === "SPOT") {
-        //     completePayload = { ...completePayload, spotDetails: { ...equipment, ...spotContact } }
-        // }
+        if (quoteType === "SPOT") {
+            completePayload = { ...completePayload, spotDetails: { ...equipment, ...spotContact, spotType: spotShipmentType[shipmentType as ShipmentOptions[keyof ShipmentOptions]] } }
+        }
         return completePayload
     }
     const validateAllForms = async () => {
@@ -259,17 +268,23 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
 
         let valid = fromValid && toValid && dimValid
 
+        // print all valid with false value
+        console.log("FROM VALID:", fromValid)
+        console.log("TO VALID:", toValid)
+        console.log("DIM VALID:", dimValid)
+
+        if (quoteType === "SPOT") {
+            const contactValid = await contactRef.current?.trigger()
+            const equipmentValid = await equipmentRef.current?.trigger()
+            valid = valid && contactValid && equipmentValid
+        }
+
         if (!valid) {
             toast.error("Please fill in all required fields correctly.")
             return false
         }
 
         return valid
-        // if (servicesRef.current) valid = valid && await servicesRef.current.trigger()
-        // if (insuranceRef.current) valid = valid && await insuranceRef.current.trigger()
-        // if (signatureRef.current) valid = valid && await signatureRef.current.trigger()
-        // if (sendRequestRef.current) valid = valid && await sendRequestRef.current.trigger()
-
     }
     const buildPayloads = () => {
         const mergedData = getMergedPayload()
@@ -294,12 +309,16 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         } else {
             if (isShipment) {
                 createShipmentMutation.mutate(shipmentPayload)
+                // console.log(shipmentPayload)
             } else {
 
                 createQuoteMutation.mutate(finalQuotePayload)
+                // console.log("FINAL QUOTE PAYLOAD:", finalQuotePayload)
             }
         }
     }
+
+
 
     const payloadTransformer = (data: any) => {
         console.log("THIS IS ADDRESS!!!!", data)
@@ -331,7 +350,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                     contactName: address.contactName,
                     phoneNumber: address.phoneNumber,
                     email: address.email,
-                    locationType: address.locationTypeId,
+                    locationType: address.address.locationTypeId,
                     companyName: address.companyName,
                     signatureId: address.signatureId,
                     defaultInstruction: address.defaultInstruction,
@@ -436,49 +455,61 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
         }
     }
     const handleGetRates = async () => {
-        const fromValid = await fromAddressRef.current?.trigger()
-        const toValid = await toAddressRef.current?.trigger()
-        const dimValid = await dimensionsRef.current?.trigger()
+        const valid = await validateAllForms()
 
-        let valid = fromValid && toValid && dimValid;
+        if (!valid) return
 
-        // print every validation
-        if (!valid) {
-            toast.error("Please fill in all required fields correctly.")
-            return
-        }
+        if (servicesRef.current) await servicesRef.current.trigger()
+        if (insuranceRef.current) await insuranceRef.current.trigger()
+        if (signatureRef.current) await signatureRef.current.trigger()
+        if (sendRequestRef.current) await sendRequestRef.current.trigger()
 
-        if (servicesRef.current) valid = valid && await servicesRef.current.trigger()
-        if (insuranceRef.current) valid = valid && await insuranceRef.current.trigger()
-        if (signatureRef.current) valid = valid && await signatureRef.current.trigger()
-        if (sendRequestRef.current) valid = valid && await sendRequestRef.current.trigger()
         getRatesRef.current?.handleStart()
-        // setOpenGetRates("rates")
         setGetRatesLoading(true)
-
     }
 
 
-    const handleBookShipment = () => {
-        // check wallet balance and selected carrier price show modal with top-up and redirect user to payment settings screen
-        // if (user.user.wallet.balance < Number(selectedCarrier?.totalPrice)) {
-        //     console.log("insufficient balance")
-        //     setInSufficientModal(true)
-        // }
-        // else {
-        //     const bookShipmentPayload = {
-        //         quoteId: singleQuote?.quote?.id,
-        //         carrier: selectedCarrier.carrier,
-        //         shipDate: singleQuote?.quote?.shipDate,
-        //     }
-        //     bookShipmentMutation.mutate(bookShipmentPayload)
-        // }
+    const handleBookShipment = async () => {
+
+        if (!singleQuote?.quote?.id) {
+            toast.error("Quote not found")
+            return
+        }
+        if (!selectedCarrier) {
+            toast.error("Please select a carrier")
+            return
+        }
+
         const bookShipmentPayload = {
             quoteId: singleQuote?.quote?.id,
             carrier: selectedCarrier.carrier,
             shipDate: singleQuote?.quote?.shipDate || "2026-08-24",
         }
-        bookShipmentMutation.mutate(bookShipmentPayload)
+        // create shipment first if not created already
+        // if (!singleQuote?.quote?.shipment?.id) {
+        //     bookShipmentMutation.mutate(bookShipmentPayload)
+        // }
+        // else {
+        // }
+        const { finalQuotePayload } = buildPayloads()
+        const newShipmentPayload = {
+            "mode": "SHIPMENT",
+            "shipmentType": singleQuote?.quote?.shipmentType,
+            "shipDate": fromAddress?.shipDate,
+            "quote": {
+                "shipmentType": singleQuote?.quote?.shipmentType,
+                "id": singleQuote?.quote?.id,
+                "quoteType": singleQuote?.quote?.quoteType,
+            }
+        }
+        const res = await createShipmentMutation.mutateAsync(newShipmentPayload)
+        console.log("CREATE SHIPMENT RESPONSE:", res)
+        if (res) {
+            bookShipmentMutation.mutate(bookShipmentPayload)
+        }
+
+
+
     }
 
     const handleConvertToShipment = async () => {
@@ -488,8 +519,7 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
 
         const { finalQuotePayload } = buildPayloads()
 
-        console.log("finalQuotePayload", finalQuotePayload)
-
+        // console.log("FINAL QUOTE PAYLOAD:", finalQuotePayload)
         createQuoteAndConvertToShipmentMutation.mutate(finalQuotePayload)
     }
     const [step, setStep] = useState(1)
@@ -522,10 +552,10 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                             <ShippingTypeSelector quoteType={quoteType} shipmentType={shipmentType} setShipmentType={setShipmentType} />
                             <div className="flex flex-col md:flex-row gap-6">
                                 <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
-                                    <ShippingAddressSection setStep={setStep} step={step} isFetchedQuoteShipment={isFetchedQuoteShipment} setIsFetchedQuoteShipment={setIsFetchedQuoteShipment} ref={fromAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="FROM" title="Shipping From" />
+                                    <ShippingAddressSection setStep={setStep} step={step} isFetchedQuoteShipment={isFetchedQuoteShipment} setIsFetchedQuoteShipment={setIsFetchedQuoteShipment} ref={fromAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="FROM" title="Shipping From" onChange={syncRealTimeData} />
                                 </div>
                                 <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
-                                    <ShippingAddressSection setStep={setStep} step={step} isFetchedQuoteShipment={isFetchedQuoteShipment} setIsFetchedQuoteShipment={setIsFetchedQuoteShipment} ref={toAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="TO" title="Shipping To" />
+                                    <ShippingAddressSection setStep={setStep} step={step} isFetchedQuoteShipment={isFetchedQuoteShipment} setIsFetchedQuoteShipment={setIsFetchedQuoteShipment} ref={toAddressRef} onSwap={handleSwapAddress} quoteType={quoteType} shipmentType={shipmentType} type="TO" title="Shipping To" onChange={syncRealTimeData} />
                                 </div>
                             </div>
                             {/* <Button
@@ -535,128 +565,74 @@ export default function DynamicQuote({ quoteType, initialShipmentType }: {
                             </Button> */}
                             {quoteType === "SPOT" ?
                                 <div className="space-y-6 mt-6">
-                                    <EquimentTypeSelector ref={equipmentRef} shipmentType={shipmentType} />
+                                    <EquimentTypeSelector ref={equipmentRef} shipmentType={shipmentType} onChange={syncRealTimeData} />
                                 </div> : ""}
                             {quoteType === "SPOT" ?
                                 <div className="space-y-6 mt-6">
-                                    <ContactInformation quoteType={quoteType} ref={contactRef} />
+                                    <ContactInformation quoteType={quoteType} ref={contactRef} onChange={syncRealTimeData} />
                                 </div> : ""}
                             <div className="space-y-6 mt-6">
-                                <Dimensions ref={dimensionsRef} shipmentType={shipmentType} />
+                                <Dimensions ref={dimensionsRef} shipmentType={shipmentType} onChange={syncRealTimeData} />
                             </div>
                             {shipmentType !== "STANDARD_FTL" ? <div className="mt-6">
-                                <AdditionalServices quoteType={quoteType} ref={servicesRef} shipmentType={shipmentType} />
+                                <AdditionalServices quoteType={quoteType} ref={servicesRef} shipmentType={shipmentType} onChange={syncRealTimeData} />
                             </div> : ""}
 
                         </div>
                         <div className="mt-6"><AdditionalInsurance ref={insuranceRef} /></div>
                         {(shipmentType === "PACKAGE" || shipmentType === "COURIER_PAK" || isShipment) && <div className="mt-6"><SignaturePreference ref={signatureRef} /></div>}
-                        <div className="mt-6">
-                            <ShippingRates
-                                getRatesLoading={getRatesLoading} setGetRatesLoading={setGetRatesLoading} ref={getRatesRef} selectedCarrier={selectedCarrier} setSelectedCarrier={setSelectedCarrier} openGetRates={openGetRates} setOpenGetRates={setOpenGetRates} dimensions={dimensions} fromAddress={fromAddress} toAddress={toAddress} />
-                        </div>
-
                         {quoteType === "SPOT" && (
                             <div className="mt-6">
                                 <SendRequest
                                     ref={sendRequestRef}
-                                    contactInfo={contactRef.current?.getValues()?.contactInformation}
-                                    equipmentDetails={equipmentRef.current?.getValues()}
-                                    fromAddress={fromAddressRef.current?.getValues()}
-                                    toAddress={toAddressRef.current?.getValues()}
-                                    dimensions={dimensionsRef.current?.getValues()}
-                                    services={servicesRef.current?.getValues()}
+                                    contactInfo={realTimeData?.spotDetails}
+                                    equipmentDetails={realTimeData?.spotDetails}
+                                    fromAddress={realTimeData?.addresses?.[0]}
+                                    toAddress={realTimeData?.addresses?.[1]}
+                                    dimensions={realTimeData}
+                                    services={realTimeData?.services}
                                     onPrevious={() => { }}
                                     onSubmit={onSubmit}
                                 />
                             </div>
                         )}
+                        <div className="mt-6">
+                            <ShippingRates
+                                getRatesLoading={getRatesLoading} setGetRatesLoading={setGetRatesLoading} ref={getRatesRef} selectedCarrier={selectedCarrier} setSelectedCarrier={setSelectedCarrier} openGetRates={openGetRates} setOpenGetRates={setOpenGetRates} dimensions={dimensions} fromAddress={fromAddress} toAddress={toAddress} />
+                        </div>
+
+
 
 
                         <div className="w-full z-10 flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
                             <div className="flex gap-4">
+                                <Button
+                                    variant={"secondary"}
+                                    disabled={getRatesLoading}
+                                    onClick={handleGetRates}>
+                                    {getRatesLoading ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
+                                    Get Rates
+                                </Button>
                                 {isShipment ?
-                                    <>
-                                        <Button
-                                            disabled={getRatesLoading}
-                                            onClick={handleGetRates}>
-                                            {getRatesLoading ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
-                                            Get Rates
-                                        </Button>
-                                        <Button
-                                            disabled={createShipmentMutation.isPending || updateShipmentMutation.isPending}
-                                            variant="outline"
-                                            onClick={() => {
-
-                                                onSubmit()
-                                            }} type="button">
-                                            {createShipmentMutation.isPending || updateShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
-                                            {isEditing ? "Update Shipment" : "Save Shipment"}
-                                        </Button>
-                                    </>
-                                    :
-                                    <div className="flex gap-2">
-                                        <Button
-                                            disabled={createQuoteMutation.isPending || updateQuoteMutation.isPending}
-                                            variant="outline"
-                                            onClick={() => {
-                                                onSubmit()
-                                            }} type="button">
-                                            {createQuoteMutation.isPending || updateQuoteMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
-                                            {isEditing ? "Update Quote" : "Save Quote"}
-                                        </Button>
-
-                                    </div>
-                                }
-                                {isFetchedQuoteShipment ?
                                     <Button onClick={handleBookShipment} disabled={bookShipmentMutation.isPending || !singleQuote}>
                                         {bookShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
                                         Book Shipment
                                     </Button> :
-
                                     <Button
                                         onClick={() => {
-                                            onSubmit()
+                                            // onSubmit()
+                                            handleConvertToShipment()
                                         }}
                                         disabled={createQuoteAndConvertToShipmentMutation.isPending}
                                     >
                                         {createQuoteAndConvertToShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
                                         Convert to Shipment
                                     </Button>
-
                                 }
-                                {/* get rates */}
-                                {!isShipment ?
-                                    // selectedCarrier === null ?
-                                    false ?
-                                        <Button
-                                            disabled={getRatesLoading}
-                                            onClick={handleGetRates}>
-                                            {getRatesLoading ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
-                                            Get Rates
-                                        </Button>
-                                        :
-                                        <Button
-                                            onClick={() => {
-                                                // onSubmit()
-                                                handleConvertToShipment()
-                                            }}
-                                            disabled={createQuoteAndConvertToShipmentMutation.isPending}
-                                        >
-                                            {createQuoteAndConvertToShipmentMutation.isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : ""}
-                                            Convert to Shipment
-                                        </Button>
-
-                                    : ""}
-
-                                {/* Convert to shipment */}
-
-                                {/* Sidebar */}
                             </div>
                         </div>
                     </div>
                     <SideBar isPending={createQuoteMutation.isPending || updateQuoteMutation.isPending} onSubmit={onSubmit} setQuoteStatus={setQuoteStatus} currentStep={currentStep} setCurrentStep={setCurrentStep} />
-
                 </div>
             </div>
         </>

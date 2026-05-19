@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
 import { FormProvider, useForm } from "react-hook-form";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -9,19 +9,46 @@ import { useMemo, useState } from "react";
 import { QuoteTypes } from "../DynamicQuote/DynamicQuote";
 
 
-const ContactInformation = forwardRef(({ quoteType }: { quoteType: QuoteTypes }, ref: any) => {
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const contactInfoSchema = z.object({
+    spotContact: z.object({
+        contactName: z.string().min(1, "Contact Name is required"),
+        phoneNumber: z.string().min(1, "Phone Number is required"),
+        email: z.email("Invalid email address"),
+        shipDate: z.date({
+            message: "Ship date is required",
+        }).min(new Date(new Date().setHours(0, 0, 0, 0)), {
+            message: "Ship date cannot be in the past",
+        }),
+        spotQuoteName: z.string().optional(),
+    }),
+});
+
+const ContactInformation = forwardRef(({ quoteType, onChange }: { quoteType: QuoteTypes, onChange?: (data: any) => void }, ref: any) => {
     const [isOpen, setIsOpen] = useState(false);
     const form = useForm({
+        resolver: zodResolver(contactInfoSchema),
         defaultValues: {
             spotContact: {
                 contactName: "",
                 phoneNumber: "",
-                shipDate: "",
-                emailAddress: "",
+                shipDate: undefined,
+                email: "",
                 spotQuoteName: "",
             },
         },
     })
+
+    useEffect(() => {
+        const subscription = form.watch((value) => {
+            if (onChange) {
+                onChange(value);
+            }
+        });
+        return () => subscription.unsubscribe();
+    }, [form, onChange]);
 
     useImperativeHandle(ref, () => ({
         getValues: form.getValues,

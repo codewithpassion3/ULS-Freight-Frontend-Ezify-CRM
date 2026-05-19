@@ -1,4 +1,4 @@
-import { CheckCircle2, RotateCcw, FileText, Image as ImageIcon, MapPin, Truck } from "lucide-react";
+import { CheckCircle2, RotateCcw, FileText, Image as ImageIcon, MapPin, Truck, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function ShipmentHeader({ quote }: { quote?: any }) {
@@ -37,10 +37,10 @@ export function ShipmentHeader({ quote }: { quote?: any }) {
       <div className="flex flex-col items-end gap-4 self-stretch md:self-auto justify-between">
         <div className="flex items-center gap-2 text-xl font-semibold text-primary">
           <CheckCircle2 className="w-6 h-6 fill-primary text-white" />
-          {quote.status === "DRAFT" ? "Draft" : quote.status}
+          {quote.status === "DRAFT" ? "Draft" : quote.shipment.currentStatus}
         </div>
-        <Button variant="outline" className="text-muted-foreground">
-          <CheckCircle2 className="w-4 h-4 mr-2" />
+        <Button variant="destructive">
+          <X className="w-4 h-4" />
           Cancel Shipment
         </Button>
       </div>

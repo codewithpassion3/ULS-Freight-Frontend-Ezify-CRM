@@ -19,7 +19,7 @@ export default function SearchInput({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
             />
-            <Button className="rounded-l-none bg-[#0070c0] hover:bg-[#005999] px-3">
+            <Button className="rounded-l-none bg-primary hover:bg-[#005999] px-3">
                 <Search className="h-4 w-4" />
             </Button>
         </div>
