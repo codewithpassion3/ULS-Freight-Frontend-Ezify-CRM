@@ -41,7 +41,7 @@ export const AuthLayout = ({
             <div className="flex items-center justify-center p-6 sm:p-12 h-screen overflow-y-auto bg-background">
                 <div className="mx-auto w-full max-w-[400px] flex flex-col justify-between gap-2 py-8">
                     {/* Header */}
-                    <div className="flex items-center justify-between mb-16">
+                    <div className="flex items-center justify-between">
 
                         <Image
                             loading="eager"

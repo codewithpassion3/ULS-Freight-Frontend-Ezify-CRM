@@ -87,7 +87,7 @@ export const contactSchema = z.object({
 
     closeTimeAmPm: z.enum(["AM", "PM"]),
 
-    locationTypeId: z.number().optional(),
+    locationTypeId: z.coerce.number().optional(),
     signatureId: z.number().optional(),
 
     isResidential: z.boolean().optional(),

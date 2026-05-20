@@ -36,6 +36,7 @@ export const columns: ColumnDef<any>[] = [
     header: "Invoice #",
     cell: ({ row }) => {
       // Use trackingNumber or fallback
+      console.log("MY INVOICES:", row.original);
       const invoiceNumber = row.original.trackingNumber || `FC${Math.floor(Math.random() * 100000000)}`;
       return (
         <span className="text-[#0070c0] font-medium whitespace-nowrap">
@@ -78,11 +79,11 @@ export const columns: ColumnDef<any>[] = [
         month: 'short',
         day: 'numeric',
       });
-      
+
       return (
         <div className="leading-tight whitespace-nowrap">
           <div className="flex items-center text-[#0070c0] font-medium">
-             <Calendar className="w-3 h-3 mr-1" /> Upcoming
+            <Calendar className="w-3 h-3 mr-1" /> Upcoming
           </div>
           <span className="text-xs text-muted-foreground">Due {formattedDueDate}</span>
         </div>
@@ -122,7 +123,7 @@ export const columns: ColumnDef<any>[] = [
       return (
         <div className="flex items-center gap-2 w-max">
           <Link className="flex gap-1 items-center text-[#0070c0] hover:underline text-sm font-medium" href={`/invoices/single?id=${row.original.id || 'FC15017348'}`}>
-             <Eye size={14} /> View
+            <Eye size={14} /> View
           </Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

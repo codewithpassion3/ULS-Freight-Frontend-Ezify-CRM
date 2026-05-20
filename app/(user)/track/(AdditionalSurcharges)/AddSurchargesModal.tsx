@@ -84,7 +84,7 @@ export function AddSurchargesModal({
 
     const onSubmit = (data: FormValues) => {
         createSurchargesMutation.mutate({
-            shipmentId: bookedShipment?.id,
+            shipmentId: bookedShipment?.shipment?.id,
             surcharges: data.surcharges,
         });
     };

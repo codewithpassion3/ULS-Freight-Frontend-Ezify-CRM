@@ -73,12 +73,12 @@ export default function DynamicInvoicesTable({ filters, invoiceCategory, currenc
 
 
     return (
-        invoicesResponse.length > 0 ?
+        invoicesResponse.data.length > 0 ?
             <>
                 <div className="shadow-sm border rounded-md mb-4">
                     <DataTable
                         columns={columns}
-                        data={invoicesResponse}
+                        data={invoicesResponse.data}
                         sorting={sorting}
                         setSorting={setSorting}
                     />

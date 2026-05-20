@@ -67,7 +67,7 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "trackingNumber",
     header: "Tracking #/BOL #",
     cell: ({ row }) => {
-      return <span className="text-foreground whitespace-nowrap">{row.original.trackingNumber}</span>
+      return <span className="text-foreground whitespace-nowrap text-center">{row.original?.shipment?.trackingNumber || "N/A"}</span>
     },
   },
   {
@@ -103,10 +103,14 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "shipFrom",
     header: "Ship From",
     cell: ({ row }) => {
+      const address = row.original.addresses[0].addressBookEntry ? row.original.addresses[0].addressBookEntry.address : row.original.addresses[0].address
+      const address1 = address?.address1
+      const city = address?.city
+      const state = address?.state
+      const country = address?.country
       return (
         <span className="text-[#0070c0] font-medium whitespace-nowrap">
-          {/* {row.original.addresses[0].address.city} */}
-          FROM
+          {address1}<br />{city}, {state}, {country}
         </span>
       )
     },
@@ -115,10 +119,14 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "shipTo",
     header: "Ship To",
     cell: ({ row }) => {
+      const address = row.original.addresses[1].addressBookEntry ? row.original.addresses[1].addressBookEntry.address : row.original.addresses[1].address
+      const address1 = address?.address1
+      const city = address?.city
+      const state = address?.state
+      const country = address?.country
       return (
         <span className="text-[#0070c0] font-medium whitespace-nowrap">
-          {/* {row.original.addresses[1].address.city} */}
-          TO
+          {address1}<br />{city}, {state}, {country}
         </span>
       )
     },
@@ -204,13 +212,13 @@ export const columns: ColumnDef<any>[] = [
               {/* if role is admin enabled for testing for now */}
               {true ?
                 <DropdownMenuItem className="cursor-pointer">
-                  <Button
-                    variant={"ghost"}
-                    className="w-full"
+                  <button
+                    // variant={"ghost"}
+                    className="w-full flex gap-2 cursor-pointer"
                     onClick={() => setOpen(true)}
                   >
                     <CircleDollarSign size={14} /> Add Surcharges
-                  </Button>
+                  </button>
                 </DropdownMenuItem> : ""}
               <DropdownMenuItem className="cursor-pointer">
                 <Link className="flex gap-2 items-center w-full" href={`/track/single?id=${row.original.id}`}>

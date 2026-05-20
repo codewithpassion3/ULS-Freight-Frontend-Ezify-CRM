@@ -70,7 +70,8 @@ export const ShippingRatesStream = forwardRef(({ payload, selectedCarrier, setSe
     };
     useImperativeHandle(ref, () => ({
         handleStart,
-        status
+        status,
+        results
     }))
 
     useEffect(() => {

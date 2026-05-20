@@ -29,7 +29,7 @@ export const navItems = [
         title: "Invoices",
         items: [
             { title: "Invoice Dashboard", href: "/invoices" },
-            { title: "Search Shipment Charges", href: "/payments" },
+            // { title: "Search Shipment Charges", href: "/payments" },
             // reporting
             { title: "Reporting", href: "/reporting" },
         ],

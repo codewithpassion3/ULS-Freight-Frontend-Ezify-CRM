@@ -72,14 +72,14 @@ export function CarrierCard({ result, index, selectedCarrier, setSelectedCarrier
         <>
 
             {isError ? (
-                <TableRow>
-                    <TableCell colSpan={5}>
-                        <code className="text-red-500 text-sm">
-                            {result.error}
-                        </code>
-                    </TableCell>
-                </TableRow>
-                // ""
+                // <TableRow>
+                //     <TableCell colSpan={5}>
+                //         <code className="text-red-500 text-sm">
+                //             {result.error}
+                //         </code>
+                //     </TableCell>
+                // </TableRow>
+                ""
             ) : quotesList.length > 0 ? (
                 quotesList.map((quote: any, index: number) => (
                     <TableRow key={index} className={isSelected(quote) ? "border-primary bg-primary/10" : ""}>

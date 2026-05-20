@@ -1,4 +1,12 @@
-import { CheckCircle2, RotateCcw, FileText, Image as ImageIcon, MapPin, Truck, X } from "lucide-react";
+import {
+  CheckCircle2,
+  RotateCcw,
+  FileText,
+  Image as ImageIcon,
+  MapPin,
+  Truck,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function ShipmentHeader({ quote }: { quote?: any }) {
@@ -15,15 +23,22 @@ export function ShipmentHeader({ quote }: { quote?: any }) {
 
         <div className="space-y-1 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
-            <span className="font-semibold text-foreground">Transaction #:</span> {quote.quoteId || 'N/A'}
+            <span className="font-semibold text-foreground">
+              Transaction #:
+            </span>{" "}
+            {quote.quoteId || "N/A"}
             <FileText className="w-3.5 h-3.5 ml-1 cursor-pointer hover:text-primary" />
           </div>
           <div className="flex items-center gap-1">
-            <span className="font-semibold text-foreground">BOL #:</span> {quote.shipment?.bolNumber || 'N/A'}
+            <span className="font-semibold text-foreground">BOL #:</span>{" "}
+            {quote.shipment?.bolNumber || "N/A"}
             <FileText className="w-3.5 h-3.5 ml-1 cursor-pointer hover:text-primary" />
           </div>
           <div className="flex items-center gap-1">
-            <span className="font-semibold text-foreground">Tracking/PRO #:</span> {quote.shipment?.trackingNumber || 'N/A'}
+            <span className="font-semibold text-foreground">
+              Tracking/PRO #:
+            </span>{" "}
+            {quote.shipment?.trackingNumber || "N/A"}
             <FileText className="w-3.5 h-3.5 ml-1 cursor-pointer hover:text-primary" />
           </div>
         </div>
@@ -36,10 +51,16 @@ export function ShipmentHeader({ quote }: { quote?: any }) {
 
       <div className="flex flex-col items-end gap-4 self-stretch md:self-auto justify-between">
         <div className="flex items-center gap-2 text-xl font-semibold text-primary">
-          <CheckCircle2 className="w-6 h-6 fill-primary text-white" />
-          {quote.status === "DRAFT" ? "Draft" : quote.shipment.currentStatus}
+          {quote.status === "DRAFT" ? (
+            "Draft"
+          ) : (
+            <>
+              <CheckCircle2 className="w-6 h-6 fill-primary text-white" />
+              <span> quote.shipment.currentStatus</span>
+            </>
+          )}
         </div>
-        <Button variant="destructive">
+        <Button disabled variant="destructive">
           <X className="w-4 h-4" />
           Cancel Shipment
         </Button>

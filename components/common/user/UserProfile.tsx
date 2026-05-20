@@ -119,11 +119,11 @@ export default function UserProfile() {
                                 </Link>
                             </DropdownMenuItem>
 
-                            <DropdownMenuItem className="hover:bg-transparent!">
-                                <Button variant="outline" className="w-full flex gap-2" size="lg" onClick={handleLogout}>
-                                    <LogOut />
-                                    Logout
-                                </Button>
+                            <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+                                <LogOut />
+                                Logout
+                                {/* <Button variant="outline" className="w-full flex gap-2 text-primary!" size="lg" onClick={handleLogout}>
+                                </Button> */}
                             </DropdownMenuItem>
 
                         </DropdownMenuContent>
