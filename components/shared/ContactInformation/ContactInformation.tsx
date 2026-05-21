@@ -5,9 +5,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { ListTodo } from "lucide-react";
 import { ChevronUp } from "lucide-react";
 import { useMemo, useState } from "react";
-
-
-
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { QuoteTypes } from "../DynamicQuote/DynamicQuote.types";

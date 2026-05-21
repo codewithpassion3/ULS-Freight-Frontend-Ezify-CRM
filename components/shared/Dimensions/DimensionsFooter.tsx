@@ -5,7 +5,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
-import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
+import { ShipmentOptions } from "../DynamicQuote/DynamicQuote.types"
+
 
 type Props = {
     shipmentType: ShipmentOptions[keyof ShipmentOptions]
