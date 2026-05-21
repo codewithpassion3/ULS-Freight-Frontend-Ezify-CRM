@@ -1,6 +1,6 @@
 // create quote
 
-import { ShipmentTypes } from "@/components/shared/DynamicQuote/DynamicQuote";
+
 import apiClient from "../client";
 
 export const createQuote = async (payload: any) => {

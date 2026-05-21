@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Bell, Boxes, CircleArrowRight, Clock, Info, Mail, Package, Truck, WalletCards } from "lucide-react"
-import { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
+
 import { useQuery } from "@tanstack/react-query"
 import { getSingleQuote } from "@/api/services/quotes.api"
 import { useEffect } from "react"
@@ -8,6 +8,7 @@ import { usePathname, useSearchParams } from "next/navigation"
 import { Loader } from "@/components/common/Loader"
 
 import { PackagingTypesModal } from "./PackagingTypesModal"
+import { ShipmentOptions } from "../DynamicQuote/DynamicQuote.types"
 
 interface QuoteShippingTypeSelectorProps {
     shipmentType: ShipmentOptions[keyof ShipmentOptions]

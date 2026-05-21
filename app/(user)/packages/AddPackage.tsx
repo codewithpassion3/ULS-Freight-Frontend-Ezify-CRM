@@ -16,8 +16,9 @@ import { AxiosError } from "axios";
 import { ApiError } from "next/dist/server/api-utils";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ShipmentOptions } from "../../../components/shared/DynamicQuote/DynamicQuote";
+
 import { calculateClass } from "@/components/shared/Dimensions/DensityCalculatorModal";
+import { ShipmentOptions } from "@/components/shared/DynamicQuote/DynamicQuote.types";
 
 const baseSchema = z.object({
     measurementUnit: z.enum(["METRIC", "IMPERIAL"]),

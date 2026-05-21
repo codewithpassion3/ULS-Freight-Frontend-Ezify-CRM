@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query"
 import { getSingleQuote } from "@/api/services/quotes.api"
 import { useEffect } from "react"
 import { Loader } from "@/components/common/Loader"
-import { ShipmentOptions } from "@/components/shared/DynamicQuote/DynamicQuote"
+
 
 import { FormProvider, useForm } from "react-hook-form"
 import { forwardRef, useImperativeHandle, useState } from "react"
@@ -20,6 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { FormInput } from "@/components/common/forms/FormInput"
 import DangerousGoodsForm from "../Dimensions/DangerousGoodDetails"
 import { LIMITED_ACCESS_LOCATIONS } from "@/shared-data/shipment.data"
+import { ShipmentOptions } from "../DynamicQuote/DynamicQuote.types"
 
 const AdditionalServices = forwardRef(({ shipmentType, quoteType, onChange }: { shipmentType: ShipmentOptions[keyof ShipmentOptions], quoteType: "SPOT" | "STANDARD", onChange?: (data: any) => void }, ref) => {
     const additionalServicesSchema = z.object({
