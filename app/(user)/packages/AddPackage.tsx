@@ -83,7 +83,7 @@ export default function AddPackage({ id, shipmentType, initialData, onSave, chil
 
     useEffect(() => {
         if (open && initialData) {
-            console.log("initialData", initialData)
+            // console.log("initialData", initialData)
             methods.reset({ ...initialData, shipmentType: shipmentType as any });
         } else if (open && !initialData) {
             methods.reset({
@@ -123,21 +123,21 @@ export default function AddPackage({ id, shipmentType, initialData, onSave, chil
         }
     })
     // errors
-    console.log("errors", methods.formState.errors)
+    // console.log("errors", methods.formState.errors)
     // values
-    console.log("values", methods.getValues())
+    // console.log("values", methods.getValues())
     const onSubmit = () => {
         if (isEdit) {
             const data = { ...methods.getValues(), id }
-            // console.log(data)
+            // // console.log(data)
             updateMutation.mutate(data as UpdatePackagePayload);
         } else {
             const data = methods.getValues()
-            // console.log(data)
+            // // console.log(data)
             createMutation.mutate(data as CreatePackagePayload);
         }
     };
-    console.log("shipmentType", shipmentType)
+    // console.log("shipmentType", shipmentType)
     const ShipmentValueType = methods.watch("shipmentType") || shipmentType;
 
     const fields: any = useMemo(() => [

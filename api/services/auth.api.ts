@@ -66,10 +66,22 @@ export const updateUserSettings = async (data: any) => {
 // edit user from admin dashboard
 
 export const editUserAdmin = async (data: AddUserFormValues) => {
-    // console.log("data", data)
+    // // console.log("data", data)
     const response = await apiClient.patch(`/users/${data.id}`, data)
     return response.data
 }
+
+// roles
+export const getAllRoles = async () => {
+    const response = await apiClient.get("/roles")
+    return response.data
+}
+
+export const getAllPermissions = async () => {
+    const response = await apiClient.get("/permissions")
+    return response.data
+}
+
 
 
 

@@ -67,7 +67,7 @@ export const NmfcCodeRequestModal = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         // Handle form submission logic here
-        console.log("NMFC Request Submitted:", { name, email, company, phone, ext, unit, items })
+        // console.log("NMFC Request Submitted:", { name, email, company, phone, ext, unit, items })
         setOpen(false)
     }
 

@@ -29,7 +29,7 @@ export default function OTPVerificationPage() {
     const { email, purpose, setToken } = useOTPFlow()
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(true)
-    // console.log(email, purpose)
+    // // console.log(email, purpose)
 
     useEffect(() => {
         const t = setTimeout(() => setIsLoading(false), 300)
@@ -79,7 +79,7 @@ export default function OTPVerificationPage() {
             email: email ?? "",
             purpose: purpose || "email_verification"
         })
-        console.log(data.code)
+        // console.log(data.code)
     }
     const handleResendOtp = () => {
         sendEmailVerificationOTP({
@@ -124,28 +124,29 @@ export default function OTPVerificationPage() {
                             onChange={field.onChange}
                             containerClassName="w-full"
                             size={20}
+                            
                         >
-                            <InputOTPGroup>
+                            <InputOTPGroup className="border! border-primary/20!">
                                 <InputOTPSlot index={0} />
                             </InputOTPGroup>
                             <InputOTPSeparator />
-                            <InputOTPGroup>
+                            <InputOTPGroup className="border! border-primary/20!">
                                 <InputOTPSlot index={1} />
                             </InputOTPGroup>
                             <InputOTPSeparator />
-                            <InputOTPGroup>
+                            <InputOTPGroup className="border! border-primary/20!">
                                 <InputOTPSlot index={2} />
                             </InputOTPGroup>
                             <InputOTPSeparator />
-                            <InputOTPGroup>
+                            <InputOTPGroup className="border! border-primary/20!">
                                 <InputOTPSlot index={3} />
                             </InputOTPGroup>
                             <InputOTPSeparator />
-                            <InputOTPGroup>
+                            <InputOTPGroup className="border! border-primary/20!">
                                 <InputOTPSlot index={4} />
                             </InputOTPGroup>
                             <InputOTPSeparator />
-                            <InputOTPGroup>
+                            <InputOTPGroup className="border! border-primary/20!">
                                 <InputOTPSlot index={5} />
                             </InputOTPGroup>
                         </InputOTP>

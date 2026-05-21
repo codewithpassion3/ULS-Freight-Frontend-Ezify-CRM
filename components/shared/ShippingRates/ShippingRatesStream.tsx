@@ -63,7 +63,7 @@ export const ShippingRatesStream = forwardRef(({ payload, selectedCarrier, setSe
     const { results, status, error, start, stop, reset } = useCarrierStream(API_URL);
 
 
-    console.log("ALL quotes results:", results)
+    // console.log("ALL quotes results:", results)
     const handleStart = () => {
         start(payload)
         setGetRatesLoading(true)

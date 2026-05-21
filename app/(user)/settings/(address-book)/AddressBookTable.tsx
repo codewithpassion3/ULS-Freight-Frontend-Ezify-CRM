@@ -19,7 +19,7 @@ export function AddressBookTable({ handleSelect, type }: { handleSelect?: (conta
     const [page, setPage] = useState(1)
     const [sorting, setSorting] = useState([])
     // print type
-    console.log(type)
+    // console.log(type)
     const debouncedSearch = useDebounce(search, 500)
 
     const { data: addressBook, isLoading, isPending } = useQuery({

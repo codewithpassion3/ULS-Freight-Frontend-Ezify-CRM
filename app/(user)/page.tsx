@@ -13,7 +13,7 @@ import { Loader } from "@/components/common/Loader";
 
 export default function Home() {
     const { user, isLoading, isPending } = useAuth();
-    // const router = useRouter();
+    const router = useRouter();
     // const hasRedirected = useRef(false)
     // const pathname = usePathname()
 
@@ -32,6 +32,12 @@ export default function Home() {
     //         router.replace(defaultPage)
     //     }
     // }, [data, pathname, router])
+
+    useEffect(() => {
+        if(user.user.role.name === "superAdmin"){
+            router.replace("/track")
+        }
+    },[])
     if (isLoading || isPending) {
         return <Loader />
     }

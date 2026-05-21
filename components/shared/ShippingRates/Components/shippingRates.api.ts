@@ -26,7 +26,7 @@ export class ShipmentApi {
         signal: AbortSignal,
         callbacks: StreamCallbacks
     ): Promise<void> {
-        console.log("process.env.NEXT_PUBLIC_API_BASE_URL", process.env.NEXT_PUBLIC_API_BASE_URL);
+        // console.log("process.env.NEXT_PUBLIC_API_BASE_URL", process.env.NEXT_PUBLIC_API_BASE_URL);
 
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/shipment-carriers/rates/stream`, {
             method: 'POST',

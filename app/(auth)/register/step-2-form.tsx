@@ -50,7 +50,7 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
     ])
 
     if (valid) onNext()
-    // console.log(form.getValues())
+    // // console.log(form.getValues())
   }
   const country = watch("address.country");
 

@@ -8,8 +8,8 @@ export function ShipmentDetailsCard({ quote }: { quote?: any }) {
   const fromAddress = quote.addresses?.find((a: any) => a.type === "FROM");
   const toAddress = quote.addresses?.find((a: any) => a.type === "TO");
 
-  console.log("fromAddress", fromAddress)
-  console.log("toAddress", toAddress)
+  // console.log("fromAddress", fromAddress)
+  // console.log("toAddress", toAddress)
   return (
 
     <Card className="mb-6 pt-0 rounded-sm shadow-sm">

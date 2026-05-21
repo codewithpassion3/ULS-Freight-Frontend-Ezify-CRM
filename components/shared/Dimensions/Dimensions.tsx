@@ -9,11 +9,12 @@ import { useDimensions } from "./Dimensions.hooks"
 import { DimensionsMeasurementControls } from "./DimensionsMesurementControls"
 import { PackageRow } from "./PackageRow"
 import { DimensionsFooter } from "./DimensionsFooter"
-import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
+// import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import { usePathname } from "next/navigation"
 import { FTLPackageDimensions } from "./FTLPackageDimensions"
+import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote.types"
 
-const Dimensions = forwardRef(({ shipmentType, onChange }: { shipmentType: ShipmentOptions[keyof ShipmentOptions], onChange?: (data: any) => void }, ref) => {
+const Dimensions = forwardRef(({ shipmentType, onChange, quoteType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions], onChange?: (data: any) => void, quoteType: keyof ShipmentOptions }, ref) => {
 
   const { methods, fieldArray, handleAddPackage, handleClearDimensions, isOpen, setIsOpen } = useDimensions(shipmentType)
   const { watch, setValue } = methods
@@ -41,7 +42,7 @@ const Dimensions = forwardRef(({ shipmentType, onChange }: { shipmentType: Shipm
 
   // show error
   const errors = methods.formState.errors
-  console.log("errors", errors)
+  // console.log("errors", errors)
 
   // is valid
   const isValid = methods.formState.isValid
@@ -89,6 +90,7 @@ const Dimensions = forwardRef(({ shipmentType, onChange }: { shipmentType: Shipm
                     onClear={handleClearDimensions}
                     open={packageDialogOpen}
                     setOpen={setPackageDialogOpen}
+                    quoteType={quoteType}
                   />
                 ))}
                 <DimensionsFooter shipmentType={shipmentType} onAddPackage={handleAddPackage} />

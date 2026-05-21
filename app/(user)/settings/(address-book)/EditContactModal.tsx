@@ -32,8 +32,8 @@ export function EditContactModal(
         select: (data) => mapPayloadToForm(data.addressBookContact),
         enabled: !!id
     })
-    console.log("id", id)
-    console.log("data", data)
+    // console.log("id", id)
+    // console.log("data", data)
 
     const mutation = useMutation({
         mutationFn: (data: ContactType) => updateContact(id, data),
@@ -49,7 +49,7 @@ export function EditContactModal(
         }
     })
 
-    console.log("editContactDefaults", data)
+    // console.log("editContactDefaults", data)
 
 
     const handleSubmit = (data: ContactFormValues) => {

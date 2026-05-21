@@ -2,24 +2,41 @@
 
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { CreditCard, Info, X } from "lucide-react";
-import { addCardSchema, type AddCardFormValues } from "./ULSWalletSettings.schema";
+import {
+  addCardSchema,
+  type AddCardFormValues,
+} from "./ULSWalletSettings.schema";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
 import { toast } from "sonner";
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import AddCardForm from "./AddCardForm";
+import { Loader } from "@/components/common/Loader";
 
 interface AddCardModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  clientSecret: string
+  clientSecret: string;
 }
 
-export default function AddCardModal({ open, onOpenChange, clientSecret }: AddCardModalProps) {
-  const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
+export default function AddCardModal({
+  open,
+  onOpenChange,
+  clientSecret,
+}: AddCardModalProps) {
+  const stripePromise = loadStripe(
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "",
+  );
   const methods = useForm<AddCardFormValues>({
     resolver: zodResolver(addCardSchema),
     defaultValues: {
@@ -32,7 +49,7 @@ export default function AddCardModal({ open, onOpenChange, clientSecret }: AddCa
   });
 
   const onSubmit = (data: AddCardFormValues) => {
-    console.log("Adding card:", data);
+    // console.log("Adding card:", data);
     toast.success("Card added successfully (Mock)");
     onOpenChange(false);
     methods.reset();
@@ -67,7 +84,9 @@ export default function AddCardModal({ open, onOpenChange, clientSecret }: AddCa
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
             {methods.formState.errors.expiryDate && (
-              <p className="text-xs text-red-500">{methods.formState.errors.expiryDate.message}</p>
+              <p className="text-xs text-red-500">
+                {methods.formState.errors.expiryDate.message}
+              </p>
             )}
           </div>
           <div className="space-y-2">
@@ -78,11 +97,13 @@ export default function AddCardModal({ open, onOpenChange, clientSecret }: AddCa
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
             {methods.formState.errors.cvv && (
-              <p className="text-xs text-red-500">{methods.formState.errors.cvv.message}</p>
+              <p className="text-xs text-red-500">
+                {methods.formState.errors.cvv.message}
+              </p>
             )}
           </div>
         </div>
-      )
+      ),
     },
     {
       type: "non-input",
@@ -91,10 +112,13 @@ export default function AddCardModal({ open, onOpenChange, clientSecret }: AddCa
         <div className="flex items-start gap-2 text-xs text-blue-600 bg-blue-50 p-3 rounded-md mb-4 border border-blue-100">
           <Info size={14} className="mt-0.5 shrink-0" />
           <p>
-            Please note that once you have added a credit card, you may receive additional charges (such as a Residential Delivery charge) on the card the shipment was booked on, even after removing the credit card from your account.
+            Please note that once you have added a credit card, you may receive
+            additional charges (such as a Residential Delivery charge) on the
+            card the shipment was booked on, even after removing the credit card
+            from your account.
           </p>
         </div>
-      )
+      ),
     },
     {
       name: "acceptTerms",
@@ -109,14 +133,22 @@ export default function AddCardModal({ open, onOpenChange, clientSecret }: AddCa
             {...methods.register("acceptTerms")}
             className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
           />
-          <label htmlFor="acceptTerms" className="text-sm text-muted-foreground">
-            I have read and accepted the <a href="#" className="text-primary hover:underline">Terms of Service</a>
+          <label
+            htmlFor="acceptTerms"
+            className="text-sm text-muted-foreground"
+          >
+            I have read and accepted the{" "}
+            <a href="#" className="text-primary hover:underline">
+              Terms of Service
+            </a>
           </label>
         </div>
-      )
-    }
+      ),
+    },
   ];
-
+  if (!stripePromise || !clientSecret) {
+    return <Loader />;
+  }
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden">
@@ -135,9 +167,11 @@ export default function AddCardModal({ open, onOpenChange, clientSecret }: AddCa
           </FormProvider>
         </div> */}
 
-
         <Elements stripe={stripePromise}>
-          <AddCardForm clientSecret={clientSecret} onOpenChange={onOpenChange} />
+          <AddCardForm
+            clientSecret={clientSecret}
+            onOpenChange={onOpenChange}
+          />
         </Elements>
 
         {/* <DialogFooter className="px-6 py-4 border-t bg-slate-50 gap-2 sm:justify-end">
@@ -157,6 +191,3 @@ export default function AddCardModal({ open, onOpenChange, clientSecret }: AddCa
     </Dialog>
   );
 }
-
-
-

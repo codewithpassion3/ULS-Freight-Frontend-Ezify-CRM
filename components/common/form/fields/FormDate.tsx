@@ -18,7 +18,7 @@ const FormDate = memo(({ field: config }: { field: any }) => {
 
     const { field, error } = useFieldController(config?.name);
 
-    console.log("field", field);
+    // console.log("field", field);
     // ✅ prevent invalid date mutation bug
     const minDate = useMemo(() => {
         const d = new Date();
@@ -64,7 +64,7 @@ const FormDate = memo(({ field: config }: { field: any }) => {
                         required
                         selected={field.value ? new Date(field.value) : undefined}
                         onSelect={(date: any) => {
-                            console.log("date", date);
+                            // console.log("date", date);
                             handleSelect(date)
                         }}
 

@@ -4,28 +4,42 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Wallet, CreditCard, Plus, Download, Upload, Info, CheckCircle2 } from "lucide-react";
-import { TopupFormValues, ulswalletSettingsSchema, type ULSWalletSettingsValues } from "./ULSWalletSettings.schema";
+import {
+  Wallet,
+  CreditCard,
+  Plus,
+  Download,
+  Upload,
+  Info,
+  CheckCircle2,
+} from "lucide-react";
+import {
+  TopupFormValues,
+  ulswalletSettingsSchema,
+  type ULSWalletSettingsValues,
+} from "./ULSWalletSettings.schema";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import AddCardModal from "./AddCardModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createIntent, getCards, topupWallet } from "@/api/services/payment.api";
+import {
+  createIntent,
+  getCards,
+  topupWallet,
+} from "@/api/services/payment.api";
 import { Loader } from "@/components/common/Loader";
 import { useAuth } from "@/context/auth.context";
 import TopupModal from "./TopupModal";
 
 const MOCK_BALANCES = {
-  accountLimit: 3000.00,
+  accountLimit: 3000.0,
   availableBalance: 343.71,
   invoicedCharges: 528.35,
   pendingCharges: 2127.94,
 };
 
-const MOCK_CARDS = [
-  { id: "1", brand: "VISA", last4: "9472", isPrimary: true },
-];
+const MOCK_CARDS = [{ id: "1", brand: "VISA", last4: "9472", isPrimary: true }];
 
 export default function ULSWalletSettings() {
   // get user
@@ -43,16 +57,20 @@ export default function ULSWalletSettings() {
   });
 
   const onSubmit = (data: ULSWalletSettingsValues) => {
-    console.log("Saving wallet settings:", data);
+    // console.log("Saving wallet settings:", data);
   };
 
   // get cards
-  const { data: cards, isLoading: isLoadingCards, isError: isErrorCards } = useQuery({
+  const {
+    data: cards,
+    isLoading: isLoadingCards,
+    isError: isErrorCards,
+  } = useQuery({
     queryKey: ["cards"],
     queryFn: () => getCards(),
-  })
+  });
 
-  console.log("Cards:", cards)
+  // console.log("Cards:", cards)
 
   const fields = [
     {
@@ -61,12 +79,11 @@ export default function ULSWalletSettings() {
       type: "select",
       options: cards?.map((card: any) => ({
         label: `${card.brand} (Ending in ${card.last4} )`,
-        value: card.id
+        value: card.id,
       })),
       // defaultValue: cards[0]?.id || "",
       wrapperClassName: "w-full md:w-1/2",
       optionClassName: "capitalize",
-
     },
     {
       type: "non-input",
@@ -75,10 +92,12 @@ export default function ULSWalletSettings() {
         <div className="flex items-start gap-2 text-sm text-blue-600 bg-blue-50 p-3 rounded-md my-4">
           <Info size={16} className="mt-0.5 shrink-0" />
           <p>
-            Please note that your primary card will be your default card when booking shipments on all Freightcom systems, including the previous version of Freightcom system.
+            Please note that your primary card will be your default card when
+            booking shipments on all Freightcom systems, including the previous
+            version of Freightcom system.
           </p>
         </div>
-      )
+      ),
     },
     {
       name: "notifyExpiry",
@@ -92,7 +111,7 @@ export default function ULSWalletSettings() {
       type: "text",
       placeholder: "",
       wrapperClassName: "w-full md:w-1/2 mt-4",
-    }
+    },
   ];
   const [isTopupModalOpen, setIsTopupModalOpen] = useState(false);
 
@@ -107,55 +126,61 @@ export default function ULSWalletSettings() {
       console.error("No card available for top up");
     }
   };
-  const [clientSecret, setClientSecret] = useState("")
+  const [clientSecret, setClientSecret] = useState("");
 
   // create payment intent mutation
-  const { mutate: createPaymentIntent, isPending: isPendingPaymentIntent, data: paymentIntent } = useMutation({
+  const {
+    mutate: createPaymentIntent,
+    isPending: isPendingPaymentIntent,
+    data: paymentIntent,
+  } = useMutation({
     mutationFn: () => createIntent(user.user.stripeCustomerId!),
     retry: 1,
     onSuccess: (data) => {
-      console.log("Payment intent created");
-      setClientSecret(data.clientSecret)
-
+      // console.log("Payment intent created");
+      setClientSecret(data.clientSecret);
     },
     onError: () => {
       console.error("Failed to create payment intent");
-    }
-  })
+    },
+  });
 
   // get query client
   const queryClient = useQueryClient();
-  const { mutate: charge, isPending: isPendingCharge, data: chargeData } = useMutation({
+  const {
+    mutate: charge,
+    isPending: isPendingCharge,
+    data: chargeData,
+  } = useMutation({
     mutationFn: (payload: any) => topupWallet(payload),
     retry: 1,
     onSuccess: () => {
-      console.log("Payment intent created");
-      queryClient.invalidateQueries({ queryKey: ["user"] })
+      // console.log("Payment intent created");
+      queryClient.invalidateQueries({ queryKey: ["user"] });
       // setClientSecret()
-
     },
     onError: () => {
       console.error("Failed to create payment intent");
-    }
-  })
+    },
+  });
 
-  console.log(user.user)
+  // console.log(user.user)
   const handleAddCard = () => {
     if (user?.user?.stripeCustomerId) {
-      createPaymentIntent(user?.user?.stripeCustomerId)
+      createPaymentIntent(user?.user?.stripeCustomerId);
       setIsAddCardModalOpen(true);
+      queryClient.invalidateQueries({
+        queryKey: ["user"],
+      });
     }
-
-  }
+  };
   if (isPendingPaymentIntent || isLoadingCards) {
-    return (
-      <Loader />
-    )
+    return <Loader />;
   }
-
 
   // charge(chargePayload)
 
+  console.log("Last Card:", user?.user?.company?.savedCards[user?.user?.company?.savedCards.length - 1]);
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2 text-xl font-semibold mb-6">
@@ -182,7 +207,9 @@ export default function ULSWalletSettings() {
           </div>
           <div>
             <p className="text-muted-foreground">Available Balance:</p>
-            <p className="font-bold">${user?.user?.company?.wallet?.balance || 0}</p>
+            <p className="font-bold">
+              ${user?.user?.company?.wallet?.balance || 0}
+            </p>
           </div>
           <div>
             <p className="text-muted-foreground">Invoiced Charges:</p>
@@ -231,17 +258,30 @@ export default function ULSWalletSettings() {
               Primary Card
             </div> */}
               <div className="border-2 border-primary bg-blue-50 rounded-lg p-4 relative overflow-hidden">
-                <div className="font-bold text-slate-700 text-sm mb-4">ENorth Logistics CARD</div>
+                {/* <div className="font-bold text-slate-700 text-sm mb-4">ENorth Logistics CARD</div> */}
                 <div className="flex justify-between items-end">
-                  <div className="text-2xl font-italic text-primary font-bold italic capitalize">{user?.user?.company?.savedCards[user?.user?.company?.savedCards.length - 1]?.brand}</div>
+                  <div className="text-2xl font-italic text-primary font-bold italic capitalize">
+                    {
+                      user?.user?.company?.savedCards[0]?.brand
+                    }
+                  </div>
                   <div className="text-right">
-                    <div className="text-[10px] text-muted-foreground uppercase">Card Number</div>
-                    <div className="text-sm font-mono">**** **** **** {user?.user?.company?.savedCards[user?.user?.company?.savedCards.length - 1]?.last4}</div>
+                    <div className="text-[10px] text-muted-foreground uppercase">
+                      Card Number
+                    </div>
+                    <div className="text-sm font-mono">
+                      **** **** ****{" "}
+                      {
+                        user?.user?.company?.savedCards[0]?.last4
+                      }
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          ) : ""}
+          ) : (
+            ""
+          )}
 
           {/* Add New Card Placeholder */}
           <div
@@ -256,7 +296,13 @@ export default function ULSWalletSettings() {
         <div className="flex items-start gap-2 text-sm text-blue-600 bg-blue-50 border border-blue-100 p-3 rounded-md">
           <Info size={16} className="mt-0.5 shrink-0" />
           <p>
-            If you would like to switch to a <span className="font-bold text-slate-800">Credit Card account</span> (and no longer use your <span className="font-bold text-slate-800">Account Balance</span>), please select “Change Account Type”
+            If you would like to switch to a{" "}
+            <span className="font-bold text-slate-800">
+              Credit Card account
+            </span>{" "}
+            (and no longer use your{" "}
+            <span className="font-bold text-slate-800">Account Balance</span>),
+            please select “Change Account Type”
           </p>
         </div>
 

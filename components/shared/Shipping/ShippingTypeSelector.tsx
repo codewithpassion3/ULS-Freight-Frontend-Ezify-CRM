@@ -35,7 +35,7 @@ export const ShippingTypeSelector = ({ shipmentType, setShipmentType, quoteType 
             { name: "STANDARD_FTL", label: "FTL", icon: <Truck /> },
         ]
     }
-    // console.log("shipmentTypes", shipmentTypes())
+    // // console.log("shipmentTypes", shipmentTypes())
     const { data: cachedSingleQuote, isLoading, isPending } = useQuery({
         queryKey: ["singleQuote", quoteId],
         queryFn: () => quoteId ? getSingleQuote(quoteId) : null,
@@ -48,7 +48,7 @@ export const ShippingTypeSelector = ({ shipmentType, setShipmentType, quoteType 
             setShipmentType(cachedSingleQuote.quote.shipmentType)
         }
     }, [cachedSingleQuote])
-    // console.log("cachedSingleQuote", cachedSingleQuote)
+    // // console.log("cachedSingleQuote", cachedSingleQuote)
     if (quoteId) {
         if (isLoading || isPending) {
             return <Loader />
@@ -56,7 +56,7 @@ export const ShippingTypeSelector = ({ shipmentType, setShipmentType, quoteType 
     }
 
     // print shipment type on change
-    console.log("shipmentType", shipmentType)
+    // console.log("shipmentType", shipmentType)
     return (
         <div className="border border-border rounded-md p-4 bg-white dark:bg-card shadow-lg">
             <div className="flex items-center justify-between pb-4">

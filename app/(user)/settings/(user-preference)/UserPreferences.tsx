@@ -44,14 +44,14 @@ export default function UserPreferences() {
         home_quick_button: quickButton
     })
     const onSubmit = (data: UserSettingsFormValues) => {
-        console.log(data)
+        // console.log(data)
     }
     const [isUploadPhotoModalOpen, setIsUploadPhotoModalOpen] = useState(false)
     useEffect(() => {
         if (user) {
             setUserSettingsFormValues({
-                default_landing_page: user.user.settings.default_landing_page,
-                home_quick_button: user.user.settings.home_quick_button
+                default_landing_page: user?.user?.settings?.default_landing_page,
+                home_quick_button: user?.user?.settings?.home_quick_button
             })
         }
     }, [user])
@@ -83,6 +83,7 @@ export default function UserPreferences() {
     const handleUpdateUserSettings = () => {
         mutate(userSettingsFormValues)
     }
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
     return (
         <div className="max-w-6xl">
@@ -117,10 +118,11 @@ export default function UserPreferences() {
                 </div> */}
 
                 {/* Default Landing Page */}
-                <div className="flex flex-col gap-4 items-start">
-                    <div>
-                        <h3 className="font-medium mb-2">Default Landing Page</h3>
-                        <Select
+                {user?.user?.role?.name !== "superAdmin" && (
+                    <div className="flex flex-col gap-4 items-start">
+                        <div>
+                            <h3 className="font-medium mb-2">Default Landing Page</h3>
+                            <Select
 
                             name="default_landing_page"
                             onValueChange={(value) => setUserSettingsFormValues({ ...userSettingsFormValues, default_landing_page: value })}
@@ -172,7 +174,7 @@ export default function UserPreferences() {
                     </div>
 
                     <Button type="button" onClick={handleUpdateUserSettings}>Save Changes</Button>
-                </div>
+                </div>)}
 
                 {/* Profile Image */}
                 <div className="border-t pt-6">
@@ -182,7 +184,7 @@ export default function UserPreferences() {
                         <div className="cursor-pointer">
                             {user?.user?.profilePic ?
                                 <Image
-                                    src={`${user?.user?.profilePic}`}
+                                    src={`${BASE_URL}${user?.user?.profilePic}`}
                                     alt="Profile"
                                     width={64}
                                     height={64}
@@ -221,7 +223,8 @@ export default function UserPreferences() {
                 {/* Change Password */}
                 <ChangePassword />
                 {/* Account Users */}
-                {user?.user?.role.name.includes("admin") &&
+
+                {["admin", "superAdmin"].includes(user?.user?.role.name) &&
                     <div className="border-t pt-6">
                         <div className="flex justify-between items-center mb-4">
                             <AddUser open={open} selectedUser={selectedUser} setOpen={setOpen} mode={mode} setMode={setMode} setSelectedUser={setSelectedUser} />

@@ -23,7 +23,7 @@ export default function SingleShipmentTrackingPage() {
     // dependency
     enabled: true
   })
-  console.log("quote", quote)
+  // console.log("quote", quote)
   if (isLoading || isPending) {
     return (
       <div className="flex items-center justify-center h-screen">

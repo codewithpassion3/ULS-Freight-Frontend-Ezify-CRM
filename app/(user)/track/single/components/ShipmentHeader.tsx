@@ -6,11 +6,17 @@ import {
   MapPin,
   Truck,
   X,
+  CircleDollarSign,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/auth.context";
+import { AddSurchargesModal } from "../../(AdditionalSurcharges)/AddSurchargesModal";
+import { useState } from "react";
 
 export function ShipmentHeader({ quote }: { quote?: any }) {
   if (!quote) return null;
+  const { user } = useAuth();
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -56,15 +62,27 @@ export function ShipmentHeader({ quote }: { quote?: any }) {
           ) : (
             <>
               <CheckCircle2 className="w-6 h-6 fill-primary text-white" />
-              <span> quote.shipment.currentStatus</span>
+              <span>{quote.shipment.currentStatus}</span>
             </>
           )}
         </div>
-        <Button disabled variant="destructive">
-          <X className="w-4 h-4" />
-          Cancel Shipment
-        </Button>
+        <div className="flex gap-2">
+          {user?.user?.role.name === "superAdmin" && (
+            <Button onClick={() => setOpen(true)}>
+              <CircleDollarSign size={14} /> Add Surcharge
+            </Button>
+          )}
+          <Button disabled variant="destructive">
+            <X className="w-4 h-4" />
+            Cancel Shipment
+          </Button>
+        </div>
       </div>
+      <AddSurchargesModal
+        bookedShipment={quote}
+        open={open}
+        onOpenChange={(open) => setOpen(open)}
+      />
     </div>
   );
 }

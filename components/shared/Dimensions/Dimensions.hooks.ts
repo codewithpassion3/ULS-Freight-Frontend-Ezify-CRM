@@ -7,8 +7,9 @@ import { useQuery } from "@tanstack/react-query"
 import { useEffect, useMemo, useState } from "react"
 import { getSingleQuote } from "@/api/services/quotes.api"
 // import { shipmentSchema, ShipmentFormValues } from "./Dimensions.schema"
-import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
+
 import { courierLineItemSchema, ftlLineItemSchema, packageLineItemSchema, palletLineItemSchema, spotFtlLineItemSchema, spotLtlLineItemSchema } from "./Dimensions.schema"
+import { ShipmentOptions } from "../DynamicQuote/DynamicQuote.types"
 
 export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOptions]) {
     const [isOpen, setIsOpen] = useState(true)
@@ -37,7 +38,7 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
     const resolver = useMemo(() => zodResolver(schema as any), [schema])
     const methods = useForm<any>({
         resolver,
-        mode: "onChange",
+        // mode: "onChange",
         defaultValues: {
             shipmentType: shipmentType,
             lineItem: {
@@ -55,6 +56,8 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
 
 
 
+
+
     const { control, setValue, reset, formState: { errors } } = methods
     const fieldArray = useFieldArray({ control, name: "lineItem.units" })
 
@@ -67,7 +70,7 @@ export function useDimensions(shipmentType: ShipmentOptions[keyof ShipmentOption
     })
 
     // print errors
-    console.log("errors", errors)
+    // console.log("errors", errors)
 
     useEffect(() => {
         if (!cachedSingleQuote) return

@@ -92,21 +92,21 @@ export function CreateReminderDialog({ children }: Props) {
         }
     }
     const recipients = methods.watch("recipients")
-    // console.log(recipients)
+    // // console.log(recipients)
     const isValid = methods.formState.isValid
-    console.log(isValid)
+    // console.log(isValid)
 
     // errors
     const errors = methods.formState.errors
-    console.log(errors)
+    // console.log(errors)
 
     // watch all fields
     const watchAllFields = methods.watch()
-    console.log(watchAllFields)
+    // console.log(watchAllFields)
 
     // print team members and user himself
-    console.log(user?.user?.teamMembers)
-    console.log(user?.user)
+    // console.log(user?.user?.teamMembers)
+    // console.log(user?.user)
     const mySelf = {
         id: user?.user?.id,
         firstName: user?.user?.firstName,

@@ -26,7 +26,7 @@ export default function ChangePassword() {
             newConfirmPassword: ""
         }
     })
-    // console.log(errors)
+    // // console.log(errors)
     const logoutMutation = useLogoutMutation({
         onSuccess: () => toast.success("User logged out successfully"),
         onError: (error: AxiosError<ApiError>) => toast.error(error?.response?.data?.message),

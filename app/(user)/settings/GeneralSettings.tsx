@@ -55,7 +55,7 @@ export default function GeneralSettings() {
     })
 
     const onSubmit = (data: SettingsFormValues) => {
-        console.log(data)
+        // console.log(data)
     }
     return (
         <div className="max-w-6xl">

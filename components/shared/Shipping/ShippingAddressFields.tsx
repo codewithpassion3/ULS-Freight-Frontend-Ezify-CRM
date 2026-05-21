@@ -30,8 +30,8 @@ export const getFormFields = ({
     signatures,
     isLoadingSignatures,
 }: GetFormFieldsParams): FormFieldUnion[] => {
-    console.log("ADDRESS TYPE:", type)
-    console.log("ADDRESS LOCKED:", addressLocked)
+    // console.log("ADDRESS TYPE:", type)
+    // console.log("ADDRESS LOCKED:", addressLocked)
     return [
         {
             name: "companyName",

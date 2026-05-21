@@ -112,7 +112,7 @@ export const columns: ColumnDef<any>[] = [
       })
 
       const handleDeleteContact = (id: string) => {
-        console.log(`Delete this ${id}`)
+        // console.log(`Delete this ${id}`)
         mutation.mutate(id)
       }
       return (

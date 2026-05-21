@@ -41,7 +41,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
     ])
 
     if (valid) onNext()
-    // console.log(form.getValues())
+    // // console.log(form.getValues())
   }
   const shippingPreference = watch("shippingPreference") || []
   const hasType = (type: string) => shippingPreference.some(p => p.shippingType === type);
@@ -106,7 +106,7 @@ export function Step1Form({ onNext }: Step1FormProps) {
   }
 
   const onSubmit = (data: RegisterSchemaTypes) => {
-    console.log("Step 1 Form submitted:", data)
+    // console.log("Step 1 Form submitted:", data)
     onNext()
   }
   // console values

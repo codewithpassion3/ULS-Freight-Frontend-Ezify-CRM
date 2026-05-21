@@ -1,23 +1,23 @@
 import * as z from "zod"
-
+// console.log("SCHEMA FILE LOADED");
 export const packageUnitSchema = z.object({
   length: z.number("Required").min(1, "Must be > 0"),
   width: z.number("Required").min(1, "Must be > 0"),
   height: z.number("Required").min(1, "Must be > 0"),
-  weight: z.number("Required").min(1, "Must be > 0"),
+  weight: z.number("Required").min(1, "Must be > 0").max(5000, "Too heavy for standard quote, please request a spot quote"),
   description: z.string().optional(),
   specialHandlingRequired: z.boolean().default(false),
 })
 
 export const courierUnitSchema = z.object({
-  weight: z.number("Required").min(1, "Must be > 0"),
+  weight: z.number("Required").min(1, "Must be > 0").max(5000, "Too heavy for standard quote, please request a spot quote"),
   description: z.string().optional(),
 })
 
 export const ftlUnitSchema = z.object({
   name: z.enum(["looseFreight", "pallets"], "Required"),
   count: z.number("Required"),
-  weight: z.number("Required").min(1, "Must be > 0"),
+  weight: z.number("Required").min(1, "Must be > 0").max(5000, "Too heavy for standard quote, please request a spot quote"),
   description: z.string().optional(),
 })
 
@@ -40,7 +40,7 @@ export const palletLineItemSchema = z.object({
         freightClass: z.string(" ").optional(),
         nmfc: z.string().nullable().optional(),
         // palletUnitType: z.string(" ").optional(),
-        palletUnitType: z.enum(["PALLET", "DRUM", "BOXES", "ROLLS", "PIPES_OR_TUBES", "BALES", "BAGS", "CYLINDER", "PAILS", "REELS", "CRATE", "LOOSE", "PIECES"]).optional(),
+        palletUnitType: z.enum(["PALLET", "DRUM", "BOXES", "ROLLS", "PIPES_OR_TUBES", "BALES", "BAGS", "CYLINDER", "PAILS", "REELS", "CRATE", "LOOSE", "PIECES"]).nullable().optional(),
         unitsOnPallet: z.coerce.number(" ").optional(),
         stackable: z.boolean().optional(),
         description: z.string().optional(),
@@ -48,6 +48,27 @@ export const palletLineItemSchema = z.object({
     ),
   })
 })
+// .superRefine((data, ctx) => {
+//   const unit = data.lineItem.measurementUnit;
+
+//   const maxWeight =
+//     unit === "IMPERIAL" ? 5000 : 2268;
+
+//   data.lineItem.units.forEach((u, index) => {
+//     const weight = Number(u.weight);
+//     // console.log("SUPER REFINE", weight, maxWeight);
+//     if (weight > maxWeight) {
+//       ctx.addIssue({
+//         code: z.ZodIssueCode.custom,
+//         path: ["lineItem", "units", index, "weight"],
+//         message:
+//           unit === "IMPERIAL"
+//             ? "Too heavy for standard quote (max 5000 lbs). Request spot quote."
+//             : "Too heavy for standard quote (max 2268 kg). Request spot quote.",
+//       });
+//     }
+//   });
+// });
 
 export const spotLtlLineItemSchema = z.object({
   shipmentType: z.literal("SPOT_LTL"),

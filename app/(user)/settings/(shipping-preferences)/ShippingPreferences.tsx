@@ -118,7 +118,7 @@ export default function ShippingPreferences() {
     })
 
     const onSubmit = (data: ShippingPreferencesFormValues) => {
-        console.log("Submitted Shipping Preferences", data)
+        // console.log("Submitted Shipping Preferences", data)
     }
 
     return (

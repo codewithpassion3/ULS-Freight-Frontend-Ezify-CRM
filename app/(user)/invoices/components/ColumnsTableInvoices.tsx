@@ -36,7 +36,7 @@ export const columns: ColumnDef<any>[] = [
     header: "Invoice #",
     cell: ({ row }) => {
       // Use trackingNumber or fallback
-      console.log("MY INVOICES:", row.original);
+      // console.log("MY INVOICES:", row.original);
       const invoiceNumber = row.original.trackingNumber || `FC${Math.floor(Math.random() * 100000000)}`;
       return (
         <span className="text-[#0070c0] font-medium whitespace-nowrap">

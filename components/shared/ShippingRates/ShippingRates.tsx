@@ -49,9 +49,9 @@ export default function ShippingRates({
   getRatesLoading: boolean;
   setGetRatesLoading: (value: boolean) => void;
 }) {
-  console.log("fromAddress", fromAddress);
-  console.log("toAddress", toAddress);
-  console.log("dimensions", dimensions);
+  // console.log("fromAddress", fromAddress);
+  // console.log("toAddress", toAddress);
+  // console.log("dimensions", dimensions);
   // const fedexPayload = {
   //     "from": {
   //         "postalCode": fromAddress.address.postalCode,
@@ -78,27 +78,25 @@ export default function ShippingRates({
   //         "state": toAddress.address.state
   //     }
   // }
-  console.log("QUOTE ID:", quoteId);
+  // console.log("QUOTE ID:", quoteId);
   const dimensionsPayload = () => {
     if (dimensions?.lineItem?.units?.length === 0) {
       return [];
     }
     return dimensions?.lineItem?.units?.map((unit: any) => {
-      return [
-        {
-          weightUnit:
-            dimensions.lineItem.measurementUnit === "IMPERIAL" ? "LB" : "KG",
-          weight: unit.weight,
-          dimensionsUnit:
-            dimensions.lineItem.measurementUnit === "IMPERIAL" ? "IN" : "CM",
-          length: unit.length,
-          width: unit.width,
-          height: unit.height,
-          handlingUnits: unit.unitsOnPallet ?? 1,
+      return {
+        weightUnit:
+          dimensions.lineItem.measurementUnit === "IMPERIAL" ? "LB" : "KG",
+        weight: unit.weight,
+        dimensionsUnit:
+          dimensions.lineItem.measurementUnit === "IMPERIAL" ? "IN" : "CM",
+        length: unit.length,
+        width: unit.width,
+        height: unit.height,
+        handlingUnits: unit.unitsOnPallet ?? 1,
         //   packaging: unit.palletUnitType,
-          packaging: "YOUR_PACKAGING",
-        },
-      ];
+        packaging: "YOUR",
+      };
     });
   };
   // const payload =
@@ -124,9 +122,9 @@ export default function ShippingRates({
   // get id from search params
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
-  console.log("FROM ADDRESS", fromAddress);
-  console.log("TO ADDRESS", toAddress);
-  console.log("DIMENSIONS", dimensions);
+  // console.log("FROM ADDRESS", fromAddress);
+  // console.log("TO ADDRESS", toAddress);
+  // console.log("DIMENSIONS", dimensions);
   const payload = {
     quoteType: "STANDARD",
     fedex: {
@@ -195,30 +193,30 @@ export default function ShippingRates({
       // }
     },
     tforce: {
-    //   quoteId: quoteId,
-    //   carrier: "TFORCE",
-    //   shipDate: "2026-07-24",
-    //   selectedRate: {
-    //     serviceType: "308", // 308=LTL US/CA | 309=Guaranteed | 349=US/MX
-    //     serviceName: "TForce Freight LTL",
-    //     totalCharge: 245.5,
-    //     currency: "USD",
-    //   },
+      //   quoteId: quoteId,
+      //   carrier: "TFORCE",
+      //   shipDate: "2026-07-24",
+      //   selectedRate: {
+      //     serviceType: "308", // 308=LTL US/CA | 309=Guaranteed | 349=US/MX
+      //     serviceName: "TForce Freight LTL",
+      //     totalCharge: 245.5,
+      //     currency: "USD",
+      //   },
 
-        from: {
-          city: fromAddress?.address?.city,
-          state: fromAddress?.address?.state,
-          postalCode: fromAddress?.address?.postalCode,
-          countryCode: fromAddress?.address?.country,
-          isResidential: toAddress?.isResidential,
-        },
-        to: {
-          city: toAddress?.address?.city,
-          state: toAddress?.address?.state,
-          postalCode: toAddress?.address?.postalCode,
-          countryCode: toAddress?.address?.country,
-          isResidential: toAddress?.isResidential,
-        },
+      from: {
+        city: fromAddress?.address?.city,
+        state: fromAddress?.address?.state,
+        postalCode: fromAddress?.address?.postalCode,
+        countryCode: fromAddress?.address?.country,
+        isResidential: toAddress?.isResidential,
+      },
+      to: {
+        city: toAddress?.address?.city,
+        state: toAddress?.address?.state,
+        postalCode: toAddress?.address?.postalCode,
+        countryCode: toAddress?.address?.country,
+        isResidential: toAddress?.isResidential,
+      },
     },
 
     pickupType: "DROPOFF_AT_FEDEX_LOCATION",
@@ -287,7 +285,7 @@ export default function ShippingRates({
   //             //                 renderTSTQuote(result.quotes);
   //             //             }
   //             // print result
-  //             console.log("result", result.quotes)
+  //             // console.log("result", result.quotes)
   //         }
   //     }
   // }

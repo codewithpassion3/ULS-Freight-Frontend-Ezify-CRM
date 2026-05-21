@@ -2,7 +2,7 @@ import axios from "axios";
 import apiClient from "../client";
 
 export const createShipment = async (payload: any) => {
-    console.log(payload)
+    // console.log(payload)
     const response = await apiClient.post("/shipments", payload);
     return response.data;
 };
@@ -20,7 +20,7 @@ export const getAddressByPostalCode = async (postalCode: string) => {
         throw new Error("Invalid postal code");
     }
     const response = await apiClient.get(`/postal-codes/${postalCode}`);
-    console.log(response.data)
+    // console.log(response.data)
     return response.data;
 };
 

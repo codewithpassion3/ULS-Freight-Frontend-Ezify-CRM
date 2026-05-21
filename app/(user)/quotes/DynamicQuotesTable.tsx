@@ -46,8 +46,8 @@ export default function DynamicQuotesTable({ filters, setCount, quoteCategory }:
         // dependency
         enabled: true
     })
-    console.log({ quoteCategory, dateRange: filters.dateRange, search: filters.search, selectedPackaging: filters.selectedPackaging })
-    console.log("quotes", quotes)
+    // console.log({ quoteCategory, dateRange: filters.dateRange, search: filters.search, selectedPackaging: filters.selectedPackaging })
+    // console.log("quotes", quotes)
     useEffect(() => {
         if (quotes) {
             setCount({

@@ -20,8 +20,7 @@ import {
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { usePathname, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { AxiosError } from "axios";
-import { ApiError } from "next/dist/server/api-utils";
+
 import { ShippingTypeSelector } from "../Shipping/ShippingTypeSelector";
 import { ShippingAddressSection } from "../Shipping/ShippingAddressSection";
 import { EquimentTypeSelector } from "../EquimentSelection/EquimentTypeSelector";
@@ -49,20 +48,10 @@ import SendRequest from "../SendRequest/SendRequest";
 import { userAgent } from "next/server";
 import { useAuth } from "@/context/auth.context";
 import AddFundsModal from "@/components/common/AddFundsModal";
+import { useDynamicQuote } from "./DynamicQuote.hooks";
+import { ShipmentOptions } from "./DynamicQuote.types";
+import { useDynamicQuoteMutations } from "./DynamicQuote.mutations";
 
-export type ShipmentTypes =
-  | "PALLET"
-  | "PACKAGE"
-  | "COURIER_PAK"
-  | "STANDARD_FTL"
-  | "SPOT_LTL"
-  | "SPOT_FTL"
-  | "TIME_CRITICAL";
-export type QuoteTypes = "SPOT" | "STANDARD";
-export type ShipmentOptions = {
-  SPOT: "SPOT_LTL" | "SPOT_FTL" | "TIME_CRITICAL";
-  STANDARD: "PALLET" | "PACKAGE" | "COURIER_PAK" | "STANDARD_FTL";
-};
 export const SchemaContext = createContext<z.ZodType<any> | null>(null);
 export default function DynamicQuote({
   quoteType,
@@ -98,19 +87,29 @@ export default function DynamicQuote({
   const getRatesRef = useRef<any>(null);
   const [getRatesLoading, setGetRatesLoading] = useState(false);
   const [isFetchedQuoteShipment, setIsFetchedQuoteShipment] = useState(false);
-  const handleSwapAddress = () => {
-    if (fromAddressRef.current && toAddressRef.current) {
-      const fromVals = fromAddressRef.current.getValues();
-      const toVals = toAddressRef.current.getValues();
-      fromAddressRef.current.setValues({ ...toVals, type: "FROM" });
-      toAddressRef.current.setValues({ ...fromVals, type: "TO" });
-    }
-  };
   const [currentStep, setCurrentStep] = useState(1);
   const [openGetRates, setOpenGetRates] = useState("");
   const [selectedCarrier, setSelectedCarrier] = useState<any>(null);
   const { user } = useAuth();
   const [inSufficientModal, setInSufficientModal] = useState(false);
+  // const handleSwapAddress = () => {
+  //   if (fromAddressRef.current && toAddressRef.current) {
+  //     const fromVals = fromAddressRef.current.getValues();
+  //     const toVals = toAddressRef.current.getValues();
+  //     fromAddressRef.current.setValues({ ...toVals, type: "FROM" });
+  //     toAddressRef.current.setValues({ ...fromVals, type: "TO" });
+  //   }
+  // };
+
+  const { handleSwapAddress } = useDynamicQuote(fromAddressRef, toAddressRef);
+  const {
+    createQuoteMutation,
+    updateQuoteMutation,
+    createShipmentMutation,
+    updateShipmentMutation,
+    bookShipmentMutation,
+    createQuoteAndConvertToShipmentMutation,
+  } = useDynamicQuoteMutations({ shipmentId: shipmentId!, quoteId: quoteId! });
   // const handleNextStep1 = async () => {
   //     const fromValid = await fromAddressRef.current?.trigger()
   //     const toValid = await toAddressRef.current?.trigger()
@@ -156,77 +155,77 @@ export default function DynamicQuote({
     }
   }, [singleQuote]);
 
-  const createQuoteMutation = useMutation({
-    mutationFn: (data: unknown) => createQuote(data),
-    onSuccess: () => {
-      toast.success("Quote created successfully");
-      // router.push("/quotes")
-    },
-    onError: (error: AxiosError<ApiError>) => {
-      toast.error(error.response?.data.message);
-    },
-  });
+  // const createQuoteMutation = useMutation({
+  //   mutationFn: (data: unknown) => createQuote(data),
+  //   onSuccess: () => {
+  //     toast.success("Quote created successfully");
+  //     // router.push("/quotes")
+  //   },
+  //   onError: (error: AxiosError<ApiError>) => {
+  //     toast.error(error.response?.data.message);
+  //   },
+  // });
 
-  const createQuoteAndConvertToShipmentMutation = useMutation({
-    mutationFn: (data: unknown) => createQuote(data),
-    onSuccess: (res) => {
-      router.push(`/shipment/?id=${res.quote.id}&mode=conversion`);
-    },
-    onError: (error: AxiosError<ApiError>) => {
-      toast.error(error.response?.data.message);
-    },
-  });
+  // const createQuoteAndConvertToShipmentMutation = useMutation({
+  //   mutationFn: (data: unknown) => createQuote(data),
+  //   onSuccess: (res) => {
+  //     router.push(`/shipment/?id=${res.quote.id}&mode=conversion`);
+  //   },
+  //   onError: (error: AxiosError<ApiError>) => {
+  //     toast.error(error.response?.data.message);
+  //   },
+  // });
 
-  const handleCreateShipment = ({ shipmentPayload }: any) => {
-    createShipmentMutation.mutate(shipmentPayload);
-  };
+  // const handleCreateShipment = ({ shipmentPayload }: any) => {
+  //   createShipmentMutation.mutate(shipmentPayload);
+  // };
 
-  const updateQuoteMutation = useMutation({
-    mutationFn: (data: unknown) => updateQuote(quoteId!, data),
-    onSuccess: () => {
-      toast.success("Quote updated successfully");
-      router.push("/quotes");
-    },
-    onError: (error: AxiosError<ApiError>) => {
-      toast.error(error.response?.data.message);
-    },
-  });
+  // const updateQuoteMutation = useMutation({
+  //   mutationFn: (data: unknown) => updateQuote(quoteId!, data),
+  //   onSuccess: () => {
+  //     toast.success("Quote updated successfully");
+  //     router.push("/quotes");
+  //   },
+  //   onError: (error: AxiosError<ApiError>) => {
+  //     toast.error(error.response?.data.message);
+  //   },
+  // });
 
-  //  create shipment mutation
-  const createShipmentMutation = useMutation({
-    mutationFn: (data: unknown) => createShipment(data),
-    onSuccess: (res) => {
-      toast.success("Shipment created successfully");
-      // router.push("/quotes")
-      console.log("CREATE SHIPMENT RESPONSE:", res);
-      return res.data;
-    },
-    onError: (error: AxiosError<ApiError>) => {
-      toast.error(error.response?.data.message);
-    },
-  });
-  const updateShipmentMutation = useMutation({
-    mutationFn: (data: unknown) => updateShipment(shipmentId!, data),
-    onSuccess: () => {
-      toast.success("Shipment updated successfully");
-      router.push("/quotes");
-    },
-    onError: (error: AxiosError<ApiError>) => {
-      toast.error(error.response?.data.message);
-    },
-  });
+  // //  create shipment mutation
+  // const createShipmentMutation = useMutation({
+  //   mutationFn: (data: unknown) => createShipment(data),
+  //   onSuccess: (res) => {
+  //     toast.success("Shipment created successfully");
+  //     // router.push("/quotes")
+  //     // console.log("CREATE SHIPMENT RESPONSE:", res);
+  //     return res.data;
+  //   },
+  //   onError: (error: AxiosError<ApiError>) => {
+  //     toast.error(error.response?.data.message);
+  //   },
+  // });
+  // const updateShipmentMutation = useMutation({
+  //   mutationFn: (data: unknown) => updateShipment(shipmentId!, data),
+  //   onSuccess: () => {
+  //     toast.success("Shipment updated successfully");
+  //     // router.push("/quotes");
+  //   },
+  //   onError: (error: AxiosError<ApiError>) => {
+  //     toast.error(error.response?.data.message);
+  //   },
+  // });
 
-  const bookShipmentMutation = useMutation({
-    mutationFn: (data: unknown) => bookShipment(data),
-    onSuccess: (res) => {
-      toast.success("Shipment booked successfully");
-      console.log("CREATE SHIPMENT RESPONSE:", res);
-      router.push("/track");
-    },
-    onError: (error: AxiosError<ApiError>) => {
-      toast.error(error.response?.data.message);
-    },
-  });
+  // const bookShipmentMutation = useMutation({
+  //   mutationFn: (data: unknown) => bookShipment(data),
+  //   onSuccess: (res) => {
+  //     toast.success("Shipment booked successfully");
+  //     // console.log("CREATE SHIPMENT RESPONSE:", res);
+  //     router.push("/track");
+  //   },
+  //   onError: (error: AxiosError<ApiError>) => {
+  //     toast.error(error.response?.data.message);
+  //   },
+  // });
 
   const spotShipmentType: any = {
     SPOT_LTL: "LTL_PARTIAL",
@@ -325,9 +324,9 @@ export default function DynamicQuote({
     let valid = fromValid && toValid && dimValid;
 
     // print all valid with false value
-    console.log("FROM VALID:", fromValid);
-    console.log("TO VALID:", toValid);
-    console.log("DIM VALID:", dimValid);
+    // console.log("FROM VALID:", fromValid);
+    // console.log("TO VALID:", toValid);
+    // console.log("DIM VALID:", dimValid);
 
     if (quoteType === "SPOT") {
       const contactValid = await contactRef.current?.trigger();
@@ -357,6 +356,7 @@ export default function DynamicQuote({
 
     if (isEditing) {
       if (isShipment) {
+        // console.log("UPDATING SHIPMENT WITH PAYLOAD:", shipmentPayload);
         updateShipmentMutation.mutate(shipmentPayload);
       } else {
         updateQuoteMutation.mutate(finalQuotePayload);
@@ -364,16 +364,16 @@ export default function DynamicQuote({
     } else {
       if (isShipment) {
         createShipmentMutation.mutate(shipmentPayload);
-        // console.log(shipmentPayload)
+        // // console.log(shipmentPayload)
       } else {
         createQuoteMutation.mutate(finalQuotePayload);
-        // console.log("FINAL QUOTE PAYLOAD:", finalQuotePayload)
+        // // console.log("FINAL QUOTE PAYLOAD:", finalQuotePayload)
       }
     }
   };
 
   const payloadTransformer = (data: any) => {
-    console.log("THIS IS ADDRESS!!!!", data);
+    // console.log("THIS IS ADDRESS!!!!", data);
     const formattedAddresses = data.addresses?.map(
       (address: any, index: number) => {
         if (address.addressBookId && !isConversion) {
@@ -511,18 +511,15 @@ export default function DynamicQuote({
     getRatesRef.current?.handleStart();
     setGetRatesLoading(true);
   };
-//   const selectedCarrierDetails = useMemo(() => {
-//     return getRatesRef.current?.results.filter(
-//       (result: any) => result.carrier === selectedCarrier,
-//     );
-//   }, [getRatesRef.current?.results, selectedCarrier]);
-//   console.log("SELECTED CARRIER:", selectedCarrier);
-//   console.log("tForceRates.quote.serviceType", selectedCarrierDetails);
   const handleBookShipment = async () => {
     // if (!singleQuote?.quote?.id) {
     //     toast.error("Quote not found")
     //     return
     // }
+    const valid = await validateAllForms();
+
+    if (!valid) return;
+
     if (!selectedCarrier) {
       toast.error("Please select a carrier");
       return;
@@ -555,7 +552,7 @@ export default function DynamicQuote({
     };
     const res = await createShipmentMutation.mutateAsync(newShipmentPayload);
     setNewlyCreatedQuoteId(res?.quote?.id);
-    console.log("CREATE SHIPMENT RESPONSE:", res);
+    // console.log("CREATE SHIPMENT RESPONSE:", res);
     const bookShipmentPayload = {
       ...(singleQuote?.quote?.id
         ? {
@@ -574,13 +571,12 @@ export default function DynamicQuote({
         currency: selectedCarrier.currency,
         ...(selectedCarrier.carrier === "TST" && {
           packagingType: selectedCarrier.packagingType || "BOX",
-        //   transitDays: selectedCarrier.estimatedDeliveryDays,
+          //   transitDays: selectedCarrier.estimatedDeliveryDays,
           transitDays: 3,
-          
         }),
       },
     };
-    console.log("BOOK SHIPMENT PAYLOAD:", bookShipmentPayload);
+    // console.log("BOOK SHIPMENT PAYLOAD:", bookShipmentPayload);
 
     if (res) {
       bookShipmentMutation.mutate(bookShipmentPayload);
@@ -594,9 +590,17 @@ export default function DynamicQuote({
 
     const { finalQuotePayload } = buildPayloads();
 
-    // console.log("FINAL QUOTE PAYLOAD:", finalQuotePayload)
+    // // console.log("FINAL QUOTE PAYLOAD:", finalQuotePayload)
     createQuoteAndConvertToShipmentMutation.mutate(finalQuotePayload);
   };
+  //   const selectedCarrierDetails = useMemo(() => {
+  //     return getRatesRef.current?.results.filter(
+  //       (result: any) => result.carrier === selectedCarrier,
+  //     );
+  //   }, [getRatesRef.current?.results, selectedCarrier]);
+  //   // console.log("SELECTED CARRIER:", selectedCarrier);
+  //   // console.log("tForceRates.quote.serviceType", selectedCarrierDetails);
+
   const [step, setStep] = useState(1);
   const handleFirstStepValidate = () => {
     const fromValid = fromAddressRef.current?.trigger();
@@ -703,6 +707,7 @@ export default function DynamicQuote({
                   ref={dimensionsRef}
                   shipmentType={shipmentType}
                   onChange={syncRealTimeData}
+                  quoteType={quoteType}
                 />
               </div>
               {shipmentType !== "STANDARD_FTL" ? (

@@ -25,18 +25,18 @@ export default function AddCardForm({ clientSecret, onOpenChange }: { clientSecr
         });
 
         if (error) {
-            console.log("Stripe error:", error);
+            // console.log("Stripe error:", error);
             return;
         }
 
         const paymentMethodId = setupIntent?.payment_method;
 
         if (!paymentMethodId) {
-            console.log("No payment method returned");
+            // console.log("No payment method returned");
             return;
         }
 
-        console.log("Calling backend...");
+        // console.log("Calling backend...");
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/payments/cards`,
             {

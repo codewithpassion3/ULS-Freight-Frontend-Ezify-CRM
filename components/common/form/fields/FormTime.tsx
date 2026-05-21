@@ -85,8 +85,8 @@ const FormTime = memo(({ field: config, wrapperClassName }: { field: FormTimePro
                         type="button"
                         onClick={() => ampmField.onChange("AM")}
                         className={`px-2 py-2 text-xs font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${ampmField.value === "AM"
-                            ? "bg-muted text-[#4aa0e3]"
-                            : "hover:bg-muted/50"
+                            ? "text-[#4aa0e3]"
+                            : "bg-white hover:bg-muted/50 text-muted-foreground"
                             }`}
                         disabled={config.disabled}
                     >
@@ -96,8 +96,8 @@ const FormTime = memo(({ field: config, wrapperClassName }: { field: FormTimePro
                         type="button"
                         onClick={() => ampmField.onChange("PM")}
                         className={`px-2 py-2 text-xs font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${ampmField.value === "PM"
-                            ? "bg-muted text-[#4aa0e3]"
-                            : "hover:bg-muted/50"
+                            ? "text-[#4aa0e3]"
+                            : "bg-white hover:bg-muted/50 text-muted-foreground"
                             } ${ampmError ? "border-red-500" : ""}`}
                         disabled={config.disabled}
                     >

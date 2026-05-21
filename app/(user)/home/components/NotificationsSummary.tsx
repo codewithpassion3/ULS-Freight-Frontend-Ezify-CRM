@@ -43,7 +43,7 @@ export default function NotificationsSummary() {
         }
     });
     // print notifications
-    // console.log(notifications);
+    // // console.log(notifications);
     const renderNotification = (notif: Notification) => {
         if (!notif || !notif.payload) return null;
 

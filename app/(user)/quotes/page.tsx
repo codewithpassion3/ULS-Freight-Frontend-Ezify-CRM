@@ -18,8 +18,8 @@ import AllQuotesTable from "./DynamicQuotesTable"
 import DynamicQuotesTable from "./DynamicQuotesTable"
 import FormDate from "@/components/common/form/fields/FormDate"
 import { DatePicker } from "@/components/common/date-picker/DatePicker"
-import { ShipmentTypes } from "@/components/shared/DynamicQuote/DynamicQuote"
 import { DateRangePicker } from "@/components/common/date-picker/DateRangePicker"
+import { useAuth } from "@/context/auth.context"
 
 const PACKAGING_TYPES = [
   { label: "Courier Pak", value: "COURIER_PAK" },

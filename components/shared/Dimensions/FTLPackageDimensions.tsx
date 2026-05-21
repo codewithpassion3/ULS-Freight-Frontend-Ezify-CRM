@@ -14,10 +14,10 @@ export function FTLPackageDimensions() {
     const weightUnit = isImperial ? "lbs" : "kg"
     //ftl package type
     const ftlPackageType = watch("lineItem.units.0.name")
-    console.log("ftlPackageType", ftlPackageType)
+    // console.log("ftlPackageType", ftlPackageType)
     // count also
     const ftlPackageCount = watch("lineItem.units.0.totalCount")
-    console.log("ftlPackageCount", ftlPackageCount)
+    // console.log("ftlPackageCount", ftlPackageCount)
     const ftlPackageTypeName = ftlPackageType === "looseFreight" ? "Loose Freight" : "Pallets"
     return (
         <GlobalForm

@@ -76,7 +76,7 @@ export function ContactForm({
     })
     useEffect(() => {
         if (defaultValues) {
-            console.log("defaultValues", defaultValues)
+            // console.log("defaultValues", defaultValues)
             methods.reset(
                 defaultValues,
             )
@@ -99,7 +99,7 @@ export function ContactForm({
             })
         }
     }, [defaultValues, methods.reset, isLoading])
-    console.log("current values", methods.getValues())
+    // console.log("current values", methods.getValues())
     const handleOpenChange = (newOpen: boolean) => {
         if (!newOpen) methods.reset()
         setOpen?.(newOpen)
@@ -119,7 +119,7 @@ export function ContactForm({
         setIsValid?.(methods.formState.isValid)
     }, [methods.formState.isValid])
 
-    console.log("errors", methods.formState.errors)
+    // console.log("errors", methods.formState.errors)
     const country = methods.watch("address.country");
     const filteredProvinces = useMemo(() => {
         if (!country) return [];

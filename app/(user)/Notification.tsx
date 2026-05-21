@@ -49,20 +49,20 @@ export function SSETest() {
     // Connection opened
     es.onopen = () => {
       setConnectionStatus('connected');
-      console.log(':white_check_mark: SSE Connected');
+      // console.log(':white_check_mark: SSE Connected');
     };
 
     // Handle specific events
     es.addEventListener('connected', (e) => {
       const data = JSON.parse(e.data);
       setClientId(data.clientId);
-      console.log(':link: Session:', data);
+      // console.log(':link: Session:', data);
     });
 
     // Handle new notifications
     es.addEventListener('notification.new', (e) => {
       const data: Notification = JSON.parse(e.data);
-      console.log(':bell: New Notification:', data);
+      // console.log(':bell: New Notification:', data);
 
       setNotifications(prev => [data, ...prev]);
       setUnreadCount(prev => prev + 1);
@@ -78,7 +78,7 @@ export function SSETest() {
 
     // Default message handler (fallback)
     es.onmessage = (e) => {
-      console.log(':incoming_envelope: Raw message:', e.data);
+      // console.log(':incoming_envelope: Raw message:', e.data);
     };
 
     // Error/Disconnect
@@ -89,7 +89,7 @@ export function SSETest() {
 
       // Auto-reconnect after 3 seconds
       setTimeout(() => {
-        console.log(':arrows_counterclockwise: Attempting reconnect...');
+        // console.log(':arrows_counterclockwise: Attempting reconnect...');
         connectSSE();
       }, 3000);
     };

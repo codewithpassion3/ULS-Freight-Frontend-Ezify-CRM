@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
-import { normalText } from "@/app/(user)/packages/AddPackage";
 
 export function ShipmentBreakdownCard({ quote }: { quote?: any }) {
   if (!quote) return null;
@@ -45,7 +44,7 @@ export function ShipmentBreakdownCard({ quote }: { quote?: any }) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {quote.shipment.trackingEvents.map((event: any) => (
+                  {quote.shipment.trackingEvents.slice().reverse().map((event: any) => (
                     <TableRow key={event.id}>
                       <TableCell className="capitalize">{event.status.replaceAll("_", " ").toLowerCase()}</TableCell>
                       <TableCell>{event.occurredAt ? format(new Date(event.occurredAt), 'hh:mm a, MMM dd, yyyy') : 'N/A'}</TableCell>

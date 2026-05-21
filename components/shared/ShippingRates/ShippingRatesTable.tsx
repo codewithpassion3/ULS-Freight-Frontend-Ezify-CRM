@@ -47,11 +47,11 @@ export function ShippingRatesTable(
     // state of carrier
     const columns = getColumns(setSelectedCarrier, selectedCarrier)
     // print type
-    console.log(type)
+    // console.log(type)
     const debouncedSearch = useDebounce(search, 500)
-    console.log("dimensions", dimensions)
-    console.log("fromAddress", fromAddress)
-    console.log("toAddress", toAddress)
+    // console.log("dimensions", dimensions)
+    // console.log("fromAddress", fromAddress)
+    // console.log("toAddress", toAddress)
     // const payload =
     // {
     //     "quoteType": "STANDARD",
@@ -174,7 +174,7 @@ export function ShippingRatesTable(
     //             }))
     //         ]
     //         setRates(ratesArray)
-    //         console.log(ratesArray)
+    //         // console.log(ratesArray)
     //     },
     //     onError: (error: AxiosError<ApiError>) => {
     //         toast.error(error.response?.data.message)
