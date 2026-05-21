@@ -146,7 +146,7 @@ export default function AddCardModal({
       ),
     },
   ];
-  if (!stripePromise || !clientSecret) {
+  if (!stripePromise) {
     return <Loader />;
   }
   return (

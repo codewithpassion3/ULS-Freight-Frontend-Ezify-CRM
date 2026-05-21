@@ -17,15 +17,15 @@ export function SideBar({ currentStep, setCurrentStep, onSubmit, setQuoteStatus,
             <div className="border border-border p-5 rounded-md sticky top-24 bg-white dark:bg-card space-y-4 shadow-lg">
                 <div className="flex justify-between items-center border-b pb-2">
                     <h2 className="font-semibold text-lg">{currentStep === 1 ? 'Shipment Overview' : 'Quote Overview'}</h2>
-                    {/* {currentStep === 1 && <span className="text-[#0070c0] text-sm flex items-center gap-1 cursor-pointer hover:underline"><Eye size={14} /> Hide</span>} */}
+                    {/* {currentStep === 1 && <span className="text-primary text-sm flex items-center gap-1 cursor-pointer hover:underline"><Eye size={14} /> Hide</span>} */}
                 </div>
 
                 <div className="relative pt-2 pl-2">
                     {/* Stepper Lines connecting steps */}
                     <div className="absolute left-4 top-5 bottom-8 w-px bg-slate-200 dark:bg-slate-800 z-0 hidden lg:block"></div>
                     <div className="space-y-6 relative z-10">
-                        <div className={`flex items-center gap-3 ${currentStep >= 1 ? "text-[#0070c0] font-medium" : "text-muted-foreground"}`}>
-                            <div className={`p-1 rounded-full flex items-center justify-center text-xs ${currentStep === 1 ? 'bg-primary text-white' : 'border-2 border-[#0070c0] text-[#0070c0] bg-white'}`}>
+                        <div className={`flex items-center gap-3 ${currentStep >= 1 ? "text-primary font-medium" : "text-muted-foreground"}`}>
+                            <div className={`p-1 rounded-full flex items-center justify-center text-xs ${currentStep === 1 ? 'bg-primary text-white' : 'border-2 border-primary text-primary bg-white'}`}>
                                 {currentStep > 1 ? <Check size={10} /> : <ArrowRight size={12} />}
                             </div>
                             <div className="flex justify-between w-full items-center">
@@ -34,8 +34,8 @@ export function SideBar({ currentStep, setCurrentStep, onSubmit, setQuoteStatus,
                             </div>
                         </div>
 
-                        <div className={`flex items-center gap-3 ${currentStep >= 2 ? "text-[#0070c0] font-medium" : "text-muted-foreground"}`}>
-                            <div className={`w-5 h-5 flex shrink-0 items-center justify-center ${currentStep === 2 ? 'text-[#0070c0]' : 'text-muted-foreground'}`}>
+                        <div className={`flex items-center gap-3 ${currentStep >= 2 ? "text-primary font-medium" : "text-muted-foreground"}`}>
+                            <div className={`w-5 h-5 flex shrink-0 items-center justify-center ${currentStep === 2 ? 'text-primary' : 'text-muted-foreground'}`}>
                                 {currentStep === 2 ?
                                     <div className="bg-primary text-white rounded-full p-1"><ArrowRight size={12} /></div> :
                                     <div className="border border-muted-foreground/30 text-muted-foreground/30 rounded-full p-1 bg-white dark:bg-transparent">
@@ -54,7 +54,7 @@ export function SideBar({ currentStep, setCurrentStep, onSubmit, setQuoteStatus,
                                 setQuoteStatus("SAVED")
                                 onSubmit();
                             }
-                            } className="flex items-center justify-center gap-3 text-[#0070c0] cursor-pointer hover:underline text-sm font-medium">
+                            } className="flex items-center justify-center gap-3 text-primary cursor-pointer hover:underline text-sm font-medium">
                             {isPending ? <LoaderCircle className="animate-spin mr-2" size={16} /> : <Save size={16} />}
                             <span>Save For Later</span>
                         </Button>

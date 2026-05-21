@@ -50,11 +50,11 @@ export function UserActions({ id, selectedUser, open, setOpen, setMode, setSelec
                     Edit
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                    className="bg-red-50 text-red-500 flex items-center gap-2 cursor-pointer"
-                    onClick={() => deleteUserMutation.mutate()}
-                >
+                    onClick={() => deleteUserMutation.mutate()} asChild>
+                    <Button variant="destructive" className="flex items-start gap-2 cursor-pointer">
                     <Trash2 />
                     Delete
+                    </Button>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

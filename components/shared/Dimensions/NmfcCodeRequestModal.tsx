@@ -91,24 +91,24 @@ export const NmfcCodeRequestModal = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <Label className="text-slate-600 font-medium mb-1.5 block">Name*</Label>
-                                    <Input required value={name} onChange={e => setName(e.target.value)} className="focus-visible:ring-amber-500" />
+                                    <Input required value={name} onChange={e => setName(e.target.value)} className="focus-visible:ring-amber-500 border border-primary/10" />
                                 </div>
                                 <div>
                                     <Label className="text-slate-600 font-medium mb-1.5 block">Email Address*</Label>
-                                    <Input required type="email" value={email} onChange={e => setEmail(e.target.value)} className="focus-visible:ring-amber-500" />
+                                    <Input required type="email" value={email} onChange={e => setEmail(e.target.value)} className="focus-visible:ring-amber-500 border border-primary/10" />
                                 </div>
                                 <div>
                                     <Label className="text-slate-600 font-medium mb-1.5 block">Company (optional)</Label>
-                                    <Input value={company} onChange={e => setCompany(e.target.value)} className="focus-visible:ring-amber-500" />
+                                    <Input value={company} onChange={e => setCompany(e.target.value)} className="focus-visible:ring-amber-500 border border-primary/10" />
                                 </div>
                                 <div className="grid grid-cols-[1fr_80px] gap-4">
                                     <div>
                                         <Label className="text-slate-600 font-medium mb-1.5 block">Contact Phone Number*</Label>
-                                        <Input required type="tel" value={phone} onChange={e => setPhone(e.target.value)} className="focus-visible:ring-amber-500" />
+                                        <Input required type="tel" value={phone} onChange={e => setPhone(e.target.value)} className="focus-visible:ring-amber-500 border border-primary/10" />
                                     </div>
                                     <div>
                                         <Label className="text-slate-600 font-medium mb-1.5 block">Ext.</Label>
-                                        <Input value={ext} onChange={e => setExt(e.target.value)} className="focus-visible:ring-amber-500" />
+                                        <Input value={ext} onChange={e => setExt(e.target.value)} className="focus-visible:ring-amber-500 border border-primary/10" />
                                     </div>
                                 </div>
                             </div>
@@ -160,18 +160,18 @@ export const NmfcCodeRequestModal = () => {
                                     {items.map((item, idx) => (
                                         <div key={item.id} className="grid grid-cols-[40px_100px_100px_100px_120px_1fr] items-center gap-3 mb-3">
                                             <div className="text-center font-medium text-slate-600">{idx + 1}</div>
-                                            <Input required type="number" value={item.length} onChange={e => updateItem(item.id, "length", e.target.value)} placeholder={unit === "IMPERIAL" ? "L" : "L"} className="text-center focus-visible:ring-amber-500" />
-                                            <Input required type="number" value={item.width} onChange={e => updateItem(item.id, "width", e.target.value)} placeholder={unit === "IMPERIAL" ? "W" : "W"} className="text-center focus-visible:ring-amber-500" />
-                                            <Input required type="number" value={item.height} onChange={e => updateItem(item.id, "height", e.target.value)} placeholder={unit === "IMPERIAL" ? "H" : "H"} className="text-center focus-visible:ring-amber-500" />
-                                            <Input required type="number" value={item.weight} onChange={e => updateItem(item.id, "weight", e.target.value)} placeholder={unit === "IMPERIAL" ? "lbs" : "kg"} className="text-center focus-visible:ring-amber-500" />
-                                            <Input required value={item.commodity} onChange={e => updateItem(item.id, "commodity", e.target.value)} placeholder="Describe the item(s) being shipped" className="focus-visible:ring-amber-500" />
+                                            <Input required type="number" value={item.length} onChange={e => updateItem(item.id, "length", e.target.value)} placeholder={unit === "IMPERIAL" ? "L" : "L"} className="text-center focus-visible:ring-amber-500 border border-primary/10" />
+                                            <Input required type="number" value={item.width} onChange={e => updateItem(item.id, "width", e.target.value)} placeholder={unit === "IMPERIAL" ? "W" : "W"} className="text-center focus-visible:ring-amber-500 border border-primary/10" />
+                                            <Input required type="number" value={item.height} onChange={e => updateItem(item.id, "height", e.target.value)} placeholder={unit === "IMPERIAL" ? "H" : "H"} className="text-center focus-visible:ring-amber-500 border border-primary/10" />
+                                            <Input required type="number" value={item.weight} onChange={e => updateItem(item.id, "weight", e.target.value)} placeholder={unit === "IMPERIAL" ? "lbs" : "kg"} className="text-center focus-visible:ring-amber-500 border border-primary/10" />
+                                            <Input required value={item.commodity} onChange={e => updateItem(item.id, "commodity", e.target.value)} placeholder="Describe the item(s) being shipped" className="focus-visible:ring-amber-500 border border-primary/10" />
                                         </div>
                                     ))}
                                 </div>
                             </div>
 
                             <div className="flex flex-wrap justify-end gap-6 border-b pb-6 mb-6">
-                                <button type="button" onClick={duplicateAllAsFirst} className="flex items-center gap-1 text-[#0070c0] font-medium text-sm hover:underline">
+                                <button type="button" onClick={duplicateAllAsFirst} className="flex items-center gap-1 text-primary font-medium text-sm hover:underline">
                                     <Copy size={14} /> All The Same
                                 </button>
                                 <button type="button" onClick={clearItems} className="flex items-center gap-1 text-red-600 font-medium text-sm hover:underline">

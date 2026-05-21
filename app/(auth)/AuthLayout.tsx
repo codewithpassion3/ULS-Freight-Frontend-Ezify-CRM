@@ -4,6 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { LanguageToggle } from "@/components/language-toggle"
 import { ModeToggle } from "@/components/mode-toggle"
+import { useTheme } from "next-themes"
 
 interface AuthLayoutProps {
     children: React.ReactNode
@@ -22,6 +23,7 @@ export const AuthLayout = ({
     logoSrc = "/enorth-logo.svg",
     footerText,
 }: AuthLayoutProps) => {
+      const { theme } = useTheme();
     return (
         <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
             {/* Left Column - Image */}
@@ -45,7 +47,7 @@ export const AuthLayout = ({
 
                         <Image
                             loading="eager"
-                            src={logoSrc}
+                            src={theme === "dark" ? "/enorth-logo-dark.svg" : "/enorth-logo.svg"}
                             alt="Logo"
                             height={250}
                             width={250}

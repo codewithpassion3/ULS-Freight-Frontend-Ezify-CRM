@@ -29,7 +29,7 @@ export default function UserLayout({
       <>
         {!isNoHeaderRoute && <Header />}
         {/* <Infobar/> */}
-        <main className={`mx-auto container ${!isNoHeaderRoute ? 'pt-20' : ''} flex flex-col min-h-screen ${isNoHeaderRoute ? 'bg-white' : 'bg-primary/5 dark:bg-[#242424]'}`}>
+        <main className={`mx-auto container ${!isNoHeaderRoute ? 'pt-20' : ''} flex flex-col min-h-screen ${isNoHeaderRoute ? 'bg-white' : ''}`}>
           {children}
         </main>
         {!isNoHeaderRoute && <Footer />}

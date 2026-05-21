@@ -78,29 +78,29 @@ export const DensityCalculatorModal = () => {
     return (
         <Dialog onOpenChange={(open) => !open && handleReset()}>
             <DialogTrigger asChild>
-                <Button variant="link">
+                <Button variant="link" className="text-primary dark:text-accent">
                     <Calculator size={16} /> Class & Density Calculator
                 </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl! p-0 gap-0 border-0 rounded-lg overflow-hidden">
                 <DialogHeader className="p-4 border-b bg-gray-50/50">
-                    <DialogTitle className="flex items-center gap-2 text-lg font-bold text-gray-800">
-                        <Calculator size={20} className="text-gray-800" /> Class & Density Calculator
+                    <DialogTitle className="flex items-center gap-2 text-lg font-bold text-gray-800 dark:text-white">
+                        <Calculator size={20} className="text-gray-800 dark:text-white" /> Class & Density Calculator
                     </DialogTitle>
                 </DialogHeader>
 
                 <div className="p-6 overflow-y-auto max-h-[80vh]">
-                    <div className="border border-gray-200 rounded-md p-4 mb-6 bg-white shrink-0">
-                        <h4 className="font-semibold mb-3 text-slate-800">Please Note:</h4>
+                    <div className="border border-gray-200 rounded-md p-4 mb-6 bg-white dark:bg-primary/10 shrink-0">
+                        <h4 className="font-semibold mb-3 text-slate-800 dark:text-white">Please Note:</h4>
                         <p className="text-slate-600 text-sm mb-3">
-                            <strong className="text-slate-800">A)</strong> The density calculator is available only as an <strong className="text-slate-800">estimation</strong> tool to provide the recommended freight class.
+                            <strong className="text-slate-800 dark:text-white">A)</strong> The density calculator is available only as an <strong className="text-slate-800 dark:text-white">estimation</strong> tool to provide the recommended freight class.
                         </p>
                         <p className="text-slate-600 text-sm">
-                            <strong className="text-slate-800">B)</strong> If you're unsure of your product's <strong className="text-slate-800">Freight Class and/or NMFC Class</strong> and require assistance, please <NmfcCodeRequestModal />.
+                            <strong className="text-slate-800 dark:text-white">B)</strong> If you're unsure of your product's <strong className="text-slate-800">Freight Class and/or NMFC Class</strong> and require assistance, please <NmfcCodeRequestModal />.
                         </p>
                     </div>
 
-                    <div className="border border-gray-200 rounded-md p-6 bg-white shadow-sm shrink-0">
+                    <div className="border border-gray-200 rounded-md p-6 bg-white dark:bg-primary/10 shadow-sm shrink-0">
                         <div className="flex justify-end mb-6 w-full">
                             <RadioGroup value={unit} onValueChange={(val: "IMPERIAL" | "METRIC") => { setUnit(val); handleReset() }} className="flex space-x-6">
                                 <div className="flex items-center space-x-2">
@@ -158,7 +158,7 @@ export const DensityCalculatorModal = () => {
                         </div>
 
                         {result && (
-                            <div className="bg-blue-50 border border-blue-100 rounded-md p-4 mb-6 flex justify-between items-center">
+                            <div className="bg-blue-50 dark:bg-primary/10 border border-blue-100 rounded-md p-4 mb-6 flex justify-between items-center">
                                 <div>
                                     <p className="text-sm text-blue-700">Calculated Density: <span className="font-semibold">{result.density} lbs/ft³</span></p>
                                 </div>
@@ -169,7 +169,7 @@ export const DensityCalculatorModal = () => {
                         )}
 
                         <div className="flex justify-end items-center gap-4 border-t pt-4">
-                            <button type="button" onClick={handleReset} className="text-[#0070c0] text-sm font-medium hover:underline">
+                            <button type="button" onClick={handleReset} className="text-primary text-sm font-medium hover:underline">
                                 Reset
                             </button>
                             <Button disabled={!length || !width || !height || !weight} type="button" onClick={handleCalculateClass}>
@@ -178,7 +178,7 @@ export const DensityCalculatorModal = () => {
                         </div>
                     </div>
 
-                    <div className="mt-6 text-xs text-slate-500 leading-relaxed bg-slate-50 p-4 rounded-md border text-center md:text-left">
+                    <div className="mt-6 text-xs text-slate-500 leading-relaxed bg-slate-50 dark:bg-primary/10 p-4 rounded-md border text-center md:text-left">
                         <strong>Disclaimer:</strong> While density is the primary determinant in establishing the class using the National Motor Freight Classification system, other factors such as the value of the product, handling characteristics (storability on a trailer), claim susceptibility, etc., are also relevant. The recommended NMFC class is NOT an absolute. The most effective way to determine an accurate class is to abide by the NMFC codes and their associated class for that particular commodity.
                     </div>
                 </div>

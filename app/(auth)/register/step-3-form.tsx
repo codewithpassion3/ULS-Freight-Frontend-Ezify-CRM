@@ -114,7 +114,7 @@ export function Step3Form({ onBack, isPending }: Step3FormProps) {
           type="button"
           variant="outline"
           onClick={onBack}
-          className="w-full sm:w-max text-[#0070c0] border border-[#0070c0] hover:bg-primary/10 bg-transparent px-8"
+          className="w-full sm:w-max text-primary border border-primary hover:bg-primary/10 bg-transparent px-8"
         >
           Previous Step
         </Button>

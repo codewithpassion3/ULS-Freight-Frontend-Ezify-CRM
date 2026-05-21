@@ -77,7 +77,7 @@ export const ShippingTypeSelector = ({ shipmentType, setShipmentType, quoteType 
                         type="button"
                         disabled={isEditing}
                         variant={shipmentType === type.name ? "default" : "outline"}
-                        className={`flex items-center gap-2 capitalize ${shipmentType === type.name ? "bg-blue-50 dark:bg-gray-900  text-[#0070c0] border-[#0070c0] hover:bg-blue-100" : "border-slate-300 dark:bg-transparent"}`}
+                        className={`flex items-center gap-2 capitalize ${shipmentType === type.name ? "bg-blue-50 dark:bg-primary/50 text-primary dark:text-white border-primary hover:bg-blue-100" : "border-slate-300 dark:bg-transparent"}`}
                         onClick={() => setShipmentType(type.name as ShipmentOptions[keyof ShipmentOptions])}
                     >
                         {type.icon} {type.label}

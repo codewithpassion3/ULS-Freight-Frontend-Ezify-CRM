@@ -44,7 +44,7 @@ const FormDate = memo(({ field: config }: { field: any }) => {
                         type="button"
                         variant="outline"
                         data-empty={!field.value}
-                        className={`w-full justify-between text-left font-normal ${error ? "border-red-500 text-red-500 bg-red-50" : ""
+                        className={`w-full justify-between text-left font-normal bg-white ${error ? "border-red-500 text-red-500 bg-red-50" : ""
                             }`}
                     >
                         {field.value ? (

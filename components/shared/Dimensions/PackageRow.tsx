@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
 import AddPackage from "@/app/(user)/packages/AddPackage";
 import { FREIGHT_CLASS_OPTIONS } from "./constants";
-
 import { usePathname } from "next/navigation";
 import PackageSelectionModal from "@/app/(user)/packages/PackageSelectionModal";
 import { useEffect } from "react";
@@ -383,7 +382,7 @@ useEffect(() => {
                 setOpen={setOpen}
                 initialData={rowSnapshot}
               >
-                <Button variant="link" type="button">
+                <Button variant="link" type="button" className="text-primary dark:text-accent">
                   <Save /> Save Package
                 </Button>
               </AddPackage>

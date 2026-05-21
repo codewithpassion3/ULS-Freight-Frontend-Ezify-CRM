@@ -48,7 +48,7 @@ export default function QuotesDashboardPage() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-1">Quotes Dashboard</h1>
         {/* <p className="text-sm">
-          <span className="text-[#0070c0] font-semibold flex items-center gap-1 cursor-pointer hover:underline">
+          <span className="text-primary font-semibold flex items-center gap-1 cursor-pointer hover:underline">
             <span className="bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">?</span>
             Click here
           </span>{" "}
@@ -57,7 +57,7 @@ export default function QuotesDashboardPage() {
       </div>
 
       {showFilters ? (
-        <div className="bg-muted/30 border border-border p-4 rounded-md mb-6 relative">
+        <div className="bg-slate-50 dark:bg-primary/10 border border-border p-4 rounded-md mb-6 relative">
           <div className="flex justify-between items-start mb-2">
             <h2 className="text-lg font-semibold text-primary">Search Quotes</h2>
             <div className="flex gap-2">
@@ -97,9 +97,9 @@ export default function QuotesDashboardPage() {
               </div>
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-1 ">
               <label className="text-sm text-muted-foreground block">Packaging Type:</label>
-              <MultiSelect options={PACKAGING_TYPES} value={selectedPackaging} onChange={setSelectedPackaging} />
+              <MultiSelect options={PACKAGING_TYPES} value={selectedPackaging} onChange={setSelectedPackaging} className="bg-white"/>
             </div>
           </div>
         </div>

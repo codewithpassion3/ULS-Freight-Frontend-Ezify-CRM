@@ -47,7 +47,6 @@ export function useDynamicQuoteMutations({shipmentId, quoteId}: {shipmentId?: st
     mutationFn: (data: unknown) => createShipment(data),
     onSuccess: (res) => {
       toast.success("Shipment created successfully");
-      router.push("/quotes")
       return res.data;
     },
     onError: (error: AxiosError<ApiError>) => {

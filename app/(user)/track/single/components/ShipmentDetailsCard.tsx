@@ -13,7 +13,7 @@ export function ShipmentDetailsCard({ quote }: { quote?: any }) {
   return (
 
     <Card className="mb-6 pt-0 rounded-sm shadow-sm">
-      <CardHeader className="bg-slate-50 border-b py-3 px-4">
+      <CardHeader className="bg-slate-50 dark:bg-gray-900 border-b py-3 px-4">
         <CardTitle className="text-xl flex items-center gap-2">
           <Info className="w-6 h-6" />
           Shipment Details

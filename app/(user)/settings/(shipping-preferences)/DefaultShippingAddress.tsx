@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 export default function DefaultShippingAddress() {
     return (
         <div className="space-y-6 pt-6 border-t">
-            <h3 className="text-[#0070c0] font-medium text-base">"Shipping From" Default Address</h3>
+            <h3 className="text-primary font-medium text-base">"Shipping From" Default Address</h3>
 
             <GlobalForm
                 formWrapperClassName="grid grid-cols-1 md:grid-cols-2 gap-4"

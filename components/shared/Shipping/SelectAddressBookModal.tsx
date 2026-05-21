@@ -45,7 +45,7 @@ export function SelectAddressBookModal({ onSelect, triggerButton }: SelectAddres
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {triggerButton || (
-          <Button variant="outline" type="button" className="text-sm text-primary flex items-center gap-1 hover:underline">
+          <Button variant="outline" type="button" className="text-sm text-primary dark:text-white flex items-center gap-1 hover:underline">
             <span>
               <NotebookText />
             </span>

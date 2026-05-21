@@ -96,7 +96,7 @@ const SendRequest = forwardRef(({
                 <div className="p-6 space-y-8">
                     {/* Contact Information Section */}
                     <section className="space-y-4">
-                        <div className="flex items-center gap-2 text-[#0070c0] border-b pb-2">
+                        <div className="flex items-center gap-2 text-primary border-b pb-2">
                             <Clipboard className="size-5" />
                             <h2 className="font-semibold text-lg">Contact Information</h2>
                         </div>
@@ -126,7 +126,7 @@ const SendRequest = forwardRef(({
 
                     {/* Shipment Details Section */}
                     <section className="space-y-6">
-                        <div className="flex items-center gap-2 text-[#0070c0] border-b pb-2">
+                        <div className="flex items-center gap-2 text-primary border-b pb-2">
                             <Send className="size-5 rotate-[-45deg]" />
                             <h2 className="font-semibold text-lg">Shipment Details</h2>
                         </div>
@@ -135,12 +135,12 @@ const SendRequest = forwardRef(({
                             {/* Pickup Location */}
                             <div className="space-y-3">
                                 <div className="flex items-center gap-2 font-semibold">
-                                    <MapPin size={18} className="text-[#0070c0]" />
+                                    <MapPin size={18} className="text-primary" />
                                     <h3>Pickup Location</h3>
                                 </div>
                                 <div className="pl-7 space-y-2">
                                     <p className="text-sm leading-relaxed">{formatAddress(fromAddress)}</p>
-                                    <div className="flex items-center gap-2 text-sm text-[#0070c0] font-medium">
+                                    <div className="flex items-center gap-2 text-sm text-primary font-medium">
                                         <Check size={16} />
                                         <span>Business - Tailgate Not Required</span>
                                     </div>
@@ -154,12 +154,12 @@ const SendRequest = forwardRef(({
                             {/* Delivery Location */}
                             <div className="space-y-3">
                                 <div className="flex items-center gap-2 font-semibold">
-                                    <MapPin size={18} className="text-[#0070c0]" />
+                                    <MapPin size={18} className="text-primary" />
                                     <h3>Delivery Location</h3>
                                 </div>
                                 <div className="pl-7 space-y-2">
                                     <p className="text-sm leading-relaxed">{formatAddress(toAddress)}</p>
-                                    <div className="flex items-center gap-2 text-sm text-[#0070c0] font-medium">
+                                    <div className="flex items-center gap-2 text-sm text-primary font-medium">
                                         <Check size={16} />
                                         <span>Business - Tailgate Not Required</span>
                                     </div>

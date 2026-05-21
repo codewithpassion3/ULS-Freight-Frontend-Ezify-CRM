@@ -15,7 +15,7 @@ export default function SearchInput({
         <div className="flex w-full items-center">
             <Input
                 placeholder={placeholder}
-                className="rounded-r-none w-full"
+                className="rounded-r-none w-full border border-primary/10"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
             />

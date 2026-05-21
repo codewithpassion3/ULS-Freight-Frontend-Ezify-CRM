@@ -91,18 +91,18 @@ export function CustomDateRangePicker({ value, onChange }: CustomDateRangePicker
             <Button
               type="button"
               variant="outline"
-              className="text-[#0070c0] border-[#0070c0]"
+              className="text-primary border-primary"
               onClick={() => setToday()}
             >
               Today
             </Button>
-            <Button type="button" className="bg-white hover:bg-white hover:text-black text-[#0070c0] border-[#0070c0]" onClick={() => setLastDays(7)}>
+            <Button type="button" className="bg-white hover:bg-white hover:text-black text-primary border-primary" onClick={() => setLastDays(7)}>
               Last 7 days
             </Button>
             <Button
               type="button"
               variant="outline"
-              className="text-[#0070c0] border-[#0070c0]"
+              className="text-primary border-primary"
               onClick={() => setLastDays(14)}
             >
               Last 14 days

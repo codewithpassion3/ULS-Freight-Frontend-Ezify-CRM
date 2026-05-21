@@ -1,6 +1,7 @@
 import React from "react"
 import { Search, CalendarCheck } from "lucide-react"
 import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 export default function TrackShipmentsWidget() {
     return (
@@ -14,15 +15,17 @@ export default function TrackShipmentsWidget() {
             <div className="p-4">
                 <div className="flex items-center mb-3">
                     <input
+                        disabled
                         type="text"
                         placeholder="#0000000000"
                         className="flex-1 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 rounded-l px-3 py-2 text-sm focus:outline-none focus:border-primary"
                     />
-                    <button className="bg-primary hover:bg-[#005f9e] text-white px-3 py-2 rounded-r flex items-center justify-center border border-primary dark:border-transparent">
+                    
+                    <Button className=" text-white px-3! py-2! rounded-r-lg! rounded-l-none flex items-center justify-center border! border-primary! dark:border-transparent">
                         <Search className="size-4" />
-                    </button>
+                    </Button>
                 </div>
-
+        
                 <Link href="/track" className="text-sm font-medium text-primary dark:text-[#3da9fc] hover:underline flex items-center gap-1.5">
                     <CalendarCheck className="size-4" />
                     View Today's Shipments (0)

@@ -30,15 +30,15 @@ export function StatusUpdatesWidget({ quote }: { quote?: any }) {
   }
   return (
     <Card className="rounded-sm shadow-sm pt-0 mb-4 border-slate-200">
-      <CardHeader className="bg-slate-50 p-4 flex flex-row items-center justify-between border-b">
+      <CardHeader className="bg-slate-50 dark:bg-gray-900 p-4 flex flex-row items-center justify-between border-b">
         <CardTitle className="text-xl  flex items-center gap-2">
           <Info className="w-6 h-6" />
           Status Updates
         </CardTitle>
-        <div className="flex items-center gap-1 text-primary cursor-pointer hover:underline">
+        {/* <div className="flex items-center gap-1 text-primary cursor-pointer hover:underline">
           Copy Link
           <Copy className="w-4 h-4" />
-        </div>
+        </div> */}
       </CardHeader>
       <CardContent className="p-5">
         <div className="flex flex-col relative">

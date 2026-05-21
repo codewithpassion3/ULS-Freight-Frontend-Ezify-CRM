@@ -1,8 +1,10 @@
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
+import { useTheme } from "next-themes";
 
 export default function PromoBannerWidget() {
+      const { theme } = useTheme();
     return (
         <div className="w-full max-w-3xl border rounded-md overflow-hidden">
 
@@ -22,13 +24,13 @@ export default function PromoBannerWidget() {
 
                             <div className="flex flex-col xl:flex-row items-center gap-4">
                                 <Image
-                                    src="/enorth-logo.svg"
+                                    src={theme === "dark" ? "/enorth-logo-dark.svg" : "/enorth-logo.svg"}
                                     alt="Logo"
                                     width={80}
                                     height={80}
                                 />
 
-                                <Button>Learn More</Button>
+                                <Button disabled>Learn More</Button>
                             </div>
 
                             <p className="text-sm font-medium max-w-md">

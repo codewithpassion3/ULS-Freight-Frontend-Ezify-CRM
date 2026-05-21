@@ -117,7 +117,7 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
           type="button"
           variant="outline"
           onClick={onBack}
-          className="text-[#0070c0] border border-[#0070c0] hover:bg-primary/10 bg-transparent px-8"
+          className="text-primary border border-primary hover:bg-primary/10 bg-transparent px-8"
         >
           Previous Step
         </Button>

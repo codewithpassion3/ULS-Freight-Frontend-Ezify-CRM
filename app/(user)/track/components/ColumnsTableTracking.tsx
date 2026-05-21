@@ -77,7 +77,7 @@ export const columns: ColumnDef<any>[] = [
     header: "Transaction #",
     cell: ({ row }) => {
       return (
-        <span className="text-[#0070c0] font-medium whitespace-nowrap">
+        <span className="text-primary font-medium whitespace-nowrap">
           {row.original.transactionId}
         </span>
       );
@@ -136,7 +136,7 @@ export const columns: ColumnDef<any>[] = [
       const state = address?.state;
       const country = address?.country;
       return (
-        <span className="text-[#0070c0] font-medium whitespace-nowrap">
+        <span className="text-primary font-medium whitespace-nowrap">
           {address1}
           <br />
           {city}, {state}, {country}
@@ -156,7 +156,7 @@ export const columns: ColumnDef<any>[] = [
       const state = address?.state;
       const country = address?.country;
       return (
-        <span className="text-[#0070c0] font-medium whitespace-nowrap">
+        <span className="text-primary font-medium whitespace-nowrap">
           {address1}
           <br />
           {city}, {state}, {country}
@@ -245,8 +245,8 @@ export const columns: ColumnDef<any>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-max">
               {/* if role is admin enabled for testing for now */}
-              {/* {user.user.role.name === "superAdmin" ? */}
-              {true ? (
+              {user.user.role.name === "superAdmin" ?
+              (
                 <DropdownMenuItem className="cursor-pointer">
                   <button
                     // variant={"ghost"}

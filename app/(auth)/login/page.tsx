@@ -59,7 +59,7 @@ export default function LoginPage() {
       footerText={
         <>
           Don't have an account?{" "}
-          <Link href="/register" className="text-primary hover:underline font-medium">
+          <Link href="/register" className="text-primary dark:text-accent hover:underline font-medium">
             Create an account
           </Link>
         </>
@@ -90,7 +90,7 @@ export default function LoginPage() {
             ]}
           />
           <div className="my-6 flex items-center justify-end">
-            <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+            <Link href="/forgot-password" className="text-sm text-primary dark:text-accent hover:underline">
               Forgot Password?
             </Link>
           </div>

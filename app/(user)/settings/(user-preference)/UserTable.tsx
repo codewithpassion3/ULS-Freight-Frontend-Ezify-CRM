@@ -93,7 +93,7 @@ export default function UserTable({ open, setOpen, mode, setMode, selectedUser, 
                             }
                         </TableCell>
 
-                        <TableCell className="p-3 flex flex-col">
+                        <TableCell className="p-3">
                             {user.lastLogin ? <span className="text-sm"> {new Date(user.lastLogin).toLocaleDateString()}</span> : "Never"}
                             {user.lastLogin ? <span className="text-sm"> {new Date(user.lastLogin).toLocaleTimeString()}</span> : ""}
                         </TableCell>

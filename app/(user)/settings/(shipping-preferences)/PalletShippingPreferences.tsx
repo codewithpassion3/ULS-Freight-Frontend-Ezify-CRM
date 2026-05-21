@@ -13,7 +13,7 @@ export default function PalletShippingPreferences() {
             </h3>
 
             <div className="space-y-4 border-b pb-6">
-                <h4 className="text-[#0070c0] font-medium text-base">Pallet Shipping Preferences</h4>
+                <h4 className="text-primary font-medium text-base">Pallet Shipping Preferences</h4>
                 <p className="text-sm text-foreground">Set Default "Shipping To" Location Type</p>
 
                 <GlobalForm
@@ -36,7 +36,7 @@ export default function PalletShippingPreferences() {
             <div className="space-y-4 border-b pb-6">
                 <h4 className="text-sm text-foreground">Additional Services for Pallets</h4>
                 <p className="text-sm text-muted-foreground flex items-center gap-1">
-                    <Info size={14} className="text-[#0070c0]" />
+                    <Info size={14} className="text-primary" />
                     By checking off these additional services, they will be added for every new pallet shipment
                 </p>
 
@@ -63,7 +63,7 @@ export default function PalletShippingPreferences() {
             </div>
 
             <div className="space-y-4">
-                <h4 className="text-[#0070c0] font-medium text-base">Set Pallet Custom Broker Default</h4>
+                <h4 className="text-primary font-medium text-base">Set Pallet Custom Broker Default</h4>
 
                 <div className="py-2">
                     <GlobalForm

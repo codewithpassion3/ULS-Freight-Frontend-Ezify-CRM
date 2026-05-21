@@ -202,7 +202,7 @@ export default function InvoicesDashboardPage() {
                 <TabsList className="flex w-full justify-start h-max! gap-4 bg-transparent border-b p-0 rounded-none">
                     {[
                         { icon: FileText, label: "All Invoices", value: "all", count: count.all },
-                        { icon: Calendar, label: "Upcoming", value: "upcoming", count: count.upcoming, color: "text-[#0070c0]" },
+                        { icon: Calendar, label: "Upcoming", value: "upcoming", count: count.upcoming, color: "text-primary" },
                         { icon: Clock, label: "Overdue", value: "overdue", count: count.overdue, color: "text-amber-500" },
                         { icon: AlertCircle, label: "Urgent", value: "urgent", count: count.urgent, color: "text-red-500" },
                         { icon: CheckCircle2, label: "Unpaid", value: "unpaid", count: count.unpaid, color: "text-slate-500" },
@@ -211,7 +211,7 @@ export default function InvoicesDashboardPage() {
                         <TabsTrigger
                             key={tab.value}
                             value={tab.value}
-                            // className="flex flex-col items-center h-auto py-2 px-4 data-[state=active]:border-b-2 data-[state=active]:border-[#0070c0] data-[state=active]:shadow-none rounded-none bg-transparent"
+                            // className="flex flex-col items-center h-auto py-2 px-4 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none bg-transparent"
                             className="flex flex-col h-max data-[state=active]:bg-primary/10 data-[state=active]:border-primary data-[state=active]:border data-[state=active]:text-primary py-2 cursor-pointer"
 
                         >

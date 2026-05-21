@@ -58,7 +58,7 @@ export const columns: ColumnDef<any>[] = [
     header: "Name",
     cell: ({ row }) => {
       return (
-        <span className="text-[#0070c0] font-medium whitespace-nowrap">
+        <span className="text-primary font-medium whitespace-nowrap">
           {row.original.quoteId}
         </span>
       );
@@ -69,7 +69,7 @@ export const columns: ColumnDef<any>[] = [
     header: "Quote ID",
     cell: ({ row }) => {
       return (
-        <span className="text-[#0070c0] font-medium whitespace-nowrap">
+        <span className="text-primary font-medium whitespace-nowrap">
           {row.original.quoteId}
         </span>
       );
@@ -128,7 +128,7 @@ export const columns: ColumnDef<any>[] = [
       const state = address?.state;
       const country = address?.country;
       return (
-        <span className="text-[#0070c0] font-medium whitespace-nowrap">
+        <span className="text-primary font-medium whitespace-nowrap">
           {address1}
           <br />
           {city}, {state}, {country}
@@ -148,7 +148,7 @@ export const columns: ColumnDef<any>[] = [
       const state = address?.state;
       const country = address?.country;
       return (
-        <span className="text-[#0070c0] font-medium whitespace-nowrap">
+        <span className="text-primary font-medium whitespace-nowrap">
           {address1}
           <br />
           {city}, {state}, {country}
@@ -160,8 +160,6 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "packagingDetails",
     header: "Packaging Details",
     cell: ({ row }) => {
-      const quoteType = normalText(row.original.quoteType);
-      const shipmentType = normalText(row.original.shipmentType);
       const totalUnits = row?.original?.lineItems?.units?.length;
       const totalWeight = row?.original?.lineItems?.units?.reduce((sum:number, u: { weight?: number }) => sum + (u.weight || 0), 0);
       return (

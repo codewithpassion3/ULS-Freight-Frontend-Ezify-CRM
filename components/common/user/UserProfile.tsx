@@ -95,7 +95,7 @@ export default function UserProfile() {
                     unoptimized
                   />
                 ) : (
-                  <Avatar className="h-10 w-10">
+                  <Avatar className="h-10 w-10 focus-visible:outline-none">
                     <AvatarFallback>
                       {user?.user?.firstName?.charAt(0)}
                       {user?.user?.lastName?.charAt(0)}

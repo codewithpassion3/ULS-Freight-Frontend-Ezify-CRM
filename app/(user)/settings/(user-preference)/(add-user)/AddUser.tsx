@@ -50,6 +50,8 @@ import { Loader } from "@/components/common/Loader";
 import { User } from "../UserTable";
 import { FormFieldWrapper } from "@/components/common/forms/FormFieldWrapper";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
+import { useAuth } from "@/context/auth.context";
+import { LoaderCircle } from "lucide-react";
 
 export type AddUserFormValues = {
   id?: number;
@@ -94,6 +96,8 @@ export default function AddUser({
     queryKey: ["users"],
     queryFn: getAllUsers,
   });
+
+  const { user } = useAuth();
 
   const { data: roles = [], isLoading: isRolesLoading } = useQuery({
     queryKey: ["roles"],
@@ -175,6 +179,15 @@ export default function AddUser({
       createUserMutation.mutate(payload);
     }
   };
+  const currentUserRole = user?.user?.role?.name; // "superAdmin" | "admin" | etc.
+
+  const filteredRoles = roles?.filter((role: any) => {
+    if (currentUserRole === "superAdmin") {
+      return ["superAdmin", "staff"].includes(role.name);
+    }
+
+    return ["admin", "user"].includes(role.name);
+  });
   // // console.log(isValid)
   return (
     <>
@@ -238,104 +251,46 @@ export default function AddUser({
                 ]}
               />
 
-              {/* <div>
-                                <label className="text-sm font-medium">
-                                    User Role
-                                </label>
+              
+              {isRolesLoading ? (
+                <Loader />
+              ) : (
+                <div>
+                  <label className="text-sm font-medium">User Role</label>
 
-                                <Controller
-                                    name="roleId"
-                                    control={form.control}
-                                    defaultValue={mode === "edit" ? selectedUser?.role : 1}
-                                    render={({ field }) => (
-                                        <Select
-                                            value={field.value?.toString()}
-                                            onValueChange={(val) => field.onChange(Number(val))}
-                                        >
-                                            <SelectTrigger className="w-full mt-1">
-                                                <SelectValue placeholder="Select role" />
-                                            </SelectTrigger>
+                  <Controller
+                    name="roleId"
+                    control={form.control}
+                    defaultValue={
+                      mode === "edit"
+                        ? selectedUser?.role
+                        : filteredRoles?.[0]?.id
+                    }
+                    render={({ field }) => (
+                      <Select
+                        value={field.value?.toString()}
+                        onValueChange={(val) => field.onChange(Number(val))}
+                      >
+                        <SelectTrigger className="w-full mt-1">
+                          <SelectValue placeholder="Select role" />
+                        </SelectTrigger>
 
-                                            <SelectContent>
-                                                <SelectItem value="1">Admin</SelectItem>
-                                                <SelectItem value="2">User</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    )}
-                                />
-                            </div>
-
-                            
-                            {roleId === 2 ? <div>
-                                <label className="text-sm font-medium block mb-2">
-                                    Permissions
-                                </label>
-
-                                <div className="space-y-2">
-
-                                    <div className="flex items-center gap-2">
-                                        <Controller
-                                            name="permissionIds"
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <Checkbox
-                                                    checked={field.value?.includes(1)}
-                                                    onCheckedChange={(checked) => {
-                                                        if (checked) {
-                                                            field.onChange([...(field.value || []), 1]);
-                                                        } else {
-                                                            field.onChange(field.value?.filter(v => v !== 1));
-                                                        }
-                                                    }}
-                                                />
-                                            )}
-                                        />
-                                        <span className="text-sm">Shipping</span>
-                                    </div>
-
-                                    <div className="flex items-center gap-2">
-                                        <Controller
-                                            name="permissionIds"
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <Checkbox
-                                                    checked={field.value?.includes(2)}
-                                                    onCheckedChange={(checked) => {
-                                                        if (checked) {
-                                                            field.onChange([...(field.value || []), 2]);
-                                                        } else {
-                                                            field.onChange(field.value?.filter(v => v !== 2));
-                                                        }
-                                                    }}
-                                                />
-                                            )}
-                                        />
-                                        <span className="text-sm">Invoicing</span>
-                                    </div>
-
-                                    <div className="flex items-center gap-2">
-                                        <Controller
-                                            name="permissionIds"
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <Checkbox
-                                                    checked={field.value?.includes(3)}
-                                                    onCheckedChange={(checked) => {
-                                                        if (checked) {
-                                                            field.onChange([...(field.value || []), 3]);
-                                                        } else {
-                                                            field.onChange(field.value?.filter(v => v !== 3));
-                                                        }
-                                                    }}
-                                                />
-                                            )}
-                                        />
-                                        <span className="text-sm">Claims</span>
-                                    </div>
-
-                                </div>
-                            </div> : ""} */}
-
+                        <SelectContent>
+                          {filteredRoles?.map((role:any) => (
+                            <SelectItem
+                              key={role.id}
+                              value={role.id.toString()}
+                            >
+                              {role.name.charAt(0).toUpperCase() +
+                                role.name.slice(1)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </div>
+              )}
               <div className="space-y-2">
                 {isPermissionsLoading ? (
                   <Loader />
@@ -366,7 +321,9 @@ export default function AddUser({
                         )}
                       />
 
-                      <span className="text-sm capitalize">{permission.name}</span>
+                      <span className="text-sm capitalize">
+                        {permission.name}
+                      </span>
                     </div>
                   ))
                 )}
@@ -377,6 +334,9 @@ export default function AddUser({
                   type="submit"
                   className="w-full"
                 >
+                  {createUserMutation.isPending ?
+                      <LoaderCircle className="animate-spin mr-2" size={16} />
+                   : ""}
                   {mode === "create" ? "Create" : "Update"} User
                 </Button>
               </DialogFooter>

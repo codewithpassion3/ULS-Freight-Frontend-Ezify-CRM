@@ -95,7 +95,7 @@ export default function ShippingRates({
         height: unit.height,
         handlingUnits: unit.unitsOnPallet ?? 1,
         //   packaging: unit.palletUnitType,
-        packaging: "YOUR",
+        packaging: "BOX",
       };
     });
   };

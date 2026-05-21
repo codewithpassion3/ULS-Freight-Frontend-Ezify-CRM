@@ -25,7 +25,7 @@ export function DateRangePicker({ value, onChange }: DateRangePickerProps) {
                 <Button
                     variant="outline"
                     className={cn(
-                        "w-[300px] justify-start text-left font-normal",
+                        "w-[300px] justify-start text-left font-normal bg-white",
                         !value?.from && "text-muted-foreground"
                     )}
                 >
@@ -45,7 +45,7 @@ export function DateRangePicker({ value, onChange }: DateRangePickerProps) {
                 </Button>
             </PopoverTrigger>
 
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent className="w-auto p-0 " align="start">
                 <Calendar
                     mode="range"
                     selected={value}

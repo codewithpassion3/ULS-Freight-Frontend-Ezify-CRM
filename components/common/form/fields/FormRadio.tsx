@@ -30,7 +30,7 @@ const FormRadio = memo(({ field: config }: { field: FormRadioTypes }) => {
                 defaultValue={config.defaultValue?.toString()}
                 // convert string to boolean
                 // onChange={() => field.onChange}
-                className={`flex gap-6 ${config.className} cursor-pointer mb-2`}
+                className={`flex gap-6 ${config.className} cursor-pointer mb-2 `}
             >
                 {config.options.map((opt) => {
                     const isSelected = field.value?.toString() === opt.value.toString()
@@ -40,7 +40,7 @@ const FormRadio = memo(({ field: config }: { field: FormRadioTypes }) => {
                                 disabled={config.disabled}
                                 value={opt.value.toString()}
                                 id={`${config.name}-${opt.value}`}
-                                className={`${error ? "border-red-500" : ""} ${isSelected ? config.selectedClassName : ""} cursor-pointer`}
+                                className={`${error ? "border-red-500" : ""} ${isSelected ? config.selectedClassName : ""} cursor-pointer border border-primary/50`}
                             />
                             <Label htmlFor={`${config.name}-${opt.value}`} className={`cursor-pointer ${error ? "text-red-500" : ""}`}>
                                 {opt.label}

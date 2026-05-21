@@ -31,6 +31,7 @@ import { useEffect, useState } from "react";
 import { User } from "@/app/(user)/settings/(user-preference)/UserTable";
 import { Loader } from "./Loader";
 import NotificationsWidget from "@/app/(user)/home/NotificationsWidget";
+import { useTheme } from "next-themes";
 
 export default function Header() {
   const { user } = useAuth();
@@ -39,7 +40,7 @@ export default function Header() {
   const userPermissions = user?.user?.permissions.map(
     (permission: Record<string, any>) => permission.name,
   );
-
+  const { theme } = useTheme();
   return (
     <header className="w-full  fixed bg-white/10 backdrop-blur-md border-b border-b-black/20 dark:border-b-white/20 z-10">
       <div className="flex h-20 container mx-auto items-center justify-between">
@@ -47,7 +48,7 @@ export default function Header() {
         <div className="flex items-center gap-6">
           <Link href={user.user.role.name === "superAdmin" ? "/track" : "/"}>
             <Image
-              src="/enorth-logo.svg"
+              src={theme === "dark" ? "/enorth-logo-dark.svg" : "/enorth-logo.svg"}
               alt="logo"
               width={200}
               height={200}
@@ -67,7 +68,7 @@ export default function Header() {
                       <Button variant="link" asChild>
                         <Link
                           href={item.href!}
-                          className={`px-3 py-2 text-black! dark:text-white text-sm rounded-md w-max ${
+                          className={`px-3 py-2 text-black dark:text-white text-sm rounded-md w-max ${
                             pathname === item.href
                               ? " font-medium"
                               : "hover:bg-gray-50 dark:hover:text-black!"

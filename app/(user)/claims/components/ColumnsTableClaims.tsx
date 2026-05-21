@@ -38,7 +38,7 @@ export const columns: ColumnDef<any>[] = [
       // Use trackingNumber or fallback
       const claimNumber = row.original.claimNumber || `CLM${Math.floor(Math.random() * 100000000)}`;
       return (
-        <span className="text-[#0070c0] font-medium whitespace-nowrap">
+        <span className="text-primary font-medium whitespace-nowrap">
           {claimNumber}
         </span>
       )
@@ -50,7 +50,7 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => {
       const trackingNumber = row.original.trackingNumber || `TRK${Math.floor(Math.random() * 100000000)}`;
       return (
-        <span className="text-[#0070c0] font-medium whitespace-nowrap">
+        <span className="text-primary font-medium whitespace-nowrap">
           {trackingNumber}
         </span>
       )
@@ -86,7 +86,7 @@ export const columns: ColumnDef<any>[] = [
       const statuses = ["Pending", "Approved", "Denied", "Paid"];
       const status = row.original.status || statuses[Math.floor(Math.random() * statuses.length)];
       
-      let statusColor = "text-[#0070c0]";
+      let statusColor = "text-primary";
       if (status === "Approved" || status === "Paid") statusColor = "text-green-600";
       if (status === "Denied") statusColor = "text-red-600";
       if (status === "Pending") statusColor = "text-orange-500";
@@ -113,7 +113,7 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2 w-max">
-          <Link className="flex gap-1 items-center text-[#0070c0] hover:underline text-sm font-medium" href={`/claims/single?id=${row.original.id || 'CLM15017348'}`}>
+          <Link className="flex gap-1 items-center text-primary hover:underline text-sm font-medium" href={`/claims/single?id=${row.original.id || 'CLM15017348'}`}>
              <Eye size={14} /> View
           </Link>
           <DropdownMenu>

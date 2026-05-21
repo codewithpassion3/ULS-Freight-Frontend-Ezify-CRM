@@ -22,6 +22,7 @@ export function FormPhone({ name, label, placeholder }: Props) {
                     <PhoneInput
                         {...field}
                         placeholder={placeholder}
+                        className="border border-primary/10"
                     />
                 )}
             />

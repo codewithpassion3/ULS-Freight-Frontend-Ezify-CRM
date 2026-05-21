@@ -8,7 +8,7 @@ export function ShipmentDocumentsWidget({ quote }: { quote?: any }) {
 
   return (
     <Card className="rounded-sm pt-0 shadow-sm border-slate-200">
-      <CardHeader className="bg-slate-50 py-3 px-4 border-b">
+      <CardHeader className="bg-slate-50 dark:bg-gray-900 py-3 px-4 border-b">
         <CardTitle className="text-xl">
           Shipment Documents
         </CardTitle>

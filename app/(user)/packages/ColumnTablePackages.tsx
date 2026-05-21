@@ -45,7 +45,7 @@ export const columns: ColumnDef<any>[] = [
         header: "Name",
         cell: ({ row }) => {
             return (
-                <span className="text-[#0070c0] font-medium whitespace-nowrap">
+                <span className="text-primary font-medium whitespace-nowrap">
                     {row.original.name}
                 </span>
             )
@@ -56,7 +56,7 @@ export const columns: ColumnDef<any>[] = [
         header: "Type",
         cell: ({ row }) => {
             return (
-                <span className="text-[#0070c0] font-medium whitespace-nowrap capitalize">
+                <span className="text-primary font-medium whitespace-nowrap capitalize">
                     {normalText(row.original.type)}
                 </span>
             )

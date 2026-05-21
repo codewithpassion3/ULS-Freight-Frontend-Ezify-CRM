@@ -73,9 +73,9 @@ export default function TrackingDashboardPage() {
       </div>
 
       {showFilters ? (
-        <div className="bg-slate-50 border border-border p-4 rounded-md mb-6 relative">
+        <div className="bg-slate-50 dark:bg-primary/10 border border-border p-4 rounded-md mb-6 relative">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-[#0070c0]">
+            <h2 className="text-lg font-semibold text-primary">
               Search Shipments
             </h2>
             <Button
@@ -92,7 +92,7 @@ export default function TrackingDashboardPage() {
                 setOriginPostal("");
                 setDestinationPostal("");
               }}
-              // className="text-[#0070c0] hover:text-[#005999] h-auto p-0 flex items-center"
+              // className="text-primary hover:text-[#005999] h-auto p-0 flex items-center"
             >
               <X className="w-4 h-4 mr-1" /> Clear Filters
             </Button>
@@ -271,7 +271,7 @@ export default function TrackingDashboardPage() {
 
       {/* Tabs */}
       <Tabs defaultValue={tabParam || "all"}>
-        <TabsList className="gap-2 bg-white dark:bg-slate-800 border border-blue-200 p-1 group-data-[orientation=horizontal]/tabs:h-fit max-w-full overflow-x-scroll no-scrollbar">
+        <TabsList className="w-full gap-2 bg-white dark:bg-slate-800 border border-blue-200 p-1 group-data-[orientation=horizontal]/tabs:h-fit max-w-full overflow-x-scroll no-scrollbar">
           {[
             {
               icon: Heart,

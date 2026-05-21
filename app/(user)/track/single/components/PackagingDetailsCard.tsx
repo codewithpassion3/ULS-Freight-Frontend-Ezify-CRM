@@ -13,7 +13,7 @@ export function PackagingDetailsCard({ quote }: { quote?: any }) {
 
   return (
     <Card className="rounded-sm pt-0 shadow-sm mb-6">
-      <CardHeader className="bg-slate-50 border-b py-3 px-4">
+      <CardHeader className="bg-slate-50 dark:bg-gray-900 border-b py-3 px-4">
         <CardTitle className="text-xl flex items-center gap-2">
           <Package className="w-6 h-6" />
           Packaging Details

@@ -32,7 +32,7 @@ export default function SingleShipmentTrackingPage() {
     )
   }
   return (
-    <div className="container mx-auto p-4 md:p-6 lg:p-8 bg-slate-50/50 min-h-screen">
+    <div className="container mx-auto p-4 md:p-6 lg:p-8 min-h-screen">
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Main Content Column */}
@@ -46,7 +46,7 @@ export default function SingleShipmentTrackingPage() {
         {/* Right Sidebar Column */}
         <div className="lg:col-span-4 flex flex-col">
           <StatusUpdatesWidget quote={quote?.quote} />
-          <ShipmentDocumentsWidget quote={quote?.quote} />
+          {/* <ShipmentDocumentsWidget quote={quote?.quote} /> */}
         </div>
       </div>
     </div>

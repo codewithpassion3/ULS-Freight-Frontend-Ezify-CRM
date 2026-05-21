@@ -9,7 +9,9 @@ export default function PackageSelectionModal({ selectedPackage, onSelect }: { s
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="link"><PackageOpen /> My Packages</Button>
+                <Button variant="link" className="text-primary dark:text-accent">
+                    <PackageOpen /> My Packages
+                </Button>
             </DialogTrigger>
             <DialogContent className="max-w-3xl!">
                 <DialogHeader>

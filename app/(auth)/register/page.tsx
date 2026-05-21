@@ -30,6 +30,7 @@ import { useUser } from "@/hooks/useUser"
 import { Loader } from "@/components/common/Loader"
 import { AxiosError } from "axios"
 import { ApiError } from "next/dist/server/api-utils"
+import { useTheme } from "next-themes"
 export default function RegisterPage() {
 
   // const { data, isLoading } = useUser();
@@ -93,7 +94,7 @@ export default function RegisterPage() {
 
 
   if (isLoading) return <Loader className="min-h-screen" />
-
+  const { theme } = useTheme();
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Top Banner */}
@@ -166,7 +167,7 @@ export default function RegisterPage() {
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
               <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-                <Image loading="eager" src="/enorth-logo.svg" alt="ENorth Logistics" width={200} height={200} />
+                <Image loading="eager" src={theme === "dark" ? "/enorth-logo-dark.svg" : "/enorth-logo.svg"} alt="ENorth Logistics" width={200} height={200} />
               </Link>
               <div className="flex items-center gap-2">
                 <LanguageToggle />

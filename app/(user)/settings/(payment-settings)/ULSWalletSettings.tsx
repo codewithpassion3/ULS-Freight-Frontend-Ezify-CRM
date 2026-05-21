@@ -257,10 +257,10 @@ export default function ULSWalletSettings() {
               <CheckCircle2 size={14} />
               Primary Card
             </div> */}
-              <div className="border-2 border-primary bg-blue-50 rounded-lg p-4 relative overflow-hidden">
+              <div className="border-2 border-primary bg-blue-50 dark:bg-primary/10 rounded-lg p-4 relative overflow-hidden">
                 {/* <div className="font-bold text-slate-700 text-sm mb-4">ENorth Logistics CARD</div> */}
                 <div className="flex justify-between items-end">
-                  <div className="text-2xl font-italic text-primary font-bold italic capitalize">
+                  <div className="text-2xl font-italic text-primary dark:text-white font-bold italic capitalize">
                     {
                       user?.user?.company?.savedCards[0]?.brand
                     }
@@ -293,15 +293,15 @@ export default function ULSWalletSettings() {
           </div>
         </div>
 
-        <div className="flex items-start gap-2 text-sm text-blue-600 bg-blue-50 border border-blue-100 p-3 rounded-md">
+        <div className="flex items-start gap-2 text-sm text-blue-600 dark:text-blue-50 bg-blue-50 dark:bg-primary/10 border border-blue-100 p-3 rounded-md">
           <Info size={16} className="mt-0.5 shrink-0" />
           <p>
             If you would like to switch to a{" "}
-            <span className="font-bold text-slate-800">
+            <span className="font-bold text-slate-800 dark:text-white">
               Credit Card account
             </span>{" "}
             (and no longer use your{" "}
-            <span className="font-bold text-slate-800">Account Balance</span>),
+            <span className="font-bold text-slate-800 dark:text-white">Account Balance</span>),
             please select “Change Account Type”
           </p>
         </div>

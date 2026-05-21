@@ -233,7 +233,7 @@
 //                                         <Separator className="bg-slate-200" />
 //                                         <div className="flex justify-between items-center">
 //                                             <span className="text-slate-900 font-bold">Amount Due</span>
-//                                             <span className="text-xl font-black text-[#0070c0]">${MOCK_INVOICE.charges.totalDue.toFixed(2)} <span className="text-xs font-bold text-slate-400">{MOCK_INVOICE.currency}</span></span>
+//                                             <span className="text-xl font-black text-primary">${MOCK_INVOICE.charges.totalDue.toFixed(2)} <span className="text-xs font-bold text-slate-400">{MOCK_INVOICE.currency}</span></span>
 //                                         </div>
 //                                     </div>
 //                                 </div>
@@ -247,7 +247,7 @@
 //                                     <h3 className="text-sm font-bold text-slate-800">
 //                                         Shipments Included ({MOCK_INVOICE.shipments.length})
 //                                     </h3>
-//                                     <Button variant="ghost" size="sm" className="text-[#0070c0] hover:bg-blue-50" onClick={handleCSVDownload}>
+//                                     <Button variant="ghost" size="sm" className="text-primary hover:bg-blue-50" onClick={handleCSVDownload}>
 //                                         <Download className="w-3.5 h-3.5 mr-1.5" />
 //                                         Export CSV
 //                                     </Button>
@@ -267,7 +267,7 @@
 //                                         <tbody className="divide-y divide-slate-100">
 //                                             {MOCK_INVOICE.shipments.map((shipment, idx) => (
 //                                                 <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
-//                                                     <td className="px-4 py-4 text-[#0070c0] font-bold underline cursor-pointer">{shipment.trackingNumber}</td>
+//                                                     <td className="px-4 py-4 text-primary font-bold underline cursor-pointer">{shipment.trackingNumber}</td>
 //                                                     <td className="px-4 py-4 text-slate-600">{shipment.referenceNumber}</td>
 //                                                     <td className="px-4 py-4 text-right text-slate-600">${shipment.freight.toFixed(2)}</td>
 //                                                     <td className="px-4 py-4 text-right text-slate-600">${shipment.adjustment.toFixed(2)}</td>
@@ -634,7 +634,7 @@ export default function SingleInvoicePage() {
                                                 Amount Due
                                             </span>
 
-                                            <span className="text-xl font-black text-[#0070c0]">
+                                            <span className="text-xl font-black text-primary">
                                                 ${totalDue.toFixed(2)}
                                                 <span className="text-xs ml-1 text-slate-400">
                                                     {shipment?.currency}
@@ -691,7 +691,7 @@ export default function SingleInvoicePage() {
 
                                         <tbody>
                                             <tr>
-                                                <td className="px-4 py-4 font-bold text-[#0070c0]">
+                                                <td className="px-4 py-4 font-bold text-primary">
                                                     {shipment?.trackingNumber ||
                                                         shipment?.bolNumber ||
                                                         "-"}
