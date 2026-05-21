@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
 import AddPackage from "@/app/(user)/packages/AddPackage";
 import { FREIGHT_CLASS_OPTIONS } from "./constants";
-import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote";
+
 import { usePathname } from "next/navigation";
 import PackageSelectionModal from "@/app/(user)/packages/PackageSelectionModal";
 import { useEffect } from "react";
 import { calculateClass } from "./DensityCalculatorModal";
 import { PAGE_TYPES } from "next/dist/lib/page-types";
 import { validateDimensionFields } from "./packageRow.utility";
+import { ShipmentOptions } from "../DynamicQuote/DynamicQuote.types";
 
 type Props = {
   index: number;
