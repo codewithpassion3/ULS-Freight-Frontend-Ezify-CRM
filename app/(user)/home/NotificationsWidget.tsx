@@ -167,7 +167,7 @@ export default function NotificationsWidget() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="relative rounded-full">
+                <Button variant="outline" className="relative rounded-full border border-primary/10">
                     <Bell />
                     {unreadCount > 0 && (
                         <span className="absolute flex items-center justify-center -top-2 -right-2 text-xs bg-primary text-white h-5 w-5 rounded-full">

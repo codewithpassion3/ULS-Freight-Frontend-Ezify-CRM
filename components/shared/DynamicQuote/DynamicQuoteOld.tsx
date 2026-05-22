@@ -93,6 +93,14 @@ export default function DynamicQuote({
   const [selectedCarrier, setSelectedCarrier] = useState<any>(null);
   const { user } = useAuth();
   const [inSufficientModal, setInSufficientModal] = useState(false);
+  // const handleSwapAddress = () => {
+  //   if (fromAddressRef.current && toAddressRef.current) {
+  //     const fromVals = fromAddressRef.current.getValues();
+  //     const toVals = toAddressRef.current.getValues();
+  //     fromAddressRef.current.setValues({ ...toVals, type: "FROM" });
+  //     toAddressRef.current.setValues({ ...fromVals, type: "TO" });
+  //   }
+  // };
   const {
     data: singleQuote,
     isLoading: isSingleQuoteLoading,
@@ -130,12 +138,113 @@ export default function DynamicQuote({
       quoteStatus,
       singleQuote,
     });
+  // const handleNextStep1 = async () => {
+  //     const fromValid = await fromAddressRef.current?.trigger()
+  //     const toValid = await toAddressRef.current?.trigger()
+
+  //     if (fromValid && toValid) {
+  //         dimensionsRef.current?.open()
+  //         setCurrentStep(2)
+  //     }
+  // }
+
+  // const handleNextStep2 = async () => {
+  //     const dimValid = await dimensionsRef.current?.trigger()
+  //     const equipValid = isSpotQuote ? await equipmentRef.current?.trigger() : true
+  //     const contactValid = isSpotQuote ? await contactRef.current?.trigger() : true
+
+  //     if (dimValid && equipValid && contactValid) {
+  //         setCurrentStep(3)
+  //     }
+  // }
+
+  // scroll to section in which there is errors, check by ref
+
+
 
   useEffect(() => {
     if (singleQuote?.quote?.shipment?.id) {
       setShipmentId(singleQuote.quote.shipment.id);
     }
   }, [singleQuote]);
+
+  // const createQuoteMutation = useMutation({
+  //   mutationFn: (data: unknown) => createQuote(data),
+  //   onSuccess: () => {
+  //     toast.success("Quote created successfully");
+  //     // router.push("/quotes")
+  //   },
+  //   onError: (error: AxiosError<ApiError>) => {
+  //     toast.error(error.response?.data.message);
+  //   },
+  // });
+
+  // const createQuoteAndConvertToShipmentMutation = useMutation({
+  //   mutationFn: (data: unknown) => createQuote(data),
+  //   onSuccess: (res) => {
+  //     router.push(`/shipment/?id=${res.quote.id}&mode=conversion`);
+  //   },
+  //   onError: (error: AxiosError<ApiError>) => {
+  //     toast.error(error.response?.data.message);
+  //   },
+  // });
+
+  // const handleCreateShipment = ({ shipmentPayload }: any) => {
+  //   createShipmentMutation.mutate(shipmentPayload);
+  // };
+
+  // const updateQuoteMutation = useMutation({
+  //   mutationFn: (data: unknown) => updateQuote(quoteId!, data),
+  //   onSuccess: () => {
+  //     toast.success("Quote updated successfully");
+  //     router.push("/quotes");
+  //   },
+  //   onError: (error: AxiosError<ApiError>) => {
+  //     toast.error(error.response?.data.message);
+  //   },
+  // });
+
+  // //  create shipment mutation
+  // const createShipmentMutation = useMutation({
+  //   mutationFn: (data: unknown) => createShipment(data),
+  //   onSuccess: (res) => {
+  //     toast.success("Shipment created successfully");
+  //     // router.push("/quotes")
+  //     // console.log("CREATE SHIPMENT RESPONSE:", res);
+  //     return res.data;
+  //   },
+  //   onError: (error: AxiosError<ApiError>) => {
+  //     toast.error(error.response?.data.message);
+  //   },
+  // });
+  // const updateShipmentMutation = useMutation({
+  //   mutationFn: (data: unknown) => updateShipment(shipmentId!, data),
+  //   onSuccess: () => {
+  //     toast.success("Shipment updated successfully");
+  //     // router.push("/quotes");
+  //   },
+  //   onError: (error: AxiosError<ApiError>) => {
+  //     toast.error(error.response?.data.message);
+  //   },
+  // });
+
+  // const bookShipmentMutation = useMutation({
+  //   mutationFn: (data: unknown) => bookShipment(data),
+  //   onSuccess: (res) => {
+  //     toast.success("Shipment booked successfully");
+  //     // console.log("CREATE SHIPMENT RESPONSE:", res);
+  //     router.push("/track");
+  //   },
+  //   onError: (error: AxiosError<ApiError>) => {
+  //     toast.error(error.response?.data.message);
+  //   },
+  // });
+
+  const spotShipmentType: any = {
+    SPOT_LTL: "LTL_PARTIAL",
+    SPOT_FTL: "FULL_TRUCK_LOAD",
+    TIME_CRITICAL: "TIME_CRITICAL",
+  };
 
   const fromAddress = fromAddressRef.current?.getValues() || {};
   const toAddress = toAddressRef.current?.getValues() || {};
@@ -506,6 +615,19 @@ export default function DynamicQuote({
   //   // console.log("tForceRates.quote.serviceType", selectedCarrierDetails);
 
   const [step, setStep] = useState(1);
+  const handleFirstStepValidate = () => {
+    const fromValid = fromAddressRef.current?.trigger();
+    const toValid = toAddressRef.current?.trigger();
+    let valid = fromValid && toValid;
+
+    // print every validation
+    if (!valid) {
+      toast.error("Please fill in all required fields correctly.");
+      return;
+    } else {
+      setStep(step + 1);
+    }
+  };
 
   return (
     <>

@@ -76,7 +76,7 @@ export function AddressBookTable({ handleSelect, type }: { handleSelect?: (conta
                             <h2 className="text-xl font-semiBold text-foreground">Address Book</h2>
                         </div>
                         <div className="space-y-4 w-full">
-                            <div className="flex justify-between gap-2">
+                            <div className="flex flex-col sm:flex-row justify-between gap-2">
                                 < DataTableToolbar
                                     search={search}
                                     setSearch={setSearch}

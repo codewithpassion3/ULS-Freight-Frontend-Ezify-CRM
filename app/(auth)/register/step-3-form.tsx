@@ -70,7 +70,7 @@ export function Step3Form({ onBack, isPending }: Step3FormProps) {
                     value={field.value ? "checked" : "unchecked"}
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                    className="cursor-pointer"
+                    className="cursor-pointer border border-primary/50"
                   />
                   <p>Accept</p>
                   <LegalPolicyModal>
@@ -93,7 +93,7 @@ export function Step3Form({ onBack, isPending }: Step3FormProps) {
                     value={field.value ? "checked" : "unchecked"}
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                    className="cursor-pointer"
+                    className="cursor-pointer border border-primary/50"
                   />
                   <p>Accept</p>
                   <LegalPolicyModal defaultTab="privacy">

@@ -67,7 +67,8 @@ export const columns: ColumnDef<any>[] = [
       return (
         <div className="h-24 w-24 p-2 flex justify-center items-center">
           {/* <Image src={"/FedExFreight.svg"} width={100} height={100} alt="Carrier Logo" /> */}
-          {getCarrierImg(row.original.carrier)}
+          {/* {getCarrierImg(row.original.carrier)} */}
+          <div className="text-2xl">{row.original.carrier}</div>
         </div>
       );
     },
@@ -259,7 +260,7 @@ export const columns: ColumnDef<any>[] = [
               ) : (
                 ""
               )}
-              <DropdownMenuItem className="cursor-pointer">
+              {row.original.shipment ? <DropdownMenuItem className="cursor-pointer">
                 <Link
                   className="flex gap-2 items-center w-full"
                   href={`/track/single?id=${row.original.id}`}
@@ -267,7 +268,7 @@ export const columns: ColumnDef<any>[] = [
                   {/* view */}
                   <Eye size={14} /> View
                 </Link>
-              </DropdownMenuItem>
+              </DropdownMenuItem> : ""}
             </DropdownMenuContent>
           </DropdownMenu>
           <AddSurchargesModal

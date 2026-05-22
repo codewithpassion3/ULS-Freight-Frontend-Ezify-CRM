@@ -57,7 +57,7 @@ export function SelectAddressBookModal({ onSelect, triggerButton }: SelectAddres
         <DialogHeader>
           <DialogTitle>Select Address from Address Book</DialogTitle>
         </DialogHeader>
-        <Tabs>
+        <Tabs className="w-full overflow-scroll no-scrollbar">
           <TabsList>
             <TabsTrigger className="cursor-pointer" value="address-book">
               <BookUser />
